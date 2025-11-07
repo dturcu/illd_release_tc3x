@@ -2,7 +2,7 @@
  * \file Ifx_Ssw_Infra.c
  * \brief Startup Software support functions.
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -141,19 +141,20 @@ void Ifx_Ssw_enableSafetyWatchdog(unsigned short password)
 
 void Ifx_Ssw_startCore(Ifx_CPU *cpu, unsigned int programCounter)
 {
-    /* Set the PC */
-    cpu->PC.B.PC = (unsigned int)programCounter >> 1U;
+	volatile Ifx_CPU_PC     *pc;
+	volatile Ifx_CPU_SYSCON *syscon;
 
-    /* release boot halt mode if required */
-    Ifx_CPU_SYSCON syscon;
-    syscon = cpu->SYSCON;
+	pc = &cpu->PC;
+	/* Set the PC */
+	pc->B.PC = (unsigned int)programCounter >> 1U;
 
-    if (syscon.B.BHALT)
-    {
-        syscon.B.BHALT = 0U;
-        cpu->SYSCON    = syscon;
-    }
+	/* Release boot halt mode if required */
+	syscon = &cpu->SYSCON;
 
+	if (syscon->B.BHALT)
+	{
+		syscon->B.BHALT = 0U;
+	}
 }
 
 

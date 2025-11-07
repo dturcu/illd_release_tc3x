@@ -3,7 +3,7 @@
  * \brief CPU  basic functionality
  * \ingroup IfxLld_Cpu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -197,6 +197,8 @@
 #include "_Utilities/Ifx_Assert.h"
 #include "Scu/Std/IfxScuWdt.h"
 #include "Scu/Std/IfxScuCcu.h"
+#include "Ifx_Types.h"
+#include "IfxCpu_reg.h"
 
 /******************************************************************************/
 /*-----------------------------------Macros-----------------------------------*/
@@ -226,6 +228,15 @@
  *   \endcode
  */
 #define IFXCPU_GLB_ADDR_PSPR(cpu, address) ((((unsigned)(address) & 0x000fffff) | 0x70100000) - ((cpu) * 0x10000000))
+
+/* DPR and CPR Granularity */
+#define DPR_GRANULARITY                 8      /* Data Protection Range granularity in bytes */
+#define CPR_GRANULARITY                 32     /* Code Protection Range granularity in bytes */
+
+/* Range Counts */
+#define DATA_PROT_RANGE_COUNT 18
+#define CODE_PROT_RANGE_COUNT 10
+#define PROTECTION_SET_COUNT 6
 
 /******************************************************************************/
 /*------------------------------Type Definitions------------------------------*/
@@ -262,6 +273,7 @@ typedef enum
 } IfxCpu_CoreMode;
 
 /** \brief Performance conunter modes
+ * Definition in Ifx_CPU_CCTRL.B.CM
  */
 typedef enum
 {
@@ -270,6 +282,7 @@ typedef enum
 } IfxCpu_CounterMode;
 
 /** \brief Overlay Address Mask: determines the overlay block size and the bits used for address comparison and translation
+ * Definition in Ifx_CPU.BLK[x].OMASK.U (x = 0 to 7)
  */
 typedef enum
 {
@@ -289,6 +302,7 @@ typedef enum
 } IfxCpu_OverlayAddressMask;
 
 /** \brief Selects overlay memory used for redirection
+ * Definition in Ifx_CPU_BLK_RABRB.OMEM
  */
 typedef enum
 {
@@ -317,12 +331,70 @@ typedef enum
 #endif /* #ifdef DEVICE_TC39XB */
 } IfxCpu_OverlayMemorySelect;
 
+/** \brief Defines the possible reasons for the last reset of a CPU.
+ * Definition in Ifx_CPU.KRST0.B.RSTSTAT
+ */
 typedef enum
 {
     IfxCpu_ResetStatus_notCpuReset   = 0,  /**< \brief No Kernel Reset was executed */
     IfxCpu_ResetStatus_cpuResetBySmu = 1,  /**< \brief Kernel reset was requested by hardware since last clear (SMU) */
     IfxCpu_ResetStatus_cpuResetBySw  = 2   /**< \brief Kernel reset was requested by software since last clear (by writing KRST0.RST=1 and KRST1.RST=1) */
 } IfxCpu_ResetStatus;
+
+/** \brief Data Protection Range enumeration
+ * Definition for CPU Data Protection Range identifiers
+ */
+typedef enum
+{
+    IfxCpu_DataProtectionRange_0  = 0,   /**< \brief Data Protection Range 0 */
+    IfxCpu_DataProtectionRange_1  = 1,   /**< \brief Data Protection Range 1 */
+    IfxCpu_DataProtectionRange_2  = 2,   /**< \brief Data Protection Range 2 */
+    IfxCpu_DataProtectionRange_3  = 3,   /**< \brief Data Protection Range 3 */
+    IfxCpu_DataProtectionRange_4  = 4,   /**< \brief Data Protection Range 4 */
+    IfxCpu_DataProtectionRange_5  = 5,   /**< \brief Data Protection Range 5 */
+    IfxCpu_DataProtectionRange_6  = 6,   /**< \brief Data Protection Range 6 */
+    IfxCpu_DataProtectionRange_7  = 7,   /**< \brief Data Protection Range 7 */
+    IfxCpu_DataProtectionRange_8  = 8,   /**< \brief Data Protection Range 8 */
+    IfxCpu_DataProtectionRange_9  = 9,   /**< \brief Data Protection Range 9 */
+    IfxCpu_DataProtectionRange_10 = 10,  /**< \brief Data Protection Range 10 */
+    IfxCpu_DataProtectionRange_11 = 11,  /**< \brief Data Protection Range 11 */
+    IfxCpu_DataProtectionRange_12 = 12,  /**< \brief Data Protection Range 12 */
+    IfxCpu_DataProtectionRange_13 = 13,  /**< \brief Data Protection Range 13 */
+    IfxCpu_DataProtectionRange_14 = 14,  /**< \brief Data Protection Range 14 */
+    IfxCpu_DataProtectionRange_15 = 15,  /**< \brief Data Protection Range 15 */
+    IfxCpu_DataProtectionRange_16 = 16,  /**< \brief Data Protection Range 16 */
+    IfxCpu_DataProtectionRange_17 = 17   /**< \brief Data Protection Range 17 */
+} IfxCpu_DataProtectionRange;
+
+/** \brief Code Protection Range enumeration
+ * Definition for CPU Code Protection Range identifiers
+ */
+typedef enum
+{
+    IfxCpu_CodeProtectionRange_0 = 0,   /**< \brief Code Protection Range 0 */
+    IfxCpu_CodeProtectionRange_1 = 1,   /**< \brief Code Protection Range 1 */
+    IfxCpu_CodeProtectionRange_2 = 2,   /**< \brief Code Protection Range 2 */
+    IfxCpu_CodeProtectionRange_3 = 3,   /**< \brief Code Protection Range 3 */
+    IfxCpu_CodeProtectionRange_4 = 4,   /**< \brief Code Protection Range 4 */
+    IfxCpu_CodeProtectionRange_5 = 5,   /**< \brief Code Protection Range 5 */
+    IfxCpu_CodeProtectionRange_6 = 6,   /**< \brief Code Protection Range 6 */
+    IfxCpu_CodeProtectionRange_7 = 7,   /**< \brief Code Protection Range 7 */
+    IfxCpu_CodeProtectionRange_8 = 8,   /**< \brief Code Protection Range 8 */
+    IfxCpu_CodeProtectionRange_9 = 9    /**< \brief Code Protection Range 9 */
+} IfxCpu_CodeProtectionRange;
+
+/** \brief Protection Set enumeration
+ * Definition for CPU Protection Set identifiers
+ */
+typedef enum
+{
+    IfxCpu_ProtectionSet_0 = 0,   /**< \brief Protection Set 0 */
+    IfxCpu_ProtectionSet_1 = 1,   /**< \brief Protection Set 1 */
+    IfxCpu_ProtectionSet_2 = 2,   /**< \brief Protection Set 2 */
+    IfxCpu_ProtectionSet_3 = 3,   /**< \brief Protection Set 3 */
+    IfxCpu_ProtectionSet_4 = 4,   /**< \brief Protection Set 4 */
+    IfxCpu_ProtectionSet_5 = 5    /**< \brief Protection Set 5 */
+} IfxCpu_ProtectionSet;
 
 /** \} */
 
@@ -336,8 +408,8 @@ typedef enum
  */
 typedef struct
 {
-    uint32  counter;        /**< \brief Counter value */
-    boolean overlfow;       /**< \brief sticky overlfow */
+    uint32  counter;        /**< \brief Counter value. Range: 0 to 0x7FFFFFFF */
+    boolean overlfow;       /**< \brief sticky overlfow. Range: TRUE - Set by hardware when count value [30:0] = 0x7FFFFFFF, FALSE : Sticky overflow bit cleared by software. */
 } IfxCpu_Counter;
 
 /** \} */
@@ -357,6 +429,33 @@ typedef struct
 
 /** \} */
 
+/** \addtogroup IfxLld_Cpu_Std_DataStructures
+ * \{ */
+/** \brief MPU Region Access Permissions
+ */
+typedef struct
+{
+    Ifx_CPU_CPXE executionEnable;
+    Ifx_CPU_DPRE readEnable;
+    Ifx_CPU_DPWE writeEnable;
+} IfxCpu_MpuRangeAccessPermissions;
+
+/** \} */
+
+
+/** \addtogroup IfxLld_Cpu_Std_DataStructures
+ * \{ */
+/** \brief MPU Configuration
+ */
+typedef struct
+{
+    Ifx_CPU_DPR dataProtectionRange[DATA_PROT_RANGE_COUNT];
+    Ifx_CPU_CPR codeProtectionRange[CODE_PROT_RANGE_COUNT];
+    IfxCpu_MpuRangeAccessPermissions accessPermissions[PROTECTION_SET_COUNT];
+} IfxCpu_MpuConfig;
+
+/** \} */
+
 /** \addtogroup IfxLld_Cpu_Std_Core
  * \{ */
 
@@ -367,7 +466,7 @@ typedef struct
 /**
  * \brief API to get the address for CPU HW module register memory map.
  *
- * \param[in] cpu Resource index of the CPU
+ * \param[in] cpu Resource index of the CPU.
  * 				  Range: \ref IfxCpu_ResourceCpu.
  *
  * \retval Ifx_CPU Pointer to the base address of the CPU module's register memory map.
@@ -493,7 +592,7 @@ IFX_EXTERN boolean IfxCpu_setProgramCounter(Ifx_CPU *cpu, uint32 programCounter)
 IFX_EXTERN boolean IfxCpu_startCore(Ifx_CPU *cpu, uint32 programCounter);
 
 /**
- * \brief To request reset of a particular core, given by coreId
+ * \brief To request reset of a particular core, given by coreId.
  *
  * \param[in] coreIndex The identifier of the CPU core to be reset.
  * 						Range: \ref IfxCpu_ResourceCpu
@@ -892,7 +991,7 @@ IFX_EXTERN void IfxCpu_resetSpinLock(IfxCpu_spinLock *lock);
  * This API can be used to spin lock for the lock for the given timeout period.
  *
  * \param[in]    lock         Pointer to the \ref IfxCpu_spinLock structure representing the spin lock to be acquired.
- * \param[inout] timeoutCount loop counter value used for timeout to acquire lock
+ * \param[inout] timeoutCount loop counter value used for timeout to acquire lock.
  * 						      Range: 0 to 0xFFFFFFFF
  *
  * \retval TRUE:  The lock was successfully acquired.
@@ -918,6 +1017,106 @@ IFX_EXTERN boolean IfxCpu_setSpinLock(IfxCpu_spinLock *lock, uint32 timeoutCount
 /******************************************************************************/
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
+
+/* MPU control functions */
+
+/** \brief API to enable memory protection by configuring control registers
+ *
+ * This function enables memory protection for the system. Before calling this function,
+ * ensure that code and data protection ranges are properly defined.
+ *
+ * It uses the intrinsic functions __mfcr() and __mtcr() to access and modify Core Special Function Registers (CSFR).
+ * - __mfcr(int csfr): Reads the value from the specified CSFR.
+ * - __mtcr(int csfr, int val): Writes the value to the specified CSFR.
+ *
+ * The Tasking intrinsic function for MTCR automatically includes an ISYNC instruction to ensure
+ * the effects of the CSFR update are correctly seen by all following instructions.
+ * For other compiler vendors, ISYNC is ensured by a preprocessor macro.
+ * \return None
+ */
+IFX_EXTERN void IfxCpu_enableMemoryProtection(void);
+
+
+/** \brief API to disable memory protection by configuring control registers
+ *
+ * This function disables memory protection for the system.
+ * It uses the intrinsic functions __mfcr() and __mtcr() to access and modify Core Special Function Registers (CSFR).
+ * - __mfcr(int csfr): Reads the value from the specified CSFR.
+ * - __mtcr(int csfr, int val): Writes the value to the specified CSFR.
+ *
+ * The Tasking intrinsic function for MTCR automatically includes an ISYNC instruction to ensure
+ * the effects of the CSFR update are correctly seen by all following instructions.
+ * For other compiler vendors, ISYNC is ensured by a preprocessor macro.
+ * \return None
+ */
+IFX_EXTERN void IfxCpu_disableMemoryProtection(void);
+
+/** \brief API to set the specified protection set as active
+ *
+ * This function is declared as inline to ensure that changes to the Program Status Word (PSW)
+ * are preserved. When a function is called, the PSW is among the registers automatically saved
+ * to the Context Save Area (CSA). Declaring this function as inline prevents the automatic saving
+ * and restoring of the Upper Context (16 registers including the PSW), which would otherwise
+ * overwrite changes made to the PSW upon function return.
+ * \param protectionSet The Protection Set to be activated
+ * \return None
+ */
+IFX_INLINE void IfxCpu_setActiveProtectionSet(IfxCpu_ProtectionSet protectionSet);
+
+/** \brief API to define a data protection range in the CPU Data Protection Range Register (DPR)
+ *
+ * Data protection ranges are set with 8-byte granularity; the lower 3 bits of any address passed are discarded.
+ * Once Memory Protection is enabled, access to an address 'x' is permitted only if:
+ * lowerBoundAddress <= x < upperBoundAddress
+ * \param lowerBoundAddress The inclusive lower bound of the protected address range
+ * \param upperBoundAddress The exclusive upper bound of the protected address range
+ * \param range Data protection range identifier
+ * \return None
+ */
+IFX_EXTERN void IfxCpu_defineDataProtectionRange(uint32 lowerBoundAddress, uint32 upperBoundAddress, IfxCpu_DataProtectionRange range);
+
+/** \brief API to define a code protection range in the CPU Code Protection Range Register (CPR)
+ *
+ * Code protection ranges are set with 32-byte granularity; the lower 5 bits of any address are discarded.
+ * Once Memory Protection is enabled, access to an address 'x' is permitted only if:
+ * lowerBoundAddress <= x < upperBoundAddress
+ * \param lowerBoundAddress The inclusive lower bound of the protected address range
+ * \param upperBoundAddress The exclusive upper bound of the protected address range
+ * \param range Code protection range identifier
+ * \return None
+ */
+IFX_EXTERN void IfxCpu_defineCodeProtectionRange(uint32 lowerBoundAddress, uint32 upperBoundAddress, IfxCpu_CodeProtectionRange range);
+
+/** \brief API to enable data read access to a predefined range within a protection set
+ *
+ * \param protectionSet Protection set identifier
+ * \param range  Data protection range identifier
+ * \return None
+ */
+IFX_EXTERN void IfxCpu_enableDataRead(IfxCpu_ProtectionSet protectionSet, IfxCpu_DataProtectionRange range);
+
+/** \brief API to enable data write access to a predefined range within a protection set
+ *
+ * \param protectionSet Protection set identifier
+ * \param range  Data protection range identifier
+ * \return None
+ */
+IFX_EXTERN void IfxCpu_enableDataWrite(IfxCpu_ProtectionSet protectionSet, IfxCpu_DataProtectionRange range);
+
+/** \brief API to enable code execution access to a predefined range within a protection set
+ *
+ * \param protectionSet Protection set identifier
+ * \param range  Code protection range identifier
+ * \return None
+ */
+IFX_EXTERN void IfxCpu_enableCodeExecution(IfxCpu_ProtectionSet protectionSet, IfxCpu_CodeProtectionRange range);
+
+/** \brief API to load the MPU (Memory Protection Unit) configuration for the CPU
+ *
+ * \param mpuConfig Pointer to a constant IfxCpu_MpuConfig structure containing MPU settings
+ * \return None
+ */
+IFX_EXTERN void IfxCpu_loadMpuConfig(const IfxCpu_MpuConfig *mpuConfig);
 
 /**
  * \brief This function disables the overlay memory.
@@ -957,7 +1156,7 @@ IFX_EXTERN void IfxCpu_disableOverlayBlock(IfxCpu_ResourceCpu cpu, uint16 overla
  * 							      Range: \ref IfxCpu_OverlayAddressMask
  * \param[in] targetBaseAddress   Target Base address (i.e Source address to be re-directed).
  * 								  Range: 0 to 0xFFFFFFFF
- * \param[in] overlayBaseAddress  Overlay or Re-directed Base address (Bits 21..5 of the base address the overlay memory block in the overlay memory)
+ * \param[in] overlayBaseAddress  Overlay or Re-directed Base address (Bits 21..5 of the base address the overlay memory block in the overlay memory).
  * 								  Range: 0 to 0xFFFFFFFF
  * \retval None
  */
@@ -1526,5 +1725,12 @@ IFX_INLINE void IfxCpu_updatePerformanceCounter(uint32 address, uint32 count)
     __mtcr(CPU_CCTRL, cctrl.U);
 }
 
+IFX_INLINE void IfxCpu_setActiveProtectionSet(IfxCpu_ProtectionSet protectionSet)
+{
+    Ifx_CPU_PSW pswRegisterValue;
+    pswRegisterValue.U = __mfcr(CPU_PSW);               /* Get the Program Status Word (PSW) register value         */
+    pswRegisterValue.B.PRS = protectionSet;             /* Set the PRS bitfield to enable the Protection Set        */
+    __mtcr(CPU_PSW, pswRegisterValue.U);                /* Set the Program Status Word (PSW) register               */
+}
 
 #endif /* IFXCPU_H */

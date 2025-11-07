@@ -2,7 +2,7 @@
  * \file IfxGtm_Tom_Timer.c
  * \brief GTM TIMER details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -208,21 +208,6 @@ boolean IfxGtm_Tom_Timer_init(IfxGtm_Tom_Timer *driver, const IfxGtm_Tom_Timer_C
     driver->tom          = &config->gtm->TOM[config->tom];
     driver->timerChannel = config->timerChannel;
 
-/*
- *  IfxGtm_Dtm dtmIndex = IfxGtm_Dtm_getTomChannelDtmIndex(config->tom, config->timerChannel);
- *  boolean dtmAvailable = FALSE;
- *  if (dtmIndex != IfxGtm_Dtm_none)
- *  {
- *      driver->dtm         = &config->gtm->CDTM.DTM[dtmIndex];
- *      driver->dtmChannel  = (IfxGtm_Dtm_Ch) (config->timerChannel % 4);
- *  dtmAvailable = TRUE;
- *  }
- *  else
- *  {
- *      dtmAvailable = FALSE;
- *  }
- */
-
     base->triggerEnabled = config->base.trigger.enabled;
 
     if (base->triggerEnabled)
@@ -365,19 +350,6 @@ boolean IfxGtm_Tom_Timer_init(IfxGtm_Tom_Timer *driver, const IfxGtm_Tom_Timer_C
         IfxGtm_Tom_Tgc_setChannelsForceUpdate(driver->tgc[0], driver->channelsMask[0], 0, 0, 0);
         IfxGtm_Tom_Tgc_trigger(driver->tgc[0]);
         IfxGtm_Tom_Tgc_setChannelsForceUpdate(driver->tgc[0], 0, driver->channelsMask[0], 0, 0);
-
-/*
- *  if (dtmAvailable)
- *  {
- *  // bypassing the DTM functionality
- *  IfxGtm_Dtm_setClockSource(driver->dtm, config->dtmClockSource);
- *  IfxGtm_Dtm_setOutput0DeadTimePath(driver->dtm, driver->dtmChannel, IfxGtm_Dtm_DeadTimePath_feedThrough);
- *
- *  IfxGtm_Dtm_setOutput1Select(driver->dtm, driver->dtmChannel, IfxGtm_Dtm_Output1Select_specialFunction);
- *  IfxGtm_Dtm_setOutput1Function(driver->dtm, driver->dtmChannel, IfxGtm_Dtm_Output1Function_dtmInputSignal);
- *  IfxGtm_Dtm_setOutput1DeadTimePath(driver->dtm, driver->dtmChannel, IfxGtm_Dtm_DeadTimePath_enable);
- *  }
- */
     }
 
     return result;
@@ -413,8 +385,6 @@ void IfxGtm_Tom_Timer_initConfig(IfxGtm_Tom_Timer_Config *config, Ifx_GTM *gtm)
 
     /* Initialize pins */
     config->initPins       = TRUE;
-
-    /* config->dtmClockSource = IfxGtm_Dtm_ClockSource_cmuClock1; */
 }
 
 

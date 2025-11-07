@@ -3,7 +3,7 @@
  * \brief SRC  basic functionality
  * \ingroup IfxLld_Src
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -119,48 +119,60 @@
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Resets the overrun flag of the Service Request.
- * \param src pointer to the Service Request Control register which the overrun flag should be cleared.
- * \return None
+/**
+ * \brief Clears the overrun flag of the Service Request.
+ *
+ * \param[inout] src Pointer to the Service Request Control register where the overrun flag should be cleared.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxSrc_init
- *
  */
 IFX_INLINE void IfxSrc_clearOverrun(volatile Ifx_SRC_SRCR *src);
 
-/** \brief Resets a specific interrupt service by software.
- * \param src pointer to the Service Request Control register which the request should be cleared.
- * \return None
+/**
+ * \brief Clears a specific interrupt service request by software.
+ *
+ * \param[inout] src Pointer to the Service Request Control register whose request should be cleared.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxSrc_init
- *
  */
 IFX_INLINE void IfxSrc_clearRequest(volatile Ifx_SRC_SRCR *src);
 
-/** \brief Gets the current overrun status.
- * \param src pointer to the Service Request Control register for which the overrun status should be returned.
- * \return current service request control overrun status.
+/**
+ * \brief Checks if an overrun condition has occurred in the Service Request Control (SRC).
+ *
+ * \param[in] src Pointer to the Service Request Control register to check for overrun status.
+ *
+ * \retval TRUE If an interrupt Overflow Detected.
+ *         FALSE If no Interrupt Trigger Overflow detected.
  *
  * Usage example: see \ref IfxSrc_init
- *
  */
 IFX_INLINE boolean IfxSrc_isOverrun(volatile Ifx_SRC_SRCR *src);
 
-/** \brief Gets the current request status.
- * \param src pointer to the Service Request Control register for which the request status should be returned.
- * \return current service request control request status.
+/**
+ * \brief Checks if a service request is currently pending.
+ *
+ * \param[in] src Pointer to the Service Request Control register to check the request status for.
+ *
+ * \retval TRUE If a service request is pending.
+ *         FALSE If no service request is pending.
  *
  * Usage example: see \ref IfxSrc_init
- *
  */
 IFX_INLINE boolean IfxSrc_isRequested(volatile Ifx_SRC_SRCR *src);
 
-/** \brief Requests a specific interrupt service by software
- * \param src pointer to the Service Request Control register which the interrupt has to be requested.
- * \return None
+/**
+ * \brief Requests a specific interrupt service by software.
  *
+ * \param[inout] src Pointer to the Service Request Control register that the interrupt request will be set for.
+ *
+ * \retval None
+ * 
  * Usage example: see \ref IfxSrc_init
- *
  */
 IFX_INLINE void IfxSrc_setRequest(volatile Ifx_SRC_SRCR *src);
 
@@ -173,39 +185,49 @@ IFX_INLINE void IfxSrc_setRequest(volatile Ifx_SRC_SRCR *src);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief DeInitializes the service request control register.
- * \param src pointer to the Service Request Control register which should be deinitialised.
- * \return None
+/**
+ * \brief Deinitializes the Service Request Control register.
  *
+ * \param[inout] src Pointer to the Service Request Control register to be deinitialized.
+ *
+ * \retval None
+ * 
  * Usage example: see \ref IfxSrc_init
- *
  */
 IFX_INLINE void IfxSrc_deinit(volatile Ifx_SRC_SRCR *src);
 
-/** \brief Disables a specific interrupt service request.
- * \param src pointer to the Service Request Control register for which the interrupt has to be disabled.
- * \return None
+/**
+ * \brief Disables a specific interrupt service request.
  *
+ * \param[inout] src Pointer to the Service Request Control register for which the interrupt has to be disabled.
+ *
+ * \retval None
+ * 
  * Usage example: see \ref IfxSrc_init
- *
  */
 IFX_INLINE void IfxSrc_disable(volatile Ifx_SRC_SRCR *src);
 
-/** \brief Enables a specific interrupt service request.
- * \param src pointer to the Service Request Control register for which the interrupt has to be enabled.
- * \return None
+/**
+ * \brief Enables a specific interrupt service request.
  *
+ * \param[inout] src Pointer to the Service Request Control register for which the interrupt has to be enabled.
+ *
+ * \retval None
+ * 
  * Usage example: see \ref IfxSrc_init
- *
  */
 IFX_INLINE void IfxSrc_enable(volatile Ifx_SRC_SRCR *src);
 
-/** \brief Initializes the service request control register.
- * \param src pointer to the Service Request Control register which should be initialised.
- * \param typOfService type of interrupt service provider.
- * \param priority Interrupt priority.
- * \return None
+/**
+ * \brief Initializes the service request control register.
  *
+ * \param[inout] src          Pointer to the Service Request Control register to be initialized.
+ * \param[in]    typOfService Type of interrupt service provider. Range: \ref IfxSrc_Tos
+ * \param[in]    priority     Interrupt priority. Range: 0 to 0xFF
+ *
+ * \retval None
+ *
+ * Usage example::
  * Get the peripheral service control register which request need to be serviced and assign this service to any of service providers.
  * \code
  * //define the interrupt priority

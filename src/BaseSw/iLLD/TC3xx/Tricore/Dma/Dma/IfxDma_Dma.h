@@ -3,7 +3,7 @@
  * \brief DMA DMA details
  * \ingroup IfxLld_Dma
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -481,12 +481,12 @@ typedef struct
 {
     IfxDma_Dma                      *module;                                       /**< \brief Specifies pointer to the IfxDma_Dma module handle */
     IfxDma_ChannelId                 channelId;                                    /**< \brief Specifies the channel being used */
-    uint32                           sourceAddress;                                /**< \brief Source address for the DMA channel */
-    uint32                           destinationAddress;                           /**< \brief Destination address for the DMA channel */
-    uint32                           shadowAddress;                                /**< \brief Initial content of shadow address for the DMA channel */
-    uint32                           readDataCrc;                                  /**< \brief Checksum for read data of the channel */
-    uint32                           sourceDestinationAddressCrc;                  /**< \brief Checksum for source and destination address of channel */
-    uint16                           transferCount;                                /**< \brief Number of transfers in a transaction */
+    uint32                           sourceAddress;                                /**< \brief Source address for the DMA channel. Range: 0 to 0xFFFFFFFF. */
+    uint32                           destinationAddress;                           /**< \brief Destination address for the DMA channel. Range: 0 to 0xFFFFFFFF. */
+    uint32                           shadowAddress;                                /**< \brief Initial content of shadow address for the DMA channel. Range: 0 to 0xFFFFFFFF. */
+    uint32                           readDataCrc;                                  /**< \brief Checksum for read data of the channel. Range: 0 to 0xFFFFFFFF. */
+    uint32                           sourceDestinationAddressCrc;                  /**< \brief Checksum for source and destination address of channel. Range: 0 to 0xFFFFFFFF. */
+    uint16                           transferCount;                                /**< \brief Number of transfers in a transaction. Range: 0 to 0x3FFF. */
     IfxDma_ChannelMove               blockMode;                                    /**< \brief Number of moves in a transfer */
     IfxDma_ChannelRequestMode        requestMode;                                  /**< \brief A service request initiates a single transfer, or the complete transaction */
     IfxDma_ChannelOperationMode      operationMode;                                /**< \brief keep enable/disable the hardware channel request after a transaction */
@@ -494,7 +494,7 @@ typedef struct
     IfxDma_ChannelPattern            pattern;                                      /**< \brief Pattern selection operation modes */
     IfxDma_ChannelRequestSource      requestSource;                                /**< \brief Request of channel transfer through hardware or daisy chain. channel transfer complete interrupt of previous channel will trigger the next channel request */
     IfxDma_ChannelBusPriority        busPriority;                                  /**< \brief Bus priority selection */
-    boolean                          hardwareRequestEnabled;                       /**< \brief Enabling channel transaction via hardware request */
+    boolean                          hardwareRequestEnabled;                       /**< \brief Enables/Disables channel transaction via hardware request. */
     IfxDma_ChannelIncrementStep      sourceAddressIncrementStep;                   /**< \brief Describes the address offset with which the source address should be modified after each move */
     IfxDma_ChannelIncrementDirection sourceAddressIncrementDirection;              /**< \brief Decides whether the source address offset after each move should be added or decremented from the exisiting address */
     IfxDma_ChannelIncrementCircular  sourceAddressCircularRange;                   /**< \brief Determines which part of the source address remains unchanged and therby not updated after each move */
@@ -505,13 +505,13 @@ typedef struct
     boolean                          sourceCircularBufferEnabled;                  /**< \brief Enables/Disables the source circular buffering */
     boolean                          destinationCircularBufferEnabled;             /**< \brief Enables/Disables the destination circular buffering */
     boolean                          timestampEnabled;                             /**< \brief Enables/Disables the appendage of the time stamp after end of the last DMA move in a transaction */
-    boolean                          wrapSourceInterruptEnabled;                   /**< \brief An interrupt should be triggered whenever source address is wrapped */
-    boolean                          wrapDestinationInterruptEnabled;              /**< \brief An interrupt should be triggered whenever destination address is wrapped */
-    boolean                          channelInterruptEnabled;                      /**< \brief The channel transfer interrupt should be triggered. See also channelInterruptControl */
+    boolean                          wrapSourceInterruptEnabled;                   /**< \brief An interrupt should be triggered whenever source address is wrapped. Range: TRUE wrap source buffer interrupt trigger enabled, FALSE wrap source buffer interrupt trigger disabled. */
+    boolean                          wrapDestinationInterruptEnabled;              /**< \brief An interrupt should be triggered whenever destination address is wrapped. Range: TRUE wrap destination buffer interrupt trigger enabled, FALSE wrap destination buffer interrupt trigger disabled. */
+    boolean                          channelInterruptEnabled;                      /**< \brief Enables/Disables the channel transfer interrupt should be triggered. See also channelInterruptControl */
     IfxDma_ChannelInterruptControl   channelInterruptControl;                      /**< \brief The channel transfer interrupt can either be triggered depending on the interruptRaiseThreshold, or each time the transaction count is decremented */
-    uint8                            interruptRaiseThreshold;                      /**< \brief The value of the transferCount at which the interrupt should be raised */
+    uint8                            interruptRaiseThreshold;                      /**< \brief The value of the transferCount at which the interrupt should be raised. Range: 0 to 15. */
     boolean                          transactionRequestLostInterruptEnabled;       /**< \brief Enables/Disables the channel transaction request lost interrupt */
-    Ifx_Priority                     channelInterruptPriority;                     /**< \brief Priority of the channel interrupt trigger */
+    Ifx_Priority                     channelInterruptPriority;                     /**< \brief Priority of the channel interrupt trigger. Range: 0 to 0xFF. */
     IfxSrc_Tos                       channelInterruptTypeOfService;                /**< \brief Interrupt service provider */
 } IfxDma_Dma_ChannelConfig;
 
@@ -532,13 +532,12 @@ typedef struct
 /******************************************************************************/
 
 /**
- *\brief Initializes a DMA module handle based on the current configuration.
- * This function sets up a DMA module handle using the provided DMA registers pointer.
+ * \brief Initializes a DMA module handle based on the current configuration.
  * It is intended for use in scenarios where the DMA module is already initialized,
  * and a global DMA handle is not available.
  *
- * \param[inout] dmaHandle Pointer to the DMA module handle.
- * \param[in]    dma       Pointer to the DMA registers to be associated with the configuration.
+ * \param[inout] dmaHandle Pointer to the DMA module handle instance.
+ * \param[in]    dma       Pointer to the DMA registers.
  *
  * \retval None
  *
@@ -546,6 +545,7 @@ typedef struct
  *      IfxDma_Dma dma;
  *      IfxDma_Dma_createModuleHandle(&dma, &MODULE_DMA);
  * \endcode
+ *
  */
 IFX_EXTERN void IfxDma_Dma_createModuleHandle(IfxDma_Dma *dmaHandle, Ifx_DMA *dma);
 
@@ -553,10 +553,10 @@ IFX_EXTERN void IfxDma_Dma_createModuleHandle(IfxDma_Dma *dmaHandle, Ifx_DMA *dm
  * \brief De-initializes the specified DMA channel.
  *
  * \param[inout] dma     Pointer to the DMA module handle instance.
- * \param[in]    channel The identifier of the DMA channel to be de-initialized.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[in]    channel The identifier of the DMA channel to be de-initialized. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxDma_Dma_deInitChannel(IfxDma_Dma *dma, IfxDma_ChannelId channel);
 
@@ -564,11 +564,12 @@ IFX_EXTERN void IfxDma_Dma_deInitChannel(IfxDma_Dma *dma, IfxDma_ChannelId chann
  * \brief Initializes the DMA module with the provided configuration.
  *
  * \param[inout] dma    Pointer to the DMA module handle instance.
- * \param[in]    config Pointer to the DMA module configuration structure to be initialized.
+ * \param[in]    config Pointer to the DMA module configuration structure.
  *
  * \retval None
  *
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_EXTERN void IfxDma_Dma_initModule(IfxDma_Dma *dma, const IfxDma_Dma_Config *config);
 
@@ -581,6 +582,7 @@ IFX_EXTERN void IfxDma_Dma_initModule(IfxDma_Dma *dma, const IfxDma_Dma_Config *
  * \retval None
  *
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_EXTERN void IfxDma_Dma_initModuleConfig(IfxDma_Dma_Config *config, Ifx_DMA *dma);
 
@@ -597,11 +599,12 @@ IFX_EXTERN void IfxDma_Dma_initModuleConfig(IfxDma_Dma_Config *config, Ifx_DMA *
  * \brief Initializes a DMA channel with the specified configuration.
  *
  * \param[inout] channel Pointer to the DMA base address and channel ID.
- * \param[inout] config  Pointer to the configuration structure containing the DMA channel settings.
+ * \param[in]    config  Pointer to the configuration structure containing the DMA channel settings.
  *
  * \retval None
  * 
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_EXTERN void IfxDma_Dma_initChannel(IfxDma_Dma_Channel *channel, const IfxDma_Dma_ChannelConfig *config);
 
@@ -614,6 +617,7 @@ IFX_EXTERN void IfxDma_Dma_initChannel(IfxDma_Dma_Channel *channel, const IfxDma
  * \retval None
  *
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_EXTERN void IfxDma_Dma_initChannelConfig(IfxDma_Dma_ChannelConfig *config, IfxDma_Dma *dma);
 
@@ -631,7 +635,8 @@ IFX_EXTERN void IfxDma_Dma_initChannelConfig(IfxDma_Dma_ChannelConfig *config, I
  *
  * \param[in] channel Pointer to the DMA base address and channel ID.
  *
- * \retval volatile Ifx_SRC_SRCR* A pointer to the source register (SRCR) of the specified DMA channel, which is used to set the source address for DMA operations.
+ * \retval Ifx_SRC_SRCR* A pointer to the source register (SRCR) of the specified DMA channel, which is used to set the source address for DMA operations.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxDma_Dma_getSrcPointer(IfxDma_Dma_Channel *channel);
 
@@ -648,6 +653,7 @@ IFX_INLINE volatile Ifx_SRC_SRCR *IfxDma_Dma_getSrcPointer(IfxDma_Dma_Channel *c
  * \retval None
  * 
  * \see \ref IfxLld_Dma_Dma_LinkedList
+ *
  */
 IFX_EXTERN void IfxDma_Dma_initLinkedListEntry(void *ptrToAddress, const IfxDma_Dma_ChannelConfig *config);
 
@@ -666,6 +672,7 @@ IFX_EXTERN void IfxDma_Dma_initLinkedListEntry(void *ptrToAddress, const IfxDma_
 * \param[inout] channel Pointer to the DMA base address and channel ID.
 *
 * \retval None 
+*
 */
 IFX_INLINE void IfxDma_Dma_clearChannelInterrupt(IfxDma_Dma_Channel *channel);
 
@@ -675,7 +682,8 @@ IFX_INLINE void IfxDma_Dma_clearChannelInterrupt(IfxDma_Dma_Channel *channel);
  * \param[inout] channel Pointer to the DMA base address and channel ID.
  *
  * \retval TRUE The interrupt flag was set.
- * \retval FALSE The interrupt flag was not set.
+ *         FALSE The interrupt flag was not set.
+ *
  */
 IFX_INLINE boolean IfxDma_Dma_getAndClearChannelInterrupt(IfxDma_Dma_Channel *channel);
 
@@ -685,7 +693,8 @@ IFX_INLINE boolean IfxDma_Dma_getAndClearChannelInterrupt(IfxDma_Dma_Channel *ch
  * \param[in] channel Pointer to the DMA base address and channel ID.
  *
  * \retval TRUE Interrupt flag is set.
- * \retval FALSE Interrupt flag is not set.
+ *         FALSE Interrupt flag is not set.
+ *
  */
 IFX_INLINE boolean IfxDma_Dma_getChannelInterrupt(IfxDma_Dma_Channel *channel);
 
@@ -695,9 +704,10 @@ IFX_INLINE boolean IfxDma_Dma_getChannelInterrupt(IfxDma_Dma_Channel *channel);
  * \param[in] channel Pointer to the DMA base address and channel ID.
  *
  * \retval TRUE If a transaction request for the given channel is pending.
- * \retval FALSE If no transaction request for the given channel is pending.
+ *         FALSE If no transaction request for the given channel is pending.
  *
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_INLINE boolean IfxDma_Dma_isChannelTransactionPending(IfxDma_Dma_Channel *channel);
 
@@ -705,12 +715,12 @@ IFX_INLINE boolean IfxDma_Dma_isChannelTransactionPending(IfxDma_Dma_Channel *ch
  * \brief Sets the destination address for the specified DMA channel after a transaction.
  *
  * \param[inout] channel Pointer to the DMA base address and channel ID.
- * \param[in]    address The 32-bit destination address to be set for the DMA channel.
- *               Range: 0 to 0xFFFFFFFF
+ * \param[in]    address The 32-bit destination address to be set for the DMA channel. Range: 0 to 0xFFFFFFFF
  *
  * \retval None
  * 
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_INLINE void IfxDma_Dma_setChannelDestinationAddress(IfxDma_Dma_Channel *channel, uint32 address);
 
@@ -718,12 +728,12 @@ IFX_INLINE void IfxDma_Dma_setChannelDestinationAddress(IfxDma_Dma_Channel *chan
  * \brief Sets the source address for a DMA channel after a transaction.
  *
  * \param[inout] channel Pointer to the DMA base address and channel ID.
- * \param[in]    address The 32-bit destination address to be set for the DMA channel.
- *               Range: 0 to 0xFFFFFFFF
+ * \param[in]    address The 32-bit destination address to be set for the DMA channel. Range: 0 to 0xFFFFFFFF
  *
  * \retval None
  *
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_INLINE void IfxDma_Dma_setChannelSourceAddress(IfxDma_Dma_Channel *channel, uint32 address);
 
@@ -731,11 +741,12 @@ IFX_INLINE void IfxDma_Dma_setChannelSourceAddress(IfxDma_Dma_Channel *channel, 
  * \brief Re-initializes the transfer count for a DMA channel after a transaction.
  *
  * \param[inout] channel        Pointer to the DMA base address and channel ID.
- * \param[in]    transferCount  The number of transfers to be set for the DMA channel. The valid range is from 1 to 16383. If set to 0, it is treated as 1 transaction.
+ * \param[in]    transferCount  value holds the DMA transfers within a transaction. Range: 1 to 0x3FFF (0 handled like 1 transaction).
  *
  * \retval None
  *
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_INLINE void IfxDma_Dma_setChannelTransferCount(IfxDma_Dma_Channel *channel, uint32 transferCount);
 
@@ -744,7 +755,10 @@ IFX_INLINE void IfxDma_Dma_setChannelTransferCount(IfxDma_Dma_Channel *channel, 
  *
  * \param[inout] channel Pointer to the DMA base address and channel ID.
  *
+ * \retval None
+ *
  * \see \ref IfxLld_Dma_Dma_Simple
+ *
  */
 IFX_INLINE void IfxDma_Dma_startChannelTransaction(IfxDma_Dma_Channel *channel);
 

@@ -2,7 +2,7 @@
  * \file IfxMsc_Msc.c
  * \brief MSC MSC details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -127,7 +127,7 @@ void IfxMsc_Msc_initModule(IfxMsc_Msc *msc, const IfxMsc_Msc_Config *config)
         mscSfr->USR.U = usr.U;
     }
 
-    if (config->streamMode == IfxMsc_StreamMode_up) /*Upstream Baudrate Configuration*/
+    if (config->streamMode == IfxMsc_StreamMode_up) /* Upstream Baudrate Configuration */
     {
         /* Normal divider */
         if (config->clockConfig.dividerMode == 1)
@@ -144,7 +144,7 @@ void IfxMsc_Msc_initModule(IfxMsc_Msc *msc, const IfxMsc_Msc_Config *config)
         }
     }
 
-    else /*Downstream Baudrate Configuration*/
+    else /* Downstream Baudrate Configuration */
     {
         /* Normal divider */
         if (config->clockConfig.dividerMode == IfxMsc_DividerMode_normal)
@@ -310,7 +310,7 @@ void IfxMsc_Msc_initModule(IfxMsc_Msc *msc, const IfxMsc_Msc_Config *config)
         icr.B.RDIP = config->interruptConfig.receiveDataInterruptNode;
         icr.B.RDIE = config->interruptConfig.receiveDataInterrupt;
 
-        /* additional interrupt configured in USCE for Upstream Interrupt node SR4 */
+        /* Additional interrupt configured in USCE for Upstream Interrupt node SR4 */
 
         Ifx_MSC_USCE usce;
 
@@ -578,7 +578,7 @@ void IfxMsc_Msc_initModuleConfig(IfxMsc_Msc_Config *config, Ifx_MSC *msc)
     /* Default Configuration */
     *config = defaultConfig;
 
-    /* take over module pointer */
+    /* Take over module pointer */
     config->msc = msc;
 }
 
@@ -767,8 +767,8 @@ void IfxMsc_Msc_setDataTarget(IfxMsc_Msc *msc, IfxMsc_Target enXHigh, IfxMsc_Tar
 void IfxMsc_Msc_initializeCommandExtension(IfxMsc_Msc *msc, const IfxMsc_Msc_Config *config)
 {
     Ifx_MSC     *mscSfr = msc->msc;
-    /*Configure the command related settings*/
 
+    /* Configure the command related settings */
     Ifx_MSC_DSCE dsce;
     Ifx_MSC_DSC  dsc;
     Ifx_MSC_DSTE dste;
@@ -779,18 +779,17 @@ void IfxMsc_Msc_initializeCommandExtension(IfxMsc_Msc *msc, const IfxMsc_Msc_Con
     dsce.U = mscSfr->DSCE.U;
 
     /* Extension Enable */
-    dste.B.UL1 = 1;   //Unlocking for writing into CX register.Write of 1 to UL1 & CX must be done in the same cycle.
+    dste.B.UL1 = 1;   /* Unlocking for writing into CX register.Write of 1 to UL1 & CX must be done in the same cycle */
     dste.B.CX  = config->commandExtensionConfig.extension;
     dste.B.FM  = config->commandExtensionConfig.fastMode;
 
     /* Configure the command passive phase length */
-
     if (config->commandExtensionConfig.commandFramePassivePhaseLength > IfxMsc_ControlFrameExtensionPassivePhaseLength_63)
     {
-        // MSB extension
+        /* MSB extension */
         dste.B.PPCEM = 1;
-        //Logic behind this is that passive phase length(PPL) = [PPCEM PPCE]+2.So the value [PPCEM PPCE] = PPL - 2.When PPCEM = 1,the equation is 64 + PPCE = PPL -2 => PPCE = PPL - 66
-        //Another way to look at it is that PPCE_max is 65...add one and MSB(PPCEM)becomes 1.So next whatever we incrase will start from 0 in PPCE.So PPCE = PPL - 66
+        /* Logic behind this is that passive phase length(PPL) = [PPCEM PPCE]+2.So the value [PPCEM PPCE] = PPL - 2.When PPCEM = 1,the equation is 64 + PPCE = PPL -2 => PPCE = PPL - 66 */
+        /* Another way to look at it is that PPCE_max is 65...add one and MSB(PPCEM)becomes 1.So next whatever we incrase will start from 0 in PPCE.So PPCE = PPL - 66 */
         dste.B.PPCE = config->commandExtensionConfig.commandFramePassivePhaseLength - 66;
     }
     else
@@ -798,22 +797,22 @@ void IfxMsc_Msc_initializeCommandExtension(IfxMsc_Msc *msc, const IfxMsc_Msc_Con
         dste.B.PPCE = config->commandExtensionConfig.commandFramePassivePhaseLength;
     }
 
-    /* Data Frame related configurations*/
+    /* Data Frame related configurations */
 
-    //SRH Selection Bit
+    /* SRH Selection Bit */
     dsc.B.ENSELH = config->commandExtensionConfig.srhActivePhaseSelection;
-    //SRL Selection Bit
+    /* SRL Selection Bit */
     dsc.B.ENSELL = config->commandExtensionConfig.srlActivePhaseSelection;
-    //Number of SRH Bits transmitted
+    /* Number of SRH Bits transmitted */
     dsc.B.NDBH   = config->commandExtensionConfig.srhDataFrameLength;
-    //Number of SRL Bits transmitted
+    /* Number of SRL Bits transmitted */
     dsc.B.NDBL   = config->commandExtensionConfig.srlDataFrameLength;
-    //Extension of number of SRL Bits transmitted in EXEN mode
+    /* Extension of number of SRL Bits transmitted in EXEN mode */
     dsce.B.NDBLE = config->commandExtensionConfig.srlBitsShiftedAtDataFramesExtension;
-    //Number of SRL Bits transmitted in EXEN mode
+    /* Number of SRL Bits transmitted in EXEN mode */
     dsce.B.NDBHE = config->commandExtensionConfig.srlBitsShiftedAtDataFramesExtension;
 
-    //N Divider for Downstream
+    /* N Divider for Downstream */
     dste.B.NDD     = config->commandExtensionConfig.nDividerDownstream;
 
     mscSfr->DSC.U  = dsc.U;

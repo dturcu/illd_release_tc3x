@@ -3,7 +3,7 @@
  * \brief CIF  basic functionality
  * \ingroup IfxLld_Cif
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -98,6 +98,7 @@
 /** \addtogroup IfxLld_Cif_Std_stdEnumerations
  * \{ */
 /** \brief Enumerator for data path of main path
+ * Definition in MODULE_CIF.DPCL.B.CIF_MP_MUX
  */
 typedef enum
 {
@@ -107,6 +108,10 @@ typedef enum
 } IfxCif_DataPathSelectorForMainPath;
 
 /** \brief Enumerator for the state of an error
+ * Definition in MODULE_CIF.MIEP.STA_ERR.B.EP_5_FIFO_FULL, MODULE_CIF.MIEP.STA_ERR.B.EP_4_FIFO_FULL, MODULE_CIF.MIEP.STA_ERR.B.EP_3_FIFO_FULL, MODULE_CIF.MIEP.STA_ERR.B.EP_2_FIFO_FULL,
+ * MODULE_CIF.MIEP.STA_ERR.B.EP_1_FIFO_FULL, MODULE_CIF.MIEP.STA_ERR.B.EP_5_IC_SIZE_ERR, MODULE_CIF.MIEP.STA_ERR.B.EP_4_IC_SIZE_ERR, MODULE_CIF.MIEP.STA_ERR.B.EP_3_IC_SIZE_ERR,
+ * MODULE_CIF.MIEP.STA_ERR.B.EP_2_IC_SIZE_ERR, and MODULE_CIF.MIEP.STA_ERR.B.EP_1_IC_SIZE_ERR.
+ * MODULE_CIF.MI.STATUS.B.BUS_WRITE_ERROR, MODULE_CIF.MI.STATUS.B.MP_CR_FIFO_FULL, MODULE_CIF.MI.STATUS.B.MP_CB_FIFO_FULL, MODULE_CIF.MI.STATUS.B.MP_Y_FIFO_FULL
  */
 typedef enum
 {
@@ -115,6 +120,7 @@ typedef enum
 } IfxCif_ErrorState;
 
 /** \brief Enumerator for the extra paths
+ * Definition in Ifx_CIF.Ep[5] and Ifx_CIF_MIEP. CH_1S[5];
  */
 typedef enum
 {
@@ -126,6 +132,7 @@ typedef enum
 } IfxCif_ExtraPath;
 
 /** \brief Enumerator for tiers
+ * Definition in MODULE_CIF.ISPIS.H_OFFS.U
  */
 typedef enum
 {
@@ -134,6 +141,7 @@ typedef enum
 } IfxCif_ImageTiers;
 
 /** \brief Enumerator for input interfaces supported by the CIF interface
+ * Definition in MODULE_CIF.DPCL.B.IF_SELECT
  */
 typedef enum
 {
@@ -141,6 +149,13 @@ typedef enum
 } IfxCif_InputInterface;
 
 /** \brief Enumerator for the state of an interrupt
+ * Definition in MODULE_CIF.JPE.ERROR_MIS.B.VLC_TABLE_ERR, MODULE_CIF.JPE.ERROR_MIS.B.R2B_IMG_SIZE_ERR, MODULE_CIF.JPE.ERROR_MIS.B.DCT_ERR, MODULE_CIF.JPE.ERROR_MIS.B.VLC_SYMBOL_ERR,
+ * MODULE_CIF.JPE.STATUS_MIS.B.GEN_HEADER_DONE, MODULE_CIF.JPE.STATUS_MIS.B.ENCODE_DONE, MODULE_CIF.MI.MIS.B.BUS_ERROR, MODULE_CIF.MI.MIS.B.WRAP_MP_CR, MODULE_CIF.MI.MIS.B.WRAP_MP_CB,
+ * MODULE_CIF.MI.MIS.B.WRAP_MP_Y, MODULE_CIF.MI.MIS.B.FILL_MP_Y, MODULE_CIF.MI.MIS.B.MBLK_LINE, MODULE_CIF.MI.MIS.B.MP_FRAME_END, MODULE_CIF.WD.MIS.B.MIS_WD_VES_TO, MODULE_CIF.WD.MIS.B.MIS_WD_VSE_TO,
+ * MODULE_CIF.WD.MIS.B.MIS_WD_HES_TO, MODULE_CIF.WD.MIS.B.MIS_WD_HSE_TO, MODULE_CIF.JPE.ERROR_RIS.B.VLC_TABLE_ERR, MODULE_CIF.JPE.ERROR_RIS.B.R2B_IMG_SIZE_ERR, MODULE_CIF.JPE.ERROR_RIS.B.DCT_ERR,
+ * MODULE_CIF.JPE.ERROR_RIS.B.VLC_SYMBOL_ERR, MODULE_CIF.JPE.STATUS_RIS.B.GEN_HEADER_DONE, MODULE_CIF.JPE.STATUS_RIS.B.ENCODE_DONE, MODULE_CIF.MI.RIS.B.BUS_ERROR, MODULE_CIF.MI.RIS.B.WRAP_MP_CR,
+ * MODULE_CIF.MI.RIS.B.WRAP_MP_CB, MODULE_CIF.MI.RIS.B.WRAP_MP_Y, MODULE_CIF.MI.RIS.B.FILL_MP_Y, MODULE_CIF.MI.RIS.B.MBLK_LINE, MODULE_CIF.MI.RIS.B.MP_FRAME_END. MODULE_CIF.WD.RIS.B.RIS_WD_VES_TO,
+ * MODULE_CIF.WD.RIS.B.RIS_WD_VSE_TO, MODULE_CIF.WD.RIS.B.RIS_WD_HES_TO, MODULE_CIF.WD.RIS.B.RIS_WD_HSE_TO.
  */
 typedef enum
 {
@@ -180,6 +195,7 @@ typedef enum
 } IfxCif_Submodules;
 
 /** \brief Enumerator for channel mode of Y/C splitter
+ * Definition in MODULE_CIF.DPCL.B.CIF_CHAN_MODE
  */
 typedef enum
 {
@@ -192,6 +208,7 @@ typedef enum
 /** \addtogroup IfxLld_Cif_Std_ispEnum
  * \{ */
 /** \brief Enumerator for the ISP CCIR sequence
+ * Definition in MODULE_CIF.ISP.ACQ_PROP.B.CCIR_SEQ
  */
 typedef enum
 {
@@ -201,6 +218,7 @@ typedef enum
 } IfxCif_IspCcirSequence;
 
 /** \brief Enumerator for the clipping range of the crominance for the ISP output
+ * Definition in MODULE_CIF.ISP.CTRL.B.ISP_CSM_C_RANGE
  */
 typedef enum
 {
@@ -209,6 +227,7 @@ typedef enum
 } IfxCif_IspColorSpaceMatrixCrominanceClippingRange;
 
 /** \brief Enumerator for the clipping range of the luminance for the ISP output
+ * Definition in MODULE_CIF.ISP.CTRL.B.ISP_CSM_Y_RANGE
  */
 typedef enum
 {
@@ -226,6 +245,7 @@ typedef enum
 } IfxCif_IspErrorSources;
 
 /** \brief Enumerator for the sampled input fields
+ * Definition in MODULE_CIF.ISP.ACQ_PROP.B.FIELD_SELECTION
  */
 typedef enum
 {
@@ -235,6 +255,7 @@ typedef enum
 } IfxCif_IspFieldSelection;
 
 /** \brief Enumerator for current field information
+ * Definition in MODULE_CIF.ISP.FLAGS_SHD.B.INFORM_FIELD
  */
 typedef enum
 {
@@ -243,6 +264,7 @@ typedef enum
 } IfxCif_IspInformFieldInformation;
 
 /** \brief Enumerator for the supported input interfaces of the ISP
+ * Definition in MODULE_CIF.ISP.ACQ_PROP.B.INPUT_SELECTION
  */
 typedef enum
 {
@@ -272,6 +294,7 @@ typedef enum
 } IfxCif_IspInterruptSources;
 
 /** \brief Enumerator for the ISP mode
+ * Definition in MODULE_CIF.ISP.CTRL.B.ISP_MODE
  */
 typedef enum
 {
@@ -283,6 +306,7 @@ typedef enum
 } IfxCif_IspMode;
 
 /** \brief Enumerator for ISP sampling edge
+ * Definition in MODULE_CIF.ISP.ACQ_PROP.B.SAMPLE_EDGE and IfxCif_Cam_Config.samplingEdge
  */
 typedef enum
 {
@@ -291,6 +315,7 @@ typedef enum
 } IfxCif_IspSamplingEdge;
 
 /** \brief
+ * Definition in MODULE_CIF.ISP.ACQ_PROP.B.VSYNC_POL, IfxCif_Cam_Config.hSyncPolarity and IfxCif_Cam_Config.vSyncPolarity
  */
 typedef enum
 {
@@ -303,6 +328,7 @@ typedef enum
 /** \addtogroup IfxLld_Cif_Std_ldsEnumerations
  * \{ */
 /** \brief Enumerator for scaling mode of linear downscaler
+ * Definition in Ifx_CIF_LDS_CTRL.B.LDS_H_MODE, inIfx_CIF_LDS_CTRL.B.LDS_V_MODE, IfxCif_Cam_Config->downscaling.hMode and IfxCif_Cam_Config->downscaling.vMode
  */
 typedef enum
 {
@@ -318,6 +344,7 @@ typedef enum
 /** \addtogroup IfxLld_Cif_Std_miEnumerations
  * \{ */
 /** \brief Enumerator for burst length affecting the write port of the memory interface
+ * Definition in MODULE_CIF.MI.CTRL.B.BURST_LEN_LUM and MODULE_CIF.MI.CTRL.B.BURST_LEN_CHROM
  */
 typedef enum
 {
@@ -335,6 +362,7 @@ typedef enum
 } IfxCif_MiDataPaths;
 
 /** \brief Enumerator for interrupt sources of the memory interface submodule
+ * Definition in MODULE_CIF.MI.IMSC
  */
 typedef enum
 {
@@ -357,6 +385,7 @@ typedef enum
 } IfxCif_MiMainPicturePathComponents;
 
 /** \brief Enumerator for write formats of data written into memory
+ * Definition in MODULE_CIF.MI.CTRL.B.MP_WRITE_FORMAT
  */
 typedef enum
 {
@@ -395,6 +424,7 @@ typedef enum
 /** \addtogroup IfxLld_Cif_Std_jpeEnumerations
  * \{ */
 /** \brief Enumerator for the Huffman Table components
+ * Definition in MODULE_CIF.JPE.DC_TABLE_SELECT and MODULE_CIF.JPE.AC_TABLE_SELECT.B.AC_TABLE_SELECT
  */
 typedef enum
 {
@@ -423,6 +453,8 @@ typedef enum
 } IfxCif_JpeDebugSignalSources;
 
 /** \brief Enumerator for the debug signal state
+ * Definition in MODULE_CIF.JPE.DEBUG.B.DEB_BAD_TABLE_ACCESS, MODULE_CIF.JPE.DEBUG.B.DEB_VLC_TABLE_BUSY, MODULE_CIF.JPE.DEBUG.B.DEB_R2B_MEMORY_FULL,
+ * MODULE_CIF.JPE.DEBUG.B.DEB_VLC_ENCODE_BUSY, MODULE_CIF.JPE.DEBUG.B.DEB_QIQ_TABLE_ACC.
  */
 typedef enum
 {
@@ -431,6 +463,7 @@ typedef enum
 } IfxCif_JpeDebugSignalState;
 
 /** \brief Enumerator for the header generation debug control
+ * Definition in MODULE_CIF.JPE.TABLE_FLUSH.B.TABLE_FLUSH
  */
 typedef enum
 {
@@ -439,6 +472,7 @@ typedef enum
 } IfxCif_JpeHeaderGenerationMode;
 
 /** \brief Enumerator for the JPE header mode
+ * Definition in MODULE_CIF.JPE.HEADER_MODE.B.HEADER_MODE
  */
 typedef enum
 {
@@ -447,6 +481,7 @@ typedef enum
 } IfxCif_JpeHeaderMode;
 
 /** \brief Enumerator for interrupt sources of the JPEG encoder module
+ * Definition in MODULE_CIF.JPE.ERROR_IMR and MODULE_CIF.JPE.STATUS_IMR
  */
 typedef enum
 {
@@ -459,6 +494,7 @@ typedef enum
 } IfxCif_JpeInterruptSources;
 
 /** \brief Enumerator for the Q-Table selector
+ * Definition in MODULE_CIF.JPE.TQ_Y_SELECT.B.TQ0_SELECT
  */
 typedef enum
 {
@@ -486,6 +522,7 @@ typedef enum
 } IfxCif_JpeScalingValueSources;
 
 /** \brief Enumerator for the codec state
+ * Definition in MODULE_CIF.JPE.ENCODER_BUSY.B.CODEC_BUSY
  */
 typedef enum
 {
@@ -494,6 +531,7 @@ typedef enum
 } IfxCif_JpeState;
 
 /** \brief Enumerator for the JPE Tables
+ * Definition in MODULE_CIF.JPE.TABLE_ID.B.TABLE_ID
  */
 typedef enum
 {
@@ -508,6 +546,7 @@ typedef enum
 } IfxCif_JpeTableId;
 
 /** \brief Enumerator for the JFIF stream encoder continuous mode
+ * Definition in MODULE_CIF.JPE.ENCODE.B.CONT_MODE
  */
 typedef enum
 {
@@ -517,6 +556,7 @@ typedef enum
 } IfxCif_JpegJfifStreamEncoderContinuousMode;
 
 /** \brief Enumerator for the picture encoding format
+ * Definition in MODULE_CIF.JPE.PIC_FORMAT.B.ENC_PIC_FORMAT
  */
 typedef enum
 {
@@ -608,6 +648,7 @@ typedef enum
 } IfxCif_EpInterrupts;
 
 /** \brief Enumerator for write formats of extra paths
+ * Definition in MODULE_CIF.MIEP.CH_1S[5].CTRL.B.EP_WRITE_FORMAT;
  */
 typedef enum
 {
@@ -649,6 +690,7 @@ typedef enum
 } IfxCif_DpCounters;
 
 /** \brief Enumerator for debug path source paths
+ * Definition in MODULE_CIF.DP.CTRL.B.DP_SEL
  */
 typedef enum
 {
@@ -667,8 +709,8 @@ typedef enum
 
 typedef struct
 {
-    uint16 priority;
-    uint16 provider;
+    uint16 priority;		/**< \brief Service Request Priority Number. Range: 0 to 0xFFFF */
+    uint16 provider;		/**< \brief Interrupt service provider. Range: 0 to 0xFFFF */
 } IfxCif_IsrSetting;
 
 /** \addtogroup IfxLld_Cif_Std_stdFunctions
@@ -678,108 +720,178 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to clear the kernel reset state
- * \return None
+/**
+ * \brief Clears the kernel reset state, indicating that the reset condition has been addressed.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_clearKernelResetState(void);
 
-/** \brief Function to query the CIF module ID
- * \return CIF module ID
+/**
+ * \brief Retrieves the module ID of the CIF module.
+ *
+ * \retval uint16 The 16-bit module identifier of the CIF module.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxCif_getCifModuleId(void);
 
-/** \brief Function to query the port input selection
- * \return Always @ref IfxCif_PortInputSelection_PinMapping0
+/**
+ * \brief Function to query the port input selection.
+ * 
+ * \retval IfxCif_PortInputSelection The port input selection configuration.
+ *                                   Range: \ref IfxCif_PortInputSelection
  */
 IFX_INLINE IfxCif_PortInputSelection IfxCif_getCifModulePortInputSelection(void);
 
-/** \brief Function to query the CIF module revision
- * \return CIF module revision
+/**
+ * \brief Retrieves the revision number of the CIF module.
+ * 
+ * \retval uint8 The revision number of the CIF module.
+ * 		   		 Range: 0 to 0xFF
  */
 IFX_INLINE uint8 IfxCif_getCifModuleRevision(void);
 
-/** \brief Function to query the CIF module ID
- * \return CIF module type
+/**
+ * \brief Retrieves the type of the CIF module ID.
+ *
+ * \retval uint8 The CIF module type.
+ * 				 Range: 0 to 0xFF
  */
 IFX_INLINE uint8 IfxCif_getCifModuleType(void);
 
-/** \brief Function to query the clock distribution enabled state
- * \return @ref IfxCif_State_Enabled if clock distribution is enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Queries and returns the current clock distribution enabled state.
+ *
+ * \retval IfxCif_State The current clock control logic state.
+ * 						Range: \ref IfxCif_State_Enabled  if clock distribution is enabled.
+ * 		   					   \ref IfxCif_State_Disabled if clock distribution is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getClockControlLogicState(void);
 
-/** \brief Function to query the data path for main path
- * \return Selector for the main data path (one member of @ref IfxCif_DataPathSelectorForMainPath)
+/**
+ * \brief Retrieves the data path selector for the main path.
+ *
+ * \retval IfxCif_DataPathSelectorForMainPath The selector for the main data path.
+ * 											  Range: \ref IfxCif_DataPathSelectorForMainPath
  */
 IFX_INLINE IfxCif_DataPathSelectorForMainPath IfxCif_getDataPathSelectorForMainPath(void);
 
-/** \brief Function to query the input interface of the CIF interface
- * \return @ref IfxCif_InputInterface Type of the configured interface
+/**
+ * \brief Retrieves the input interface type configured for the CIF interface.
+ *
+ * \retval IfxCif_InputInterface The configured input interface type.
+ * 								 Range: \ref IfxCif_InputInterface
  */
 IFX_INLINE IfxCif_InputInterface IfxCif_getInputInterface(void);
 
-/** \brief Function to query the current level of the ISP input port s_hsync (for testing purposes only)
- * \return @ref IfxCif_State_Enabled if s_hsync is high, @ref IfxCif_State_Disabled if s_hsync is low
+/**
+ * \brief Function to query the current level of the ISP input port s_hsync (for testing purposes only).
+ * 
+ * \retval IfxCif_State The current state of ISP input port s_hsyn.
+ * 						Range: \ref IfxCif_State_Enabled  if the s_hsync is high.
+ * 							   \ref IfxCif_State_Disabled if the s_hsync is low.
  */
 IFX_INLINE IfxCif_State IfxCif_getIspInputPortSHSyncState(void);
 
-/** \brief Function to query the kernel reset status
- * \return @ref IfxCif_State_Enabled if kernel reset was executed, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Queries and returns the current kernel reset status.
+ *
+ * \retval IfxCif_State The current kernel reset status.
+ * 						Range: \ref IfxCif_State_Enabled  if the kernel reset was executed.
+ * 						       \ref IfxCif_State_Disabled if the kernel reset was not executed.
  */
 IFX_INLINE IfxCif_State IfxCif_getKernelResetStatus(void);
 
-/** \brief Function to query the module number
- * \return Module number of the CIF interface
+/**
+ * \brief Function to query the module number of the CIF interface.
+ *
+ * \retval uint16 The module number of the CIF interface.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxCif_getModuleNumber(void);
 
-/** \brief Function to query the revision number of the CIF interface
- * \return Revision number of the CIF interface
+/**
+ * \brief Function to query the revision number of the CIF interface.
+ *
+ * \retval uint8 The revision number of the CIF interface.
+ * 				 Range: 0 to 0xFF
  */
 IFX_INLINE uint8 IfxCif_getModuleRevisionNumber(void);
 
-/** \brief Function to query the state of the CIF module
- * \return @ref IfxCif_State_Enabled if the module is currently enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Function to query the state of the CIF module.
+ *
+ * \retval IfxCif_State The current module state.
+ * 						Range: \ref IfxCif_State_Enabled  if the module is currently enabled.
+ * 		   			           \ref IfxCif_State_Disabled if the module is currently disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getModuleState(void);
 
-/** \brief Function to query the module type
- * \return Module type of the CIF interface
+/**
+ * \brief Queries and returns the module type of the CIF interface.
+ *
+ * \retval uint8 The module type of the CIF interface.
+ * 				 Range: 0 to 0xFF
  */
 IFX_INLINE uint8 IfxCif_getModuleType(void);
 
-/** \brief Function to query the Y/C splitter channel mode
- * \return Configured mode of the Y/C splitter (one member of @ref IfxCif_YCSplitterChannelMode)
+/**
+ * \brief Queries and returns the current channel mode of the Y/C splitter.
+ *
+ * \retval IfxCif_YCSplitterChannelMode The configured mode of the Y/C splitter channel.
+ * 										Range: \ref IfxCif_YCSplitterChannelMode
  */
 IFX_INLINE IfxCif_YCSplitterChannelMode IfxCif_getYCSplitterChannelMode(void);
 
-/** \brief Function to enable or disable the clock distribution to all CIF submodules
- * \param clockControlLogicState @ref IfxCif_State_Enabled to enable clock distribution, @ref IfxCif_State_Disabled to disable clock distribution
- * \return None
+/**
+ * \brief Sets the clock control logic state to enable or disable clock distribution to all CIF submodules.
+ *
+ * \param[in] clockControlLogicState The state to set the clock control logic to.
+ * 									 Range: \ref IfxCif_State_Enabled  to Enable clock distribution.
+ * 									 		\ref IfxCif_State_Disabled to Disable clock distribution.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setClockControlLogicState(IfxCif_State clockControlLogicState);
 
-/** \brief Function to set the data path for main path
- * \param pathSelector Selector for the main data path
- * \return None
+/**
+ * \brief Sets the data path selector for the main path, configuring how data flows through the main path.
+ *
+ * \param[in] pathSelector The selector for the main data path.
+ * 						   Range: \ref IfxCif_DataPathSelectorForMainPath
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setDataPathSelectorForMainPath(IfxCif_DataPathSelectorForMainPath pathSelector);
 
-/** \brief Function to set the input interface of the CIF interface
- * \param interface Type of interface
- * \return None
+/**
+ * \brief Configures the input interface type for the CIF interface.
+ *
+ * \param[in] interface The type of input interface to be configured.
+ * 			  			Range: \ref IfxCif_InputInterface
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setInputInterface(IfxCif_InputInterface interface);
 
-/** \brief Function to request a kernel reset or reset the request bit
- * \param state @ref IfxCif_State_Enabled to request a reset, @ref IfxCif_State_Disabled to reset the request bit before a reset was performed
- * \return None
+/**
+ * \brief Requests a kernel reset or resets the kernel reset request bit based on the provided state.
+ *
+ * \param[in] state The state parameter determines whether to request a kernel reset.
+ * 					Range: \ref IfxCif_State_Enabled  to request a reset.
+ * 					       \ref IfxCif_State_Disabled to reset the request bit before a reset was performed.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setKernelResetRequestState(IfxCif_State state);
 
-/** \brief Function to set the Y/C splitter channel mode
- * \param mode Mode of the Y/C splitter to set
- * \return None
+/**
+ * \brief Sets the mode of operation for the Y/C splitter channel.
+ *
+ * \param[in] mode The mode of operation to set for the Y/C splitter channel.
+ * 				   Range: \ref IfxCif_YCSplitterChannelMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setYCSplitterChannelMode(IfxCif_YCSplitterChannelMode mode);
 
@@ -787,46 +899,82 @@ IFX_INLINE void IfxCif_setYCSplitterChannelMode(IfxCif_YCSplitterChannelMode mod
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to query the clock state of a submodule
- * \param submodule Identifier of the submodule
- * \return @ref IfxCif_State_Enabled if the clock of the submodule is enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Function to query the clock state of a submodule.
+ *
+ * \param[in] submodule The identifier of the submodule to query.
+ * 			  			Range: \ref IfxCif_Submodules
+ *
+ * \retval IfxCif_State The current mode of the internal clock.
+ * 						Range: \ref IfxCif_State_Enabled  if the clock of the submodule is enabled.
+ * 		   					   \ref	IfxCif_State_Disabled if the clock of the submodule is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getInternalClockMode(IfxCif_Submodules submodule);
 
-/** \brief Function to query the state of the kernel reset request bit
- * \return @ref IfxCif_State_Enabled if the kernel reset requets bit is set, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Queries and returns the current state of the kernel reset request bit.
+ *
+ * \retval IfxCif_State The current state of the Kernel Reset Request.
+ * 						Range: \ref IfxCif_State_Enabled  if the kernel reset request bit is set.
+ * 		   					   \ref	IfxCif_State_Disabled if the kernel reset request bit is not set.
  */
 IFX_EXTERN IfxCif_State IfxCif_getKernelResetRequestState(void);
 
-/** \brief Function to query the reset mode of a submodule
- * \param submodule Identifier of the submodule
- * \return @ref IfxCif_State_Enabled if the reset mode of the submodule is enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Function to query the reset mode of a submodule.
+ *
+ * \param[in] submodule The identifier of the submodule to query.
+ * 						Range: \ref IfxCif_Submodules
+ *
+ * \retval IfxCif_State The current mode of the Software Reset.
+ * 		   				Range: \ref IfxCif_State_Enabled  if the reset mode of the submodule is enabled.
+ * 							   \ref IfxCif_State_Disabled if the reset mode of the submodule is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getSoftwareResetMode(IfxCif_Submodules submodule);
 
-/** \brief resets CIF kernel
- * \param cifBbb pointer to CIF_BBB registers
- * \return None
+/**
+ * \brief Resets the CIF kernel to its initial state.
+ *
+ * \param[inout] cifBbb Pointer to the CIF_BBB registers. This structure contains the configuration and control registers for the CIF module.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_resetModule(Ifx_CIF_BBB *cifBbb);
 
-/** \brief Function to enable or disable the clock of a submodule
- * \param submodule Identifier of the submodule to enable or disable
- * \param clockState @ref IfxCif_State_Enabled to enable the clock, @ref IfxCif_State_Disabled to disable the clock
- * \return None
+/**
+ * \brief to Enable or Disables the clock of a submodule.
+ *
+ * \param[in] submodule  Identifier of the submodule to configure.
+ * 						 Range: \ref IfxCif_Submodules
+ * \param[in] clockState Specifies the state of the clock.
+ * 					     Range: \ref IfxCif_State_Enabled  to enable the clock.
+ * 					     		\ref IfxCif_State_Disabled to disable the clock
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setInternalClockMode(IfxCif_Submodules submodule, IfxCif_State clockState);
 
-/** \brief Function to request enabling or disabling of the CIF module
- * \param state @ref IfxCif_State_Enabled to request the enabling of the module, @ref IfxCif_State_Disabled otherwise
- * \return None
+/**
+ * \brief Function to request enabling or disabling of the CIF module.
+ *
+ * \param[in] state Module state to be set.
+ * 					Range: \ref IfxCif_State_Enabled  to request the enabling of the module.
+ * 						   \ref IfxCif_State_Disabled to request the disabling of the module.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setModuleStateRequest(IfxCif_State state);
 
-/** \brief Function to enable or disable the reset mode of a submodule
- * \param submodule Identifier of the submodule
- * \param resetMode @ref IfxCif_State_Enabled to enable the reset of the submodule, @ref IfxCif_State_Disabled to disable the reset
- * \return None
+/**
+ * \brief Enables or disables the software reset mode of a specified submodule.
+ *
+ * \param[in] submodule The identifier of the submodule to configure.
+ * 						Range: \ref IfxCif_Submodules
+ * \param[in] resetMode Specifies whether to enable or disable the reset mode.
+ * 						Range: \ref IfxCif_State_Enabled  to enable the reset of the submodule.
+ * 							   \ref IfxCif_State_Disabled to disable the reset.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setSoftwareResetMode(IfxCif_Submodules submodule, IfxCif_State resetMode);
 
@@ -839,214 +987,361 @@ IFX_EXTERN void IfxCif_setSoftwareResetMode(IfxCif_Submodules submodule, IfxCif_
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to generate a frame synchronous ISP configuration update signal
- * \return None
+/**
+ * \brief Generates a frame synchronous ISP configuration update signal.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_generateIspFrameSynchronousConfigUpdateSignal(void);
 
-/** \brief Function to generate an immediate ISP configuration update signal
- * \return None
+/**
+ * \brief Generates an immediate ISP configuration update signal.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_generateIspImmediateConfigUpdateSignal(void);
 
-/** \brief Function to query the current ISP frame count
- * \return Current ISP frame count
+/**
+ * \brief Function to query the current ISP frame count.
+ * 
+ * \retval uint16 The current frame count of processing.
+ * 				  Range: 0 to 0x3FF
  */
 IFX_INLINE uint16 IfxCif_getCurrentIspFrameCount(void);
 
-/** \brief Function to query the current field information
- * \return @ref IfxCif_IspInformFieldInformation_Odd for odd fields, @ref IfxCif_IspInformFieldInformation_Even for even fields
+/**
+ * \brief Retrieves the current ISP inform field information.
+ *
+ * \retval IfxCif_IspInformFieldInformation The current field information.
+ *  										Range: \ref IfxCif_IspInformFieldInformation_Odd  for odd fields.
+ *  											   \ref IfxCif_IspInformFieldInformation_Even for even fields.
  */
 IFX_INLINE IfxCif_IspInformFieldInformation IfxCif_getCurrentIspInformFieldInformation(void);
 
-/** \brief Function to query the current state of the ISP formatter
- * \return @ref IfxCif_State_Enabled if the ISP input formatter is currently enabled, @ref IfxCif_State_Disabled if the ISP input formatter is currently disabled
+/**
+ * \brief Queries and returns the current state of the ISP input formatter.
+ *
+ * \retval IfxCif_State The current ISP input Formatter Shadow.
+ * 						Range: \ref IfxCif_State_Enabled  if the ISP input formatter is currently enabled.
+ * 							   \ref IfxCif_State_Disabled if the ISP input formatter is currently disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getCurrentIspInputFormatterState(void);
 
-/** \brief Function to query the currently set CCIR sequence
- * \return Currently set CCIR sequence (one member of @ref IfxCif_IspCcirSequence)
+/**
+ * \brief Retrieves the currently configured CCIR sequence for the ISP.
+ *
+ * \retval IfxCif_IspCcirSequence The currently active CCIR sequence.
+ * 								  Range: \ref IfxCif_IspCcirSequence
  */
 IFX_INLINE IfxCif_IspCcirSequence IfxCif_getIspCcirSequence(void);
 
-/** \brief Function to query the clipping range of the crominance of the ISP output
- * \return Currently set clipping range (one member of @ref IfxCif_IspColorSpaceMatrixCrominanceClippingRange)
+/**
+ * \brief Retrieves the currently configured clipping range for the crominance component of the ISP color space matrix.
+ *
+ * \retval IfxCif_IspColorSpaceMatrixCrominanceClippingRange The currently set clipping range for the crominance component.
+ * 															 Range: \ref IfxCif_IspColorSpaceMatrixCrominanceClippingRange
  */
 IFX_INLINE IfxCif_IspColorSpaceMatrixCrominanceClippingRange IfxCif_getIspColorSpaceMatrixCrominanceClippingRange(void);
 
-/** \brief Function to query the clipping range of the luminance of the ISP output
- * \return Currently set clipping range (one member of @ref IfxCif_IspColorSpaceMatrixLuminanceClippingRange)
+/**
+ * \brief Function to query the clipping range of the luminance of the ISP output.
+ * 
+ * \retval IfxCif_IspColorSpaceMatrixLuminanceClippingRange The currently set clipping range.
+ * 														    Range: \ref IfxCif_IspColorSpaceMatrixLuminanceClippingRange
  */
 IFX_INLINE IfxCif_IspColorSpaceMatrixLuminanceClippingRange IfxCif_getIspColorSpaceMatrixLuminanceClippingRange(void);
 
-/** \brief Function to query the state of field ID inversion
- * \return @ref IfxCif_State_Enabled if field ID inversion is enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Function to query the state of field ID inversion.
+ * 
+ * \retval IfxCif_State The current state of the ISP field invert.
+ * 						Range: \ref IfxCif_State_Enabled  if the Field ID inversion is enabled.
+ * 		   					   \ref IfxCif_State_Disabled if the Field ID inversion is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getIspFieldInvertState(void);
 
-/** \brief Function to query the currently set field sample mode
- * \return Currently set fields sample mode (one member of @ref IfxCif_IspFieldSelection)
+/**
+ * \brief Retrieves the currently configured field sample mode for the ISP.
+ *
+ * \retval IfxCif_IspFieldSelection The currently set fields sample mode.
+ * 									Range: \ref IfxCif_IspFieldSelection
  */
 IFX_INLINE IfxCif_IspFieldSelection IfxCif_getIspFieldSelection(void);
 
-/** \brief Function to query the currently set polarity of the HSYNC signal
- * \return @ref IfxCif_IspSyncPolarity_HighActive if HSYNC is configured as high active, @ref IfxCif_IspSyncPolarity_LowActive if HSYNC is configured as low active
+/**
+ * \brief Function to query the currently set polarity of the HSYNC signal.
+ *
+ * \retval IfxCif_IspSyncPolarity The currently set polarity of the HSYNC signal.
+ * 								  Range: \ref IfxCif_IspSyncPolarity_HighActive if the HSYNC is configured as high active.
+ * 									     \ref IfxCif_IspSyncPolarity_LowActive  if the HSYNC is configured as low active.
  */
 IFX_INLINE IfxCif_IspSyncPolarity IfxCif_getIspHSyncPolarity(void);
 
-/** \brief Function to query the current state of the ISP input formatter
- * \return @ref IfxCif_State_Enabled if the ISP input formatter is enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Queries and returns the current state of the ISP input formatter.
+ *
+ * \retval IfxCif_State The current state of the ISP input formatter.
+ * 						Range: \ref IfxCif_State_Enabled  if the ISP input formatter is enabled.
+ *		   					   \ref	IfxCif_State_Disabled if the ISP input formatter is currently disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getIspInputFormatterState(void);
 
-/** \brief Function to query the ISP input interface bit width
- * \return Configured ISP input interface bit width (one member of @ref IfxCif_IspInputInterface)
+/**
+ * \brief Retrieves the configured ISP input interface bit width.
+ *
+ * \retval IfxCif_IspInputInterface The configured ISP input interface bit width.
+ * 									Range: \ref IfxCif_IspInputInterface
  */
 IFX_INLINE IfxCif_IspInputInterface IfxCif_getIspInputInterface(void);
 
-/** \brief Function to query the current value of the ISP input port s_data (for test purposes only)
- * \return Current value of s_data
+/**
+ * \brief Queries the current value of the ISP input port s_data (for test purposes only)
+ * 
+ * \retval uint16 The current state of ISP input port s_data.
+ * 				  Range: 0 to 0x3FFF
  */
 IFX_INLINE uint16 IfxCif_getIspInputPortSDataState(void);
 
-/** \brief Function to query the current level of the ISP input port s_vsync (for test purposes only)
- * \return @ref IfxCif_State_Enabled if s_vsync is high, @ref IfxCif_State_Disabled if s_vsync is low
+/**
+ * \brief Queries the current state of the ISP input port s_vsync signal (for test purposes only)
+ *
+ * \retval IfxCif_State The current level of the ISP input port s_vsync.
+ * 						Range: \ref IfxCif_State_Enabled  if the s_vsync is high.
+ * 		  					   \ref IfxCif_State_Disabled if the s_vsync is low.
+ *
+ * \note This function is intended for test purposes only
  */
 IFX_INLINE IfxCif_State IfxCif_getIspInputPortSVSyncState(void);
 
-/** \brief Function to query the currently set ISP mode
- * \return Current ISP mode (one member of @ref IfxCif_IspMode)
+/**
+ * \brief Retrieves the currently configured ISP mode.
+ *
+ * \retval IfxCif_State The current ISP mode.
+ * 						Range: \ref IfxCif_State
  */
 IFX_INLINE IfxCif_State IfxCif_getIspMode(void);
 
-/** \brief Function to query the ISP output state
- * \return @ref IfxCif_State_Enabled if the ISP output is enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Queries and returns the current state of the ISP output.
+ *
+ * \retval IfxCif_State The current state of the ISP output.
+ * 						Range: \ref IfxCif_State_Enabled  if the ISP output is enabled.
+ *		  					   \ref IfxCif_State_Disabled if the ISP output is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getIspOutputState(void);
 
-/** \brief Function to query the currently set ISP sampling edge
- * \return @ref IfxCif_IspSamplingEdge_NegativeEdge if negative clock edge is configured as sampling edge, @ref IfxCif_IspSamplingEdge_PositiveEdge if positive clock edge is configured as sampling edge
+/**
+ * \brief Queries and returns the currently configured ISP sampling edge.
+ *
+ * \retval IfxCif_IspSamplingEdgeIfxCif_Isp The current state of the configured ISP sampling edge.
+ * 											Range: \ref IfxCif_IspSamplingEdge_NegativeEdge if the negative clock edge is configured as sampling edge.
+ * 		    									   \ref IfxCif_IspSamplingEdge_PositiveEdge if the positive clock edge is configured as sampling edge.
  */
 IFX_INLINE IfxCif_IspSamplingEdge IfxCif_getIspSamplingEdge(void);
 
-/** \brief Function to query the current state of the ISP
- * \return @ref IfxCif_State_Enabled if the ISP is currently enabled, @ref IfxCif_State_Disabled if the ISP is currently disabled
+/**
+ * \brief Queries and returns the current state of the ISP.
+ *
+ * \retval IfxCif_State The current state of the ISP.
+ * 						Range: \ref IfxCif_State_Enabled  if the ISP is currently enabled.
+ * 		    				   \ref IfxCif_State_Disabled if the ISP is currently disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getIspState(void);
 
-/** \brief Function to query the currently set polarity of the VSYNC signal
- * \return @ref IfxCif_IspSyncPolarity_HighActive if VSYNC is configured as high active, @ref IfxCif_IspSyncPolarity_LowActive if VSYNC is configured as low active
+/**
+ * \brief Queries and returns the currently set polarity of the VSYNC signal.
+ *
+ * \retval IfxCif_IspSyncPolarity The current state of the VSYNC signal polarity.
+ * 								  Range: \ref IfxCif_IspSyncPolarity_HighActive if the VSYNC is configured as high active.
+ * 		   						 		 \ref IfxCif_IspSyncPolarity_LowActive  if the VSYNC is configured as low active.
  */
 IFX_INLINE IfxCif_IspSyncPolarity IfxCif_getIspVSyncPolarity(void);
 
-/** \brief Function to query the number of acquisition frames
- * \return Currently set number of acquisition frames
+/**
+ * \brief Retrieves the currently set number of acquisition frames.
+ *
+ * \retval uint16 The currently set number of acquisition frames.
+ * 				  Range: 0 to 0x3FF
  */
 IFX_INLINE uint16 IfxCif_getNumberOfAcquisitionFrames(void);
 
-/** \brief Function to set the ISP acquisition offsets
- * \param hOffset Acquisition horizontal offset to set
- * \param vOffset Acquisition vertical offset to set
- * \return None
+/**
+ * \brief Configures the horizontal and vertical acquisition offsets for the ISP.
+ *
+ * \param[in] hOffset Horizontal offset value to be applied during acquisition.
+ * 					  Range: 0 to 0x1FFF
+ * \param[in] vOffset Vertical offset value to be applied during acquisition.
+ * 					  Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspAcquisitionOffsets(uint16 hOffset, uint16 vOffset);
 
-/** \brief Function to set the ISP acquisition sizes
- * \param hSize Acquisition horizontal size to set
- * \param vSize Acquisition vertical size to set
- * \return None
+/**
+ * \brief Function to set the horizontal and vertical acquisition size for the ISP.
+ *
+ * \param[in] hSize Horizontal acquisition size to set.
+ * 					Range: 0 to 0x1FFF
+ * \param[in] vSize Vertical acquisition size to set.
+ * 				    Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspAcquisitionSizes(uint16 hSize, uint16 vSize);
 
-/** \brief Function to set the CCIR sequence
- * \param sequence CCIR sequence to set
- * \return None
+/**
+ * \brief Function to set the CCIR sequence.
+ *
+ * \param[in] sequence The CCIR sequence to be set.
+ * 					   Range: \ref IfxCif_IspCcirSequence
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspCcirSequence(IfxCif_IspCcirSequence sequence);
 
-/** \brief Function to set the clipping range of the crominance of the ISP output
- * \param clippingRange Clipping range to set
- * \return None
+/**
+ * \brief Sets the clipping range for the crominance component of the ISP output color space matrix.
+ *
+ * \param[in] clippingRange Clipping range to be set.
+ * 							Range: \ref IfxCif_IspColorSpaceMatrixCrominanceClippingRange
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspColorSpaceMatrixCrominanceClippingRange(IfxCif_IspColorSpaceMatrixCrominanceClippingRange clippingRange);
 
-/** \brief Function to set the clipping range of the luminance of the ISP output
- * \param clippingRange Clipping range to set
- * \return None
+/**
+ * \brief Sets the clipping range of the luminance for the ISP output.
+ *
+ * \param[in] clippingRange Clipping range to set.
+ * 							Range: \ref IfxCif_IspColorSpaceMatrixLuminanceClippingRange
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspColorSpaceMatrixLuminanceClippingRange(IfxCif_IspColorSpaceMatrixLuminanceClippingRange clippingRange);
 
-/** \brief Function to enable or disable inversion of the field ID
- * \param fieldInvertState @ref IfxCif_State_Enabled to enable field ID inversion, @ref IfxCif_State_Disabled to disable field ID inversion
- * \return None
+/**
+ * \brief Function to enable or disable inversion of the field ID.
+ *
+ * \param[in] fieldInvertState The state to set for field inversion.
+ *                             Range: \ref IfxCif_State_Enabled  to enable field ID inversion.
+ *                            		  \ref IfxCif_State_Disabled to disable field ID inversion.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspFieldInvertState(IfxCif_State fieldInvertState);
 
-/** \brief Function to select fields to sample
- * \param selection Sampled fields selector
- * \return None
+/**
+ * \brief Selects the fields to be sampled.
+ *
+ * \param[in] selection The sampled fields selector.
+ * 						Range: \ref IfxCif_IspFieldSelection
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspFieldSelection(IfxCif_IspFieldSelection selection);
 
-/** \brief Function to set the polarity of the HSYNC signal
- * \param polarity @ref IfxCif_IspSyncPolarity_HighActive for high active HSYNC signal, @ref IfxCif_IspSyncPolarity_LowActive for low active HSYNC signal
- * \return None
+/**
+ * \brief Sets the polarity of the HSYNC signal for the ISP.
+ *
+ * \param[in] polarity The desired polarity of the HSYNC signal.
+ *                     Range: \ref IfxCif_IspSyncPolarity_HighActive for high active HSYNC signal.
+ *                    		  \ref IfxCif_IspSyncPolarity_LowActive  for low active HSYNC signal.
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspHSyncPolarity(IfxCif_IspSyncPolarity polarity);
 
-/** \brief Function to enable or disable the ISP input formatter
- * \param inputFormatterState @ref IfxCif_State_Enabled to enable the ISP input formatter, @ref IfxCif_State_Disabled to disable it
- * \return None
+/**
+ * \brief Function to enable or disable the ISP input formatter.
+ *
+ * \param[in] inputFormatterState The desired state of the ISP input formatter.
+ * 								  Range: \ref IfxCif_State_Enabled  to enable the ISP input formatter.
+ *								   		 \ref IfxCif_State_Disabled to disable it.
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspInputFormatterState(IfxCif_State inputFormatterState);
 
-/** \brief Function to set the ISP input interface bit width
- * \param input ISP input interface bit width to set
- * \return None
+/**
+ * \brief Sets the ISP input interface bit width.
+ *
+ * \param[in] input The ISP input interface bit width to configure.
+ * 			        Range: \ref IfxCif_IspInputInterface
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspInputInterface(IfxCif_IspInputInterface input);
 
-/** \brief Function to set the ISP mode
- * \param mode Mode to set
- * \return None
+/**
+ * \brief Configures the ISP mode according to the specified mode.
+ *
+ * \param[in] mode The ISP mode to be set.
+ * 				   Range: \ref IfxCif_IspMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspMode(IfxCif_IspMode mode);
 
-/** \brief Function to enable or disable the ISP output
- * \param ispOutputState ispOutputState @ref IfxCif_State_Enabled to enable the ISP output, @ref IfxCif_State_Disabled to disable it
- * \return None
+/**
+ * \brief Enables or disables the ISP output based on the provided state.
+ *
+ * \param[in] ispOutputState The state to set for the ISP output.
+ * 							 Range: \ref IfxCif_State_Enabled  to enable the ISP output.
+ * 							 		\ref IfxCif_State_Disabled to disable it.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspOutputState(IfxCif_State ispOutputState);
 
-/** \brief Function to set the ISP output window offsets
- * \param hOffset Offset horizontal to set
- * \param vOffset Offset vertical to set
- * \return None
+/**
+ * \brief Configures the horizontal and vertical offsets for the ISP output window.
+ *
+ * \param[in] hOffset The horizontal offset value to be set.
+ * 					  Range: 0 to 0xFFF
+ * \param[in] vOffset The Vertical offset value to be set.
+ * 					  Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspOutputWindowOffsets(uint16 hOffset, uint16 vOffset);
 
-/** \brief Function to set the ISP picture sizes
- * \param hSize Picture horizontal size to set
- * \param vSize Picture vertical size to set
- * \return None
+/**
+ * \brief Configures the ISP with the specified horizontal and vertical picture sizes.
+ *
+ * \param[in] hSize The horizontal size of the picture to be set.
+ * 					Range: 0 to 0xFFF
+ * \param[in] vSize The vertical size of the picture to be set.
+ *					Range: 0 to 0xFFF
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspPictureSizes(uint16 hSize, uint16 vSize);
 
-/** \brief Function to set the ISP sampling edge
- * \param edge @ref IfxCif_IspSamplingEdge_NegativeEdge to sample at negative clock edges, @ref IfxCif_IspSamplingEdge_PositiveEdge to sample at positive clock edges
- * \return None
+/**
+ * \brief Configures the sampling edge for the ISP module.
+ *
+ * \param[in] edge The sampling edge to be configured.
+ *           	   Range: \ref IfxCif_IspSamplingEdge_NegativeEdge to sample at negative clock edges.
+ *           	   		  \ref IfxCif_IspSamplingEdge_PositiveEdge to sample at positive clock edges.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspSamplingEdge(IfxCif_IspSamplingEdge edge);
 
-/** \brief Function to set the polarity of the VSYNC signal
- * \param polarity @ref IfxCif_IspSyncPolarity_HighActive for high active VSYNC signal, @ref IfxCif_IspSyncPolarity_LowActive for low active VSYNC signal
- * \return None
+/**
+ * \brief Sets the polarity of the VSYNC signal for the ISP.
+ *
+ * \param[in] polarity The desired polarity of the VSYNC signal.
+ *                     Range: \ref IfxCif_IspSyncPolarity_HighActive for high active VSYNC signal.
+ *                    		  \ref IfxCif_IspSyncPolarity_LowActive  for low active VSYNC signal.
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspVSyncPolarity(IfxCif_IspSyncPolarity polarity);
 
-/** \brief Function to set the number of acquisition frames
- * \param numberOfFrames Number of acquisition frames to set
- * \return None
+/**
+ * \brief Sets the number of frames to be acquired during the acquisition process.
+ *
+ * \param[in] numberOfFrames Number of frames to set for acquisition.
+ * 							 Range: 0 to 0x3FF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setNumberOfAcquisitionFrames(uint16 numberOfFrames);
 
@@ -1054,126 +1349,227 @@ IFX_INLINE void IfxCif_setNumberOfAcquisitionFrames(uint16 numberOfFrames);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to clear the error status bit for an error source
- * \param errorSource Error source
- * \return None
- */
+/**
+* \brief Clears the error status bit for a specified error source in the ISP module.
+*
+* \param[in] errorSource The error source to clear ISP error.
+* 						 Range: \ref IfxCif_IspErrorSources
+*
+* \retval None
+*/
 IFX_EXTERN void IfxCif_clearIspError(IfxCif_IspErrorSources errorSource);
 
-/** \brief Function to clear an interrupt
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Clears a specific ISP interrupt source.
+ *
+ * \param[in] interruptSource The source of the interrupt to be cleared.
+ * 						      Range: \ref IfxCif_IspInterruptSources
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_clearIspInterrupt(IfxCif_IspInterruptSources interruptSource);
 
-/** \brief Function to query the current ISP picture offset for one tier
- * \param tier Tier for which to query the current ISP picture offset
- * \return Current ISP picture offset
+/**
+ * \brief Function to query the current ISP picture offset for a specified tier.
+ *
+ * \param[in] tier The tier for which to query the current ISP picture offset. 
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current ISP picture offset for the specified tier.
+ * 				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getCurrentIspPictureOffset(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the current ISP picture size for one tier
- * \param tier Tier for which to query the current ISP picture size
- * \return Current ISP picture size
+/**
+ * \brief Function to query the current ISP picture size for one tier.
+ *
+ * \param[in] tier The tier for which to query the current ISP picture size.
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current ISP picture size for the specified tier.
+ * 			      Range: 0 to 0x1FFF
  */
 IFX_EXTERN uint16 IfxCif_getCurrentIspPictureSize(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the currently set ISP acquisition offset of one tier
- * \param tier Tier for which to query the ISP acquisition offset
- * \return Currently set ISP acquisition offset
+/**
+ * \brief Retrieves the currently configured ISP acquisition offset for the specified image tier.
+ *
+ * \param[in] tier The image tier for which to retrieve the ISP acquisition offset.
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The currently set ISP acquisition offset for the specified tier.
+ * 				  Range: 0 to 0x1FFF
  */
 IFX_EXTERN uint16 IfxCif_getIspAcquisitionOffset(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the currently set ISP acquisition size of one tier
- * \param tier Tier for which to query the ISP acquisition size
- * \return Currently set acquisition size
+/**
+ * \brief Function to query the currently set ISP acquisition size of one tier.
+ *
+ * \param[in] tier The image tier for which to query the acquisition size.
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The currently set acquisition size for the specified tier.
+ *                Range: 0 to 0x1FFF
  */
 IFX_EXTERN uint16 IfxCif_getIspAcquisitionSize(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the error state of an error source
- * \param errorSource errorSource Error source to query
- * \return @ref IfxCif_ErrorState_Error if the error occured, @ref IfxCif_ErrorState_NoError if the error did not occur
+/**
+ * \brief Function to query the error state of a specific ISP error source.
+ *
+ * \param[in] errorSource The error source to query. 
+ * 						  Range: \ref IfxCif_IspErrorSources
+ * 
+ * \retval IfxCif_ErrorState The current ISP error state of the specified error source.
+ *                           Range: \ref IfxCif_ErrorState_Error   if the error occurred.
+ *                                  \ref IfxCif_ErrorState_NoError if the error did not occur.
  */
 IFX_EXTERN IfxCif_ErrorState IfxCif_getIspErrorState(IfxCif_IspErrorSources errorSource);
 
-/** \brief Function to query the append state
- * \return @ref IfxCif_State_Enabled if appending is enabled, IfxCif_State_Disabled otherwise
+/**
+ * \brief Queries and returns the current state of the ISP input selection append feature.
+ *
+ * \retval IfxCif_State The current state of the ISP input selection append feature.
+ *                      Range: \ref IfxCif_State_Enabled  if appending is enabled.
+ *                             \ref IfxCif_State_Disabled if appending is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getIspInputSelectionAppendState(void);
 
-/** \brief Function to query the enabled state of an interrupt
- * \param interruptSource interruptSource Source of the interrupt
- * \return @ref IfxCif_State_Enabled if the interrupt is enabled, @ref IfxCif_State_Disabled if the interrupt is disabled
+/**
+ * \brief Retrieves the enabled state of a specific ISP interrupt source.
+ *
+ * \param[in] interruptSource The interruptSource Source of the interrupt.
+ *                            Range: \ref IfxCif_IspInterruptSources   
+ *
+ * \retval IfxCif_State The current state of specific ISP interrupt source.
+ *                      Range: \ref IfxCif_State_Enabled  if the interrupt is enabled.
+ *                             \ref IfxCif_State_Disabled if the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getIspInterruptEnableState(IfxCif_IspInterruptSources interruptSource);
 
-/** \brief Function to query the currently set ISP output window offset for one tier
- * \param tier Tier for which to query the ISP output window offset
- * \return Currently set ISP output window offset
+/**
+ * \brief Retrieves the currently set ISP output window offset for a specified tier.
+ *
+ * \param[in] tier The tier for which to retrieve the ISP output window offset.
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The currently set ISP output window offset.
+ *                Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getIspOutputWindowOffset(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the currently set ISP picture size of one tier
- * \param tier Tier for which to query the ISP picture size
- * \return Currently set ISP picture size
+/**
+ * \brief Function to query the currently set ISP picture size of one tier.
+ * 
+ * \param[in] tier The tier for which to query the ISP picture size.
+ *                 Range: \ref IfxCif_ImageTiers
+ * 
+ * \retval uint16 The currently set ISP picture size for the specified tier.
+ *                Range: 0 to 0xFFF 
  */
 IFX_EXTERN uint16 IfxCif_getIspPictureSize(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the masked state of an interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set and the interrupt is enabled, @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is not set or the interrupt is disabled
+/**
+ * \brief Queries the masked state of a specific ISP interrupt source.
+ *
+ * \param[in] interruptSource The ISP interrupt source to query.
+ *                            Range: \ref IfxCif_IspInterruptSources         
+ *
+ * \retval IfxCif_InterruptTriggeredState The current masked state of the specified ISP interrupt source.
+ *                                        Range: \ref IfxCif_InterruptTriggeredState_Triggered    if the interrupt request bit is set and the interrupt is enabled.
+ *                                               \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set or the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getMaskedIspInterruptTriggeredState(IfxCif_IspInterruptSources interruptSource);
 
-/** \brief Function to query the raw state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set, @ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set
+/**
+ * \brief Queries the raw state of an ISP interrupt source.
+ *
+ * \param[in] interruptSource The source of the interrupt to query.
+ *                            Range: \ref IfxCif_IspInterruptSources 
+ *
+ * \retval IfxCif_InterruptTriggeredState The current raw state of the specified ISP interrupt source.
+ *                                        Range: \ref IfxCif_InterruptTriggeredState_Triggered    if the interrupt request bit is set.
+ *                                               \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getRawIspInterruptTriggeredState(IfxCif_IspInterruptSources interruptSource);
 
-/** \brief Function to set the ISP acquisition offset of one tier
- * \param tier Tier for which to set the ISP acquisition offset
- * \param offset Acquisition offset to set
- * \return None
+/**
+ * \brief Sets the ISP acquisition offset for a specified image tier.
+ *
+ * \param[in] tier   The image tier for which to set the acquisition offset.  
+ *                   Range: \ref IfxCif_ImageTiers
+ * \param[in] offset The acquisition offset value to be set.
+ *                   Range: 0 to 0x1FFF
+ *
+ * \retval None 
  */
 IFX_EXTERN void IfxCif_setIspAcquisitionOffset(IfxCif_ImageTiers tier, uint16 offset);
 
-/** \brief Function to set the ISP acquisition size of one tier
- * \param tier Tier for which to set the ISP acquisition size
- * \param size Acquisition size to set
- * \return None
+/**
+ * \brief Sets the ISP acquisition size for a specified image tier.
+ *
+ * \param[in] tier The image tier for which to set the acquisition size.
+ *                 Range: \ref IfxCif_ImageTiers
+ * \param[in] size The acquisition size to be set. 
+ *                 Range: 0 to 0x1FFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspAcquisitionSize(IfxCif_ImageTiers tier, uint16 size);
 
-/** \brief Function to enable or disable appending of bits to the input signal
- * \param appendState @ref IfxCif_State_Enabled if appending is enabled, IfxCif_State_Disabled otherwise
- * \return None
+/**
+ * \brief Enables or disables the appending of bits to the input signal.
+ *
+ * \param[in] appendState The state specifying whether to enable or disable the appending.
+ *                        Range: \ref IfxCif_State_Enabled  to enable appending.
+ *                               \ref IfxCif_State_Disabled to disable appending.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspInputSelectionAppendState(IfxCif_State appendState);
 
-/** \brief Function to enable or disable an interrupt
- * \param interruptSource interruptSource Source of the interrupt to enable or disable
- * \param interruptEnableState @ref IfxCif_State_Enabled to enable the interrupt, @ref IfxCif_State_Disabled to disable the interrupt
- * \return None
+/**
+ * \brief Enables or disables a specific interrupt source.
+ *
+ * \param[in] interruptSource      The source of the interrupt to be enabled or disabled.
+ *                                 Range: \ref IfxCif_IspInterruptSources
+ * \param[in] interruptEnableState The state to which the interrupt should be set.
+ *                                 Range: \ref IfxCif_State_Enabled  to enable the interrupt.
+ *                                        \ref IfxCif_State_Disabled to disable the interrupt.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspInterruptEnableState(IfxCif_IspInterruptSources interruptSource, IfxCif_State interruptEnableState);
 
-/** \brief Function to set an interrupt request bit (does not necessarily trigger an interrupt)
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Sets the specified interrupt request bit for the ISP module (does not necessarily trigger an interrupt).
+ *
+ * \param[in] interruptSource The source of the interrupt to be set.
+ *                            Range: \ref IfxCif_IspInterruptSources
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspInterruptRequestBit(IfxCif_IspInterruptSources interruptSource);
 
-/** \brief Function to set the ISP output window offset for one tier
- * \param tier Tier for which to query the ISP output window offset
- * \param offset Offset to set
- * \return None
+/**
+ * \brief Sets the ISP output window offset for a specified image tier.
+ *
+ * \param[in] tier   The tier for which to set the ISP output window offset.
+ *                   Range: \ref IfxCif_ImageTiers
+ * \param[in] offset The offset value to be set.
+ *                   Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspOutputWindowOffset(IfxCif_ImageTiers tier, uint16 offset);
 
-/** \brief Function to set the ISP picture size of one tier
- * \param tier Tier for which to set the ISP picture size
- * \param pictureSize Picture size to set
- * \return None
+/**
+ * \brief Sets the ISP picture size for a specified image tier.
+ *
+ * \param[in] tier        The image tier for which to set the picture size.
+ *                        Range: \ref IfxCif_ImageTiers
+ * \param[in] pictureSize The size of the picture to be set.
+ *                        Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspPictureSize(IfxCif_ImageTiers tier, uint16 pictureSize);
 
@@ -1186,58 +1582,96 @@ IFX_EXTERN void IfxCif_setIspPictureSize(IfxCif_ImageTiers tier, uint16 pictureS
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to query the current state of the linear downscaler for one tier
- * \param tier Tier for which to query the state of the linear downscaler
- * \return @ref IfxCif_State_Enabled if the linear downscaler is enabled, @ref IfxCif_State_Disabled if the linear downscaler is disabled
+/**
+ * \brief Function to query the current state of the linear down scaler for a specific image tier.
+ *
+ * \param[in] tier The image tier for which to query the linear down scaler state.
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval IfxCif_State The current state of the linear down scaler for the specified tier.
+ *                      Range: \ref IfxCif_State_Enabled  if the linear down scaler is enabled.
+ *                             \ref IfxCif_State_Disabled if the linear down scaler is disabled for the specified tier.
  */
 IFX_EXTERN IfxCif_State IfxCif_getLinearDownscalerEnableState(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the currently set scaling factor of the linear downscaler of one tier
- * \param tier Tier for which to query the scaling factor
- * \return Current set scaling factor
+/**
+ * \brief Function to query the currently set scaling factor of the linear down scaler for a specific image tier.
+ *
+ * \param[in] tier The image tier for which to query the scaling factor of the linear down scaler.
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint8 The current scaling factor for the specified tier.
+ *               Range: 0 to 0xFF
  */
 IFX_EXTERN uint8 IfxCif_getLinearDownscalerScalingFactor(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the currently set scaling mode of one tier
- * \param tier Tier for which to query the scaling mode
- * \return Currently set scaling mode (one member of @ref IfxCif_LinearDownscalerScalingMode)
+/**
+ * \brief Retrieves the currently set scaling mode for the specified image tier.
+ *
+ * \param[in] tier The image tier for which to query the scaling mode. 
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval IfxCif_LinearDownscalerScalingMode The currently set scaling mode for the specified tier.
+ *                                            Range: \ref IfxCif_LinearDownscalerScalingMode       
  */
 IFX_EXTERN IfxCif_LinearDownscalerScalingMode IfxCif_getLinearDownscalerScalingMode(IfxCif_ImageTiers tier);
 
-/** \brief Function to enable or disable the linear downscaler for one tier
- * \param tier Tier for which to enable or disable the linear downscaler
- * \param enableState @ref IfxCif_State_Enabled to enable the linear downscaler, @ref IfxCif_State_Disabled to disable the linear downscaler
- * \return None
+/**
+ * \brief Function to enable or disable the linear down scaler for a specific image tier.
+ *
+  * \param[in] tier       The image tier for which to enable or disable the linear down scaler.
+ *                        Range: \ref IfxCif_ImageTiers
+ * \param[in] enableState The state to set for the linear down scaler.
+ *                        Range: \ref IfxCif_State_Enabled  to enable the linear down scaler.
+ *                        		 \ref IfxCif_State_Disabled to disable the linear down scaler.
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setLinearDownscalerEnableState(IfxCif_ImageTiers tier, IfxCif_State enableState);
 
-/** \brief Function to set the scaling factor of the linear downscaler of one tier
- * \param tier Tier for which to set the scaling factor
- * \param factor Factor to set (depending on the configured scaling mode every factor + 1 pixel or double pixel will be skipped or passed to the next module)
- * \return None
+/**
+ * \brief Sets the scaling factor for the linear downscaler of a specified image tier.
+ *
+ * \param[in] tier   The image tier for which to set the scaling factor.
+ *                   Range: \ref IfxCif_ImageTiers
+ * \param[in] factor The factor to be set (depending on the configured scaling mode every factor + 1 pixel or double pixel will be skipped or passed to the next module).
+ *                   Range: 0 to 0xFF
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setLinearDownscalerScalingFactor(IfxCif_ImageTiers tier, uint8 factor);
 
-/** \brief Function to set the scaling factors of the linear downscaler
- * \param horizFactor Factor horizontal to set (depending on the configured scaling mode every factor + 1 pixel or double pixel will be skipped or passed to the next module)
- * \param vertFactor actor horizontal to set (depending on the configured scaling mode every factor + 1 pixel or double pixel will be skipped or passed to the next module)
- * \return None
+/**
+ * \brief Configures the scaling factors of the linear downscaler module.
+ *
+ * \param[in] horizFactor The horizontal scaling factor to be set (Depending on the configured mode every lds_h_fac+1th pixel (or double pixel) will be skipped or passed on to the next module).
+ *                        Range: 0 to 0xFF
+ * \param[in] vertFactor  The vertical scaling factor to be set (Depending on the configured mode every lds_v_fac+1th line (or double line) will be skipped or passed on to the next module).
+ *                        Range: 0 to 0xFF
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setLinearDownscalerScalingFactors(uint8 horizFactor, uint8 vertFactor);
 
-/** \brief Function to set the scaling mode of one tier
- * \param tier Tier for which to set the scaling mode
- * \param mode Scaling mode to set
- * \return None
+/**
+ * \brief Sets the scaling mode for the linear downscaler of a specified image tier.
+ *
+ * \param[in] tier Tier for which to set the scaling mode.
+ *                 Range: \ref IfxCif_ImageTiers
+ * \param[in] mode Scaling mode to be set.
+ *                 Range: \ref IfxCif_LinearDownscalerScalingMode 
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setLinearDownscalerScalingMode(IfxCif_ImageTiers tier, IfxCif_LinearDownscalerScalingMode mode);
 
-/** \brief Function to set the scaling mode of one tier
- * \param horizMode Scaling mode to set for horizontal
- * If the horizMode is not IfxCif_LinearDownscalerScalingMode_Disabled, the horizontal scaling will be enabled.
- * \param vertMode Scaling mode to set for vertical
- * If the vertMode is not IfxCif_LinearDownscalerScalingMode_Disabled, the vertical scaling will be enabled.
- * \return None
+/**
+ * \brief Sets the scaling mode for the horizontal and vertical linear downscaler.
+ *
+ * \param[in] horizMode Scaling mode to set for horizontal tier.
+ *                      Range: \ref IfxCif_LinearDownscalerScalingMode
+ * \param[in] vertMode  Scaling mode to set for vertical tier.
+ *                      Range: \ref IfxCif_LinearDownscalerScalingMode
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setLinearDownscalerScalingModes(IfxCif_LinearDownscalerScalingMode horizMode, IfxCif_LinearDownscalerScalingMode vertMode);
 
@@ -1250,94 +1684,161 @@ IFX_EXTERN void IfxCif_setLinearDownscalerScalingModes(IfxCif_LinearDownscalerSc
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to generate an immediate configuration update signal for the memory interface submodule
- * \return None
+/**
+ * \brief Generates an immediate configuration update signal for the memory interface submodule.
+ *
+ * \retval None 
  */
 IFX_INLINE void IfxCif_generateMiImmediateConfigUpdateSignal(void);
 
-/** \brief Function to query the enabled state of the update signal of the base address and buffer size shadow registers to the programmed register init values
- * \return @ref IfxCif_State_Enabled if update of the base address and buffer size shadow registers is enabled (update will be executed either when a forced software update occurs or when an automatic config update signal arrives at the MI input port), @ref IfxCif_State_Disabled if update of the base address and buffer size shadow registers is disabled
+/**
+ * \brief Queries the enabled state of the update signal of the base address and buffer size shadow registers to the programmed register Initialization values.
+ *
+ * \retval IfxCif_State The current state of the base address and buffer size shadow registers update signal.
+ *                      Range: \ref IfxCif_State_Enabled  if update of the base address and buffer size shadow registers is enabled.
+ *                      								  (update will be executed either when a forced software update occurs or when an automatic config update signal arrives at the MI input port).
+ *                             \ref IfxCif_State_Disabled if update of the base address and buffer size shadow registers is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getBaseAddressInitializationEnableState(void);
 
-/** \brief Function to query the number of JPEG or RAW data bytes of the last transmitted frame
- * \return Number of JPEG or RAW data bytes of the last transmitted frame (updated at frame end)
+/**
+ * \brief Gets the number of JPEG or RAW data bytes of the last transmitted frame.
+ * 
+ * \retval uint32 The number of JPEG or RAW data bytes of the last transmitted frame (updated at frame end).
+ * 				  Range: 0 to 0xFFFFFF
  */
 IFX_INLINE uint32 IfxCif_getMiByteCount(void);
 
-/** \brief Function to query the current state of the change of byte order of the 32 bit output word
- * \return @ref IfxCif_State_Enabled if byte swapping is enabled, @ref IfxCif_State_Disabled if byte swapping is disabled
+/**
+ * \brief Retrieves the current state of the 32-bit output word byte order swapping.
+ *
+ * \retval IfxCif_State The current state of the Mi byte order swapping.
+ *                      Range: \ref IfxCif_State_Enabled  if byte swapping is enabled.
+ *                             \ref IfxCif_State_Disabled if byte swapping is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getMiByteSwapEnableState(void);
 
-/** \brief Function to query the currently set burst length for Cb and Cr data
- * \return @ref IfxCif_MiBurstLength_4BeatBursts if 4 bytes are transferred, @ref IfxCif_MiBurstLength_8BeatBursts if 8 bytes are transferred
+/**
+ * \brief Queries the currently set burst length for Cb and Cr data.
+ *
+ * \retval IfxCif_MiBurstLength The length of the Mi Chrominance burst for data transfer.    
+ *                              Range: \ref IfxCif_MiBurstLength_4BeatBursts if 4 bytes are transferred.
+ *                                     \ref IfxCif_MiBurstLength_8BeatBursts if 8 bytes are transferred.
  */
 IFX_INLINE IfxCif_MiBurstLength IfxCif_getMiChrominanceBurstLength(void);
 
-/** \brief Function to query the currently set burst length for Y, JPEG, or RAW data
- * \return @ref IfxCif_MiBurstLength_4BeatBursts if 4 bytes are transferred, @ref IfxCif_MiBurstLength_8BeatBursts if 8 bytes are transferred
+/**
+ * \brief Function to query the currently set burst length for Y, JPEG, or RAW data.
+ * 
+ * \retval IfxCif_MiBurstLength The length of the Mi luminance burst for data transfer.    
+ *                              Range: \ref IfxCif_MiBurstLength_4BeatBursts if 4 bytes are transferred.
+ *                                     \ref IfxCif_MiBurstLength_8BeatBursts if 8 bytes are transferred.
  */
 IFX_INLINE IfxCif_MiBurstLength IfxCif_getMiLuminanceBurstLength(void);
 
-/** \brief Function to query the currently set write format of the main picture path of the memory interface
- * \return Currently set write format (one member of @ref IfxCif_MiMainPictureWriteFormat)
+/**
+ * \brief Function to query the currently set write format of the main picture path of the memory interface.
+ * 
+ * \retval IfxCif_MiMainPictureWriteFormat The currently set write format.
+ *                                         Range: \ref IfxCif_MiMainPictureWriteFormat                                
  */
 IFX_INLINE IfxCif_MiMainPictureWriteFormat IfxCif_getMiMainPictureWriteFormat(void);
 
-/** \brief Function to query the filling level that triggers an interrupt of main picture path Y component
- * \return Filling level that triggers an interrupt
+/**
+ * \brief Function to query the filling level that triggers an interrupt of main picture path Y component.
+ * 
+ * \retval uint32 The current filling level that triggers an interrupt.
+ *                Range: 0 to 0x3FFFFF
  */
 IFX_INLINE uint32 IfxCif_getMiMainPictureYInitialFillLevelInterruptOffset(void);
 
-/** \brief Function to query the filling level of the main picture Y component that triggers an interrupt
- * \return Filling level of the main picture Y component that triggers an interrupt
+/**
+ * \brief Function to query the filling level of the main picture Y component that triggers an interrupt.
+ * 
+ * \retval uint32 The interrupt offset level for the main picture Y component filling level
+ *                Range: 0 to 0x3FFFFF
  */
 IFX_INLINE uint32 IfxCif_getMiMainPictureYInterruptOffset(void);
 
-/** \brief Function to query the enabled state of the update signal of the offset counter shadow registers
- * \return @ref IfxCif_State_Enabled if update of the offset counter shadow registers is enabled (update will be executed either when a forced software update occurs or when an automatic config update signal arrives at the MI input port), @ref IfxCif_State_Disabled if update of the offset counter shadow registers is disabled
+/**
+ * \brief Queries the enabled state of the offset counter shadow registers update signal.
+ *
+ * \retval IfxCif_State The current state of the offset counter shadow registers update signal.
+ *                      Range: \ref IfxCif_State_Enabled  if the update of the offset counter shadow registers is enabled.
+ *                      								  (update will be executed either when a forced software update occurs or when an automatic config update signal arrives at the MI input port)
+ *                             \ref IfxCif_State_Disabled if the update of the offset counter shadow registers is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getMiOffsetCounterInitializationEnableState(void);
 
-/** \brief Function to skip the current or next starting main data path picture
- * \return None
+/**
+ * \brief Skips the current or next starting main data path picture.
+ *
+ * \retval None 
  */
 IFX_INLINE void IfxCif_miSkipPicture(void);
 
-/** \brief Function to enable or disable the update of the base address and buffer size shadow registers to the programmed register init values (update will be executed either when a forced software update occurs or when an automatic config update signal arrives at the MI input port)
- * \param state @ref IfxCif_State_Enabled to enable the generation of the update signal, @ref IfxCif_State_Disabled to disable the generation of the update signal
- * \return None
+/**
+ * \brief Enables or disables the automatic update of base address and buffer size shadow registers.
+ *
+ * \param[in] state The state to set.
+ *                  Range: \ref IfxCif_State_Enabled  to enable the generation of the update signal.
+ *                         \ref IfxCif_State_Disabled to disable the generation of the update signal.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setMiBaseAddressInitializationEnableState(IfxCif_State state);
 
-/** \brief Function to enable or disable the change of byte order of the 32 bit output word
- * \param enableState @ref IfxCif_State_Enabled to enable byte swapping, @ref IfxCif_State_Disabled to disable byte swapping
- * \return None
+/**
+ * \brief Enables or disables the byte swapping of the 32-bit output word.
+ *
+ * \param[in] enableState The current state of the byte swapping.          
+ *                        Range: \ref IfxCif_State_Enabled  to enable the byte swapping.
+ *                               \ref IfxCif_State_Disabled to disable the byte swapping.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCif_setMiByteSwapEnableState(IfxCif_State enableState);
 
-/** \brief Function to set the burst length for Cb and Cr data
- * \param burstLength Burst length to set
- * \return None
+/**
+ * \brief Sets the burst length for the chrominance (Cb and Cr) data in the memory interface.
+ *
+ * \param[in] burstLength The burst length to be set.
+ *                        Range: \ref IfxCif_MiBurstLength
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setMiChrominanceBurstLength(IfxCif_MiBurstLength burstLength);
 
-/** \brief Function to set the write format of the main picture path of the memory interface
- * \param format Format to set
- * \return None
+/**
+ * \brief Configures the write format for the main picture path in the memory interface.
+ *
+ * \param[in] format The write format to be set.
+ *                   Range: \ref IfxCif_MiMainPictureWriteFormat    
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setMiMainPictureWriteFormat(IfxCif_MiMainPictureWriteFormat format);
 
-/** \brief Function to set the filling level to trigger an interrupt for main picture path Y component
- * \param interruptOffset Filling level to set
- * \return None
+/**
+ * \brief Sets the filling level to trigger an interrupt for the main picture path Y component.
+ *
+ * \param[in] interruptOffset The filling level at to be set for triggering an interrupt.
+ *                            Range: 0 to 0x3FFFFF
+ *
+ * \retval None 
  */
 IFX_INLINE void IfxCif_setMiMainPictureYInitialFillLevelInterruptOffset(uint32 interruptOffset);
 
-/** \brief Function to enable or disable the update of the offset counter shadow registers (update will be executed either when a forced software update occurs or when an automatic config update signal arrives at the MI input port)
- * \param state @ref IfxCif_State_Enabled to enable the generation of the update signal, @ref IfxCif_State_Disabled to disable the generation of the update signal
- * \return None
+/**
+ * \brief Enables or disables the update of the offset counter shadow registers.
+ *        The update will be executed either when a forced software update occurs
+ *        or when an automatic config update signal arrives at the MI input port.
+ *
+ * \param[in] state The state to set for the offset counter initialization.   
+ *                  Range: \ref IfxCif_State_Enabled  to enable the generation of the update signal.
+ *                         \ref IfxCif_State_Disabled to disable the generation of the update signal.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setMiOffsetCounterInitializationEnableState(IfxCif_State state);
 
@@ -1345,146 +1846,262 @@ IFX_INLINE void IfxCif_setMiOffsetCounterInitializationEnableState(IfxCif_State 
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to clear an interrupt
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Clears the specified interrupt source.
+ *
+ * \param[in] interruptSource The source of the interrupt to be cleared.
+ *                            Range: \ref IfxCif_MiInterruptSources
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_clearMiInterrupt(IfxCif_MiInterruptSources interruptSource);
 
-/** \brief Function to clear the status information of one status clear source of the memory interface submodule
- * \param source Status information source for which to clear the status
- * \return None
+/**
+ * \brief Clears the status information for a specified source of the memory interface submodule.
+ *
+ * \param[in] source The status information source to be cleared.
+ *                   Range: \ref IfxCif_MiStatusClearSources
+ * \retval None
  */
 IFX_EXTERN void IfxCif_clearMiStatus(IfxCif_MiStatusClearSources source);
 
-/** \brief Function to query the initial base address of the ring buffer of one main picture path component
- * \param component Main picture path component for which to query the initial base address
- * \return Initial base address of the main picture path component
+/**
+ * \brief Queries the initial base address of the ring buffer for a specified main picture path component.
+ *
+ * \param[in] component Main picture path component for which to query the initial base address.
+ *                      Range: \ref IfxCif_MiMainPicturePathComponents 
+ *
+ * \retval uint32 The initial base address of the main picture path component's ring buffer.
+ *                Range: 0 to 0xFFFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getMainPictureComponentBaseInitAddress(IfxCif_MiMainPicturePathComponents component);
 
-/** \brief Function to query the masked state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set and the interrupt is enabled, @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is not set or the interrupt is disabled
+/**
+ * \brief Queries the masked state of a specific memory interface interrupt source.
+ *
+ * \param[in] interruptSource The MI interrupt source to query.
+ * 							  Range: \ref IfxCif_MiInterruptSources
+ *
+ * \retval IfxCif_InterruptTriggeredState The current masked state of Memory Interrupt Trigger.
+ * 										  Range: \ref IfxCif_InterruptTriggeredState_Triggered 	  if the interrupt request bit is set and the interrupt is enabled.
+ *  	   								  		 \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set or the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getMaskedMiInterruptTriggeredState(IfxCif_MiInterruptSources interruptSource);
 
-/** \brief Function to query the enabled state of one main data path component at the memory interface input
- * \param dataPath Main data path component for which to query the enabled state
- * \return @ref IfxCif_State_Enabled if the main data path component is enabled, @ref IfxCif_State_Disabled if the main data path component is disabled
+/**
+ * \brief Queries the enabled state of a specified main data path component at the memory interface input.
+ *
+ * \param[in] dataPath Main data path component for which to query the enabled state.
+ * 					   Range: \ref IfxCif_MiDataPaths
+ *
+ * \retval IfxCif_State The current state of Memory interface Data Path Input.
+ * 						Range: \ref IfxCif_State_Enabled  if the main data path component is enabled.
+ *							   \ref	IfxCif_State_Disabled if the main data path component is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getMiDataPathInputEnableState(IfxCif_MiDataPaths dataPath);
 
-/** \brief Function to query the enabled state of one main data path component at the memory interface output
- * \param dataPath Main data path component for which to query the enabled state
- * \return @ref IfxCif_State_Enabled if the main data path component is enabled, @ref IfxCif_State_Disabled if the main data path component is disabled
+/**
+ * \brief Function to query the enabled state of one main data path component at the memory interface output
+ *
+ * \param[in] dataPath Main data path component for which to query the enabled state.
+ *                     Range: \ref IfxCif_MiDataPaths
+ *
+ * \retval IfxCif_State The current state of Memory interface Data Path.
+ * 						Range: \ref IfxCif_State_Enabled  if the main data path component is enabled.
+ * 		                	   \ref IfxCif_State_Disabled if the main data path component is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getMiDataPathOutputEnableState(IfxCif_MiDataPaths dataPath);
 
-/** \brief Function to query the enabled state of a memory interface data path
- * \param dataPath Data path to query
- * \return @ref IfxCif_State_Enabled if the memory interface data path is enabled, @ref IfxCif_State_Disabled if the data path is disabled
+/**
+ * \brief Function to query the enabled state of a memory interface data path.
+ *
+ * \param[in] dataPath The data path to query.
+ * 					   Range: \ref IfxCif_MiDataPaths
+ *
+ * \retval IfxCif_State The current state of Memory Interface Feature.
+ * 						Range: \ref IfxCif_State_Enabled  if the memory interface data path is enabled.
+ * 		   					   \ref IfxCif_State_Disabled if the data path is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getMiFeatureEnableState(IfxCif_MiDataPaths dataPath);
 
-/** \brief Function to query the enabled state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_State_Enabled if the interrupt is enabled, @ref IfxCif_State_Disabled if the interrupt is disabled
+/**
+ * \brief Retrieves the enabled state of a specific Memory Interface interrupt source.
+ *
+ * \param[in] interruptSource The Memory Interface interrupt source to query.
+ * 							  Range: \ref IfxCif_MiInterruptSources
+ *
+ * \retval IfxCif_State The current state of Memory Interface Interrupt Source.
+ * 						Range: \ref IfxCif_State_Enabled  if the interrupt is enabled.
+ * 		   					   \ref IfxCif_State_Disabled if the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getMiInterruptEnableState(IfxCif_MiInterruptSources interruptSource);
 
-/** \brief Function to query the current base address of the ring buffer of one main picture path component
- * \param component Main Picture path component for which to query the base address
- * \return Current base address of the ring buffer of the main picture path component
+/**
+ * \brief Function to query the current base address of the ring buffer of one main picture path component.
+ *
+ * \param[in] component Main Picture path component for which to query the base address.
+ *						Range: \ref IfxCif_MiMainPicturePathComponents
+ *
+ * \retval uint32 The current base address of the ring buffer of the main picture path component.
+ * 		          Range: 0 to 0xFFFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getMiMainPictureComponentBaseAddress(IfxCif_MiMainPicturePathComponents component);
 
-/** \brief Function to query the initial size of the ring buffer of one main picture path component
- * \param component Main picture path component for which to query the intial size
- * \return Initial size of the main picture path component
+/**
+ * \brief Retrieves the initial size of the ring buffer for a specified main picture path component.
+ *
+ * \param[in] component The main picture path component for which to query the initial size.
+ * 						Range: \ref IfxCif_MiMainPicturePathComponents
+ *
+ * \retval uint32 The initial size of the ring buffer for the specified component in bytes.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getMiMainPictureComponentInitSize(IfxCif_MiMainPicturePathComponents component);
 
-/** \brief Function to query the initial offset counter inside the ring buffer of one main picture path compoent
- * \param component Main picture path component for which to query the initial offset counter
- * \return Initial offset counter value of the main picture path component
+/**
+ * \brief Retrieves the initial offset counter inside the ring buffer of one main picture path component.
+ *
+ * \param[in] component The main picture path component for which to retrieve the initial offset counter.
+ * 						Range: \ref IfxCif_MiMainPicturePathComponents
+ *
+ * \retval uint32 The initial offset counter value of the specified main picture path component.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getMiMainPictureComponentInitialOffsetCounter(IfxCif_MiMainPicturePathComponents component);
 
-/** \brief Function to query the current offset counter within the ring buffer of one main picture path component
- * \param component Main picture path component for which to query the offest counter value
- * \return Current offset counter within the ring buffer of the main picture path component
+/**
+ * \brief Function to query the current offset counter within the ring buffer of one main picture path component.
+ *
+ * \param[in] component The main picture path component for which to query the offset counter value.
+ *                      Range: \ref IfxCif_MiMainPicturePathComponents
+ *
+ * \retval uint32 The current offset counter within the ring buffer of the specified main picture path component.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getMiMainPictureComponentOffsetCounter(IfxCif_MiMainPicturePathComponents component);
 
-/** \brief Function to query the offset counter which points to the start address of the previously processed picture for one main picture path component
- * \param component Main picture path component for which to query the offset counter value
- * \return Offset counter value pointing to the start address of the previously processed picture
+/**
+ * \brief Retrieves the offset counter pointing to the start address of the previously processed picture for a specified main picture path component.
+ *
+ * \param[in] component The main picture path component for which to query the offset counter value.
+ * 						Range: \ref IfxCif_MiMainPicturePathComponents
+ *
+ * \retval uint32 The offset counter value pointing to the start address of the previously processed picture for the specified component.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getMiMainPictureComponentOffsetCounterStart(IfxCif_MiMainPicturePathComponents component);
 
-/** \brief Function to query the current size of the ring buffer of one main picture path component
- * \param component Main Picture path component for which to query the size
- * \return Current size of the ring buffer of the main picture path component
+/**
+ * \brief Queries the current size of the ring buffer for a specified main picture path component.
+ *
+ * \param[in] component The main picture path component for which to query the main picture path component size.
+ *                      Range: \ref IfxCif_MiMainPicturePathComponents
+ *
+ * \retval uint32 The current size of the ring buffer of the main picture path component.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getMiMainPictureComponentSize(IfxCif_MiMainPicturePathComponents component);
 
-/** \brief Function to query the status information of one status information source of the memory interface module
- * \param source Status information source for which to query the status information
- * \return @ref IfxCif_ErrorState_NoError if the error has occured since the last clear, @ref IfxCif_ErrorState_Error if the error has occured since the last clear
+/**
+ * \brief Function to query the status information of one status information source of the memory interface module.
+ *
+ * \param[in] source The status information source to query.
+ * 					 Range: \ref IfxCif_MiStatusInformationSources
+ *
+ * \retval IfxCif_ErrorState The current status information source of the memory interface.
+ * 							 Range: \ref IfxCif_ErrorState_NoError if no error has occurred since the last clear.
+ * 		   				     		\ref IfxCif_ErrorState_Error   if an error has occurred since the last clear.
  */
 IFX_EXTERN IfxCif_ErrorState IfxCif_getMiStatusInformation(IfxCif_MiStatusInformationSources source);
 
-/** \brief Function to query the raw state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set, @ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set
+/**
+ * \brief Function to query the raw state of a specific interrupt source.
+ *
+ * \param[in] interruptSource The Source of the interrupt.
+ * 							  Range: \ref IfxCif_MiInterruptSources
+ *
+ * \retval IfxCif_InterruptTriggeredState The current state of the interrupt trigger.
+ * 										  \ref IfxCif_InterruptTriggeredState_Triggered    if the interrupt request bit is set.
+ * 										  \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getRawMiInterruptTriggeredState(IfxCif_MiInterruptSources interruptSource);
 
-/** \brief Function to enable or disable one memory interface data path
- * \param dataPath Data path to enable or disable
- * \param enableState @ref IfxCif_State_Enabled to enable the data path, @ref IfxCif_State_Disabled to disable the data path
- * \return None
+/**
+ * \brief Enables or disables a specific memory interface data path feature.
+ *
+ * \param[in] dataPath 	  The data path to be enabled or disabled.
+ * 						  Range: \ref IfxCif_MiDataPaths
+ * \param[in] enableState The state to set for the specified data path.
+ * 						  Range: \ref IfxCif_State_Enabled  to enable the data path.
+ * 						 		 \ref IfxCif_State_Disabled to disable the data path
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setMiFeatureEnableState(IfxCif_MiDataPaths dataPath, IfxCif_State enableState);
 
-/** \brief Function to enable or disable an interrupt
- * \param interruptSource Source of the interrupt to enable or disable
- * \param interruptEnableState @ref IfxCif_State_Enabled to enable the interrupt, @ref IfxCif_State_Disabled to disable the interrupt
- * \return None
+/**
+ * \brief Function to enable or disable an interrupt.
+ *
+ * \param[in] interruptSource      The source of the interrupt to be enabled or disabled.
+ *                                 Range: \ref IfxCif_MiInterruptSources.
+ * \param[in] interruptEnableState The state to set the interrupt to.
+ * 								   Range: \ref IfxCif_State_Enabled  to enable the interrupt.
+ * 								   		  \ref IfxCif_State_Disabled to disable the interrupt.
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setMiInterruptEnableState(IfxCif_MiInterruptSources interruptSource, IfxCif_State interruptEnableState);
 
-/** \brief Function to set an interrupt request bit (does not necessarily trigger an interrupt)
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Sets the specified interrupt request bit for the given interrupt source (does not necessarily trigger an interrupt).
+ *
+ * \param[in] interruptSource The source of the interrupt.
+ * 							  Range: \ref IfxCif_MiInterruptSources
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setMiInterruptRequestBit(IfxCif_MiInterruptSources interruptSource);
 
-/** \brief Function to set the burst length for Y, JPEG, or RAW data
- * \param burstLength Burst length to set
- * \return None
+/**
+ * \brief Sets the burst length for Y, JPEG, or RAW data.
+ *
+ * \param[in] burstLength Burst length to set.
+ * 						  Range: \ref IfxCif_MiBurstLength
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setMiLuminanceBurstLength(IfxCif_MiBurstLength burstLength);
 
-/** \brief Function to set the initial base address of the ring buffer for one main picture path component
- * \param component Main picture path component for which to set the initial base address
- * \param address Base address to set (must be word aligned)
- * \return None
+/**
+ * \brief Sets the initial base address of the ring buffer for a specified main picture path component.
+ *
+ * \param[in] component The main picture path component for which to set the initial base address.
+ * 						Range: \ref IfxCif_MiMainPicturePathComponents
+ * \param[in] address   Base address to set (must be word-aligned).
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setMiMainPictureComponentBaseInitAddress(IfxCif_MiMainPicturePathComponents component, Ifx_AddressValue address);
 
-/** \brief Function to set the initial size of the ring buffer for one main picture path component
- * \param component Main picture path component for which to set the initial size
- * \param size Size to set (must be word aligned)
- * \return None
+/**
+ * \brief Sets the initial size of the ring buffer for a specified main picture path component.
+ *
+ * \param[in] component The main picture path component for which to set the initial size.
+ * 					    Range: \ref IfxCif_MiMainPicturePathComponents
+ * \param[in] size      Size to set for the ring buffer (must be word-aligned).
+ *               		Range: 0 to 0xFFFFFC
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setMiMainPictureComponentInitSize(IfxCif_MiMainPicturePathComponents component, uint32 size);
 
-/** \brief Function to set the initial offset counter inside the ring buffer for one main picture path component
- * \param component Main picture path component for which to set the initial offest counter
- * \param offsetCounter Offset counter value to set (must be word aligned)
- * \return None
+/**
+ * \brief Sets the initial offset counter inside the ring buffer for a specified main picture path component.
+ *
+ * \param[in] component     The main picture path component for which to set the initial offest counter.
+ * 						    Range: \ref IfxCif_MiMainPicturePathComponents
+ * \param[in] offsetCounter The Offset counter value to set (must be word aligned).
+ * 							Range: 0 to 0xFFFFFC
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setMiMainPictureComponentInitialOffsetCounter(IfxCif_MiMainPicturePathComponents component, uint32 offsetCounter);
 
@@ -1497,114 +2114,179 @@ IFX_EXTERN void IfxCif_setMiMainPictureComponentInitialOffsetCounter(IfxCif_MiMa
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to query the current header generation debug control mode
- * \return Currently set header generation debug control mode (one member of @ref IfxCif_JpeHeaderGenerationMode)
+/**
+ * \brief Queries the current header generation debug control mode.
+ * 
+ * \retval IfxCif_JpeHeaderGenerationMode The currently set header generation debug control mode.
+ * 		   								  Range: \ref IfxCif_JpeHeaderGenerationMode
  */
 IFX_INLINE IfxCif_JpeHeaderGenerationMode IfxCif_getJpeHeaderGenerationMode(void);
 
-/** \brief Function to query the currently set JPE header mode
- * \return Currently set JPE header mode (one member of @ref IfxCif_JpeHeaderMode)
+/**
+ * \brief Queries the currently set JPE header mode.
+ *
+ * \retval IfxCif_JpeHeaderMode The current JPE header mode.
+ * 								Range: \ref IfxCif_JpeHeaderMode
  */
 IFX_INLINE IfxCif_JpeHeaderMode IfxCif_getJpeHeaderMode(void);
 
-/** \brief Function to query the JPE encode mode
- * \return Always 1, because this is the encoder only edition
+/**
+ * \brief Retrieves the current JPE encode mode.
+ *
+ * \retval IfxCif_State The current JPE encode mode (always returns 1, as this is the encoder-only edition).
+ 	 	 	 	 	 	Range: \ref IfxCif_State
  */
 IFX_INLINE IfxCif_State IfxCif_getJpeMode(void);
 
-/** \brief Function to query the current restart interval
- * \return Current restart interval
+/**
+ * \brief Retrieves the current JPE restart interval value.
+ *
+ * \retval uint16 The current JPE restart interval value in internal cycles or counts.
+ *				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxCif_getJpeRestartInterval(void);
 
-/** \brief Function to get the current JPEG codec state
- * \return @ref IfxCif_JpeState_Busy if the JPEG codec is currently processing, @ref IfxCif_JpeState_Free if the JPEG codec is currently free
+/**
+ * \brief Retrieves the current operational state of the JPEG codec.
+ *
+ * \retval IfxCif_JpeState The current operational state of the JPEG codec.
+ * 						   Range: \ref IfxCif_JpeState_Busy if the JPEG codec is currently processing.
+ * 		   				   		  \ref IfxCif_JpeState_Free if the JPEG codec is currently idle and free.
  */
 IFX_INLINE IfxCif_JpeState IfxCif_getJpeState(void);
 
-/** \brief Function to query the current JPE Table ID
- * \return Current JPE Table ID
+/**
+ * \brief Retrieves the current JPE (Joint Photographic Experts Group) Table ID used by the CIF (Common Intermediate Format) module.
+ *
+ * \retval IfxCif_JpeTableId The current JPE Table ID in use.
+ * 							 Range: \ref IfxCif_JpeTableId
  */
 IFX_INLINE IfxCif_JpeTableId IfxCif_getJpeTableId(void);
 
-/** \brief Function to query the current encoder continuous mode
- * \return Current encoder continuous mode (one member of @ref IfxCif_JpegJfifStreamEncoderContinuousMode)
+/**
+ * \brief Queries the current continuous mode setting of the JPEG/JFIF stream encoder.
+ *
+ * \retval IfxCif_JpegJfifStreamEncoderContinuousMode The current continuous mode of the encoder.
+ *                                                    Range: \ref IfxCif_JpegJfifStreamEncoderContinuousMode
  */
 IFX_INLINE IfxCif_JpegJfifStreamEncoderContinuousMode IfxCif_getJpegJfifStreamEncoderContinuousMode(void);
 
-/** \brief Function to query the current picture encoding format
- * \return Current picture encoding format
+/**
+ * \brief Queries the current JPEG picture encoding format.
+ *
+ * \retval IfxCif_JpegPictureEncodingFormat The current picture encoding format.
+ * 											Range: \ref IfxCif_JpegPictureEncodingFormat
  */
 IFX_INLINE IfxCif_JpegPictureEncodingFormat IfxCif_getJpegPictureEncodingFormat(void);
 
-/** \brief Function to immediately start the JPEG encoder.
- * This function has to be called after @ref IfxCif_startJpegJfifStreamEncoder to start the JPEG encoder
- * \return None
+/**
+ * \brief Starts the JPEG encoder immediately.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_initJpegEncoder(void);
 
-/** \brief Function to start to generate JPEG stream header. Auto reset after one clock cycle
- * \return None
+/**
+ * \brief Function to start generating JPEG stream header. Auto-resets after one clock cycle.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCif_jpeGenerateHeader(void);
 
-/** \brief Function to set the header generation debug control mode
- * \param headerGenerationMode Header generation debug control mode to set
- * \return None
+/**
+ * \brief Sets the JPE header generation debug control mode.
+ *
+ * \param[in] headerGenerationMode The JPE header Header generation debug control mode to be set.
+ * 								   Range: \ref IfxCif_JpeHeaderGenerationMode
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpeHeaderGenerationMode(IfxCif_JpeHeaderGenerationMode headerGenerationMode);
 
-/** \brief Function to set the JPE header mode
- * \param headerMode Header mode to set
- * \return None
+/**
+ * \brief Sets the JPE header mode for image data formatting.
+ *
+ * \param[in] headerMode The JPE header mode to be set.
+ *                		 Range: \ref IfxCif_JpeHeaderMode
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpeHeaderMode(IfxCif_JpeHeaderMode headerMode);
 
-/** \brief Function to set the restart interval
- * \param interval Restart interval to set
- * \return None
+/**
+ * \brief sets the restart interval for the JPE engine.
+ *
+ * \param[in] interval Restart interval value to be set for the JPE engine.
+ * 					   Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpeRestartInterval(uint16 interval);
 
-/** \brief Function to set the JPE Table LSB
- * \param data Value to set for the JPE Table LSB
- * \return None
+/**
+ * \brief Sets the least significant byte (LSB) of the JPE table data.
+ *
+ * \param[in] data The value to be set for the LSB of the JPE table data.
+ * 				   Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpeTableDataLsb(uint8 data);
 
-/** \brief Function to set the JPE Table MSB
- * \param data Value to set for the JPE Table MSB
- * \return None
+/**
+ * \brief Sets the most significant byte (MSB) of the JPE table data.
+ *
+ * \param[in] data Value to be set as the MSB of the JPE table data.
+ * 			       Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpeTableDataMsb(uint8 data);
 
-/** \brief Function to set the JPE Table ID
- * \param tableId tableId Table ID to set
- * \return None
+/**
+ * \brief Sets the JPE table ID.
+ *
+ * \param[in] tableId The JPE table ID to be set.
+ * 					  Range: \ref IfxCif_JpeTableId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpeTableId(IfxCif_JpeTableId tableId);
 
-/** \brief Function to set the JPEG codec image sizes
- * \param hSize Image horizontal size
- * \param vSize Image vertical size
- * \return None
+/**
+ * \brief Configures the horizontal and vertical sizes of the image for the JPEG codec.
+ *
+ * \param[in] hSize Horizontal size of the image in pixels.
+ * 			        Range: 0 to 0xFFF
+ * \param[in] vSize Vertical size of the image in pixels.
+ * 					Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpegCodecImageSizes(uint16 hSize, uint16 vSize);
 
-/** \brief Function to set the stream encoder continuous mode
- * \param mode Encoder continuous mode to set
- * \return None
+/**
+ * \brief Configures the continuous mode for the JPEG JFIF stream encoder.
+ *
+ * \param[in] mode The encoder continuous mode to be set.
+ * 				   Range: \ref IfxCif_JpegJfifStreamEncoderContinuousMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpegJfifStreamEncoderContinuousMode(IfxCif_JpegJfifStreamEncoderContinuousMode mode);
 
-/** \brief Function to set the picture encoding format
- * \param format Encoding format to set
- * \return None
+/**
+ * \brief Sets the JPEG picture encoding format.
+ *
+ * \param[in] format The encoding format to set.
+ * 					 Range: \ref IfxCif_JpegPictureEncodingFormat
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setJpegPictureEncodingFormat(IfxCif_JpegPictureEncodingFormat format);
 
-/** \brief Function to start JFIF stream encoding. Auto reset after one clock cycle
- * \return None
+/**
+ * \brief Starts the JFIF stream encoder for JPEG encoding. The function automatically resets after one clock cycle.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCif_startJpegJfifStreamEncoder(void);
 
@@ -1612,144 +2294,266 @@ IFX_INLINE void IfxCif_startJpegJfifStreamEncoder(void);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to clear an interrupt
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Clears a JPE interrupt based on the specified interrupt source.
+ *
+ * \param[in] interruptSource The source of the interrupt to be cleared.
+ * 							  Range: \ref IfxCif_JpeInterruptSources
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_clearJpeInterrupt(IfxCif_JpeInterruptSources interruptSource);
 
-/** \brief Function to query the currently set Huffman Table length for AC values
- * \param table Huffman Table for which to query the current length
- * \return Current length of Huffman Table
+/**
+ * \brief Queries the the currently set Huffman Table length for AC values.
+ *
+ * \param[in] table The Huffman table for which to query the current length.
+ * 					Range: \ref IfxCif_HuffmanTables
+ *
+ * \retval uint8 The current length of the Huffman table for AC values.
+ * 				 Range: 0 to 0xFF
  */
 IFX_EXTERN uint8 IfxCif_getHuffmanAcTableLength(IfxCif_HuffmanTables table);
 
-/** \brief Function to check if a Huffman Table and a Huffman Table component is enabled for AC values
- * \param table Huffman Table to check
- * \param component Huffman Table component to check
- * \return @ref IfxCif_State_Enabled if the queried Huffman Table and the Huffman Table component is selected, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Checks if a specified Huffman Table and its component is enabled for AC values.
+ *
+ * \param[in] table 	The Huffman Table to check.
+ * 						Range: \ref IfxCif_HuffmanTables
+ * \param[in] component The Huffman Table component to check.
+ * 						Range: \ref IfxCif_HuffmanTableComponents
+ *
+ * \retval IfxCif_State The current state of the queried Huffman Ac Table and component.
+ *   					Range: \ref IfxCif_State_Enabled  if the queried Huffman Table and the Huffman Table component is selected.
+ *   						   \ref IfxCif_State_Disabled if the queried Huffman Table and the Huffman Table component is not selected.
  */
 IFX_EXTERN IfxCif_State IfxCif_getHuffmanAcTableSelectorState(IfxCif_HuffmanTables table, IfxCif_HuffmanTableComponents component);
 
-/** \brief Function to query the current Huffman Table length for DC values
- * \param table Huffman Table for which to query the current length
- * \return Current length of Huffman Table
+/**
+ * \brief Queries the current length of the Huffman DC table for the specified table identifier.
+ *
+ * \param[in] table The Huffman table identifier.
+ * 					Range: \ref IfxCif_HuffmanTables
+ *
+ * \retval uint8 The current length of Huffman DC Table.
+ * 			     Range: 0 to 0xFF
  */
 IFX_EXTERN uint8 IfxCif_getHuffmanDcTableLength(IfxCif_HuffmanTables table);
 
-/** \brief Function to check if a Huffman Table and a Huffman Table component is enabled for DC values
- * \param table Huffman Table to check
- * \param component Huffman Table component to check
- * \return @ref IfxCif_State_Enabled if the queried Huffman Table and the Huffman Table component is selected, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Check if a Huffman Table and a Huffman Table component is enabled for DC values.
+ *
+ * \param[in] table 	The Huffman table to check.
+ * 						Range: \ref IfxCif_HuffmanTables
+ * \param[in] component The Huffman table component to check.
+ * 						Range: \ref IfxCif_HuffmanTableComponents
+ *
+ * \retval IfxCif_State The current state of Huffman Dc Table Selector.
+ * 						Range: \ref IfxCif_State_Enabled  if the specified Huffman table and component are enabled for DC values.
+ * 							   \ref IfxCif_State_Disabled if the specified Huffman table and component are not enabled for DC values.
  */
 IFX_EXTERN IfxCif_State IfxCif_getHuffmanDcTableSelectorState(IfxCif_HuffmanTables table, IfxCif_HuffmanTableComponents component);
 
-/** \brief Function to query the state of one JPE debug signal source
- * \param source Signal source for which to query the debug signal state
- * \return @ref IfxCif_JpeDebugSignalState_Inactive if the debug signal is currently inactive, @ref IfxCif_JpeDebugSignalState_Active if the debug signal is currently active
+/**
+ * \brief Function to query the state of a JPE debug signal source.
+ *
+ * \param[in] source The source for which to query the debug signal state.
+ * 					 Range: \ref IfxCif_JpeDebugSignalSources
+ *
+ * \retval IfxCif_JpeDebugSignalState The Current state of an JPE debug signal source.
+ * 									  Range: \ref IfxCif_JpeDebugSignalState_Inactive if the debug signal is currently inactive.
+ * 									  	     \ref IfxCif_JpeDebugSignalState_Active   if the debug signal is currently active.
  */
 IFX_EXTERN IfxCif_JpeDebugSignalState IfxCif_getJpeDebugSignalState(IfxCif_JpeDebugSignalSources source);
 
-/** \brief Function to query the enabled state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_State_Enabled if the interrupt is enabled, @ref IfxCif_State_Disabled if the interrupt is disabled
+/**
+ * \brief Function to query the enabled state of a JPE interrupt source.
+ *
+ * \param[in] interruptSource The JPE interrupt source to query.
+ * 							  Range: \ref IfxCif_JpeInterruptSources
+ *
+ * \retval IfxCif_State The current state of the JPE interrupt source.
+ * 						Range: \ref IfxCif_State_Enabled  if the interrupt is enabled.
+ * 							   \ref IfxCif_State_Disabled if the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getJpeInterruptEnableState(IfxCif_JpeInterruptSources interruptSource);
 
-/** \brief Function to query the currently selected Q-Table for one component
- * \param component Component for which to query the currently selected Q-Table
- * \return Currently selected Q-Table
+/**
+ * \brief Retrieves the currently selected Q-Table for a specified JPEG component.
+ *
+ * \param[in] component The component for which to query the currently selected Q-Table.
+ *						Range: \ref IfxCif_JpeQTableSelectorComponents
+ *
+ * \retval IfxCif_JpeQTableSelector The currently selected Q-Table for the specified component.
+ * 									Range: \ref IfxCif_JpeQTableSelector
  */
 IFX_EXTERN IfxCif_JpeQTableSelector IfxCif_getJpeQTableSelector(IfxCif_JpeQTableSelectorComponents component);
 
-/** \brief Function to query the current enabled state of the scaling of an input value source
- * \param source Input value source for which to query the enabled state
- * \return @ref IfxCif_State_Enabled if scaling is enabled, @ref IfxCif_State_Disabled if scaling is disabled
+/**
+ * \brief Queries the enabled state of scaling for a specified input value source.
+ *
+ * \param[in] source Input value source for which to query the enabled state.
+ * 				     Range: \ref IfxCif_JpeScalingValueSources
+ *
+ * \retval IfxCif_State The current state of the scaling of an input value source.
+ * 					    Range: \ref IfxCif_State_Enabled  if the scaling is enabled for the specified source.
+ * 		   					   \ref IfxCif_State_Disabled if the scaling is disabled for the specified source.
  */
 IFX_EXTERN IfxCif_State IfxCif_getJpeScalingEnableState(IfxCif_JpeScalingValueSources source);
 
-/** \brief Function to query the currently set JPEG codec image size of one tier
- * \param tier Tier for which to query the JPEG codec image size
- * \return Currently set image size for R2B and SGEN blocks
+/**
+ * \brief Queries the currently set JPEG codec image size for a specified tier.
+ *
+ * \param[in] tier The tier for which to query the JPEG codec image size.
+ * 				   Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The currently set image size for R2B and SGEN blocks.
+ *                Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getJpegCodecImageSize(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the masked state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set and the interrupt is enabled, @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is not set or the interrupt is disabled
+/**
+ * \brief Function to query the masked state of a JPE interrupt.
+ *
+ * \param[in] interruptSource The JPE interrupt source to query.
+ * 							  Range: \ref IfxCif_JpeInterruptSources
+ *
+ * \retval IfxCif_InterruptTriggeredState The current masked state of a JPE interrupt.
+ * 										  Range: \ref IfxCif_InterruptTriggeredState_Triggered    if the interrupt request bit is set and the interrupt is enabled.
+ * 										  		 \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set or the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getMaskedJpeInterruptTriggeredState(IfxCif_JpeInterruptSources interruptSource);
 
-/** \brief Function to query the raw state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set, @ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set
+/**
+ * \brief Function to query the raw state of a JPE interrupt source.
+ *
+ * \param[in] interruptSource The JPE interrupt source to query.
+ *							  Range: \ref IfxCif_JpeInterruptSources
+ *
+ * \retval IfxCif_InterruptTriggeredState The current raw state of a JPE interrupt source.
+ * 										  Range: \ref IfxCif_InterruptTriggeredState_Triggered    if the interrupt request bit for the specified source is set.
+ *          							  		 \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit for the specified source is not set.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getRawJpeInterruptTriggeredState(IfxCif_JpeInterruptSources interruptSource);
 
 /**
- * \return None
+ * \brief Programs a JPE table with specified data.
+ *
+ * \param[in] tableId    The identifier of the JPE table to be programmed.
+ * 					     Range: \ref IfxCif_JpeTableId
+ * \param[in] tableEntry Pointer to the data to be programmed into the specified JPE table.
+ * \param[in] length     The number of bytes to be programmed into the table.
+ * 						 Range: 0xFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_programJpeTable(IfxCif_JpeTableId tableId, const uint8 *tableEntry, uint8 length);
 
-/** \brief Function to set the Huffman Table length for AC values
- * \param table Huffman Table for which to set the length
- * \param length Length to set
- * \return None
+/**
+ * \brief Sets the length of the specified AC Huffman table.
+ *
+ * \param[in] table  The Huffman table to configure.
+ * 					 Range: \ref IfxCif_HuffmanTables
+ * \param[in] length The length to set for the specified Huffman table.
+ * 					 Range: 0xFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setHuffmanAcTableLength(IfxCif_HuffmanTables table, uint8 length);
 
-/** \brief Function to set the Huffman Table selector for AC Values
- * \param table Huffman Table to select
- * \param component Huffman Table component to select
- * \return None
+/**
+ * \brief Sets the Huffman Table selector for AC Values.
+ *
+ * \param[in] table     The Huffman table to select.
+ * 					    Range: \ref IfxCif_HuffmanTables
+ * \param[in] component The Huffman table component to select.
+ * 						Range: \ref IfxCif_HuffmanTableComponents
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setHuffmanAcTableSelector(IfxCif_HuffmanTables table, IfxCif_HuffmanTableComponents component);
 
-/** \brief Function to set the Huffman Table length for DC values
- * \param table Huffman Table for which to set the length
- * \param length Length to set
- * \return None
+/**
+ * \brief Sets the Huffman DC table length for the specified table.
+ *
+ * \param[in] table  Huffman Table for which length to be set.
+ * 					 Range: \ref IfxCif_HuffmanTables
+ * \param[in] length The length to be set for the specified Huffman table.
+ * 					 Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setHuffmanDcTableLength(IfxCif_HuffmanTables table, uint8 length);
 
-/** \brief Function to set the Huffman Table selector for DC values
- * \param table Huffman Table to select
- * \param component Huffman Table component to select
- * \return None
+/**
+ * \brief Sets the Huffman Table selector for DC values.
+ *
+ * \param[in] table     The Huffman table to select.
+ * 				        Range: \ref IfxCif_HuffmanTables
+ * \param[in] component The Huffman table component to configure.
+ * 						Range: \ref IfxCif_HuffmanTableComponents
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setHuffmanDcTableSelector(IfxCif_HuffmanTables table, IfxCif_HuffmanTableComponents component);
 
-/** \brief Function to enable or disable an interrupt
- * \param interruptSource Source of the interrupt to enable or disable
- * \param interruptEnableState @ref IfxCif_State_Enabled to enable the interrupt, @ref IfxCif_State_Disabled to disable the interrupt
- * \return None
+/**
+ * \brief Enables or disables a JPE interrupt source.
+ *
+ * \param[in] interruptSource      The JPE interrupt source to configure.
+ * 								   Range: \ref IfxCif_JpeInterruptSources
+ * \param[in] interruptEnableState The state to set for the interrupt source.
+ *                                 Range: \ref IfxCif_State_Enabled  to enable the interrupt.
+ *                                 	      \ref IfxCif_State_Disabled to disable the interrupt.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setJpeInterruptEnableState(IfxCif_JpeInterruptSources interruptSource, IfxCif_State interruptEnableState);
 
-/** \brief Function to set an interrupt request bit (does not necessarily trigger an interrupt)
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Sets an interrupt request bit for the specified JPE interrupt source.
+ *        This function does not necessarily trigger an interrupt but sets the request bit.
+ *
+ * \param[in] interruptSource The source of the JPE interrupt to be set.
+ * 							  Range: \ref IfxCif_JpeInterruptSources
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setJpeInterruptRequestBit(IfxCif_JpeInterruptSources interruptSource);
 
-/** \brief Function to set the Q-Table selector for one component
- * \param component Component for which to select the Q-Table
- * \param selector Q-Table to select
- * \return None
+/**
+ * \brief Sets the Q-Table selector for a specific component.
+ *
+ * \param[in] component The color component for which to select the Q-Table.
+ * 						Range: \ref IfxCif_JpeQTableSelectorComponents
+ * \param[in] selector  The Q-Table to select.
+ * 						Range: \ref IfxCif_JpeQTableSelector
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setJpeQTableSelector(IfxCif_JpeQTableSelectorComponents component, IfxCif_JpeQTableSelector selector);
 
-/** \brief Function to enable or disable scaling of one input value source
- * \param source Input value source for which to query the enabled state
- * \param scalingEnable @ref IfxCif_State_Enabled to enable scaling, @ref IfxCif_State_Disabled to disable scaling
- * \return None
+/**
+ * \brief Configures whether scaling is enabled or disabled for a specific input value source.
+ *
+ * \param[in] source        Input value source for which to configure the scaling state.
+ *             		        Range: \ref IfxCif_JpeScalingValueSources
+ * \param[in] scalingEnable State to set for scaling.
+ *                          Range: \ref IfxCif_State_Enabled  to enable scaling.
+ *                          	   \ref IfxCif_State_Disabled to disable scaling
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setJpeScalingEnableState(IfxCif_JpeScalingValueSources source, IfxCif_State scalingEnable);
 
-/** \brief Function to set the JPEG codec image size of one tier
- * \param tier Tier for which to set the JPEG codec image size
- * \param size Image size for R2B and SGEN blocks
- * \return None
+/**
+ * \brief Sets the JPEG codec image size for a specified tier.
+ *
+ * \param[in] tier  The tier for which to set the JPEG codec image size.
+ * 				    Range: \ref IfxCif_ImageTiers
+ * \param [in] size The Image size for R2B and SGEN blocks.
+ * 					Range: 0 to 0xFFF
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setJpegCodecImageSize(IfxCif_ImageTiers tier, uint16 size);
 
@@ -1762,25 +2566,42 @@ IFX_EXTERN void IfxCif_setJpegCodecImageSize(IfxCif_ImageTiers tier, uint16 size
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to query the currently set watchdog predivider
- * \return Currently set predivider
+/**
+ * \brief Retrieves the currently configured predivider value for the Security Watchdog Counter.
+ *
+ * \retval uint16 The currently set predivider value.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxCif_getSecurityWatchdogCounterPredivider(void);
 
-/** \brief Function to query the enabled state of the watchdog unit
- * \return @ref IfxCif_State_Enabled if the watchdog unit is enabled, @ref IfxCif_State_Disabled if the watchdog unit is disabled
+/**
+ * \brief Queries and returns the enabled state of the Security Watchdog unit.
+ *
+ * \return IfxCif_State The current states of the Security Watchdog unit.
+ * 						Range: \ref IfxCif_State_Enabled  if the Security Watchdog is enabled.
+ *         					   \ref IfxCif_State_Disabled if the Security Watchdog is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getSecurityWatchdogEnableState(void);
 
-/** \brief Function to set the watchdog predivider counter (A value of 0 means that the Watchdog Counters are increased with every CIF clock cycle. Every other value N leads to an increment at every N+1th cycle)
- * \param predivider Predivider to set
- * \return None
+/**
+ * \brief Sets the watchdog predivider counter for the CIF security watchdog. (A value of 0 means the Watchdog Counters are incremented with every CIF clock cycle.
+ *        For any other value N, the counters are incremented every N+1th cycle).
+ *
+ * \param[in] predivider The predivider value to set.
+						 Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setSecurityWatchdogCounterPredivider(uint16 predivider);
 
-/** \brief Function to enable or disable the watchdog unit
- * \param enableState @ref IfxCif_State_Enabled to enable the watchdog unit, @ref IfxCif_State_Disabled to disable the watchdog unit
- * \return None
+/**
+ * \brief Function to enable or disable the security watchdog unit.
+ *
+ * \param[in] enableState The state to set for the security watchdog unit.
+ *                        Range: \ref IfxCif_State_Enabled  to enable the watchdog unit.
+ *                        		 \ref IfxCif_State_Disabled to disable the watchdog unit.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setSecurityWatchdogEnableState(IfxCif_State enableState);
 
@@ -1788,61 +2609,111 @@ IFX_INLINE void IfxCif_setSecurityWatchdogEnableState(IfxCif_State enableState);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to clear an interrupt
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Clears a security watchdog interrupt.
+ *
+ * \param[in] interruptSource The source of the interrupt to be cleared.
+ *                            Range: \ref IfxCif_SecurityWatchdogInterruptSources
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_clearSecurityWatchdogInterrupt(IfxCif_SecurityWatchdogInterruptSources interruptSource);
 
-/** \brief Function to get the masked state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set and the interrupt is enabled, @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is not set or the interrupt is disabled
+/**
+ * \brief Gets the masked state of a security watchdog interrupt.
+ * 
+ * \param[in] interruptSource The source of the security watchdog interrupt to check.
+ *                            Range: \ref IfxCif_SecurityWatchdogInterruptSources.
+ * 
+ * \retval IfxCif_InterruptTriggeredState The current state of the interrupt source.
+ * 										  Range: \ref IfxCif_InterruptTriggeredState_Triggered    if the interrupt request bit is set and the interrupt is enabled.
+ * 										  		 \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set or the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getMaskedSecurityWatchdogInterruptTriggeredState(IfxCif_SecurityWatchdogInterruptSources interruptSource);
 
-/** \brief Function to get the raw state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set, @ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set
+/**
+ * \brief Gets the raw state of a security watchdog interrupt.
+ *
+ * \param[in] interruptSource The source of the security watchdog interrupt to query.
+ *                            Range: \ref IfxCif_SecurityWatchdogInterruptSources.
+ *
+ * \retval IfxCif_InterruptTriggeredState The current state of an interrupt.
+ * 		   								  Range: \ref IfxCif_InterruptTriggeredState_Triggered 	  if the interrupt request bit is set.
+ *		   								  		 \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getRawSecurityWatchdogInterruptTriggeredState(IfxCif_SecurityWatchdogInterruptSources interruptSource);
 
-/** \brief Function to query the enabled state of an interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_State_Enabled if the interrupt is enabled, @ref IfxCif_State_Disabled if the interrupt is disabled
+/**
+ * \brief Retrieves the enabled state of a specified security watchdog interrupt source.
+ *
+ * \param[in] interruptSource The interrupt source to query.
+ * 							  Range: \ref IfxCif_SecurityWatchdogInterruptSources
+ *
+ * \retval IfxCif_State The current state of the interrupt source.
+ * 						Range: \ref IfxCif_State_Enabled  if the interrupt is enabled.
+ *  						   \ref IfxCif_State_Disabled if the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getSecurityWatchdogInterruptEnableState(IfxCif_SecurityWatchdogInterruptSources interruptSource);
 
-/** \brief Function to query the current value of a timeout counter of one tier
- * \param tier Tier for which to query the timeout counter
- * \param timeoutCounter Timeout counter to query
- * \return Current timeout
+/**
+ * \brief Retrieves the current timeout value for a specified security watchdog counter in a given tier.
+ *
+ * \param[in] tier 			 Tier for which to query the timeout counter.
+ * 							 Range:\ref IfxCif_ImageTiers
+ * \param[in] timeoutCounter The specific timeout counter to query.
+ * 							 Range: \ref IfxCif_SecurityWatchdogTimeoutCounters
+ *
+ * \retval uint16 The current timeout value of the specified counter in the given tier.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_EXTERN uint16 IfxCif_getSecurityWatchdogTimeout(IfxCif_ImageTiers tier, IfxCif_SecurityWatchdogTimeoutCounters timeoutCounter);
 
-/** \brief Function to reset one watchdog counter
- * \param counter Counter to reset
- * \return None
+/**
+ * \brief Resets the specified security watchdog counter to its initial state.
+ *
+ * \param[in] counter The watchdog counter to reset.
+ * 					  Range: \ref IfxCif_SecurityWatchdogCounters
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_resetSecurityWatchdogCounter(IfxCif_SecurityWatchdogCounters counter);
 
-/** \brief Function to enable or disable an interrupt
- * \param interruptSource Source of the interrupt to enable or disable
- * \param interruptEnableState @ref IfxCif_State_Enabled to enable the interrupt, @ref IfxCif_State_Disabled to disable the interrupt
- * \return None
+/**
+ * \brief Configures the enable state of a security watchdog interrupt.
+ *
+ * \param[in] interruptSource      The source of the interrupt to configure.
+ * 								   Range: \ref IfxCif_SecurityWatchdogInterruptSources.
+ * \param[in] interruptEnableState The state to set for the interrupt.
+ *                                 Range: \ref IfxCif_State_Enabled  if the interrupt is enabled.
+ *                                 		  \ref IfxCif_State_Disabled if the interrupt is disabled.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setSecurityWatchdogInterruptEnableState(IfxCif_SecurityWatchdogInterruptSources interruptSource, IfxCif_State interruptEnableState);
 
-/** \brief Function to set an interrupt request bit (does not necessarily trigger an interrupt)
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Sets an interrupt request bit for a specified security watchdog interrupt source.
+ *        This function does not necessarily trigger an interrupt but sets the request bit.
+ *
+ * \param[in] interruptSource The source of the interrupt to set the request bit for.
+ * 							  Range: \ref IfxCif_SecurityWatchdogInterruptSources
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setSecurityWatchdogInterruptRequestBit(IfxCif_SecurityWatchdogInterruptSources interruptSource);
 
-/** \brief Function to set the timeout for a watchdog timeout counter of one tier. A value of 0 disables the timeout
- * \param tier Tier for which to set the timeout
- * \param timeoutCounter Timeout counter for which to set the timeout
- * \param timeout Timeout to set
- * \return None
+/**
+ * \brief Sets the timeout for a watchdog timeout counter of a specified tier.
+ *        A timeout value of 0 disables the timeout.
+ *
+ * \param[in] tier           The tier for which to set the timeout.
+ * 						     Range: \ref IfxCif_ImageTiers
+ * \param[in] timeoutCounter The watchdog timeout counter to configure.
+ * 							 Range: \ref IfxCif_SecurityWatchdogTimeoutCounters
+ * \param[in] timeout        The timeout value to set.
+ * 							 Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setSecurityWatchdogTimeout(IfxCif_ImageTiers tier, IfxCif_SecurityWatchdogTimeoutCounters timeoutCounter, uint16 timeout);
 
@@ -1855,39 +2726,67 @@ IFX_EXTERN void IfxCif_setSecurityWatchdogTimeout(IfxCif_ImageTiers tier, IfxCif
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to query the enabled state of image stabilization
- * \return @ref IfxCif_State_Enabled if image stabilization is enabled, @ref IfxCif_State_Disabled if image stabilization is disabled
+/**
+ * \brief Queries and returns the enabled state of image stabilization.
+ *
+ * \retval IfxCif_State The current state of the Image stabilization.
+ * 						Range: \ref IfxCif_State_Enabled  if image stabilization is enabled.
+  	  	  	  				   \ref IfxCif_State_Disabled if image stabilization is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getIspisEnableState(void);
 
-/** \brief Function to query the current image stabilization recenter value
- * \return Current image stabilization recenter value
+/**
+ * \brief Retrieves the current image stabilization recenter value.
+ *
+ * \retval uint8 The current image stabilization recenter value.
+ * 				 Range: 0 Recenter feature switched off For all other values recentering is active (cur_h/v_offs-H/V_OFFS)/2 power(recenter)
  */
 IFX_INLINE uint8 IfxCif_getIspisRecenterValue(void);
 
-/** \brief Function to enable or disable image stabilization
- * \param enableState @ref IfxCif_State_Enabled to enable image stabilization, @ref IfxCif_State_Disabled to disable image stabilization
- * \return None
+/**
+ * \brief Enables or disables the image stabilization feature.
+ *
+ * \param[in] enableState The state to set for image stabilization.
+ *                        Range: \ref IfxCif_State_Enabled	to enable image stabilization.
+ *                        	     \ref IfxCif_State_Disabled to disable image stabilization.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspisEnableState(IfxCif_State enableState);
 
-/** \brief Function to set the image stabilization offsets of the output window
- * \param hOffset Horizontal Offset
- * \param vOffset Vertical Offset
- * \return None
+/**
+ * \brief Sets the image stabilization offsets of the output window.
+ *
+ * \param [in] hOffset The horizontal offset configuration.
+ * 					   Range: \ref  IfxCif_ImageTiers
+ * \param[in] vOffset  The vertical offset value.
+ * 					   Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspisOutputWindowOffsets(IfxCif_ImageTiers hOffset, uint16 vOffset);
 
-/** \brief Function to set the picture size
- * \param hSize Horizontal Picture Size
- * \param vSize Vertical Picture Size
- * \return None
+/**
+ * \brief Configures the ISPIS Picture Sizes with the specified horizontal and vertical picture sizes.
+ *
+ * \param[in] hSize Horizontal size of the picture.
+ * 					Range: 001H (ITU-R BT.656 YUV)
+ * 					 	   002H (ITU-R BT.601 YUV)
+ * 					 	   003H (ITU-R BT.601 Bayer RGB)
+ * 					 	   005H (ITU-R BT.656 Bayer RGB)
+ * \param[in] vSize Vertical size of the picture.
+ *					Range: 0 to 0xFFF
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspisPictureSizes(uint16 hSize, uint16 vSize);
 
-/** \brief Function to set the image stabilization recenter value
- * \param value Recenter value to set (0 to disabled recenter value, for all other values recentering is active (cur_h/v_offs-H/V_OFFS)/2 power(recenter))
- * \return None
+/**
+ * \brief Sets the image stabilization recenter value.
+ *
+ * \param[in] value Recenter value to set.
+ * 					Range: 0 to disabled recenter value, for all other values recentering is active (cur_h/v_offs-H/V_OFFS)/2 power(recenter)).
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setIspisRecenterValue(uint8 value);
 
@@ -1895,72 +2794,126 @@ IFX_INLINE void IfxCif_setIspisRecenterValue(uint8 value);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to query the current camera displacement for one tier
- * \param tier Tier for which to query the camera displacement
- * \return Current camera displacement
+/**
+ * \brief Function to query the current camera displacement for one tier.
+ * 
+ * \param[in] tier The tier for which to query the camera displacement.
+ * 				   Range: \ref IfxCif_ImageTiers
+ * 
+ * \retval uint16 The current camera displacement value.
+ *				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getIspisCameraDisplacement(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the offset of the current picture for one tier
- * \param tier Tier for which to query the offset
- * \return Offset of the current picture
+/**
+ * \brief Function to query the offset of the current picture for one tier
+ *
+ * \param[in] tier The tier for which to query the offset.
+ * 				   Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The offset of the current picture.
+ *				  Range: 0 to 0x1FFF
  */
 IFX_EXTERN uint16 IfxCif_getIspisCurrentPictureOffset(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the picture size of the current picture for one tier
- * \param tier Tier for which to query the picture size
- * \return Picture size of the current picture
+/**
+ * \brief Queries the picture size of the current picture for a specified tier.
+ *
+ * \param[in] tier The tier for which to query the picture size.
+ * 				   Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The picture size of the current picture for the specified tier.
+ * 				  Range: 0 to 0x1FFF
  */
 IFX_EXTERN uint16 IfxCif_getIspisCurrentPictureSize(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the current maximum displacement for one tier
- * \param tier Tier for which to query the maximum displacement
- * \return Current maximum displacement
+/**
+ * \brief Queries the current maximum displacement for a specified image tier.
+ *
+ * \param[in] tier The image tier for which to query the maximum displacement.
+ * 				   Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current maximum displacement in pixels.
+ * 				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getIspisMaximumDisplacement(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the current image stabilization offset of the output window of one tier
- * \param tier Tier for which to query the offset
- * \return Current offset
+/**
+ * \brief Function to query the current image stabilization offset of the output window for a specified tier.
+ *
+ * \param[in] tier The tier for which to query the offset.
+ * 					Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current image stabilization offset of the output window for the specified tier.
+ * 				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getIspisOffsetOutputWindow(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the current picture size for one tier
- * \param tier Tier for which to query the picture size
- * \return Current picture size
+/**
+ * \brief Function to query the current picture size for one tier.
+ *
+ * \param[in] tier The tier for which to query the picture size.
+ * 				   Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current picture size in pixels.
+ * 				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getIspisPictureSize(IfxCif_ImageTiers tier);
 
-/** \brief Function to query the enabled state of image stabilization recenter feature
- * \return @ref IfxCif_State_Enabled if the image stabilization recenter feature is enabled, @ref IfxCif_State_Disabled if the image stabilization recenter feature is disabled
+/**
+ * \brief Queries and returns the enabled state of the image stabilization recenter feature.
+ *
+ * \retval IfxCif_State	The current state of image stabilization recenter feature.
+ * 						Range: \ref IfxCif_State_Enabled  if the image stabilization recenter feature is enabled.
+ * 							   \ref IfxCif_State_Disabled if the image stabilization recenter feature is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getIspisRecenterEnableState(void);
 
-/** \brief Function to set the camera displacement for one tier
- * \param tier Tier for which to set the camera displacement
- * \param displacement Camera displacement to set
- * \return None
+/**
+ * \brief Sets the camera displacement value for a specified tier.
+ *
+ * \param[in] tier 		   The tier for which the camera displacement is to be set.
+ * 						   Range: 0 to 0xFFFF
+ * \param[in] displacement The camera displacement value to be set for the specified tier.
+ * 						   Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspisCameraDisplacement(uint16 tier, uint16 displacement);
 
-/** \brief Function to set the maximum displacement for one tier
- * \param tier Tier for which to set the maximum displacement
- * \param displacement Displacement to set
- * \return None
+/**
+ * \brief Sets the maximum displacement for a specified image tier.
+ *
+ * \param[in] tier         The image tier for which to set the maximum displacement.
+ * 				   		   Range: \ref IfxCif_ImageTiers
+ * \param[in] displacement The maximum displacement value to set.
+ * 						   Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspisMaximumDisplacement(IfxCif_ImageTiers tier, uint16 displacement);
 
-/** \brief Function to set the image stabilization offset of the output window of one tier
- * \param tier Tier for which to set the offset
- * \param offset Offset to set
- * \return None
+/**
+ * \brief Sets the image stabilization offset of the output window for a specified tier.
+ *
+ * \param[in] tier   The tier for which the offset is to be set.
+ * 				     Range: \ref IfxCif_ImageTiers
+ * \param[in] offset Offset value to be applied to the output window.
+ * 					 Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspisOutputWindowOffset(IfxCif_ImageTiers tier, uint16 offset);
 
-/** \brief Function to set the picture size for one tier
- * \param tier Tier for which to set the picture size
- * \param size Size to set
- * \return None
+/**
+ * \brief Sets the picture size for a specific image tier.
+ *
+ * \param[in] tier    The image tier for which to set the size.
+ * 					  Range: \ref IfxCif_ImageTiers
+ * \param[in] sizeThe size to set for the specified tier.
+ * 					  Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setIspisPictureSize(IfxCif_ImageTiers tier, uint16 size);
 
@@ -1973,320 +2926,584 @@ IFX_EXTERN void IfxCif_setIspisPictureSize(IfxCif_ImageTiers tier, uint16 size);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to clear one extra path error
- * \param source Extra path error to clear
- * \return None
+/**
+ * \brief Clears a specific extra path error source.
+ *
+ * \param[in] source The extra path error source to clear.
+ * 					 Range: \ref IfxCif_EpErrorClearSources
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_clearEpError(IfxCif_EpErrorClearSources source);
 
-/** \brief Function to clear an interrupt
- * \param z Extra path for which to clear the interrupt
- * \param interruptSource Source of the interrupt
- * \return None
+/**
+ * \brief Clears the specified endpoint interrupt for the given extra path.
+ *
+ * \param[in] z 			  The extra path for which the interrupt should be cleared.
+ * 							  Range: \ref IfxCif_ExtraPath
+ * \param[in] interruptSource The source of the interrupt to be cleared.
+ * 							  Range: \ref IfxCif_EpInterrupts
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_clearEpInterrupt(IfxCif_ExtraPath z, IfxCif_EpInterrupts interruptSource);
 
-/** \brief Function to trigger an immediate configuration update for one extra path
- * \param z Function to trigger an immediate configuration update for one extra path
- * \return None
+/**
+ * \brief Triggers an immediate configuration update for a specified extra path.
+ *
+ * \param[in] z Triggers an immediate configuration update for one extra path.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_epForceConfigurationUpdate(IfxCif_ExtraPath z);
 
-/** \brief Function to skip one picture of one extra path
- * \param z Extra path for which to skip one picture
- * \return None
+/**
+ * \brief Function to skip one picture of one extra path.
+ * 
+ * \param[in] z Extra path for which to skip one picture.
+ * 				Range: \ref IfxCif_ExtraPath
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxCif_epSkipPicture(IfxCif_ExtraPath z);
 
-/** \brief Function to query the current base address of the ring buffer of one extra path
- * \param z Extra path for which to query the current base address of the ring buffer
- * \return Current base address of the ring buffer
+/**
+ * \brief Function to query the current base address of the ring buffer of one extra path.
+ *
+ * \param[in] z The extra path for which to query the current base address of the ring buffer.
+ *              Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint32 The current base address of the ring buffer.
+ * 				  Range: 0 to 0xFFFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpBaseAddress(IfxCif_ExtraPath z);
 
-/** \brief Function to query the initial base address of the ring buffer of one extra path
- * \param z Extra path for which to query the initial base address
- * \return Initial base address of the ring buffer of the extra path
+/**
+ * \brief Function to query the initial base address of the ring buffer of one extra path.
+ *
+ * \param[in] z The extra path for which to query the initial base address.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint32 The initial base address of the ring buffer of the specified extra path.
+ * 				  Range: 0 to 0xFFFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpBaseInitAddress(IfxCif_ExtraPath z);
 
-/** \brief Function to query the image cropping camera displacement of one tier of one extra path
- * \param z Extra path for which to query the image cropping camera displacement
- * \param tier Tier for which to query the image cropping camera displacement
- * \return Current image cropping camera displacement
+/**
+ * \brief Function to query the image cropping camera displacement of one tier of one extra path.
+ *
+ * \param[in] z    The extra path for which to query the image cropping camera displacement.
+ *             	   Range: \ref IfxCif_ExtraPath
+ * \param[in] tier The tier for which to query the image cropping camera displacement.
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current image cropping camera displacement value.
+ * 				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getEpCroppingCameraDisplacement(IfxCif_ExtraPath z, IfxCif_ImageTiers tier);
 
-/** \brief Function to query the current image cropping picture offset of one tier of one extra path
- * \param z Extra path for which to query the current image cropping picture offset
- * \param tier Tier for which to query the current image cropping picture offset
- * \return Current image cropping picture offset
+/**
+ * \brief Function to query the current image cropping picture offset of one tier of one extra path.
+ * 
+ * \param[in] z    The extra path for which to query the current image cropping picture offset.
+ * 				   Range: \ref IfxCif_ExtraPath
+ * \param[in] tier The tier for which to query the current image cropping picture offset. 
+ * 				   Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current image cropping picture offset.
+ * 				  Range: 0 to 0x1FFF
  */
 IFX_EXTERN uint16 IfxCif_getEpCroppingCurrentPictureOffset(IfxCif_ExtraPath z, IfxCif_ImageTiers tier);
 
-/** \brief Function to query the current image cropping picture size of one tier of one extra path
- * \param z Extra path for which to query the current image cropping picture size
- * \param tier Tier for which to query the current image cropping picture size
- * \return Current image cropping picture size
+/**
+ * \brief Function to query the current image cropping picture size of one tier of one extra path.
+ *
+ * \param[in] z    The extra path for which to query the current image cropping picture size.
+ *             	   Range: \ref IfxCif_ExtraPath
+ * \param[in] tier The tier for which to query the current image cropping picture size.
+ * 				   Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current image cropping picture size.
+ *				  Range: 0 to 0x1FFF
  */
 IFX_EXTERN uint16 IfxCif_getEpCroppingCurrentPictureSize(IfxCif_ExtraPath z, IfxCif_ImageTiers tier);
 
-/** \brief Function to query the image cropping enabled state of one extra path
- * \param z Extra path for which to query the image cropping enabled state
- * \return @ref IfxCif_State_Enabled if image cropping is enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Function to query the image cropping enabled state of one extra path.
+ *
+ * \param[in] z The extra path for which to query the image cropping enabled state.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval IfxCif_State The current endpoint cropping state.
+ * 						Range: \ref IfxCif_State_Enabled  if the image cropping is enabled for the specified extra path.
+ * 		  			    	   \ref IfxCif_State_Disabled if the image cropping is disabled for the specified extra path.
  */
 IFX_EXTERN IfxCif_State IfxCif_getEpCroppingEnableState(IfxCif_ExtraPath z);
 
-/** \brief Function to query the maximum displacement of one tier of one extra path
- * \param z Extra path for which to query the maximum displacement
- * \param tier Tier for which to query the maximum displacement
- * \return Current maximum displacement
+/**
+ * \brief Function to query the maximum displacement of one tier of one extra path.
+ *
+ * \param[in] z    Extra path for which to query the maximum displacement.
+ * 				   Range: \ref IfxCif_ExtraPath
+ * \param[in] tier Tier for which to query the maximum displacement.
+ * 				   Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The current maximum displacement as a uint16 value.
+ *				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getEpCroppingMaximumDisplacement(IfxCif_ExtraPath z, IfxCif_ImageTiers tier);
 
-/** \brief Function to query the image cropping offset of the output window of one tier of one extra path
- * \param z Extra path for which to query the image cropping offset of the output window
- * \param tier Tier for which to query the image cropping offset of the output window
- * \return Current image cropping offset of the output window
+/**
+ * \brief Function to query the image cropping offset of the output window of one tier of one extra path.
+ * 
+ * \param[in] z    The extra path for which to query the image cropping offset of the output window.
+ *                 Range: \ref IfxCif_ExtraPath
+ * \param[in] tier The tier for which to query the image cropping offset of the output window.
+ *                 Range: \ref IfxCif_ImageTiers
+ * 
+ * \retval uint16 The current image cropping offset of the output window.
+ * 				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getEpCroppingOffsetOutputWindow(IfxCif_ExtraPath z, IfxCif_ImageTiers tier);
 
-/** \brief Function to query the image cropping picture size of one tier of one extra path
- * \param z Extra path for which to query the image cropping picture size
- * \param tier Tier for which to query the image cropping picture size of one tier of one extra path
+/**
+ * \brief Function to query the image cropping picture size of one tier of one extra path.
+ *
+ * \param[in] z    The extra path for which to query the image cropping picture size.
+ *                 Range: \ref IfxCif_ExtraPath
+ * \param[in] tier The tier for which to query the image cropping picture size.
+ *                 Range: \ref IfxCif_ImageTiers
+ *
+ * \retval uint16 The cropping picture size for the specified tier of the extra path.
+ *				  Range: 0 to 0xFFF
  */
 IFX_EXTERN uint16 IfxCif_getEpCroppingPictureSize(IfxCif_ExtraPath z, IfxCif_ImageTiers tier);
 
-/** \brief Function to query the enabled state of the recenter feature of one extra path
- * \param z Extra path for which to query the enabled state of the recenter feature
- * \return @ref IfxCif_State_Enabled if the recenter feature is enabled, @ref IfxCif_State_Disabled otherwise
+/**
+ * \brief Function to query the enabled state of the recenter feature of one extra path.
+ *
+ * \param[in] z The extra path for which to query the recenter feature state.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval IfxCif_State The current endpoint cropping recenter state.
+ * 						Range: \ref IfxCif_State_Enabled  if the recenter feature is enabled.
+ * 		   					   \ref IfxCif_State_Disabled if the recenter feature is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getEpCroppingRecenterState(IfxCif_ExtraPath z);
 
-/** \brief Function to query the state of an extra path error source
- * \param source Error source for which to query the state
- * \return @ref IfxCif_ErrorState_NoError if the error did not occur, @ref IfxCif_ErrorState_Error if the error occured
+/**
+ * \brief Queries the error state of a specified extra path error source.
+ *
+ * \param[in] source The error source to query.
+ * 					 Range: \ref IfxCif_EpErrorSources
+ *
+ * \retval IfxCif_ErrorState The current endpoint Error state.
+ * 							 Range: \ref IfxCif_ErrorState_NoError if the error did not occur.
+ * 		   					 		\ref IfxCif_ErrorState_Error   if the error occurred.
  */
 IFX_EXTERN IfxCif_ErrorState IfxCif_getEpErrorState(IfxCif_EpErrorSources source);
 
-/** \brief Function to query the enabled state of one feature of one extra path
- * \param z Extra path for which to query the enabled state of the feature
- * \param feature Feature which to query
- * \return @ref IfxCif_State_Enabled if the feature of the extra path is enabled, @ref IfxCif_State_Disabled if the feature of the extra path is disabled
+/**
+ * \brief Function to query the enabled state of a specific feature for a given extra path.
+ *
+ * \param[in] z       The extra path for which to query the feature state.
+ * 					  Range: \ref IfxCif_ExtraPath
+ * \param[in] feature The specific feature of the extra path to query.
+ * 			  		  Range: \ref IfxCif_EpFeatures
+ *
+ * \retval IfxCif_State The current endpoint feature state.
+ * 						Range: \ref IfxCif_State_Enabled  if the feature is enabled.
+ * 		   					   \ref IfxCif_State_Disabled if the feature is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getEpFeatureEnableState(IfxCif_ExtraPath z, IfxCif_EpFeatures feature);
 
-/** \brief Function to query the initial size of the ring buffer of one extra path
- * \param z Extra path for which to query the initial size
- * \return Initial size of the ring buffer of the extra path
+/**
+ * \brief Function to query the initial size of the ring buffer of one extra path.
+ *
+ * \param[in] z The extra path for which to query the initial size.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint32 The initial size of the ring buffer of the specified extra path.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpInitSize(IfxCif_ExtraPath z);
 
-/** \brief Function to query the initial filling level interrupt offset of one extra path
- * \param z Extra path for which to query the initial filling level interrupt offset
- * \return Initial filling level interrupt offset of the extra path
+/**
+ * \brief Retrieves the initial filling level interrupt offset for a specified extra path.
+ *
+ * \param[in] z The extra path selector.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint32 The initial filling level interrupt offset for the specified extra path.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpInitialFillLevelInterruptOffset(IfxCif_ExtraPath z);
 
-/** \brief Function to query the initial offset counter of one extra path
- * \param z Extra path for which to query the initial offset counter
- * \return Initial offset counter of the extra path
+/**
+ * \brief Function to query the initial offset counter for a specific extra path.
+ *
+ * \param[in] z The extra path for which to query the initial offset counter.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint32 The initial offset counter of the specified extra path.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpInitialOffsetCounter(IfxCif_ExtraPath z);
 
-/** \brief Function to query the current input enable state of one extra path
- * \param z Extra path for which to query the current input enable state
- * \return @ref IfxCif_State_Enabled if the extra path is used in module MI_IN, @ref IfxCif_State_Disabled if the extra path is not used in module MI_IN
+/**
+ * \brief Queries the current input enable state for specified extra path.
+ *
+ * \param[in] z The Extra path for which to query the current input enable state.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval IfxCif_State The current endpoint Interrupt state.
+ * 		   				Range: \ref IfxCif_State_Enabled  if the extra path is enabled in MI_IN.
+ * 		   					   \ref IfxCif_State_Disabled if the extra path is disabled in MI_IN.
  */
 IFX_EXTERN IfxCif_State IfxCif_getEpInputEnableState(IfxCif_ExtraPath z);
 
-/** \brief Function to query the enabled state of an interrupt
- * \param z Extra path for which to query the enabled state of the interrupt
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_State_Enabled if the interrupt is enabled, @ref IfxCif_State_Disabled if the interrupt is disabled
+/**
+ * \brief Queries the enabled state of a specific endpoint interrupt for a given extra path.
+ *
+ * \param[in] z 			  The extra path for which to query the interrupt state.
+ *             				  Range: \ref IfxCif_ExtraPath
+ * \param[in] interruptSource The specific interrupt source within the endpoint.
+ *                            Range: \ref IfxCif_EpInterrupts
+ *
+ * \retval IfxCif_State The current endpoint Interrupt state.
+ * 						Range: \ref IfxCif_State_Enabled  if the interrupt is enabled.
+ * 							   \ref IfxCif_State_Disabled if the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_State IfxCif_getEpInterruptEnableState(IfxCif_ExtraPath z, IfxCif_EpInterrupts interruptSource);
 
-/** \brief Function to query the current interrupt offset of one extra path
- * \param z Extra path for which to query the current interrupt offset
- * \return Current interrupt offset
+/**
+ * \brief Function to query the current interrupt offset of one extra path
+ * 
+ * \param[in] z The extra path for which to query the current interrupt offset. 
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * retval uint32 The current offset counter value of the specified extra path.
+ * 				 Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpInterruptOffset(IfxCif_ExtraPath z);
 
-/** \brief Function to query the current offset counter of one extra path
- * \param z Extra path for which to query the current offset counter
- * \return Current offset counter
+/**
+ * \brief Function to query the current offset counter of one extra path.
+ *
+ * \param[in] z The extra path for which to query the current offset counter.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint32 The current offset counter value of the specified extra path.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpOffsetCounter(IfxCif_ExtraPath z);
 
-/** \brief Function to query the initial offset counter start value of one extra path
- * \param z Extra path for which to query the initial offset counter start value
- * \return Initial offset counter start value of the extra path
+/**
+ * \brief Queries the initial offset counter start value for a specified extra path.
+ *
+ * \param[in] z The extra path for which to query the initial offset counter start value.
+ *              Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint32 The initial offset counter start value of the specified extra path.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpOffsetCounterStart(IfxCif_ExtraPath z);
 
-/** \brief Function to query the current output enable state of one extra path
- * \param z Extra path for which to query the current output enable state
- * \return @ref IfxCif_State_Enabled if the extra path is used in module MI_OUT, @ref IfxCif_State_Disabled if the extra path is not used in module MI_OUT
+/**
+ * \brief Queries the current output enable state for the specified extra path.
+ *
+ * \param[in] z The Extra path for which to query the current output enable state.
+ * 				Range: \ref IfxCif_State
+ *
+ * \retval IfxCif_State The current output enable state for the specified extra path.
+ * 						Range: \ref IfxCif_State_Enabled  if the extra path is enabled for use in MI_OUT.
+ * 		   					   \ref IfxCif_State_Disabled if the extra path is disabled for use in MI_OUT.
  */
 IFX_EXTERN IfxCif_State IfxCif_getEpOutputEnableState(IfxCif_ExtraPath z);
 
-/** \brief Function to query the current recenter value of one extra path
- * \param z Extra path for which to query the current recenter value
- * \return Current recenter value
+/**
+ * \brief Function to query the current recenter value of one extra path.
+ *
+ * \param[in] z The extra path for which to query the current recenter value.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint8 The current recenter value.
+ * 				 Range: 000B Recenter feature switched off.
+ * 				 		For all other values recentering is active (cur_h/v_offs-H/V_OFFS)/2 power(recenter).
  */
 IFX_EXTERN uint8 IfxCif_getEpRecenterValue(IfxCif_ExtraPath z);
 
-/** \brief Function to query the current ring buffer size of one extra path
- * \param z Extra path for which to query the ring buffer size
- * \return Current ring buffer size
+/**
+ * \brief Function to query the current ring buffer size of one extra path
+ *
+ * \param[in] z The extra path for which to query the ring buffer size. 
+ *              Range: \ref IfxCif_ExtraPath
+ *
+ * \retval uint32 The current ring buffer size of the specified extra path.
+ * 				  Range: 0 to 0xFFFFFC
  */
 IFX_EXTERN uint32 IfxCif_getEpSize(IfxCif_ExtraPath z);
 
-/** \brief Function to query the write format of one extra path
- * \param z Extra path for which to query the write format
- * \return Set write format of the extra path (one member of @ref IfxCif_EpWriteFormat)
+/**
+ * \brief Queries and returns the write format of a specified extra path.
+ *
+ * \param[in] z The extra path for which to query the write format.
+ * 				Range: \ref IfxCif_ExtraPath
+ *
+ * \retval IfxCif_EpWriteFormat The current write format of the extra path.
+ *                              Range: \ref IfxCif_EpWriteFormat
  */
 IFX_EXTERN IfxCif_EpWriteFormat IfxCif_getEpWriteFormat(IfxCif_ExtraPath z);
 
-/** \brief Function to get the masked state of an interrupt
- * \param z Extra path for which to query the interrupt state
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set and the interrupt is enabled, @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is not set or the interrupt is disabled
+/**
+ * \brief Gets the masked state of an nterrupt.
+ *
+ * \param[in] z 			  The extra path for which to query the interrupt state.
+ *              			  Range: \ref IfxCif_ExtraPath
+ * \param[in] interruptSource The source of the interrupt to check.
+ * 						      Range: \ref IfxCif_EpInterrupts
+ *
+ * \retval IfxCif_InterruptTriggeredState The current state of masked triggered interrupt.
+ * 										  Range: \ref IfxCif_InterruptTriggeredState_Triggered    if the interrupt request bit is set and the interrupt is enabled.
+ * 		   								  		 \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set or the interrupt is disabled.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getMaskedEpInterruptTriggeredState(IfxCif_ExtraPath z, IfxCif_EpInterrupts interruptSource);
 
-/** \brief Function to query the raw state of an interrupt
- * \param z Extra path for which to query the interrupt state
- * \param interruptSource Source of the interrupt
- * \return @ref IfxCif_InterruptTriggeredState_Triggered if the interrupt request bit is set, @ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set
+/**
+ * \brief Qery the raw state of an interrupt.
+ *
+ * \param[in] z 			  The extra path for which to query the interrupt state.
+ *                            Range: \ref IfxCif_ExtraPath
+ * \param[in] interruptSource The source of the interrupt to check.
+ * 						      Range: \ref IfxCif_EpInterrupts
+ *
+ * \retval IfxCif_InterruptTriggeredState The current Interrupt Trigger State.
+ * 										  Range: \ref IfxCif_InterruptTriggeredState_Triggered    if the interrupt request bit is set.
+ * 										  		 \ref IfxCif_InterruptTriggeredState_NotTriggered if the interrupt request bit is not set.
  */
 IFX_EXTERN IfxCif_InterruptTriggeredState IfxCif_getRawEpInterruptTriggeredState(IfxCif_ExtraPath z, IfxCif_EpInterrupts interruptSource);
 
-/** \brief Function to set the initial base address of the ring buffer of one extra path
- * \param z Extra path for which to set the initial base address
- * \param baseAddress Initial base address of the ring buffer to set
- * \return None
+/**
+ * \brief Sets the initial base address of the ring buffer for a specified extra path.
+ *
+ * \param[in] z 		  The extra path for which to set the initial base address.
+ * 						  Range: \ref IfxCif_ExtraPath
+ * \param[in] baseAddress The initial base address to be set for the ring buffer.
+ * 					      Range: \ref Ifx_AddressValue
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpBaseInitAddress(IfxCif_ExtraPath z, Ifx_AddressValue baseAddress);
 
-/** \brief Function to set the image cropping camera displacement of one tier of one extra path
- * \param z Extra path for which to set the image cropping camera displacement
- * \param tier Tier for which to set the image cropping camera displacement
- * \param displacement Image cropping camera displacement to set
- * \return None
+/**
+ * \brief Sets the image cropping camera displacement for a specified tier of an extra path.
+ *
+ * \param[in] z    		   The extra path for which to set the image cropping camera displacement.
+ *             	   		   Range: \ref IfxCif_ExtraPath
+ * \param[in] tier 		   The tier for which to set the image cropping camera displacement.
+ *                 		   Range: \ref IfxCif_ImageTiers
+ * \param[in] displacement The image cropping camera displacement value to be set.
+ *						   Range: 0 to 0xFFF
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpCroppingCameraDisplacement(IfxCif_ExtraPath z, IfxCif_ImageTiers tier, uint16 displacement);
 
-/** \brief Function to enable or disable image cropping of one extra path
- * \param z Extra path for which to enable or disable image cropping
- * \param enableState @ref IfxCif_State_Enabled to enable image cropping, @ref IfxCif_State_Disabled to disable image cropping
- * \return None
+/**
+ * \brief Enables or disables image cropping for a specified extra path.
+ *
+ * \param[in] z 		  The extra path for which to enable or disable image cropping.
+ * 						  Range: \ref IfxCif_ExtraPath
+ * \param[in] enableState The state to set for image cropping.
+ *                        Range: TRUE  to enable image cropping.
+ *                       		 FALSE to disable image cropping.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpCroppingEnableState(IfxCif_ExtraPath z, uint32 enableState);
 
-/** \brief Function to set the maximum displacement of one tier of one extra path
- * \param z Extra path for which to set the maximum displacement
- * \param tier Tier for which to set the maximum displacement
- * \param displacement Maximum displacement to set
- * \return None
+/**
+ * \brief Sets the Image Cropping Output Picture Size.
+ *
+ * \param[in] z    		   The extra path for which to set the maximum displacement.
+ *             	   		   Range: \ref IfxCif_ExtraPath
+ * \param[in] tier         The tier for which to set the maximum displacement.
+ *                         Range: \ref IfxCif_ImageTiers
+ * \param[in] displacement The maximum displacement value to be set.
+ *                         Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpCroppingMaximumDisplacement(IfxCif_ExtraPath z, IfxCif_ImageTiers tier, uint16 displacement);
 
-/** \brief Function to set the image cropping offset of the output window of one tier of one extra path
- * \param z Extra path for which to set the image cropping offset of the output window
- * \param tier Tier for which to set the image cropping offset of the output window
- * \param offset Offset to set
- * \return None
+/**
+ * \brief Configures the image cropping offset for the output window of a specified tier within an extra path.
+ *
+ * \param[in] z      The extra path for which to configure the cropping offset.
+ *                   Range: \ref IfxCif_ExtraPath
+ * \param[in] tier   The tier (horizontal or vertical) for which to configure the image cropping offset of the output window.
+ * 				     Range: 0 to 0xFFF
+ * \param[in] offset The offset value to apply to the output window.
+ *                   Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpCroppingOffsetOutputWindow(IfxCif_ExtraPath z, IfxCif_ImageTiers tier, uint16 offset);
 
-/** \brief Function to set the image cropping offsets of the output window of one extra path
- * \param z Extra path for which to set the image cropping offset of the output window
- * \param hOffset Offset horizontal to set
- * \param vOffset Offset vertical to set
- * \return None
+/**
+ * \brief Sets the image cropping offsets of the output window for a specified extra path.
+ *
+ * \param[in] z 	  The extra path for which to set the cropping offsets.
+ * 				      Range: \ref IfxCif_ExtraPath
+ * \param[in] hOffset Image Cropping Horizontal Offset of Output Window to be set.
+ * 					  Range: 0 to 0xFFF
+ * \param[in] vOffset Image Cropping Vertical Offset Of Output Window to be set.
+ * 					  Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpCroppingOffsetsOutputWindow(IfxCif_ExtraPath z, uint16 hOffset, uint16 vOffset);
 
-/** \brief Function to set the image cropping picture size of one tier of one extra path
- * \param z Extra path for which to set the image cropping picture size
- * \param tier Tier for which to set the image cropping picture size
- * \param size Image cropping picture size to set
- * \return None
+/**
+ * \brief Set the image cropping picture size of one tier of one extra path.
+ *
+ * \param[in] z    The extra path identifier for which to set the image cropping picture size.
+ * 				   Range: \ref IfxCif_ExtraPath
+ * \param[in] tier The Tier for which to set the image cropping picture size.
+ * 				   Range: \ref IfxCif_ImageTiers
+ * \param[in] size Image cropping picture size to set.
+ * 				   Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpCroppingPictureSize(IfxCif_ExtraPath z, IfxCif_ImageTiers tier, uint16 size);
 
-/** \brief Function to set the image cropping picture sizes one extra path
- * \param z Extra path for which to set the image cropping picture size
- * \param hSize Image cropping picture horizontal size to set
- * \param vSize Image cropping picture vertical size to set
- * \return None
+/**
+ * \brief Sets the Extra Path i Image Cropping Output Horizontal and Vertical Picture Size.
+ *
+ * \param[in] z 	The extra path for which to set the cropping picture sizes.
+ * 					Range: \ref IfxCif_ExtraPath
+ * \param[in] hSize The horizontal picture size of the cropping image to be set.
+ *                 	Range: 0 to 0xFFF
+ * \param[in] vSize The vertical picture size of the cropping image to be set.
+ *                 	Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpCroppingPictureSizes(IfxCif_ExtraPath z, uint16 hSize, uint16 vSize);
 
-/** \brief Function to enable or disable one feature of one extra path
- * \param z Extra path for which to enable or disable one feature
- * \param feature Feature to enable or disable
- * \param enableState @ref IfxCif_State_Enabled to enable the feature, @ref IfxCif_State_Disabled to disable the feature
- * \return None
+/**
+ * \brief Function to enable or disable one feature of one extra path.
+ *
+ * \param[in] z 	      Extra path identifier.
+ * 					  	  Range: \ref IfxCif_ExtraPath
+ * \param[in] feature 	  Feature to enable or disable.
+ * 						  Range: \ref IfxCif_EpFeatures
+ * \param[in] enableState State to set the feature to.
+ * 						  Range: \ref IfxCif_State_Enabled 	to enable the feature.
+ * 						  		 \ref IfxCif_State_Disabled to disable the feature
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpFeatureEnableState(IfxCif_ExtraPath z, IfxCif_EpFeatures feature, IfxCif_State enableState);
 
-/** \brief Function to set the initial size of the ring buffer of one extra path
- * \param z Extra path for which to set the initial size of the ring buffer
- * \param size Initial size of the ring buffer to se
- * \return None
+/**
+ * \brief Sets the initial size of the ring buffer for a specified extra path.
+ *
+ * \param[in] z    The extra path for which to set the initial size of the ring buffer.
+ * 				   Range: \ref IfxCif_ExtraPath
+ * \param[in] size The initial size of the ring buffer to set.
+ * 				   Range: 0 to 0xFFFFFC
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpInitSize(IfxCif_ExtraPath z, uint32 size);
 
-/** \brief Function to set the initial filling level interrupt offset of one extra path
- * \param z Extra path for which to set the initial filling level interrupt offset
- * \param interruptOffset Initial filling level interrupt offset to set
- * \return None
+/**
+ * \brief Sets the initial filling level interrupt offset for an extra path.
+ *
+ * \param[in] z 			  Extra path identifier for which to set the initial filling level interrupt offset.
+ * 							  Range: 0 to 0xFFFFFFFF
+ * \param[in] interruptOffset Initial filling level interrupt offset value to be set.
+ * 							  Range: 0 to 0xFFFFFC
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpInitialFillLevelInterruptOffset(uint32 z, uint32 interruptOffset);
 
-/** \brief Function to set the initial offset counter of one extra path
- * \param z Extra path for which to set the initial offset counter
- * \param offsetCounter Initial offset counter to set
- * \return None
+/**
+ * \brief Sets the initial offset counter for a specified extra path.
+ *
+ * \param[in] z 			The extra path for which to set the initial offset counter.
+ * 							Range: \ref IfxCif_ExtraPath
+ * \param[in] offsetCounter The initial offset counter value to set.
+ *                          Range: 0 to 0xFFFFFC
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpInitialOffsetCounter(IfxCif_ExtraPath z, uint32 offsetCounter);
 
-/** \brief Function to enable or disable an interrupt
- * \param z Extra path for which to enable or disable the interrupt
- * \param interruptSource Source of the interrupt to enable or disable
- * \param interruptEnableState @ref IfxCif_State_Enabled to enable the interrupt, @ref IfxCif_State_Disabled to disable the interrupt
- * \return None
+/**
+ * \brief Enables or disables an interrupt for a specific extra path.
+ *
+ * \param[in] z 			       The extra path for which the interrupt state is to be set.
+ *              			       Range: \ref IfxCif_ExtraPath
+ * \param[in] interruptSource      The source of the interrupt to be enabled or disabled.
+ *                                 Range: \ref IfxCif_EpInterrupts
+ * \param[in] interruptEnableState The state to which the interrupt is to be set.
+ *                                 Range: \ref IfxCif_State_Enabled  to enable the interrupt.
+ *                                 		  \ref IfxCif_State_Disabled to disable the interrupt.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpInterruptEnableState(IfxCif_ExtraPath z, IfxCif_EpInterrupts interruptSource, IfxCif_State interruptEnableState);
 
-/** \brief Function to set an interrupt request bit (does not necessarily trigger an interrupt)
- * \param z Function to set an interrupt request bit (does not necessarily trigger an interrupt)
- * \param interruptSource Extra path for which to set the interrupt request bit
- * \return None
+/**
+ * \brief Sets an interrupt request bit for a specified extra path (does not necessarily trigger an interrupt).
+ *
+ * \param[in] z 			  The extra path for which to set the interrupt request bit(does not necessarily trigger an interrupt).
+ *              			  Range: \ref IfxCif_ExtraPath
+ * \param[in] interruptSource The interrupt source to set the interrupt request bit for.
+ *                            Range: \ref IfxCif_EpInterrupts.
+ *
+ * \retval void
  */
 IFX_EXTERN void IfxCif_setEpInterruptRequestBit(IfxCif_ExtraPath z, IfxCif_EpInterrupts interruptSource);
 
-/** \brief Function to set the initial offset counter start value of one extra path
- * \param z Extra path for which to set the initial offset counter start value
- * \param offsetCounter Initial offset counter start value to set
- * \return None
+/**
+ * \brief Sets the initial offset counter start value for a specific extra path.
+ *
+ * \param[in] z   			The extra path identifier for which to set the initial offset counter start value.
+ * 							Range: 0 to 0xFFFFFFFF
+ * \param[in] offsetCounter The initial offset counter start value to be set.
+ * 							Range: 0 to 0xFFFFFC
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpOffsetCounterStart(uint32 z, uint32 offsetCounter);
 
-/** \brief Function to set the recenter value of one extra path (0 to switch the recenter feature off, for all other values recentering is active (cur_h/v_offs-H/V_OFFS)/2power(recenter))
- * \param z Extra path for which to set the recenter value
- * \param value Recenter value to set
- * \return None
+/**
+ * \brief Sets the recenter value for a specified extra path (0 to switch the recenter feature off, for all other values recentering is active (cur_h/v_offs-H/V_OFFS)/2power(recenter)).
+ *
+ * \param[in] z     The Extra path for which to set the recenter value.
+ * 				    Range: \ref IfxCif_ExtraPath
+ * \param[in] value Recenter value to be set.
+ * 				    Range: 0x0          Recenter feature switched off.
+ * 				    	   0x1 to 0x7   For all other values recentering is active (cur_h/v_offs-H/V_OFFS)/2 power(recenter) recenter feature switched off.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setEpRecenterValue(IfxCif_ExtraPath z, uint8 value);
 
-/** \brief Function to set the write format for one extra path
- * \param z Extra path for which to set the write format
- * \param writeFormat Write format to set
- * \return None
+/**
+ * \brief Sets the write format for a specified extra path.
+ *
+ * \param[in] z 		  The extra path to configure.
+ * 					      Range: \ref IfxCif_ExtraPath
+ * \param[in] writeFormat The write format to set for the extra path.
+ *						  Range: \ref IfxCif_EpWriteFormat
+ *
+ * \retval void
  */
 IFX_EXTERN void IfxCif_setEpWriteFormat(IfxCif_ExtraPath z, IfxCif_EpWriteFormat writeFormat);
 
@@ -2299,25 +3516,40 @@ IFX_EXTERN void IfxCif_setEpWriteFormat(IfxCif_ExtraPath z, IfxCif_EpWriteFormat
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to query the debug path enabled state
- * \return @ref IfxCif_State_Enabled if the debug path is enabled, @ref IfxCif_State_Disabled if the debug path is disabled
+/**
+ * \brief Queries and returns the current state of the debug path enabled state.
+ *
+ * \retval IfxCif_State The currently selected debug path enabled state.
+ * 						Range: \ref	IfxCif_State_Enabled  if the debug path is enabled.
+ * 		   					   \ref IfxCif_State_Disabled if the debug path is disabled.
  */
 IFX_INLINE IfxCif_State IfxCif_getDpEnableState(void);
 
-/** \brief Function to query the selected debug path source path
- * \return Currently selected debug path source path (one member of @ref IfxCif_DpSourcePath)
+/**
+ * \brief Retrieves the currently selected debug path source path.
+ *
+ * \retval IfxCif_DpSourcePath The currently selected debug path source path.
+ * 							   Range: \ref IfxCif_DpSourcePath
  */
 IFX_INLINE IfxCif_DpSourcePath IfxCif_getDpSourcePath(void);
 
-/** \brief Function to enable or disable the debug path
- * \param enableState @ref IfxCif_State_Enabled to enable the debug path, @ref IfxCif_State_Disabled to disable the debug path
- * \return None
+/**
+ * \brief Enables or disables the debug path based on the provided state.
+ *
+ * \param[in] enableState State to be specified.
+ * 						  Range: \ref IfxCif_State_Enabled  to enable the debug path.
+ * 						  		 \ref IfxCif_State_Disabled to disable the debug path
+ * \retval None
  */
 IFX_INLINE void IfxCif_setDpEnableState(IfxCif_State enableState);
 
-/** \brief Function to select one debug path source path
- * \param sourcePath Source path to select
- * \return None
+/**
+ * \brief Function to select one debug path source path.
+ *
+ * \param[in] sourcePath The source path to be selected.
+ * 						 Range: \ref IfxCif_DpSourcePath
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCif_setDpSourcePath(IfxCif_DpSourcePath sourcePath);
 
@@ -2325,51 +3557,86 @@ IFX_INLINE void IfxCif_setDpSourcePath(IfxCif_DpSourcePath sourcePath);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to reset one debug path counter
- * \param counter Debug path counter to reset
- * \return None
+/**
+ * \brief Function to reset one debug path counter
+ *
+ * \param[in] counter Debug path counter to reset.
+ * 					  Range: \ref IfxCif_DpCounters
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_dpResetCounter(IfxCif_DpCounters counter);
 
-/** \brief Function to query the transmission enabled state of one debug path control source
- * \param source Source for which to query the transmission enabled state
- * \return @ref IfxCif_State_Enabled if transmission is enabled, @ref IfxCif_State_Disabled if transmission is disabled
+/**
+ * \brief Function to query the transmission enabled state of one debug path control source
+ *
+ * \param[in] source Source for which to query the transmission enabled state.
+ * 				     Range: \ref IfxCif_DpControlSources
+ *
+ * \retval IfxCif_State The current transmission state status.
+ * 						Range: \ref IfxCif_State_Enabled  if transmission is enabled for the specified source.
+ * 							   \ref IfxCif_State_Disabled if transmission is disabled for the specified source.
  */
 IFX_EXTERN IfxCif_State IfxCif_getDpControlEnableState(IfxCif_DpControlSources source);
 
-/** \brief Function to query the current counter value of one debug path counter
- * \param counter Counter for which to query the value
- * \return Current counter value
+/**
+ * \brief Function to query the current counter value of a specified debug path counter.
+ *
+ * \param[in] counter Counter for which to query the value.
+ * 					  Range: \ref IfxCif_DpCounters
+ *
+ * \retval uint32 The current counter value of the specified debug path counter.
+ * 				  Range: 0 to 0xFFFFFFFF
  */
 IFX_EXTERN uint32 IfxCif_getDpCounter(IfxCif_DpCounters counter);
 
-/** \brief Function to query the value of one user defined debug symbol
- * \param x User defined symbol to query
- * \return Value of the user defined debug symbol
+/**
+ * \brief Retrieves the value of a user-defined debug symbol based on the given index.
+ *
+ * \param[in] x The index of the user-defined debug symbol to query.
+ * 				Range: 0 to 0xFF
+ *
+ * \retval uint16 The value of the user defined debug symbol.
+ * 				  Range: 0 to 0x7FFF
  */
 IFX_EXTERN uint16 IfxCif_getDpUserDefinedSymbol(uint8 x);
 
-/** \brief Function to enable or disable transmission of one debug path control source
- * \param source Source for which to enable or disable transmission
- * \param enableState @ref IfxCif_State_Enabled to enable transmission, @ref IfxCif_State_Disabled to disable transmission
- * \return None
+/**
+ * \brief Enables or disables the transmission of a specified debug path control source.
+ *
+ * \param[in] source      Source for which to enable or disable transmission.
+ *               	      Range: \ref IfxCif_DpControlSources
+ * \param[in] enableState The state to set for the debug path control source transmission.
+ *                        Range: \ref IfxCif_State_Enabled  to enable transmission.
+ *                        		 \ref IfxCif_State_Disabled to disable transmission
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setDpControlEnableState(IfxCif_DpControlSources source, IfxCif_State enableState);
 
-/** \brief Function to set one debug path counter to a counter value
- * \param counter Counter to set
- * \param counterValue Counter value to set
- * \return None
+/**
+ * \brief Sets a debug path counter to a specified counter value.
+ *
+ * \param[in] counter      The debug path counter to be set.
+ * 					       Range: \ref IfxCif_DpCounters
+ * \param[in] counterValue The value to be assigned to the specified counter.
+ *                         Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setDpCounter(IfxCif_DpCounters counter, uint32 counterValue);
 
-/** \brief Function to set one user defined debug symbol
- * \param x User defined symbol to set
- * \param value Value to set
- * \return None
+/**
+ * \brief Sets a user-defined debug symbol for the CIF module with a specified value.
+ *
+ * \param[in] x     User defined symbol to set.
+ * 					Range: 0 to 0xFF
+ * \param[in] value Value to assign to the user-defined symbol.
+ * 					Range: 0 to 0x7FFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCif_setDpUserDefinedSymbol(uint8 x, uint16 value);
-
 /** \} */
 
 /******************************************************************************/

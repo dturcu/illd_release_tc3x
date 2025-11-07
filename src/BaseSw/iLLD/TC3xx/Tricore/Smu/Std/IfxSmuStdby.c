@@ -2,7 +2,7 @@
  * \file IfxSmuStdby.c
  * \brief SMU  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -54,7 +54,7 @@ void IfxSmuStdby_setFaultSignalAGConfigEventFlags(uint8 alarmGroup, uint32 flags
     Ifx_PMS_AGFSP_STDBY0 AgfspStdby20;
     Ifx_PMS_AGFSP_STDBY1 AgfspStdby21;
     uint16               passwd = IfxScuWdt_getSafetyWatchdogPassword();
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     if (alarmGroup == 20U)
@@ -86,7 +86,7 @@ void IfxSmuStdby_setFaultSignalAlarmConfigEventFlag(uint8 alarmGroup, uint8 alar
     Ifx_PMS_AGFSP_STDBY0 AgfspStdby20;
     Ifx_PMS_AGFSP_STDBY1 AgfspStdby21;
     uint16               passwd = IfxScuWdt_getSafetyWatchdogPassword();
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     if (alarmGroup == 20U)
@@ -138,7 +138,7 @@ void IfxSmuStdby_setSmuStdbyAlarmStatusFlag(uint8 alarmGroup, uint8 alarmNum, If
     Ifx_PMS_CMD_STDBY cmdStdby;
 
     uint16            passwd = IfxScuWdt_getSafetyWatchdogPassword();
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     cmdStdby.U         = PMS_CMD_STDBY.U;
@@ -191,19 +191,21 @@ void IfxSmuStdby_startSmuStdbyMonBist(void)
     IfxSmuStdby_clearSmuStdbyMonBistFlags();
     uint16          passwd  = IfxScuWdt_getSafetyWatchdogPassword();
     volatile uint32 timeout = 0x1000U;
-    /* disable the write-protection for registers */
+
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     PMS_MONFILT.U = 0x20000000U;
 
-    while ((PMS_MONFILT.U != 0x20000000U) && (timeout--)) // TO DO: Is wait needed? added based on SoC Ver request , to be confirmed from Concept
+    /* TO DO: Is wait needed? added based on SoC Ver request , to be confirmed from Concept */
+    while ((PMS_MONFILT.U != 0x20000000U) && (timeout--))
     {}
 
     PMS_MONCTRL.U = 0xa5a5a5U;
     timeout       = 0x1000U;
 
-    while ((PMS_MONCTRL.U != 0xa5a5a5U) && (timeout--))  // TO DO: Is wait needed? added based on SoC Ver request , to be confirmed from Concept
-
+    /* TO DO: Is wait needed? added based on SoC Ver request , to be confirmed from Concept */
+    while ((PMS_MONCTRL.U != 0xa5a5a5U) && (timeout--))
     {}
 
     PMS_PMSIEN.U &= ~0x00000FFFU;
@@ -212,11 +214,15 @@ void IfxSmuStdby_startSmuStdbyMonBist(void)
 
     IfxSmuStdby_setFaultSignalAGConfigEventFlags(20, 0U);
     IfxSmuStdby_setFaultSignalAGConfigEventFlags(21, 0U);
+    /* Set FSP0 and FSP1 error pins to inactive state */
     IfxSmuStdby_setFsp0ErrorPinActive(IfxSmuStdby_FspErrorPinState_inactive);
     IfxSmuStdby_setFsp1ErrorPinActive(IfxSmuStdby_FspErrorPinState_inactive);
     IfxSmuStdby_enableAlarmStatusClear();
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
     PMS_MONFILT.U = 0x00000000U;
+    /* Restore back the write-protection for registers */
     IfxScuWdt_setSafetyEndinit(passwd);
+    /* Enable the SMU Standby Monitor BIST */
     IfxSmuStdby_enableSmuStdbyMonBist();
 }

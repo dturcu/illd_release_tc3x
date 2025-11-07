@@ -3,7 +3,7 @@
  * \brief CAN  basic functionality
  * \ingroup IfxLld_Can
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -83,7 +83,8 @@
 
 /** \addtogroup IfxLld_Can_Std_Enum
  * \{ */
-/** \brief Status of warning limit for error counters in CAN node
+/** \brief Status of warning limit for error counters in CAN node\n
+ * Definition in Ifx_CAN_N_PSR.B.EW
  */
 typedef enum
 {
@@ -128,7 +129,8 @@ typedef enum
     IfxCan_DataFieldSize_64      /**< \brief 64 byte data field  */
 } IfxCan_DataFieldSize;
 
-/** \brief Data Length code of the Message
+/** \brief Data Length code of the Message\n
+ * Definition in Ifx_CAN_R1.B.DLC or Ifx_CAN_TXEVENT_E1.B.DLC or Ifx_CAN_TXMSG_T1.B.DLC
  */
 typedef enum
 {
@@ -150,7 +152,8 @@ typedef enum
     IfxCan_DataLengthCode_64      /**< \brief 64 data bytes  */
 } IfxCan_DataLengthCode;
 
-/** \brief Filter Element Configuration
+/** \brief Filter Element Configuration\n
+ * Definition in Ifx_CAN_STDMSG_S0.B.SFEC or Ifx_CAN_EXTMSG_F0.B.EFEC
  */
 typedef enum
 {
@@ -164,7 +167,8 @@ typedef enum
     IfxCan_FilterElementConfiguration_storeInRxBuffer              /**< \brief Store into Rx Buffer */
 } IfxCan_FilterElementConfiguration;
 
-/** \brief Filter Type
+/** \brief Filter Type\n
+ * Definition in Ifx_CAN_STDMSG_S0.B.SFT or Ifx_CAN_EXTMSG_F1.B.EFT
  */
 typedef enum
 {
@@ -255,7 +259,8 @@ typedef enum
     IfxCan_InterruptGroup_traco    /**< \brief Interrupts of the transmission control */
 } IfxCan_InterruptGroup;
 
-/** \brief Interrupt line number INT_Ox (x= 0 - 15) \n
+/** \brief Interrupt line number INT_Ox (x= 0 - 15)\n
+ * Definition in Ifx_CAN_N_GRINT1 or Ifx_CAN_N_GRINT2
  */
 typedef enum
 {
@@ -277,7 +282,8 @@ typedef enum
     IfxCan_InterruptLine_15     /**< \brief Interrupt Line 15  */
 } IfxCan_InterruptLine;
 
-/** \brief Type of last error to occur on the CAN node
+/** \brief Type of last error to occur on the CAN node\n
+ * Definition in Ifx_CAN_N_PSR.B.LEC or Ifx_CAN_N_PSR.B.DLEC
  */
 typedef enum
 {
@@ -291,7 +297,8 @@ typedef enum
     IfxCan_LastErrorCodeType_noCANBusEvent = 7  /**< \brief No CAN bus event occured */
 } IfxCan_LastErrorCodeType;
 
-/** \brief Message Id length (Standard / Extended)
+/** \brief Message Id length (Standard / Extended)\n
+ * Definition in Ifx_CAN_TXMSG_T0.B.XTD or Ifx_CAN_R0.B.XTD or Ifx_CAN_TXEVENT_E0.B.XTD
  */
 typedef enum
 {
@@ -300,7 +307,8 @@ typedef enum
     IfxCan_MessageIdLength_both       /**< \brief Both Standard and Extended message IDs */
 } IfxCan_MessageIdLength;
 
-/** \brief Indicate the action to be taken with the messages which do not match with any element of the filter.
+/** \brief Indicate the action to be taken with the messages which do not match with any element of the filter.\n
+ * Definition in Ifx_CAN_N_GFC.B.ANFS or Ifx_CAN_N_GFC.B.ANFE
  */
 typedef enum
 {
@@ -413,11 +421,12 @@ typedef enum
  */
 typedef enum
 {
-    IfxCan_Status_ok          = 0,
-    IfxCan_Status_notSentBusy = 1
+    IfxCan_Status_ok          = 0, /**< \brief CAN API status Okay for send message*/
+    IfxCan_Status_notSentBusy = 1  /**< \brief CAN API status Not Sent Busy for send message */
 } IfxCan_Status;
 
-/** \brief OCDS Suspend Control (OCDS.SUS)
+/** \brief OCDS Suspend Control (OCDS.SUS)\n
+ * Definition in Ifx_CAN_OCS.B.SUS
  */
 typedef enum
 {
@@ -477,7 +486,8 @@ typedef enum
 
 /** \} */
 
-/** \brief CAN node Bus Off status
+/** \brief CAN node Bus Off status\n
+ * Definition in Ifx_CAN_N_PSR.B.BO
  */
 typedef enum
 {
@@ -485,7 +495,8 @@ typedef enum
     IfxCan_CanNodeBusOffErrorStatus_BusOffErr = 1  /**< \brief CAN node in Bus Off state */
 } IfxCan_CanNodeBusOffErrorStatus;
 
-/** \brief CAN node communication state
+/** \brief CAN node communication state\n
+ * Definition in Ifx_CAN_N_PSR.B.ACT
  */
 typedef enum
 {
@@ -495,7 +506,7 @@ typedef enum
     IfxCan_CanNodeCommunicationState_transmit    = 3   /**< \brief Node is operating as transmitter */
 } IfxCan_CanNodeCommunicationState;
 
-/** \brief CAN frame format type
+/** \brief CAN frame format type\n
  * Definition in Ifx_CAN_TXEVENT.E1A.B.FDF or Ifx_CAN_TXEVENT.E1B.B.FDF
  */
 typedef enum
@@ -522,11 +533,14 @@ typedef enum
  */
 typedef struct
 {
-    uint8                             number;                     /**< \brief Filter Number */
-    IfxCan_FilterElementConfiguration elementConfiguration;       /**< \brief *FEC, Filter Element Configuration of (standard / extended ID) filter element */
+    uint8                             number;                     /**< \brief Filter Number. Range: 0 to 63 */
+    IfxCan_FilterElementConfiguration elementConfiguration;       /**< \brief *FEC, Filter Element Configuration of (standard / extended ID) filter element.*/
     IfxCan_FilterType                 type;                       /**< \brief *FT, Filter Type of (standard / extended ID) filter element */
-    uint32                            id1;                        /**< \brief *FID1 First ID of (standard / extended ID) filter element */
-    uint32                            id2;                        /**< \brief *FID2 Second ID of (standard / extended ID) filter element */
+    uint32                            id1;                        /**< \brief *FID1 First ID of (standard / extended ID) filter element. Range: 0 to 0x7FF (Standard); 0 to 0x1FFFFFFF (Extended) */
+    uint32                            id2;                        /**< \brief *FID2 Second ID of (standard / extended ID) filter element.
+     	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	Range:
+     	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	Standard:  0 to 0x7FF if bit fields SFEC = 001 to 110; 0x0 to 0x7FF if bit fields SFEC = 111
+     	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	Extended:  0 to 0x1FFFFFFF if bit fields EFEC = 001 to 110; 0x0 to 0x000007FF if bit fields EFEC = 111 */
     IfxCan_RxBufferId                 rxBufferOffset;             /**< \brief Rx Buffer number to set the offset to the Rx Buffer Start Address */
 } IfxCan_Filter;
 
@@ -543,32 +557,32 @@ typedef struct
  */
 typedef struct
 {
-    uint8                  bufferNumber;                  /**< \brief (Tx / Rx) Buffer Element number */
-    uint32                 messageId;                     /**< \brief ID, Identifier */
-    boolean                remoteTransmitRequest;         /**< \brief RTR, Remote Transmit Request (enable / disable) */
+    uint8                  bufferNumber;                  /**< \brief (Tx / Rx) Buffer Element number. Range: For Tx \ref IfxCan_TxBufferId; For Rx \ref IfxCan_RxBufferId */
+    uint32                 messageId;                     /**< \brief ID, Identifier. Range: 0x000 to 0x7FF (Standard); 0 to 0x1FFFFFFF (Extended) */
+    boolean                remoteTransmitRequest;         /**< \brief RTR, Remote Transmit Request (enable / disable). Range: TRUE if Remote frame transmitted, FALSE if Data frame transmitted */
     IfxCan_MessageIdLength messageIdLength;               /**< \brief XTD, Message Id length (Standard / Extended) */
-    boolean                errorStateIndicator;           /**< \brief ESI, Error State Indicator (enable / disable) */
+    boolean                errorStateIndicator;           /**< \brief ESI, Error State Indicator (enable / disable). Range: TRUE if error passive, FALSE if error active */
     IfxCan_DataLengthCode  dataLengthCode;                /**< \brief DLC, Data Length Code */
     IfxCan_FrameMode       frameMode;                     /**< \brief CAN frame mode */
-    boolean                txEventFifoControl;            /**< \brief EFC, Tx Event FIFO Control (enable / disable) */
-    boolean                storeInTxFifoQueue;            /**< \brief Write message in Tx FIFO/QUEUE */
-    boolean                readFromRxFifo0;               /**< \brief Read message from Rx FIFO 0 */
-    boolean                readFromRxFifo1;               /**< \brief Read message from Rx FIFO 1 */
-    boolean                bypassSwTransmitRequest;       /**< \brief Bypass SW Transmission request TRUE: TXBAR.ARz is not set. FALSE: TXBAR.ARz is set */
+    boolean                txEventFifoControl;            /**< \brief EFC, Tx Event FIFO Control (enable / disable). Range: TRUE if store Tx events, FALSE if don't store Tx events */
+    boolean                storeInTxFifoQueue;            /**< \brief Write message in Tx FIFO/QUEUE. Range: TRUE Write in Tx FIFO/QUEUE, FALSE do not write */
+    boolean                readFromRxFifo0;               /**< \brief Read message from Rx FIFO 0. Range: TRUE read from Rx FIFO 0, FALSE do not read */
+    boolean                readFromRxFifo1;               /**< \brief Read message from Rx FIFO 1. Range: TRUE read from Rx FIFO 1, FALSE do not read */
+    boolean                bypassSwTransmitRequest;       /**< \brief Bypass SW Transmission request. Range: TRUE: TXBAR.ARz is not set. FALSE: TXBAR.ARz is set */
 } IfxCan_Message;
 
 /** \brief Structure for Message RAM configuration
  */
 typedef struct
 {
-    uint32 baseAddress;                          /**< \brief Message RAM base address of the CAN */
-    uint16 standardFilterListStartAddress;       /**< \brief Start address of Standard Message ID filter list (32-bit word address) */
-    uint16 extendedFilterListStartAddress;       /**< \brief Start address of Extended Message ID filter list (32-bit word address) */
-    uint16 rxFifo0StartAddress;                  /**< \brief Start address of Rx FIFO 0 in Message RAM (32-bit word address) */
-    uint16 rxFifo1StartAddress;                  /**< \brief Start address of Rx FIFO 1 in Message RAM (32-bit word address) */
-    uint16 rxBuffersStartAddress;                /**< \brief Start address of Rx Buffers section in the Message RAM (32-bit word address). */
-    uint16 txEventFifoStartAddress;              /**< \brief Start address of Tx Event FIFO in Message RAM (32-bit w ord address) */
-    uint16 txBuffersStartAddress;                /**< \brief Start address of Tx Buffers section in the Message RAM (32-bit word address). */
+    uint32 baseAddress;                          /**< \brief Message RAM base address of the CAN. Range: 0xF0200000 to 0xF0223FFF */
+    uint16 standardFilterListStartAddress;       /**< \brief Start address of Standard Message ID filter list (32-bit word address). Range: 0 to 0xFFFC */
+    uint16 extendedFilterListStartAddress;       /**< \brief Start address of Extended Message ID filter list (32-bit word address). Range: 0 to 0xFFFC */
+    uint16 rxFifo0StartAddress;                  /**< \brief Start address of Rx FIFO 0 in Message RAM (32-bit word address). Range: 0x0000 to 0x3FFF */
+    uint16 rxFifo1StartAddress;                  /**< \brief Start address of Rx FIFO 1 in Message RAM (32-bit word address). Range: 0x0000 to 0x3FFF */
+    uint16 rxBuffersStartAddress;                /**< \brief Start address of Rx Buffers section in the Message RAM (32-bit word address). Range: 0x0000 to 0x3FFF */
+    uint16 txEventFifoStartAddress;              /**< \brief Start address of Tx Event FIFO in Message RAM (32-bit word address). Range: 0x0000 to 0x3FFF */
+    uint16 txBuffersStartAddress;                /**< \brief Start address of Tx Buffers section in the Message RAM (32-bit word address). Range: 0x0000 to 0x3FFF */
 } IfxCan_MessageRAM;
 
 /** \} */
@@ -580,113 +594,166 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the configuration change\n
- * The CPU has no write access to the protected configuration registers
- * \param node Specifies the pointer to the CAN Node registers
- * \return None
+/**
+ * \brief Disables configuration change for the specified CAN node
+ * 
+ * This function prevents the CPU from gaining write access to the protected configuration registers of the CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_disableConfigurationChange(Ifx_CAN_N *node);
 
-/** \brief Enables the configuration change\n
- * The CPU has write access to the protected configuration registers (while CCCR.INIT = 1)
- * \param node Specifies the pointer to the CAN Node registers
- * \return None
+/**
+ * \brief Enables configuration change for the CAN node
+ * 
+ * This function allows the CPU to access and modify the protected configuration registers
+ * of the CAN node while the initialization mode (CCCR.INIT) is active.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_enableConfigurationChange(Ifx_CAN_N *node);
 
-/** \brief Enables the internal Virtual CAN bus loopback mode
- * \param node Specifies the pointer to the CAN Node registers
- * \return None
+/**
+ * \brief Enables the internal Virtual CAN bus loopback mode
+ * 
+ * This function configures the specified CAN node to operate in loopback mode, where transmitted messages are internally looped back to the receiver without being sent over the physical CAN bus. This is typically used for debugging and testing purposes.
+ * 
+ * \param[inout] node Pointer to the CAN node registers.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_enableLoopbackMode(Ifx_CAN_N *node);
 
-/** \brief Returns the status of whether the CAN Node is synchronised or not
- * \param node Specifies the pointer to the CAN Node registers
- * \return Status TRUE: synchronized, FALSE : Sync in progress
+/**
+ * \brief Checks if the CAN Node is synchronized.
+ *
+ * This function determines whether the specified CAN Node has completed its synchronization process.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE if the CAN Node is synchronized.
+ *         FALSE if synchronization is in progress.
  */
 IFX_INLINE boolean IfxCan_Node_isNodeSynchronized(Ifx_CAN_N *node);
 
-/** \brief Initialises the node\n
- * 0= Normal Operation\n
- * 1= Initialization is started
- * \param node Specifies the pointer to the CAN Node registers
- * \param enable Enable / Disable choice
- * \return None
+/**
+ * \brief Initializes the CAN node for operation.
+ * 
+ * This function sets the initialization state of the CAN node. When enabled (1), the node 
+ * enters initialization mode. When disabled (0), the node operates normally.
+ *
+ * \param[inout] node   Pointer to the CAN node registers.
+ * \param[in]    enable A boolean value indicating whether to enable (1) or disable (0) the initialization. Range: 0 (disable) or 1 (enable)              
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setInitialisation(Ifx_CAN_N *node, boolean enable);
 
-/** \brief Sets Transceiver Delay Compensation offset
- * \param node Specifies the pointer to the CAN Node registers
- * \param delay delay offset value
- * \return None
+/**
+ * \brief Sets the transceiver delay compensation offset for the CAN node.
+ *
+ * \param[inout] node  Pointer to the CAN node registers.
+ * \param[in]    delay Delay offset value to be applied. Range: 0 to 127
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTransceiverDelayCompensationOffset(Ifx_CAN_N *node, uint8 delay);
 
-/** \brief Get the LEC error status of the CAN node.
- * \param node Specifies the pointer to CAN node registers
- * \return LEC error status in CAN node PSR register
+/**
+ * \brief Get the LEC (Last Error Code) error status of the CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval IfxCan_LastErrorCodeType The LEC error status retrieved from the CAN node's PSR register. Range: \ref IfxCan_LastErrorCodeType
  */
 IFX_INLINE IfxCan_LastErrorCodeType IfxCan_Node_getLastErroCodeStatus(Ifx_CAN_N *node);
 
-/** \brief Error Passive status of the CAN node.
- * TRUE: CAN node in error passive.
- * FALSE: CAN node not in error passive.
- * \param node Specifies the pointer to CAN node registers
- * \return Error Passive error status of CAN node (TRUE/FALSE).
+/**
+ * \brief Checks if the CAN node is in error passive state.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE if the CAN node is in error passive state.
+ *         FALSE if the CAN node is not in error passive state.
  */
 IFX_INLINE boolean IfxCan_Node_isErrorPassive(Ifx_CAN_N *node);
 
-/** \brief Get the warning status of the CAN node.
- * \param node Specifies the pointer to CAN node registers
- * \return Warning status in CAN node
+/**
+ * \brief Get the warning status of the CAN node..
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval IfxCan_CanNodeErrorWarningLimitStatus The warning status of the CAN node. Range: \ref IfxCan_CanNodeErrorWarningLimitStatus
  */
 IFX_INLINE IfxCan_CanNodeErrorWarningLimitStatus IfxCan_Node_getWarningStatus(Ifx_CAN_N *node);
 
-/** \brief Get the Bus Off status of the CAN node.
- * \param node Specifies the pointer to CAN node registers
- * \return Bus Off Error status in CAN node
+/**
+ * \brief Retrieves the Bus Off error status of the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval IfxCan_CanNodeBusOffErrorStatus The Bus Off error status of the CAN node. Range: \ref IfxCan_CanNodeBusOffErrorStatus
  */
 IFX_INLINE IfxCan_CanNodeBusOffErrorStatus IfxCan_Node_getBusOffStatus(Ifx_CAN_N *node);
 
-/** \brief Get the Activity status of the CAN node.
- * \param node Specifies the pointer to CAN node registers
- * \return Activity status of CAN node
+/**
+ * \brief Get the current communication activity status of the CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval IfxCan_CanNodeCommunicationState The activity status of the CAN node. Range: \ref IfxCan_CanNodeCommunicationState
  */
 IFX_INLINE IfxCan_CanNodeCommunicationState IfxCan_Node_getActivityStatus(Ifx_CAN_N *node);
 
-/** \brief Get the Error status in data phase of the CAN node in the recent CANFD operation with bit rate switch.
- * \param node Specifies the pointer to CAN node registers
- * \return Error status of the recent CAN FD with BRS flag set.
+/**
+ * \brief Retrieves the last error code for the data phase of the most recent CAN FD operation with bit rate switching.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval IfxCan_LastErrorCodeType The error status of the recent CAN FD operation with bit rate switching. Range: \ref IfxCan_LastErrorCodeType
  */
 IFX_INLINE IfxCan_LastErrorCodeType IfxCan_Node_getDataPhaseLastErrorCode(Ifx_CAN_N *node);
 
-/** \brief Protocol Exception Event status
- * TRUE: Protocol Exception event occured.
- * FALSE: Protocol Exception event not occured.
- * \param node Specifies the pointer to CAN node registers
- * \return Get the Protocol Exception event status (TRUE/FALSE)
+/**
+ * \brief Checks if a Protocol Exception Event has occurred in the CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE if a Protocol Exception Event has occurred.
+ *         FALSE if a Protocol Exception event not occured.
  */
 IFX_INLINE boolean IfxCan_Node_isProtocolExceptionEventOccured(Ifx_CAN_N *node);
 
-/** \brief Returns the error status of the recent recieved CAN FD message.
- * TRUE : Error status indicator is enabled
- * FALSE: Erro status indicator not enabled.
- * \param node Specifies the pointer to CAN node registers
- * \return Error indicator for recent received CAN FD message (TRUE/FALSE)
+/**
+ * \brief Checks if the error status indicator is enabled for the recent received CAN FD message.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE If Error status indicator is enabled.
+ *         FALSE If Error status indicator is not enabled.
  */
 IFX_INLINE boolean IfxCan_Node_isErrorStatusIndicatorEnabled(Ifx_CAN_N *node);
 
-/** \brief Bit Rate Switch status of the last recieved CAN FD message.
- * TRUE: Bit rate switch is enabled.
- * FALSE: Bit rate switch is disabled.
- * \param node Specifies the pointer to CAN node registers
- * \return Bit Rate Switch flag status (TRUE/FALSE)
+/**
+ * \brief Checks if the bit rate switch flag is enabled for the last received CAN FD message.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE If Bit rate switch is enabled.
+ *         FALSE If Bit rate switch is disabled.
  */
 IFX_INLINE boolean IfxCan_Node_isBitRateSwitchFlagEnabled(Ifx_CAN_N *node);
 
-/** \brief Return the DLC code corresponding to the data length in bytes
- * \param dataLength Data length in bytes
- * \return Data length code
+/**
+ * \brief Returns the Data Length Code (DLC) corresponding to the given data length in bytes.
+ *
+ * \param[in] dataLength Data length in bytes to be converted to DLC. Range: 0 to 64
+ *
+ * \retval IfxCan_DataLengthCode The DLC code corresponding to the input data length. Range: \ref IfxCan_DataLengthCode
  */
 IFX_INLINE IfxCan_DataLengthCode IfxCan_Node_getCodeFromDataLengthInBytes(uint32 dataLength);
 
@@ -694,111 +761,158 @@ IFX_INLINE IfxCan_DataLengthCode IfxCan_Node_getCodeFromDataLengthInBytes(uint32
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Converts data length code (DLC) into number of words
- * \param dataLengthCode DLC, Data Length Code
- * \return Number of data words
+/**
+ * \brief Converts a data length code (DLC) into the number of words
+ *
+ * \param[in] dataLengthCode The data length code to be converted. Range: \ref IfxCan_DataLengthCode
+ *
+ * \retval uint32 The number of data words. Range: 0 to 64
  */
 IFX_EXTERN uint32 IfxCan_Node_getDataLength(IfxCan_DataLengthCode dataLengthCode);
 
-/** \brief Converts data length code (DLC) into number of data words.
- * This function is deprecated. Use new function IfxCan_Node_getDataLength
- * \param node Specifies the pointer to the CAN Node registers
- * \param dataLengthCode DLC, Data Length Code
- * \return Number of data words
+/**
+ * \brief Converts data length code (DLC) into the number of data words.
+ * This function is deprecated. Use the new function \ref IfxCan_Node_getDataLength instead.
+ *
+ * \param[in] node           Pointer to the CAN node registers.
+ * \param[in] dataLengthCode The data length code to be converted. Range: \ref IfxCan_DataLengthCode
+ *
+ * \retval uint32 The number of data words. Range: 0 to 64
  */
 IFX_EXTERN uint32 IfxCan_Node_getDataLengthFromCode(Ifx_CAN_N *node, IfxCan_DataLengthCode dataLengthCode);
 
-/** \brief Returns CAN frame mode of operation for a received frame
- * \param rxBufferElement Rx Buffer Element
- * \return CAN frame mode
+/**
+ * \brief Returns the CAN frame mode of operation for a received frame.
+ *
+ * \param[in] rxBufferElement Pointer to the receive buffer element containing the CAN frame information.
+ *
+ * \retval IfxCan_FrameMode The frame mode of the received CAN frame. Range: \ref IfxCan_FrameMode
  */
 IFX_EXTERN IfxCan_FrameMode IfxCan_Node_getFrameMode(Ifx_CAN_RXMSG *rxBufferElement);
 
-/** \brief Select and initialise the CAN node receive pin
- * \param node Specifies the pointer to the CAN Node registers
- * \param rxd Rx pin
- * \param mode Input mode
- * \param padDriver Pad Driver Configuration
- * \return TRUE: Returns TRUE if the operation was successful\n
- * FALSE: Returns FALSE if the operation was errorneous
+/**
+ * \brief Initializes and configures the CAN node receive pin.
+ *
+ * This function selects and initializes the specified CAN node's receive pin
+ * with the given input mode and pad driver configuration.
+ *
+ * \param[inout] node      Pointer to the CAN node registers.
+ * \param[inout] rxd       Pointer to the Rx pin configuration.
+ * \param[in]    mode      Input mode to be configured for the receive pin. Range: \ref IfxPort_InputMode
+ * \param[in]    padDriver Pad driver configuration for the receive pin. Range: \ref IfxPort_PadDriver
+ *
+ * \retval TRUE If the receive pin was successfully initialized.
+ *         FALSE If an error occurred during initialization.
  */
 IFX_EXTERN boolean IfxCan_Node_initRxPin(Ifx_CAN_N *node, IfxCan_Rxd_In *rxd, IfxPort_InputMode mode, IfxPort_PadDriver padDriver);
 
-/** \brief Select and initialise the CAN node transmit pin
- * \param txd Tx pin
- * \param mode Output mode
- * \param padDriver Pad driver Configuration
- * \return TRUE: Returns TRUE if the operation was successful\n
- * FALSE: Returns FALSE if the operation was errorneous
+/**
+ * \brief Initializes and configures the CAN node transmit pin.
+ *
+ * This function sets up the specified transmit pin according to the provided output mode and pad driver configuration.
+ *
+ * \param[inout] txd       Pointer to the transmit pin configuration structure to be initialized.
+ * \param[in]    mode      Output mode to be set for the transmit pin. Range: \ref IfxPort_OutputMode
+ * \param[in]    padDriver Pad driver configuration. Range: \ref IfxPort_PadDriver
+ *
+ * \retval TRUE If operation was successful.
+ *         FALSE If the operation was errorneous.
  */
 IFX_EXTERN boolean IfxCan_Node_initTxPin(IfxCan_Txd_Out *txd, IfxPort_OutputMode mode, IfxPort_PadDriver padDriver);
 
-/** \brief Calculates and Sets the CAN baudrate for standard frames and arbitration phase of CAND FD frames
- * \param node Specifies the pointer to the CAN Node registers
- * \param moduleFreq Specifies the CAN module frequency
- * \param baudrate Specifies the baud rate. Unit: baud
- * \param samplePoint Specifies the sample point. Range = [0, 10000] resp. [0%, 100%] of the total bit time.
- * \param syncJumpWidth Specifies the re-synchronization jump width
- * \return None
+/**
+ * \brief Calculates and sets the CAN baudrate for standard frames and arbitration phase of CAN FD frames.
+ *
+ * \param[inout] node          Pointer to the CAN node registers.
+ * \param[in]    moduleFreq    The frequency of the CAN module in Hz. This is used to calculate the bit timing parameters.
+ * \param[in]    baudrate      The desired baudrate for the CAN communication. Unit: baud. Range upto 1000000
+ * \param[in]    samplePoint   The sample point as a percentage of the total bit time. Range : 0 to 10000 resp. [0%, 100%] of the total bit time.
+ * \param[in]    syncJumpWidth The re-synchronization jump width. Range: 0 to 127
+ *
+ * \retval None
+ *
+ * \note The function assumes that the provided parameters are valid and within the specified ranges. Ensure that
+ * the values comply with the CAN protocol specifications for proper operation.
  */
 IFX_EXTERN void IfxCan_Node_setBitTiming(Ifx_CAN_N *node, float32 moduleFreq, uint32 baudrate, uint16 samplePoint, uint16 syncJumpWidth);
 
-/** \brief Sets the values of CAN baudrate for standard frames
- * \param node Specifies the pointer to the CAN Node registers
- * \param syncJumpWidth Synchronization Jump Width
- * \param timeSegment2 Time segment after sample point
- * \param timeSegment1 Time segment before sample point
- * \param prescaler Baud Rate Prescaler
- * \return None
+/**
+ * \brief Configures the values of CAN baudrate for standard frames.
+ *
+ * \param[inout] node          Pointer to the CAN node registers.
+ * \param[in]    syncJumpWidth Synchronization Jump Width. Range: 0 to 127
+ * \param[in]    timeSegment2  Time segment after the sample point.  Range: 1 to 127 
+ * \param[in]    timeSegment1  Time segment before the sample point. Range: 1 to 255
+ * \param[in]    prescaler     Baud Rate Prescaler. Range: 0 to 511
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_setBitTimingValues(Ifx_CAN_N *node, uint16 syncJumpWidth, uint8 timeSegment2, uint8 timeSegment1, uint16 prescaler);
 
-/** \brief Calulates and Sets the CAN fast baudrate for CAN FD frames data phase
- * \param node Specifies the pointer to the CAN Node registers
- * \param moduleFreq Specifies the CAN module frequency
- * \param baudrate Specifies the baud rate. Unit: baud
- * \param samplePoint Specifies the sample point. Range = [0, 10000] resp. [0%, 100%] of the total bit time.
- * \param syncJumpWidth Specifies the re-synchronization jump width
- * \return None
+/**
+ * \brief Calculates and sets the CAN fast baudrate timing for the data phase of CAN FD frames.
+ *
+ * \param[inout] node          Pointer to the CAN node registers.
+ * \param[in]    moduleFreq    The frequency of the CAN module clock in Hz. This value is used to calculate the timing parameters.
+ * \param[in]    baudrate      The desired baudrate for the CAN communication in baud. The function calculates the timing parameters to achieve this baudrate. Range upto 8000000
+ * \param[in]    samplePoint   The sample point for the bit timing, specified as a percentage of the total bit time. Range = [0, 10000] resp. [0%, 100%] of the total bit time.                        
+ * \param[in]    syncJumpWidth The re-synchronization jump width for the bit timing. This value determines the maximum amount of time the sample point can shift during re-synchronization. Range: 0 to 15
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_setFastBitTiming(Ifx_CAN_N *node, float32 moduleFreq, uint32 baudrate, uint16 samplePoint, uint16 syncJumpWidth);
 
-/** \brief Sets the values of CAN fast baudrate for CAN FD frames data phase
- * \param node Specifies the pointer to the CAN Node registers
- * \param syncJumpWidth Synchronization Jump Width
- * \param timeSegment2 Time segment after sample point
- * \param timeSegment1 Time segment before sample point
- * \param prescaler Baud Rate Prescaler
- * \return None
+/**
+ * \brief Sets the values of CAN fast baudrate for CAN FD frames data phase.
+ *
+ * \param[inout] node          Pointer to the CAN node registers.
+ * \param[in]    syncJumpWidth Synchronization Jump Width. Range: 0 to 15
+ * \param[in]    timeSegment2  Time segment after the sample point. Range: 0 to 15
+ * \param[in]    timeSegment1  Time segment before the sample point. Range: 0 to 31
+ * \param[in]    prescaler     Baud Rate Prescaler value. Range: 0 to 31
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_setFastBitTimingValues(Ifx_CAN_N *node, uint16 syncJumpWidth, uint8 timeSegment2, uint8 timeSegment1, uint16 prescaler);
 
-/** \brief Enables the CAN frame mode for transmission
- * \param node Specifies the pointer to the CAN Node registers
- * \param frameMode CAN frame mode
- * \return None
+/**
+ * \brief Configures the CAN frame mode for transmission.
+ *
+ * \param[inout] node      Pointer to the CAN node registers.
+ * \param[in]    frameMode The frame mode to be configured. Range: \ref IfxCan_FrameMode
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_setFrameMode(Ifx_CAN_N *node, IfxCan_FrameMode frameMode);
 
-/** \brief Sets CAN frame mode request for transmission
- * \param txBufferElement Tx Buffer Element
- * \param frameMode CAN frame mode
- * \return None
+/**
+ * \brief Configures CAN frame mode request for transmission.
+ *
+ * \param[inout] txBufferElement Pointer to the transmit buffer element where the frame mode will be set.
+ * \param[in]    frameMode       The requested frame mode for the transmission. Range: \ref IfxCan_FrameMode
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_setFrameModeReq(Ifx_CAN_TXMSG *txBufferElement, IfxCan_FrameMode frameMode);
 
-/** \brief Sets CAN frame mode request for transmission.
- * This function is deprecated. Use new function IfxCan_Node_setFrameModeReq
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferElement Tx Buffer Element
- * \param frameMode CAN frame mode
- * \return None
+/**
+ * \brief Configures CAN frame mode request for transmission.
+ * This function is deprecated. Use new function \ref IfxCan_Node_setFrameModeReq
+ * 
+ * \param[in]    node            Pointer to the CAN node registers.
+ * \param[inout] txBufferElement Pointer to the Tx Buffer Element to be configured.
+ * \param[in]    frameMode       The desired CAN frame mode. Range: \ref IfxCan_FrameMode
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_setFrameModeRequest(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferElement, IfxCan_FrameMode frameMode);
 
-/** \brief Converts data length code (DLC) into number of bytes
- * \param dataLengthCode Data length code
- * \return Data length in bytes
+/**
+ * \brief Converts a given Data Length Code (DLC) to its corresponding data length in bytes.
+ *
+ * \param[in] dataLengthCode Data Length Code (DLC) of the message. Range: \ref IfxCan_DataLengthCode
+ *
+ * \retval uint32 Data length in bytes corresponding to the provided DLC. Range: 0 to 64
  */
 IFX_EXTERN uint32 IfxCan_Node_getDataLengthInBytes(IfxCan_DataLengthCode dataLengthCode);
 
@@ -811,181 +925,258 @@ IFX_EXTERN uint32 IfxCan_Node_getDataLengthInBytes(IfxCan_DataLengthCode dataLen
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns Tx FIFO/Queue Put Index
- * \param node Specifies the pointer to the CAN Node registers
- * \return Tx Buffer Element Number
+/**
+ * \brief Retrieves the current put index of the Tx FIFO/Queue for the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval IfxCan_TxBufferId The current put index of the Tx FIFO/Queue. Range: \ref IfxCan_TxBufferId
  */
 IFX_INLINE IfxCan_TxBufferId IfxCan_Node_getTxFifoQueuePutIndex(Ifx_CAN_N *node);
 
-/** \brief Returns the status of whether cancellation is finished on the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return Status
+/**
+ * \brief Checks if the cancellation of transmission for a specific Tx buffer has finished.
+ *
+ * \param[in] node       Pointer to the CAN node registers.
+ * \param[in] txBufferId The identifier of the Tx buffer to check. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval TRUE If the Tx buffer cancellation is finished.
+ *         FALSE If the Tx buffer cancellation is not finished.
  */
 IFX_INLINE boolean IfxCan_Node_isTxBufferCancellationFinished(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Returns the status of pending request of the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return Status
+/**
+ * \brief Checks if a transmit buffer request is pending for the specified buffer ID.
+ *
+ * \param[in] node       Pointer to the CAN node registers.
+ * \param[in] txBufferId The ID of the transmit buffer to check. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval TRUE If a request for the specified transmit buffer is pending.
+ *         FALSE If no request for the specified transmit buffer is pending.
  */
 IFX_INLINE boolean IfxCan_Node_isTxBufferRequestPending(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Returns the status of whether transmission occured on the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return Status
+/**
+ * \brief Checks if a transmission occurred on the specified Tx buffer.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ * \param[in] txBufferId Tx Buffer number to check transmission status for. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval TRUE If transmission occurred on the specified Tx buffer.
+ *         FALSE If no transmission occurred on the specified Tx buffer.
  */
 IFX_INLINE boolean IfxCan_Node_isTxBufferTransmissionOccured(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Returns the status of Tx Fifo/Queue is full or not
- * \param node Specifies the pointer to the CAN Node registers
- * \return Status
+/**
+ * \brief Checks if the transmit FIFO/Queue of the specified CAN node is full.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE If the transmit FIFO/Queue is full.
+ *         FALSE If the transmit FIFO/Queue is not full.
  */
 IFX_INLINE boolean IfxCan_Node_isTxFifoQueueFull(Ifx_CAN_N *node);
 
-/** \brief pauses the CAN Node for two CAN bit times before starting the next transmission
- * \param node Specifies the pointer to the CAN Node registers
- * \param enable Enable / Disable choice
- * \return None
+/**
+ * \brief Pauses the CAN Node for two CAN bit times before starting the next transmission.
+ *
+ * \param[inout] node   Pointer to the CAN node registers.
+ * \param[in]    enable Boolean flag to enable (TRUE) or disable (FALSE) the transmission pause. Range: TRUE or FALSE
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_pauseTransmission(Ifx_CAN_N *node, boolean enable);
 
-/** \brief Sets the Data Length Code (DLC) for transmit frame
- * \param txBufferElement Tx Buffer Element
- * \param dataLengthCode DLC, data length code
- * \return None
+/**
+ * \brief Sets the Data Length Code (DLC) for a transmit frame.
+ * 
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to be configured.
+ * \param[in]    dataLengthCode  DLC value to be set. Range: \ref IfxCan_DataLengthCode
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setDataLength(Ifx_CAN_TXMSG *txBufferElement, IfxCan_DataLengthCode dataLengthCode);
 
-/** \brief Sets the Data Length Code (DLC) for transmit frame.
- * This function is deprecated. Use new function IfxCan_Node_setDataLength
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferElement Tx Buffer Element
- * \param dataLengthCode DLC, data length code
- * \return None
+/**
+ * \brief Sets the Data Length Code (DLC) for transmit frame.
+ * This function is deprecated. Use new function \ref IfxCan_Node_setDataLength.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to be configured.
+ * \param[in]    dataLengthCode  DLC value to be set. Range: \ref IfxCan_DataLengthCode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setDataLengthCode(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferElement, IfxCan_DataLengthCode dataLengthCode);
 
-/** \brief Sets the number of dedicated Tx Buffers
- * \param node Specifies the pointer to the CAN Node registers
- * \param number Number of Tx Buffers
- * \return None
+/**
+ * \brief Configures the number of dedicated transmit buffers for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    number The number of dedicated transmit buffers to allocate. Range: 0 to 32
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setDedicatedTxBuffersNumber(Ifx_CAN_N *node, uint8 number);
 
-/** \brief Sets the Error State Indicator (ESI) for transmit frame
- * \param txBufferElement Tx Buffer Element
- * \param enable Choice (True/ False)
- * \return None
+/**
+ * \brief Sets the Error State Indicator (ESI) for a transmit frame.
+ * 
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to configure.
+ * \param[in]    enable          Boolean flag to enable or disable the ESI. Range: TRUE (Enable) or FALSE (Disable)
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setErrStateIndicator(Ifx_CAN_TXMSG *txBufferElement, boolean enable);
 
-/** \brief Sets the Error State Indicator (ESI) for transmit frame.
- * This function is decprecated. Use new function IfxCan_Node_setErrStateIndicator
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferElement Tx Buffer Element
- * \param enable Choice (True/ False)
- * \return None
+/**
+ * \brief Sets the Error State Indicator (ESI) for a transmit frame.
+ * This function is deprecated. Use \ref IfxCan_Node_setErrStateIndicator instead.
+ * 
+ * \param[in]    node            Pointer to the CAN node registers.
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to configure.
+ * \param[in]    enable          Boolean flag to enable or disable the ESI. Range: TRUE (Enable) or FALSE (Disable)
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setErrorStateIndicator(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferElement, boolean enable);
 
-/** \brief Sets the Message Marker (MM) for transmit frame
- * \param txBufferElement Tx Buffer Element
- * \param bufferId MM, Message Marker , Buffer Id
- * \return None
+/**
+ * \brief Sets the Message Marker (MM) for a transmit frame.
+ *
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to configure.
+ * \param[in]    bufferId        The identifier of the transmit buffer. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setMessageMarker(Ifx_CAN_TXMSG *txBufferElement, IfxCan_TxBufferId bufferId);
 
-/** \brief Sets the identifier (ID) for transmit frame.
- * \param txBufferElement Tx Buffer Element
- * \param messageId Identifier
- * \param messageIdLength Message Id length (Standard / Extended)
- * \return None
+/** 
+ * \brief Sets the identifier (ID) for transmit frame.
+ *
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to configure.
+ * \param[in]    messageId       Message Identifier. Range: 0x000 to 0x7FF (Standard); 0 to 0x1FFFFFFF (Extended)
+ * \param[in]    messageIdLength Message Id length (Standard / Extended). Range: \ref IfxCan_MessageIdLength
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setMsgId(Ifx_CAN_TXMSG *txBufferElement, uint32 messageId, IfxCan_MessageIdLength messageIdLength);
 
-/** \brief Sets the identifier (ID) for transmit frame.
- * This function is deprecated. Use the new function IfxCan_Node_setMsgId
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferElement Tx Buffer Element
- * \param messageId Identifier
- * \param messageIdLength Message Id length (Standard / Extended)
- * \return None
+/**
+ * \brief Sets the identifier (ID) for a transmit frame. (Deprecated)
+ * This function is deprecated; use the new function \ref IfxCan_Node_setMsgId instead.
+ *
+ * \param[in]    node            Pointer to the CAN node registers.
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to configure.
+ * \param[in]    messageId       The identifier for the transmit frame. Range: 0x000 to 0x7FF (Standard); 0 to 0x1FFFFFFF (Extended)
+ * \param[in]    messageIdLength The length of the message ID. Range: \ref IfxCan_MessageIdLength
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setMesssageId(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferElement, uint32 messageId, IfxCan_MessageIdLength messageIdLength);
 
-/** \brief Sets the remote Transmit Request (RTR) for transmit frame
- * \param txBufferElement Tx Buffer Element
- * \param enable Choice (True/ False)
- * \return None
+/**
+ * \brief Configures the remote transmit request (RTR) bit for a given transmit buffer element.
+ *
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to configure.
+ * \param[in]    enable          Boolean flag to enable or disable the RTR bit. Range: TRUE (remote frame) or FALSE (data frame)
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRemoteTransmitReq(Ifx_CAN_TXMSG *txBufferElement, boolean enable);
 
-/** \brief Sets the remote Transmit Request (RTR) for transmit frame.
- * This function is deprecated. Use new function IfxCan_Node_setRemoteTransmitReq
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferElement Tx Buffer Element
- * \param enable Choice (True/ False)
- * \return None
+/**
+ * \brief Sets the remote Transmit Request (RTR) for a transmit frame. (Deprecated)
+ * This function is deprecated; use \ref IfxCan_Node_setRemoteTransmitReq instead.
+ *
+ * \param[in]    node            Pointer to the CAN node registers.
+ * \param[inout] txBufferElement Pointer to the transmit buffer element to configure.
+ * \param[in]    enable          Boolean flag to enable or disable the RTR bit. Range: TRUE (remote frame) or FALSE (data frame)
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRemoteTransmitRequest(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferElement, boolean enable);
 
-/** \brief Sets Transmit FIFO/Queue Mode
- * \param node Specifies the pointer to the CAN Node registers
- * \param mode Tx FIFO/Queue Mode
- * \return None
+/**
+ * \brief Configures the transmit FIFO/queue mode for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    mode Tx FIFO/Queue Mode. Range: \ref IfxCan_TxMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTransmitFifoQueueMode(Ifx_CAN_N *node, IfxCan_TxMode mode);
 
-/** \brief Sets Transmit FIFO/Queue Size
- * \param node Specifies the pointer to the CAN Node registers
- * \param number Number of Tx Buffers used for Tx FIFO/Queue
- * \return None
+/**
+ * \brief Configures the number of transmit buffers used for the Tx FIFO/Queue.
+ *
+ * \param[inout] node   Pointer to the CAN node registers.
+ * \param[in]    number The number of Tx buffers to be used for the Tx FIFO/Queue. Range: 0 to 32
+ *                  
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTransmitFifoQueueSize(Ifx_CAN_N *node, uint8 number);
 
-/** \brief Sets the Add Request for the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return None
+/**
+ * \brief Sets the Add Request for the selected Tx buffer
+ *
+ * \param[inout] node       Pointer to the CAN node registers.
+ * \param[in]    txBufferId The ID of the Tx buffer to configure. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxBufferAddRequest(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Sets the Cancellation Request for the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return None
+/**
+ * \brief Sets the cancellation request for the specified transmit buffer in the CAN node.
+ *
+ * \param[inout] node       Pointer to the CAN node registers.
+ * \param[in]    txBufferId Transmit buffer identifier. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxBufferCancellationRequest(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Sets Tx Buffer Data Field Size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Tx Buffer Data Field Size
- * \return None
+/**
+ * \brief Configures the transmit buffer data field size for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size Tx Buffer Data Field Size. This parameter specifies the size of the
+ *                    data field in the transmit buffer. Range: \ref IfxCan_DataFieldSize
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxBufferDataFieldSize(Ifx_CAN_N *node, IfxCan_DataFieldSize size);
 
-/** \brief Sets the start address of Tx Buffers section in the Message RAM (32-bit word address)
- * \param node Specifies the pointer to the CAN Node registers
- * \param address Start address of Tx Buffers in the message RAM
- * \return None
+/**
+ * \brief Sets the start address of the Tx Buffers section in the Message RAM (32-bit word address)
+ *
+ * \param[inout] node    Pointer to the CAN node registers.
+ * \param[in]    address Start address of the Tx Buffers in the Message RAM. Range: 0x0000 to 0x3FFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxBuffersStartAddress(Ifx_CAN_N *node, uint16 address);
 
-/** \brief Sets the Tx Event Fifo Control (EFC) for transmit frame
- * \param txBufferElement Tx Buffer Element
- * \param enable Choice (True/ False)
- * \return None
+/**
+ * \brief Enables or disables the Tx Event FIFO control (EFC) for a specific transmit message buffer element.
+ *
+ * \param[inout] txBufferElement Pointer to the transmit message buffer element.
+ * \param[in] enable             Boolean flag to enable (TRUE) or disable (FALSE) the Tx Event FIFO control. Range: TRUE OR FALSE
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxEventFifoCtrl(Ifx_CAN_TXMSG *txBufferElement, boolean enable);
 
-/** \brief Sets the Tx Event Fifo Control (EFC) for transmit frame.
- * This function is deprecated. Use new function IfxCan_Node_setTxEventFifoCtrl
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferElement Tx Buffer Element
- * \param enable Choice (True/ False)
- * \return None
+/**
+ * \brief Configures the Tx Event FIFO Control (EFC) for a transmit frame.
+ * This function is deprecated. Use new function \ref IfxCan_Node_setTxEventFifoCtrl
+ *
+ * \param[in]    node            Pointer to the CAN node registers.
+ * \param[inout] txBufferElement Pointer to the transmit message buffer element.
+ * \param[in]    enable          Boolean flag to enable (TRUE) or disable (FALSE) the Tx Event FIFO control. Range: TRUE OR FALSE
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxEventFifoControl(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferElement, boolean enable);
 
@@ -993,36 +1184,48 @@ IFX_INLINE void IfxCan_Node_setTxEventFifoControl(Ifx_CAN_N *node, Ifx_CAN_TXMSG
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns Tx Buffer Data Field Size in bytes
- * \param node Specifies the pointer to the CAN Node registers
- * \return Data field size
+/**
+ * \brief Returns the size of the transmit buffer data field for the specified CAN node in bytes.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 The size of the transmit buffer data field in bytes. Range: 0 to 64
  */
 IFX_EXTERN uint8 IfxCan_Node_getTxBufferDataFieldSize(Ifx_CAN_N *node);
 
-/** \brief Returns the address of selected Tx buffer element
- * \param node Specifies the pointer to the CAN Node registers
- * \param ramBaseAddress Message RAM base address of CAN module
- * \param txBuffersStartAddress Start address of Tx Buffers section in the Message RAM
- * \param txBufferNumber Tx buffer element number
- * \return Tx Buffer Element Address
+/**
+ * \brief Returns the address of a selected Tx buffer element in the CAN module.
+ *
+ * \param[in] node                  Pointer to the CAN node registers.
+ * \param[in] ramBaseAddress        Message RAM base address of the CAN module. Range: 0xF0200000 to 0xF0223FFF
+ * \param[in] txBuffersStartAddress Start address of the Tx Buffers section in the Message RAM. Range: 0x0000 to 0x3FFF
+ * \param[in] txBufferNumber        Tx buffer element number. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval Ifx_CAN_TXMSG*  Pointer to the Tx buffer element's address.
  */
 IFX_EXTERN Ifx_CAN_TXMSG *IfxCan_Node_getTxBufferElementAddress(Ifx_CAN_N *node, uint32 ramBaseAddress, uint16 txBuffersStartAddress, IfxCan_TxBufferId txBufferNumber);
 
-/** \brief Writes Data into Tx buffer element Node_writeTxBufData
- * \param txBufferElement Tx Buffer Element
- * \param dataLengthCode DLC, Data Length Code
- * \param data Pointer to data (in words)
- * \return None
+/**
+ * \brief Writes data into a specified transmit buffer element for a CAN node.
+ *
+ * \param[inout] txBufferElement Pointer to the transmit buffer element where data will be written.
+ * \param[in]    dataLengthCode  DLC (Data Length Code) specifying the length of the data to be written.Range: \ref IfxCan_DataLengthCode
+ * \param[in]    data            Pointer to the data (in 32-bit words) to be written into the transmit buffer.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_writeTxBufData(Ifx_CAN_TXMSG *txBufferElement, IfxCan_DataLengthCode dataLengthCode, uint32 *data);
 
-/** \brief Writes Data into Tx buffer element.
- * This function is deprecated. Use new function IfxCan_Node_writeTxBufData
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferElement Tx Buffer Element
- * \param dataLengthCode DLC, Data Length Code
- * \param data Pointer to data (in words)
- * \return None
+/**
+ * \brief Writes data into a Tx buffer element.
+ * This function is deprecated; use \ref IfxCan_Node_writeTxBufData instead.
+ *
+ * \param[in]    node            Pointer to the CAN node registers.
+ * \param[inout] txBufferElement Pointer to the transmit buffer element where data will be written.
+ * \param[in]    dataLengthCode  DLC (Data Length Code) specifying the length of the data to be written.Range: \ref IfxCan_DataLengthCode
+ * \param[in]    data            Pointer to the data (in 32-bit words) to be written into the transmit buffer.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_writeData(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferElement, IfxCan_DataLengthCode dataLengthCode, uint32 *data);
 
@@ -1035,137 +1238,197 @@ IFX_EXTERN void IfxCan_Node_writeData(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferEl
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the Data Length Code from the received frame
- * \param rxBufferElement Rx Buffer Element
- * \return Data Length Code
+/**
+ * \brief Extracts the Data Length Code (DLC) from the provided receive buffer element.
+ *
+ * \param[in] rxBufferElement Pointer to the RX buffer element containing the received frame data.
+ *
+ * \retval uint32 The Data Length Code (DLC) of the received frame. Range 0 to 15
  */
 IFX_INLINE uint32 IfxCan_Node_getDataLengthCode(Ifx_CAN_RXMSG *rxBufferElement);
 
-/** \brief Returns the identifier (ID) from the received frame
- * \param rxBufferElement Rx Buffer Element
- * \return Identifier
+/**
+ * \brief Returns the identifier (ID) from the received frame.
+ *
+ * \param[in] rxBufferElement Pointer to the RX buffer element containing the received frame data.
+ *
+ * \retval uint32 The message identifier extracted from the RX buffer element. Range: 0x000 to 0x7FF (Standard); 0 to 0x1FFFFFFF (Extended)
  */
 IFX_INLINE uint32 IfxCan_Node_getMesssageId(Ifx_CAN_RXMSG *rxBufferElement);
 
-/** \brief Returns Rx FIFO 0 Fill Level
- * \param node Specifies the pointer to the CAN Node registers
- * \return Fill level
+/**
+ * \brief Returns the current fill level of the Rx FIFO 0 buffer for the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 Fill level of Rx FIFO 0 buffer. Range 0 to 64
  */
 IFX_INLINE uint8 IfxCan_Node_getRxFifo0FillLevel(Ifx_CAN_N *node);
 
-/** \brief Returns Rx FIFO 0 get index
- * \param node Specifies the pointer to the CAN Node registers
- * \return Rx Buffer Element Number
+/**
+ * \brief Retrieves the get index of the Rx FIFO 0 buffer.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval IfxCan_RxBufferId The Rx Buffer Element Number. Range: \ref IfxCan_RxBufferId
  */
 IFX_INLINE IfxCan_RxBufferId IfxCan_Node_getRxFifo0GetIndex(Ifx_CAN_N *node);
 
-/** \brief Returns Rx FIFO 1 Fill Level
- * \param node Specifies the pointer to the CAN Node registers
- * \return Fill level
+/**
+ * \brief Returns the current fill level of the Rx FIFO 1 buffer for the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 Fill level of Rx FIFO 1 buffer. Range 0 to 64
  */
 IFX_INLINE uint8 IfxCan_Node_getRxFifo1FillLevel(Ifx_CAN_N *node);
 
-/** \brief Returns Rx FIFO 1 get index
- * \param node Specifies the pointer to the CAN Node registers
- * \return Rx Buffer Element Number
+/**
+ * \brief Retrieves the get index of the Rx FIFO 1 buffer.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval IfxCan_RxBufferId Rx Buffer Element Number. Range: \ref IfxCan_RxBufferId
  */
 IFX_INLINE IfxCan_RxBufferId IfxCan_Node_getRxFifo1GetIndex(Ifx_CAN_N *node);
 
-/** \brief Sets Rx Buffer Data Field Size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Rx Buffer Data Field Size
- * \return None
+/**
+ * \brief Sets the size of the receive buffer data field for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size The desired size of the receive buffer data field. Range: \ref IfxCan_DataFieldSize
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxBufferDataFieldSize(Ifx_CAN_N *node, IfxCan_DataFieldSize size);
 
-/** \brief Sets the start address of Rx Buffers section in the Message RAM (32-bit word address)
- * \param node Specifies the pointer to the CAN Node registers
- * \param address Start address of Rx Buffers in the Message RAM
- * \return None
+/**
+ * \brief Sets the start address of the Rx Buffers section in the Message RAM (32-bit word address)
+ *
+ * \param[inout] node    Pointer to the CAN node registers.
+ * \param[in]    address Start address of Rx Buffers in the Message RAM. Range: 0x0000 to 0x3FFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxBuffersStartAddress(Ifx_CAN_N *node, uint16 address);
 
-/** \brief Sets Rx FIFO 0 Acknowledge Index
- * \param node Specifies the pointer to the CAN Node registers
- * \param RxBufferNumber Rx buffer element number
- * \return None
+/**
+ * \brief Sets the Rx FIFO 0 Acknowledge Index for the specified CAN node.
+ *
+ * \param[inout] node           Pointer to the CAN node registers.
+ * \param[in]    RxBufferNumber The Rx buffer element number to be acknowledged. Range: \ref IfxCan_RxBufferId
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo0AcknowledgeIndex(Ifx_CAN_N *node, IfxCan_RxBufferId RxBufferNumber);
 
-/** \brief Sets Rx Buffer Fifo 0 Data Field Size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Rx FIFO 0 Data Field Size
- * \return None
+/**
+ * \brief Configures the data field size for the Rx Buffer Fifo 0 of the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size The desired data field size for Rx FIFO 0. Range: \ref IfxCan_DataFieldSize
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo0DataFieldSize(Ifx_CAN_N *node, IfxCan_DataFieldSize size);
 
-/** \brief Sets Rx Buffer Fifo 0 operating mode
- * \param node Specifies the pointer to the CAN Node registers
- * \param mode Rx FIFO 0 operating Mode
- * \return None
+/**
+ * \brief Sets the operating mode for Rx Buffer FIFO 0 of the CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    mode The operating mode for Rx FIFO 0. Range: \ref IfxCan_RxFifoMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo0OperatingMode(Ifx_CAN_N *node, IfxCan_RxFifoMode mode);
 
-/** \brief Sets Rx FIFO 0 Size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Rx FIFO 0 Size
- * \return None
+/**
+ * \brief Sets the size of the Rx FIFO 0 for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size The size of the Rx FIFO 0 buffer. Range: 0 to 64
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo0Size(Ifx_CAN_N *node, uint8 size);
 
-/** \brief Sets the start address of Rx FIFO 0 section in the Message RAM (32-bit word address)
- * \param node Specifies the pointer to the CAN Node registers
- * \param address Start address of Rx FIFO 0 in the Message RAM
- * \return None
+/**
+ * \brief Configures the start address of Rx FIFO 0 section in the Message RAM (32-bit word address)
+ *
+ * \param[inout] node    Pointer to the CAN node registers.
+ * \param[in]    address Start address of Rx FIFO 0 in the Message RAM. Range: 0x0000 to 0x3FFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo0StartAddress(Ifx_CAN_N *node, uint16 address);
 
-/** \brief Sets Rx FIFO 0 Watermark Level
- * \param node Specifies the pointer to the CAN Node registers
- * \param level Rx FIFO 0 Watermark Level
- * \return None
+/**
+ * \brief Configures the watermark level for the receive FIFO 0 of the CAN node.
+ *
+ * \param[inout] node  Pointer to the CAN node registers.
+ * \param[in]    level Rx FIFO 0 Watermark Level. Range: 1 to 64 (For ranges 0, 65 to 127, Watermark interrupt disabled)
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo0WatermarkLevel(Ifx_CAN_N *node, uint8 level);
 
-/** \brief Sets Rx FIFO 1 Acknowledge Index
- * \param node Specifies the pointer to the CAN Node registers
- * \param RxBufferNumber Rx buffer element number
- * \return None
+/**
+ * \brief Sets the Rx FIFO 1 Acknowledge Index for the specified CAN node.
+ *
+ * \param[inout] node           Pointer to the CAN node registers.
+ * \param[in]    RxBufferNumber The Rx buffer element number to be acknowledged. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo1AcknowledgeIndex(Ifx_CAN_N *node, IfxCan_RxBufferId RxBufferNumber);
 
-/** \brief Sets Rx Buffer Fifo 1 Data Field Size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Rx FIFO 1 Data Field Size
- * \return None
+/**
+ * \brief Sets the data field size for the Rx Buffer FIFO 1 of the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size Rx FIFO 1 data field size. Range: \ref IfxCan_DataFieldSize
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo1DataFieldSize(Ifx_CAN_N *node, IfxCan_DataFieldSize size);
 
-/** \brief Sets Rx Buffer Fifo 1 operating mode
- * \param node Specifies the pointer to the CAN Node registers
- * \param mode Rx FIFO 1 operating Mode
- * \return None
+/**
+ * \brief Sets the operating mode for the Rx FIFO 1 buffer of the CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    mode The operating mode for Rx FIFO 1. Range: \ref IfxCan_RxFifoMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo1OperatingMode(Ifx_CAN_N *node, IfxCan_RxFifoMode mode);
 
-/** \brief Sets Rx FIFO 1 Size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Rx FIFO 1 Size
- * \return None
+/**
+ * \brief Configures the size of the receive FIFO 1 for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size The size of Rx FIFO 1. Range 0 to 64
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo1Size(Ifx_CAN_N *node, uint8 size);
 
-/** \brief Sets the start address of Rx FIFO 1 section in the Message RAM (32-bit word address)
- * \param node Specifies the pointer to the CAN Node registers
- * \param address Start address of Rx FIFO 1 in the Message RAM
- * \return None
+/**
+ * \brief Configures the start address of Rx FIFO 1 section in the Message RAM (32-bit word address).
+ *
+ * \param[inout] node    Pointer to the CAN node registers.
+ * \param[in]    address Start address of Rx FIFO 1 in the Message RAM. Range: 0x0000 to 0x3FFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo1StartAddress(Ifx_CAN_N *node, uint16 address);
 
-/** \brief Sets Rx FIFO 1 Watermark Level
- * \param node Specifies the pointer to the CAN Node registers
- * \param level Rx FIFO 1 Watermark Level
- * \return None
+/**
+ * \brief Sets the Rx FIFO 1 Watermark Level for the specified CAN node.
+ *
+ * \param[inout] node  Pointer to the CAN node registers.
+ * \param[in]    level Rx FIFO 1 Watermark Level. Range: 1 to 64 (For ranges 0, 65 to 127, Watermark interrupt disabled)
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setRxFifo1WatermarkLevel(Ifx_CAN_N *node, uint8 level);
 
@@ -1173,70 +1436,98 @@ IFX_INLINE void IfxCan_Node_setRxFifo1WatermarkLevel(Ifx_CAN_N *node, uint8 leve
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears the New Data flag of the selected Rx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param rxBufferId Rx Buffer number
- * \return None
+/**
+ * \brief Clears the New Data flag of the selected Rx buffer.
+ *
+ * \param[inout] node       Pointer to the CAN node registers.
+ * \param[in]    rxBufferId The identifier of the Rx buffer for which the New Data flag should be cleared. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_clearRxBufferNewDataFlag(Ifx_CAN_N *node, IfxCan_RxBufferId rxBufferId);
 
-/** \brief Returns Rx Buffer Data Field Size in bytes
- * \param node Specifies the pointer to the CAN Node registers
- * \return Data field size
+/**
+ * \brief Gets the size of the receive buffer data field in bytes.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 The size of the receive buffer data field in bytes. Range: 8 to 64
  */
 IFX_EXTERN uint8 IfxCan_Node_getRxBufferDataFieldSize(Ifx_CAN_N *node);
 
-/** \brief Returns the address of selected Rx buffer element
- * \param node Specifies the pointer to the CAN Node registers
- * \param ramBaseAddress Message RAM base address of CAN Module
- * \param rxBuffersStartAddress Start address of Rx Buffers section in the Message RAM
- * \param rxBufferNumber Rx buffer element number
- * \return Rx Buffer Element Address
+/**
+ * \brief Returns the address of selected Rx buffer element.
+ *
+ * \param[in] node                  Pointer to the CAN node registers.
+ * \param[in] ramBaseAddress        Message RAM base address of CAN Module. Range: 0xF0200000 to 0xF0223FFF
+ * \param[in] rxBuffersStartAddress Start address of Rx Buffers section in the Message RAM. Range: 0x0000 to 0x3FFF
+ * \param[in] rxBufferNumber        Rx buffer element number. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval Ifx_CAN_RXMSG* Rx Buffer Element Address
  */
 IFX_EXTERN Ifx_CAN_RXMSG *IfxCan_Node_getRxBufferElementAddress(Ifx_CAN_N *node, uint32 ramBaseAddress, uint16 rxBuffersStartAddress, IfxCan_RxBufferId rxBufferNumber);
 
-/** \brief Returns Rx FIFO 0 Data Field Size in bytes
- * \param node Specifies the pointer to the CAN Node registers
- * \return Data field size
+/**
+ * \brief Returns the size of the receive FIFO 0 data field in bytes.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 The size of the data field in bytes. Range: 8 to 64
  */
 IFX_EXTERN uint8 IfxCan_Node_getRxFifo0DataFieldSize(Ifx_CAN_N *node);
 
-/** \brief Returns the address of selected Rx FIFO 0 element
- * \param node Specifies the pointer to the CAN Node registers
- * \param ramBaseAddress Message RAM base address of CAN Module
- * \param rxFifo0StartAddress Start address of Rx FIFO 0 section in the Message RAM
- * \param rxBufferNumber Rx buffer element number
- * \return Rx FIFO 0 Element Address
+/**
+ * \brief Returns the address of the selected Rx FIFO 0 element.
+ *
+ * \param[in] node                Pointer to the CAN node registers.
+ * \param[in] ramBaseAddress      Message RAM base address of the CAN Module. Range: 0xF0200000 to 0xF0223FFF
+ * \param[in] rxFifo0StartAddress Start address of Rx FIFO 0 section in the Message RAM. Range: 0x0000 to 0x3FFF
+ * \param[in] rxBufferNumber      Rx buffer element number. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval Ifx_CAN_RXMSG* Address of the specified Rx FIFO 0 element.
  */
 IFX_EXTERN Ifx_CAN_RXMSG *IfxCan_Node_getRxFifo0ElementAddress(Ifx_CAN_N *node, uint32 ramBaseAddress, uint16 rxFifo0StartAddress, IfxCan_RxBufferId rxBufferNumber);
 
-/** \brief Returns Rx FIFO 1 Data Field Size in bytes
- * \param node Specifies the pointer to the CAN Node registers
- * \return Data field size
+/**
+ * \brief Returns the size of the receive FIFO 1 data field in bytes for the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 The size of the data field in the receive FIFO 1. Range 8 to 64
  */
 IFX_EXTERN uint8 IfxCan_Node_getRxFifo1DataFieldSize(Ifx_CAN_N *node);
 
-/** \brief Returns the address of selected Rx FIFO 1 element
- * \param node Specifies the pointer to the CAN Node registers
- * \param ramBaseAddress Message RAM base address of CAN Module
- * \param rxFifo1StartAddress Start address of Rx FIFO 1 section in the Message RAM
- * \param rxBufferNumber Rx buffer element number
- * \return Rx FIFO 1 Element Address
+/**
+ * \brief Returns the address of a selected Rx FIFO 1 element in the Message RAM
+ *
+ * \param[in] node                Pointer to the CAN node registers.
+ * \param[in] ramBaseAddress      Message RAM base address of the CAN Module. Range: 0xF0200000 to 0xF0223FFF
+ * \param[in] rxFifo1StartAddress Start address of Rx FIFO 1 section in the Message RAM. Range: 0x0000 to 0x3FFF
+ * \param[in] rxBufferNumber      Rx buffer element number. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval Ifx_CAN_RXMSG* Address of the selected Rx FIFO 1 element.
  */
 IFX_EXTERN Ifx_CAN_RXMSG *IfxCan_Node_getRxFifo1ElementAddress(Ifx_CAN_N *node, uint32 ramBaseAddress, uint16 rxFifo1StartAddress, IfxCan_RxBufferId rxBufferNumber);
 
-/** \brief Returns the status of whether the selcted Rx buffer has been updated from new data
- * \param node Specifies the pointer to the CAN Node registers
- * \param rxBufferId Rx Buffer number
- * \return Status
+/**
+ * \brief Checks if the specified Rx buffer has been updated with new data.
+ *
+ * \param[in] node       Pointer to the CAN node registers.
+ * \param[in] rxBufferId Rx Buffer number to check for new data. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval TRUE If new data is available in the specified Rx buffer.
+ *         FALSE If no new data is available in the specified Rx buffer.
  */
 IFX_EXTERN boolean IfxCan_Node_isRxBufferNewDataUpdated(Ifx_CAN_N *node, IfxCan_RxBufferId rxBufferId);
 
-/** \brief Reads data from Rx buffer element
- * \param rxBufferElement Rx Buffer Element
- * \param dataLengthCode DLC, Data Length Code
- * \param data Pointer to data (in words)
- * \return None
+/**
+ * \brief Reads data from an Rx buffer element into a data array.
+ *
+ * \param[in]    rxBufferElement Pointer to Rx Buffer Element containing the received message data.
+ * \param[in]    dataLengthCode  DLC (Data Length Code) specifying the number of data bytes in the message. Range: \ref IfxCan_DataLengthCode
+ * \param[inout] data            Pointer to a uint32 array where the data words will be stored.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_readData(Ifx_CAN_RXMSG *rxBufferElement, IfxCan_DataLengthCode dataLengthCode, uint32 *data);
 
@@ -1249,139 +1540,199 @@ IFX_EXTERN void IfxCan_Node_readData(Ifx_CAN_RXMSG *rxBufferElement, IfxCan_Data
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the selected interrupt
- * \param node Specifies the pointer to the CAN Node registers
- * \return None
+/**
+ * \brief Enables the CAN node to accept remote frames with a standard identifier (11-bit ID).
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_acceptRemoteFramesWithStandardId(Ifx_CAN_N *node);
 
-/** \brief Disables the selected interrupt
- * \param node Specifies the pointer to the CAN Node registers
- * \return None
+/**
+ * \brief Enables the CAN node to accept remote frames with extended identifiers (29-bit ID).
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_acceptRemoteFrameswithExtendedId(Ifx_CAN_N *node);
 
-/** \brief Configure the filter for non matching frames with extended id.
- * \param node Specifies the pointer to the CAN Node registers
- * \param filter action to be performed on non matching messages.
- * \return None
+/**
+ * \brief Configures the filter for non-matching frames with an extended ID.
+ *
+ * \param[inout] node   Pointer to the CAN node registers.
+ * \param[in]    filter Action to be performed on non-matching messages. Range: \ref IfxCan_NonMatchingFrame
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_configureExtendedFilterForNonMatchingFrames(Ifx_CAN_N *node, IfxCan_NonMatchingFrame filter);
 
-/** \brief Configure the filter for non matching frames with standard id.
- * \param node Specifies the pointer to the CAN Node registers
- * \param filter action to be performed on non matching messages.
- * \return None
+/**
+ * \brief Configures the filter for non-matching frames using a standard ID.
+ *
+ * \param[inout] node   Pointer to the CAN node registers.
+ * \param[in]    filter Action to be performed on non-matching messages. Range: \ref IfxCan_NonMatchingFrame
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_configureStandardFilterForNonMatchingFrames(Ifx_CAN_N *node, IfxCan_NonMatchingFrame filter);
 
-/** \brief Reject the remote frames with extended id.
- * \param node Specifies the pointer to the CAN Node registers
- * \return None
+/**
+ * \brief Rejects remote frames with an extended identifier for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_rejectRemoteFramesWithExtendedId(Ifx_CAN_N *node);
 
-/** \brief Reject the remote frames with standard id.
- * \param node Specifies the pointer to the CAN Node registers
- * \return None
+/**
+ * \brief Configures the CAN node to reject remote frames with standard IDs (11-bit identifier).
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_rejectRemoteFramesWithStandardId(Ifx_CAN_N *node);
 
-/** \brief Sets the Extended Filter Element Configuration
- * \param extendedFilterElement Extended Filter Element
- * \param filterElementConfiguration Filter Element Configuration
- * \return None
+/**
+ * \brief Configures the extended filter element for the CAN node.
+ *
+ * \param[inout] extendedFilterElement      Pointer to the extended filter element.
+ * \param[in]    filterElementConfiguration The configuration mode for the filter element. Range: \ref IfxCan_FilterElementConfiguration
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setExtendedFilterConfiguration(Ifx_CAN_EXTMSG *extendedFilterElement, IfxCan_FilterElementConfiguration filterElementConfiguration);
 
-/** \brief Sets the Extended Filter ID 1 for Extended Filter Element
- * \param extendedFilterElement Extended Filter Element
- * \param id Filter ID 1
- * \return None
+/**
+ * \brief Configures the Extended Filter ID 1 for a specified Extended Filter Element.
+ *
+ * \param[inout] extendedFilterElement Pointer to the extended filter element.
+ * \param[in]    id                    The Extended Filter ID 1 to be configured. Range: 0x00000000 to 0x1FFFFFFF 
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setExtendedFilterId1(Ifx_CAN_EXTMSG *extendedFilterElement, uint32 id);
 
-/** \brief Sets the Extended Filter ID 2 for Extended Filter Element
- * \param extendedFilterElement Extended Filter Element
- * \param id Filter ID 2
- * \return None
+/**
+ * \brief Sets the Extended Filter ID 2 for the Extended Filter Element in the CAN module.
+ *
+ * \param[inout] extendedFilterElement Pointer to the extended filter element.
+ * \param[in]    id                    Filter ID 2 to be configured. Range: 0x00000000 to 0x1FFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setExtendedFilterId2(Ifx_CAN_EXTMSG *extendedFilterElement, uint32 id);
 
-/** \brief Sets the Extended Message ID filter list size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Number of Extended Message ID filter elements
- * \return None
+/**
+ * \brief Configures the number of elements in the Extended Message ID filter list for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size Number of Extended Message ID filter elements to be set. Range: 0 to 64
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setExtendedFilterListSize(Ifx_CAN_N *node, uint8 size);
 
-/** \brief Sets the start address of Extended Message ID filter list (32-bit word address)
- * \param node Specifies the pointer to the CAN Node registers
- * \param address Start address of Extended Message ID filter list in the Message RAM
- * \return None
+/**
+ * \brief Sets the start address of the Extended Message ID filter list (32-bit word address) in the Message RAM.
+ *
+ * \param[inout] node    Pointer to the CAN node registers.
+ * \param[in]    address Start address of the Extended Message ID filter list in the Message RAM. Range: 0x0000 to 0x3FFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setExtendedFilterListStartAddress(Ifx_CAN_N *node, uint16 address);
 
-/** \brief Sets the Offset to the Rx Buffer Start Address RXBC.RBSA for storage of a matching message for Extended filter element
- * \param extendedFilterElement Extended Filter Element
- * \param rxBufferNumber Offset to the Rx Buffer Start Address RXBC.RBSA for storage of a matching message (Rx buffer number)
- * \return None
+/**
+ * \brief Sets the Offset to the Rx Buffer Start Address (RXBC.RBSA) for storage of a matching message for Extended filter element.
+ *
+ * \param[inout] extendedFilterElement Pointer to the extended filter element to be configured.
+ * \param[in]    rxBufferNumber        Offset to the Rx Buffer Start Address (RXBC.RBSA) for storage of a matching message. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setExtendedFilterRxBufferOffset(Ifx_CAN_EXTMSG *extendedFilterElement, IfxCan_RxBufferId rxBufferNumber);
 
-/** \brief Sets the Extended Filter Type for Extended Filter Element
- * \param extendedFilterElement Extended Filter Element
- * \param filterType Filter Type
- * \return None
+/**
+ * \brief Configures the extended filter type for the specified extended filter element.
+ *
+ * \param[inout] extendedFilterElement Pointer to the extended filter element to be configured.
+ * \param[in]    filterType            The type of filter to be applied. Range: \ref IfxCan_FilterType
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setExtendedFilterType(Ifx_CAN_EXTMSG *extendedFilterElement, IfxCan_FilterType filterType);
 
-/** \brief Sets the Standard Filter Element Configuration
- * \param standardFilterElement Standard Filter Element
- * \param filterElementConfiguration Filter Element Configuration
- * \return None
+/**
+ * \brief Sets the Standard Filter Element Configuration for a CAN node.
+ *
+ * \param[inout] standardFilterElement      Pointer to the standard filter element to be configured.
+ * \param[in]    filterElementConfiguration Configuration for the filter element. Range: \ref IfxCan_FilterElementConfiguration
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setStandardFilterConfiguration(Ifx_CAN_STDMSG *standardFilterElement, IfxCan_FilterElementConfiguration filterElementConfiguration);
 
-/** \brief Sets the Standard Filter ID 1 for Standard Filter Element
- * \param standardFilterElement Standard Filter Element
- * \param id Filter ID 1
- * \return None
+/**
+ * \brief Sets the Standard Filter ID 1 for a Standard Filter Element
+ *
+ * \param[inout] standardFilterElement Pointer to the standard filter element to be configured.
+ * \param[in]    id                    Filter ID 1 to be set for the standard filter element. Range: 0 to 0x7FF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setStandardFilterId1(Ifx_CAN_STDMSG *standardFilterElement, uint32 id);
 
-/** \brief Sets the Standard Filter ID 2 for Standard Filter Element
- * \param standardFilterElement Standard Filter Element
- * \param id Filter ID 2
- * \return None
+/**
+ * \brief Sets the standard filter ID 2 for a given standard filter element in the CAN node.
+ *
+ * \param[inout] standardFilterElement Pointer to the standard filter element to be configured.
+ * \param[in]    id                    Filter ID 2 to be set for the standard filter element. Range: 0 to 0x7FF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setStandardFilterId2(Ifx_CAN_STDMSG *standardFilterElement, uint32 id);
 
-/** \brief Sets the Standard  Message ID filter list size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Number of Standard Message ID filter elements
- * \return None
+/**
+ * \brief Configures the size of the Standard Message ID filter list for the CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size Number of Standard Message ID filter elements to be configured. Range: 0 to 128             
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setStandardFilterListSize(Ifx_CAN_N *node, uint8 size);
 
-/** \brief Sets the start address of Standard Message ID filter list (32-bit word address)
- * \param node Specifies the pointer to the CAN Node registers
- * \param address Start address of Standard Message ID filter in the Message RAM
- * \return None
+/**
+ * \brief Sets the start address of the Standard Message ID filter list (32-bit word address)
+ *
+ * \param[inout] node    Pointer to the CAN node registers.
+ * \param[in]    address Start address of the Standard Message ID filter list in the Message RAM. Range: 0x0000 to 0x3FFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setStandardFilterListStartAddress(Ifx_CAN_N *node, uint16 address);
 
-/** \brief Sets the Offset to the Rx Buffer Start Address RXBC.RBSA for storage of a matching message for standard filter element
- * \param standardFilterElement Standard Filter Element
- * \param rxBufferNumber Offset to the Rx Buffer Start Address RXBC.RBSA for storage of a matching message (Rx buffer number)
- * \return None
+/**
+ * \brief Sets the offset to the Rx Buffer Start Address (RXBC.RBSA) for storing a matching message for a standard filter element.
+ *
+ * \param[inout] standardFilterElement Pointer to Standard Filter Element to configure. 
+ * \param[in]    rxBufferNumber        Offset to the Rx Buffer Start Address (RXBC.RBSA) for storing the matching message. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setStandardFilterRxBufferOffset(Ifx_CAN_STDMSG *standardFilterElement, IfxCan_RxBufferId rxBufferNumber);
 
-/** \brief Sets the Standard Filter Type for Standard Filter Element
- * \param standardFilterElement Standard Filter Element
- * \param filterType Filter Type
- * \return None
+/**
+ * \brief Configures the standard filter type for the specified standard filter element.
+ *
+ * \param[inout] standardFilterElement Pointer to the standard filter element to be configured.
+ * \param[in]    filterType            The type of filter to be applied. Range: \ref IfxCan_FilterType
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setStandardFilterType(Ifx_CAN_STDMSG *standardFilterElement, IfxCan_FilterType filterType);
 
@@ -1389,19 +1740,25 @@ IFX_INLINE void IfxCan_Node_setStandardFilterType(Ifx_CAN_STDMSG *standardFilter
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the address of selected extended filter element
- * \param ramBaseAddress Message RAM base address of CAN Module
- * \param extendedFilterListStartAddress Start address of Extended Message ID filter list (32-bit word address)
- * \param filterNumber extended filter element number
- * \return Extended Filter Element Address
+/**
+ * \brief Returns the address of a selected extended filter element based on the provided parameters.
+ *
+ * \param[in] ramBaseAddress                 The base address of the Message RAM for the CAN module. Range: 0xF0200000 to 0xF0223FFF
+ * \param[in] extendedFilterListStartAddress The start address of the Extended Message ID filter list (32-bit word address). Range: 0x0000 to 0x3FFF
+ * \param[in] filterNumber                   Extended filter element number. Range: 0 to 63
+ *
+ * \retval Ifx_CAN_EXTMSG* The address of the selected extended filter element.
  */
 IFX_EXTERN Ifx_CAN_EXTMSG *IfxCan_Node_getExtendedFilterElementAddress(uint32 ramBaseAddress, uint16 extendedFilterListStartAddress, uint8 filterNumber);
 
-/** \brief Returns the address of selected standard filter element
- * \param ramBaseAddress Message RAM base address of CAN Module
- * \param standardFilterListStartAddress Start address of Standard Message ID filter list (32-bit word address)
- * \param filterNumber Standard filter element number
- * \return Standard Filter Element Address
+/**
+ * \brief Returns the address of the selected standard filter element in the CAN module's message RAM.
+ *
+ * \param[in] ramBaseAddress                 The base address of the message RAM of the CAN module. Range: 0xF0200000 to 0xF0223FFF
+ * \param[in] standardFilterListStartAddress The start address of the standard message ID filter list. Range: 0x0000 to 0x3FFF
+ * \param[in] filterNumber                   Standard filter element number. Range: 0 to 127
+ *
+ * \retval Ifx_CAN_STDMSG* Standard filter element's address.
  */
 IFX_EXTERN Ifx_CAN_STDMSG *IfxCan_Node_getStandardFilterElementAddress(uint32 ramBaseAddress, uint16 standardFilterListStartAddress, uint8 filterNumber);
 
@@ -1414,59 +1771,87 @@ IFX_EXTERN Ifx_CAN_STDMSG *IfxCan_Node_getStandardFilterElementAddress(uint32 ra
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears the selected interrupt Flag
- * \param node Specifies the pointer to the CAN Node registers
- * \param interrupt Type of Interrupt
- * \return None
+/**
+ * \brief Clears the selected interrupt flag for the specified CAN node.
+ *
+ * \param[inout] node      Pointer to the CAN node registers.
+ * \param[in]    interrupt Type of interrupt to be cleared. Range: \ref IfxCan_Interrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_clearInterruptFlag(Ifx_CAN_N *node, IfxCan_Interrupt interrupt);
 
-/** \brief Disables the selected interrupt
- * \param node Specifies the pointer to the CAN Node registers
- * \param interrupt Type of Interrupt
- * \return None
+/**
+ * \brief Disables the specified interrupt for the given CAN node.
+ *
+ * \param[inout] node      Pointer to the CAN node registers.
+ * \param[in]    interrupt The type of interrupt to disable. Range: \ref IfxCan_Interrupt.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_disableInterrupt(Ifx_CAN_N *node, IfxCan_Interrupt interrupt);
 
-/** \brief Disables the Cancellation Finished Interrupt of the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return None
+/**
+ * \brief Disables the Cancellation Finished Interrupt of the selected Tx buffer.
+ *
+ * \param[inout] node       Pointer to the CAN node registers.
+ * \param[in]    txBufferId The identifier of the Tx buffer. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_disableTxBufferCancellationFinishedInterrupt(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Disables the Transmission Interrupt of the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return None
+/**
+ * \brief Disables the transmission interrupt for the specified Tx buffer.
+ *
+ * \param[inout] node       Pointer to the CAN node registers.
+ * \param[in]    txBufferId Tx buffer number to disable the transmission interrupt. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_disableTxBufferTransmissionInterrupt(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Enables the selected interrupt
- * \param node Specifies the pointer to the CAN Node registers
- * \param interrupt Type of Interrupt
- * \return None
+/**
+ * \brief Enables the selected interrupt for the specified CAN node.
+ *
+ * \param[inout] node      Pointer to the CAN node registers.
+ * \param[in]    interrupt Type of interrupt to enable. Range: \ref IfxCan_Interrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_enableInterrupt(Ifx_CAN_N *node, IfxCan_Interrupt interrupt);
 
-/** \brief Enables the Cancellation Finished Interrupt of the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return None
+/**
+ * \brief Enables the Cancellation Finished Interrupt of the selected Tx buffer
+ *
+ * \param[inout] node       Pointer to the CAN node registers.
+ * \param[in]    txBufferId Tx Buffer number to enable the cancellation finished interrupt. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_enableTxBufferCancellationFinishedInterrupt(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Enables the Transmission Interrupt of the selected Tx buffer
- * \param node Specifies the pointer to the CAN Node registers
- * \param txBufferId Tx Buffer number
- * \return None
+/**
+ * \brief Enables the transmission interrupt for the specified transmit buffer of the CAN node.
+ *
+ * \param[inout] node       Pointer to the CAN node registers.
+ * \param[in]    txBufferId The identifier of the transmit buffer to enable the interrupt. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_enableTxBufferTransmissionInterrupt(Ifx_CAN_N *node, IfxCan_TxBufferId txBufferId);
 
-/** \brief Returns the status of selected interrupt flag
- * \param node Specifies the pointer to the CAN Node registers
- * \param interrupt Type of Interrupt
- * \return Status TRUE / FALSE
+/**
+ * \brief Checks if the specified interrupt flag is set for the given CAN node.
+ *
+ * This function queries the status of a specific interrupt flag associated with a CAN node.
+ * It is typically used to check if an interrupt event has occurred and needs to be serviced.
+ *
+ * \param[in] node      Pointer to the CAN node registers.
+ * \param[in] interrupt Type of interrupt to check. Range: \ref IfxCan_Interrupt
+ *
+ * \retval TRUE If the specified interrupt flag is set.
+ *         FALSE If the specified interrupt flag is not set.
  */
 IFX_INLINE boolean IfxCan_Node_getInterruptFlagStatus(Ifx_CAN_N *node, IfxCan_Interrupt interrupt);
 
@@ -1474,19 +1859,25 @@ IFX_INLINE boolean IfxCan_Node_getInterruptFlagStatus(Ifx_CAN_N *node, IfxCan_In
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Sets the slected interrupt to the selcted interrupt line
- * \param node Specifies the pointer to the CAN Node registers
- * \param interruptGroup Type of Interrupt group
- * \param interruptLine Interrupt line number
- * \return None
+/**
+ * \brief Assigns the specified interrupt group to a selected interrupt line for the CAN node.
+ *
+ * \param[inout] node           Pointer to the CAN node registers.
+ * \param[in]    interruptGroup Type of interrupt group to be configured. Range: \ref IfxCan_InterruptGroup
+ * \param[in]    interruptLine  Interrupt line number to which the interrupt group is to be assigned. Range: \ref IfxCan_InterruptLine
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_setGroupInterruptLine(Ifx_CAN_N *node, IfxCan_InterruptGroup interruptGroup, IfxCan_InterruptLine interruptLine);
 
-/** \brief Sets the slected interrupt to the selcted interrupt line
- * \param node Specifies the pointer to the CAN Node registers
- * \param interrupt Type of Interrupt
- * \param interruptLine Interrupt line number
- * \return None
+/**
+ * \brief Configures the selected interrupt to the selected interrupt line.
+ *
+ * \param[inout] node          Pointer to the CAN node registers.
+ * \param[in]    interrupt     Type of interrupt to be configured. Range: \ref IfxCan_Interrupt
+ * \param[in]    interruptLine Interrupt line number to which the interrupt should be assigned. Range: \ref IfxCan_InterruptLine
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Node_setInterruptLine(Ifx_CAN_N *node, IfxCan_Interrupt interrupt, IfxCan_InterruptLine interruptLine);
 
@@ -1499,39 +1890,55 @@ IFX_EXTERN void IfxCan_Node_setInterruptLine(Ifx_CAN_N *node, IfxCan_Interrupt i
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the base adress of the selected Node of CAN module
- * \param can Specifies the pointer to the CAN registers
- * \param nodeId Node number of the module
- * \return Specifies the pointer to the CAN Node registers
+/**
+ * \brief Retrieves the base address of the specified CAN node.
+ *
+ * \param[in] can    Pointer to the CAN module registers.
+ * \param[in] nodeId Node identifier for the CAN module. Range: \ref IfxCan_NodeId
+ *
+ * \retval Ifx_CAN_N* Pointer to the CAN node registers.
  */
 IFX_INLINE Ifx_CAN_N *IfxCan_getNodePointer(Ifx_CAN *can, IfxCan_NodeId nodeId);
 
-/** \brief Returns the status of module enabled or disabled
- * \param can Specifies the pointer to the CAN registers
- * \return Status (TRUE / FALSE)
+/**
+ * \brief Checks if the specified CAN module is enabled.
+ *
+ * \param[in] can Pointer to the CAN module registers.
+ *
+ * \retval TRUE If the CAN module is enabled.
+ *         FALSE If the CAN module is disabled.
  */
 IFX_INLINE boolean IfxCan_isModuleEnabled(Ifx_CAN *can);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param can Pointer to CAN module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the CAN module is in a suspended state.
+ *
+ * \param[in] can Pointer to the CAN module registers.
+ *
+ * \retval TRUE If the CAN module is currently suspended.
+ *         FALSE If the CAN module is not yet suspended.
  */
 IFX_INLINE boolean IfxCan_isModuleSuspended(Ifx_CAN *can);
 
-/** \brief Sets the sensitivity of the module to sleep signal
- * \param can pointer to CAN registers
- * \param mode mode selection (enable/disable)
- * \return None
+/**
+ * \brief Configures the sensitivity of the CAN module to the sleep signal.
+ *
+ * \param[inout] can  Pointer to the CAN module registers.
+ * \param[in]    mode Mode selection for sleep signal sensitivity. Range: \ref IfxCan_SleepMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_setSleepMode(Ifx_CAN *can, IfxCan_SleepMode mode);
 
-/** \brief Set the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param can Pointer to CAN module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Sets the CAN module to the specified suspend mode.
+ * 
+ * \note The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
+ *
+ * \param[inout] can  Pointer to the CAN module registers.
+ * \param[in]    mode The suspend mode to be set. Range: \ref IfxCan_SuspendMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_setSuspendMode(Ifx_CAN *can, IfxCan_SuspendMode mode);
 
@@ -1539,45 +1946,66 @@ IFX_INLINE void IfxCan_setSuspendMode(Ifx_CAN *can, IfxCan_SuspendMode mode);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the module (sets the disable request)
- * \param can Specifies the pointer to the CAN registers
- * \return None
+/**
+ * \brief Disables the CAN module by setting the disable request.
+ *
+ * \param[inout] can Pointer to the CAN module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_disableModule(Ifx_CAN *can);
 
-/** \brief Enables the module (clears the disable request)
- * \param can Specifies the pointer to the CAN registers
- * \return None
+/**
+ * \brief Enables the CAN module by clearing the disable request.
+ *
+ * \param[inout] can Pointer to the CAN module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_enableModule(Ifx_CAN *can);
 
 /**
- * \param can Module index of the CAN
- * \return CAN module register address
+ * \brief Retrieves the base register address of the specified CAN module.
+ *
+ * \param[in] can Module index of the CAN. Range: \ref IfxCan_Index
+ *
+ * \retval Ifx_CAN* Base address of the CAN module's register.
  */
 IFX_EXTERN Ifx_CAN *IfxCan_getAddress(IfxCan_Index can);
 
-/** \brief API to get the resource index of the CAN specified.
- * \return can resource index
+/**
+ * \brief Retrieves the resource index of the specified CAN controller.
+ *
+ * \param[in] can Pointer to the CAN module registers.
+ *
+ * \retval IfxCan_Index The resource index of the CAN controller. Range: \ref IfxCan_Index
  */
 IFX_EXTERN IfxCan_Index IfxCan_getIndex(Ifx_CAN *can);
 
-/** \brief Returns the operatinf frequency of the CAN module
- * \return Module Frequency
+/**
+ * \brief Returns the current operating frequency of the CAN module in Hz.
+ *
+ * \retval float32 The operating frequency of the CAN module in Hz. 
  */
 IFX_EXTERN float32 IfxCan_getModuleFrequency(void);
 
-/** \brief resets CAN kernel
- * \param can pointer to CAN registers
- * \return None
+/**
+ * \brief Resets the CAN kernel to its initial state.
+ *
+ * \param[inout] can Pointer to the CAN module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_resetModule(Ifx_CAN *can);
 
-/** \brief sets the clocksource selection
- * \param can Specifies the pointer to the CAN registers
- * \param clockSelect Clock selection option
- * \param clockSource Type of Clock Source selection
- * \return None
+/**
+ * \brief Sets the clock source selection for the specified CAN module.
+ *
+ * \param[inout] can         Pointer to the CAN module registers.
+ * \param[in]    clockSelect Clock selection option. Range: \ref IfxCan_ClockSelect
+ * \param[in]    clockSource Type of clock source selection. \ref IfxCan_ClockSource
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_setClockSource(Ifx_CAN *can, IfxCan_ClockSelect clockSelect, IfxCan_ClockSource clockSource);
 
@@ -1590,137 +2018,203 @@ IFX_EXTERN void IfxCan_setClockSource(Ifx_CAN *can, IfxCan_ClockSelect clockSele
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the Bit Rate Switch (BRS) from the Tx Event Fifo element
- * \param txEventFifoElement Tx Event FIFO Element
- * \return Bit Rate Switch (TRUE/FALSE)
+/**
+ * \brief Returns the Bit Rate Switch (BRS) from the Tx Event FIFO element
+ *
+ * \param[in] txEventFifoElement Pointer to the Tx Event FIFO element.
+ *
+ * \retval TRUE If BRS is active
+ *         FALSE If BRS is not active
  */
 IFX_INLINE boolean IfxCan_Node_getBRSFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the Data Length Code from the Tx Event Fifo Element
- * \param txEventFifoElement Tx Event Fifo Element
- * \return Data Length Code
+/**
+ * \brief Extracts the Data Length Code (DLC) from a given Tx Event FIFO element.
+ *
+ * \param[in] txEventFifoElement Pointer to the Tx Event FIFO element.
+ *
+ * \retval uint32 The Data Length Code (DLC) value. Range: 0 to 15
  */
 IFX_INLINE uint32 IfxCan_Node_getDLCFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the Error State Indicator (ESI) from the Tx Event Fifo element
- * \param txEventFifoElement Tx Event FIFO Element
- * \return Error State Indicator
- */
+/**
+ * \brief Returns the Error State Indicator (ESI) from the Tx Event FIFO element
+ *
+ * \param[in] txEventFifoElement Pointer to the Tx Event FIFO element.
+ *
+ * \retval TRUE If transmitting node is error passive
+ *         FALSE If transmitting node is error active
+ */ 
 IFX_INLINE boolean IfxCan_Node_getESIFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the FD Format (FDF) from the Tx Event Fifo element
- * \param txEventFifoElement Tx Event FIFO Element
- * \return FD format (TRUE/FALSE)
+/**
+ * \brief Returns the FD Format (FDF) from the Tx Event FIFO element
+ *
+ * \param[in] txEventFifoElement Pointer to the Tx Event FIFO element.
+ *
+ * \retval TRUE If CAN FD frame format (new DLC-coding and CRC)
+ *         FALSE If Standard frame format
  */
 IFX_INLINE boolean IfxCan_Node_getFDFFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the Message Marker (MM) from the Tx Event Fifo element
- * \param txEventFifoElement Tx Event FIFO Element
- * \return Message Marker
+/**
+ * \brief Returns the Message Marker (MM) from the Tx Event FIFO element
+ * 
+ * \param[in] txEventFifoElement Pointer to the Tx Event FIFO element.
+ *
+ * \retval uint8 Message Marker value. Range 0 to 31
  */
 IFX_INLINE uint8 IfxCan_Node_getMMFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the identifier (ID) from the Tx Event Fifo element
- * \param txEventFifoElement Tx Event FIFO Element
- * \return Identifier
+/**
+ * \brief Returns the identifier (ID) from the Tx Event FIFO element
+ *
+ * \param[in] txEventFifoElement Pointer to the Tx Event FIFO element.
+ *
+ * \retval uint32 The message identifier extracted from the Tx Event FIFO element. Range: 0x000 to 0x7FF (Standard); 0 to 0x1FFFFFFF (Extended)
  */
 IFX_INLINE uint32 IfxCan_Node_getMesssageIdFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the Remote Transmission Request Status (RTR) from the Tx Event Fifo element
- * \param txEventFifoElement Tx Event FIFO Element
- * \return Remote Transmission Request Status
+/**
+ * \brief Returns the Remote Transmission Request (RTR) status from the specified Tx Event FIFO element.
+ *
+ * \param[in] txEventFifoElement Pointer to the Tx Event FIFO element.
+ *
+ * \retval TRUE  If Remote frame transmitted.
+ *         FALSE If Data frame transmitted.
  */
 IFX_INLINE boolean IfxCan_Node_getRTRFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the Tx Time Stamp (TXTS) from the Tx Event Fifo element
- * \param txEventFifoElement Tx Event FIFO Element
- * \return Tx Time Stamp
+/**
+ * \brief Returns the Tx Time Stamp (TXTS) from a given Tx Event FIFO element.
+ *
+ * \param[in] txEventFifoElement Pointer to the Tx Event FIFO element.
+ *
+ * \retval uint16 Tx Time Stamp (TXTS) value extracted from the Tx Event FIFO element. Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxCan_Node_getTXTSFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the Tx Event Fifo Acknowledge Index
- * \param node Specifies the pointer to the CAN Node registers
- * \return Returns Tx Event Fifo Acknowledge Index
+
+/**
+ * \brief Returns the Tx Event Fifo Acknowledge Index
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 The current Tx Event Fifo Acknowledge Index. Range: 0 to 31
  */
 IFX_INLINE uint8 IfxCan_Node_getTxEventFifoAcknowledgeIndex(Ifx_CAN_N *node);
 
-/** \brief Returns the Tx Event Fifo Fill Level
- * \param node Specifies the pointer to the CAN Node registers
- * \return Returns Tx Event Fifo Fill Level
+/**
+ * \brief Returns the current fill level of the Tx Event FIFO
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 The current fill level of the Tx Event FIFO. Range: 0 to 32
  */
 IFX_INLINE uint8 IfxCan_Node_getTxEventFifoFillLevel(Ifx_CAN_N *node);
 
-/** \brief Returns the Tx Event Fifo Get Index
- * \param node Specifies the pointer to the CAN Node registers
- * \return Returns Tx Event Fifo Get Index
+/**
+ * \brief Retrieves the current index of the transmit event FIFO get index.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 Tx Event Fifo Get Index. Range: 0 to 31
  */
 IFX_INLINE uint8 IfxCan_Node_getTxEventFifoGetIndex(Ifx_CAN_N *node);
 
-/** \brief Returns the Tx Event Fifo Put Index
- * \param node Specifies the pointer to the CAN Node registers
- * \return Returns Tx Event Fifo Put Index
+/**
+ * \brief Returns the Tx Event Fifo Put Index.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 Tx Event Fifo Put Index. Range: 0 to 31
  */
 IFX_INLINE uint8 IfxCan_Node_getTxEventFifoPutIndex(Ifx_CAN_N *node);
 
-/** \brief Returns Tx Event Fifo Size
- * \param node Specifies the pointer to the CAN Node registers
- * \return Tx Event Fifo Size
+/**
+ * \brief Returns the size of the transmit event FIFO for the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 The size of the transmit event FIFO. Range: 0 to 32
  */
 IFX_INLINE uint8 IfxCan_Node_getTxEventFifoSize(Ifx_CAN_N *node);
 
-/** \brief Returns Tx Event Fifo Start Address
- * \param node Specifies the pointer to the CAN Node registers
- * \return Tx Event Fifo Start Address
+/**
+ * \brief Retrieves the starting address of the transmit event FIFO for the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint16 The starting address of the transmit event FIFO as a 16-bit unsigned integer. Range: 0x0000 to 0x3FFF
  */
 IFX_INLINE uint16 IfxCan_Node_getTxEventFifoStartAddress(Ifx_CAN_N *node);
 
-/** \brief Returns Tx Event Fifo Watermark Level
- * \param node Specifies the pointer to the CAN Node registers
- * \return Tx Event Fifo Watermark Level
+/**
+ * \brief Returns the current Tx Event FIFO watermark level for the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 The current watermark level of the Tx Event FIFO. Range: 1 to 32
  */
 IFX_INLINE uint8 IfxCan_Node_getTxEventFifoWatermarkLevel(Ifx_CAN_N *node);
 
-/** \brief Returns the status of Tx Event Fifo Element lost
- * \param node Specifies the pointer to the CAN Node registers
- * \return Returns status of Tx Event Fifo Element Lost\n
- * True : elemnt lost\n
- * False : element not lost
+/**
+ * \brief Checks if a Tx Event FIFO element has been lost.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE If the Tx Event FIFO element is lost.
+ *         FALSE If the Tx Event FIFO element is not lost.
  */
 IFX_INLINE boolean IfxCan_Node_isTxEventFifoElementLost(Ifx_CAN_N *node);
 
-/** \brief Returns the status of Tx Event Fifo Full
- * \param node Specifies the pointer to the CAN Node registers
- * \return Returns status of Tx Event Fifo Full\n
- * True : Fifo full\n
- * False : Fifo not full
+/**
+ * \brief Checks if the Tx Event FIFO is full.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE If the Tx Event FIFO is full.
+ *         FALSE If the Tx Event FIFO is not full.
  */
 IFX_INLINE boolean IfxCan_Node_isTxEventFifoFull(Ifx_CAN_N *node);
 
-/** \brief Sets Tx Event Fifo Size
- * \param node Specifies the pointer to the CAN Node registers
- * \param size Tx Event Fifo Size
- * \return None
+/**
+ * \brief Sets the size of the Tx Event FIFO for the specified CAN node.
+ *
+ * \param[inout] node Pointer to the CAN node registers.
+ * \param[in]    size The desired size of the Tx Event FIFO. Range: 0 to 32
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxEventFifoSize(Ifx_CAN_N *node, uint8 size);
 
-/** \brief Sets Tx Event Fifo Start Address
- * \param node Specifies the pointer to the CAN Node registers
- * \param address Tx Event Fifo Start Address
- * \return None
+/**
+ * \brief Configures the starting address for the transmit event FIFO.
+ *
+ * \param[inout] node    Pointer to the CAN node registers.
+ * \param[in]    address The starting address of the transmit event FIFO. Range: 0x0000 to 0x3FFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxEventFifoStartAddress(Ifx_CAN_N *node, uint16 address);
 
-/** \brief Sets Tx Event Fifo Watermark Level
- * \param node Specifies the pointer to the CAN Node registers
- * \param level Tx Event Fifo Watermark Level
- * \return None
+/**
+ * \brief Configures the Tx Event FIFO watermark level for the specified CAN node.
+ *
+ * \param[inout] node  Pointer to the CAN node registers.
+ * \param[in]    level The watermark level to be set for the Tx Event FIFO. Range: 1 to 32
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxEventFifoWatermarkLevel(Ifx_CAN_N *node, uint8 level);
 
-/** \brief Sets Tx Event FIFO Acknowledge Index for given node
- * \param node Specifies the pointer to the CAN Node registers
- * \param TxEventBufferNumber Tx event buffer element number
- * \return None
+/**
+ * \brief Sets the Tx Event FIFO Acknowledge Index for the specified CAN node.
+ *
+ * \param[inout] node                Pointer to the CAN node registers.
+ * \param[in]    TxEventBufferNumber The Tx event buffer element number to be acknowledged. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setTxEventFifoAcknowledgeIndex(Ifx_CAN_N *node, IfxCan_TxBufferId TxEventBufferNumber);
 
@@ -1728,17 +2222,23 @@ IFX_INLINE void IfxCan_Node_setTxEventFifoAcknowledgeIndex(Ifx_CAN_N *node, IfxC
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns CAN frame mode of operation for a Tx Event Fifo Element
- * \param txEventFifoElement Tx Event Fifo Element
- * \return CAN frame mode
+/**
+ * \brief Retrieves the CAN frame mode of operation from a Tx Event FIFO element.
+ *
+ * \param[in] txEventFifoElement [in] Pointer to the Tx Event FIFO element.
+ *
+ * \retval IfxCan_FrameMode The frame mode of the CAN message. Range: \ref IfxCan_FrameMode
  */
 IFX_EXTERN IfxCan_FrameMode IfxCan_Node_getFrameModeFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement);
 
-/** \brief Returns the address of selected Tx Event Fifo element
- * \param ramBaseAddress Message RAM base address of CAN module
- * \param txEventFifoStartAddress Start address of Tx Event Fifo section in the Message RAM
- * \param txEventFifoNumber Tx Event Fifo element number
- * \return Tx Event Fifo Element Address
+/**
+ * \brief Returns the address of a selected Tx Event Fifo element based on the provided parameters.
+ *
+ * \param[in] ramBaseAddress          The base address of the Message RAM for the CAN module. Range: 0xF0200000 to 0xF0223FFF
+ * \param[in] txEventFifoStartAddress The starting address of the Tx Event Fifo section within the Message RAM. Range: 0x0000 to 0x3FFF
+ * \param[in] txEventFifoNumber       The specific element number within the Tx Event Fifo. Range: 0 to 31
+ *
+ * \retval Ifx_CAN_TXEVENT* Pointer to the Tx Event Fifo Element Address.
  */
 IFX_EXTERN Ifx_CAN_TXEVENT *IfxCan_Node_getTxEventFifoElementAddress(uint32 ramBaseAddress, uint16 txEventFifoStartAddress, uint8 txEventFifoNumber);
 
@@ -1748,30 +2248,41 @@ IFX_EXTERN Ifx_CAN_TXEVENT *IfxCan_Node_getTxEventFifoElementAddress(uint32 ramB
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief CAN frame format of the last received message.
- * TRUE: CAN FD frame received
- * FALSE: CAN FD frame not received
- * \param node Specifies the pointer to CAN node registers
- * \return CAN Frame format (TRUE/FALSE)
+/**
+ * \brief Checks if the last received message was a CAN FD frame.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval TRUE If the last received message was a CAN FD frame.
+ *         FALSE If the last received message was not a CAN FD frame.
  */
 IFX_INLINE boolean IfxCan_Node_isCanFDMsgReceived(Ifx_CAN_N *node);
 
-/** \brief Returns the number of consecutively free Tx FIFO elements
- * \param node Specifies the pointer to the CAN Node registers
- * \return Number of consecutively free Tx FIFO elements - Range: 0 to 32
+/**
+ * \brief Returns the number of consecutively free Tx FIFO elements available in the specified CAN node.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint8 Number of consecutively free Tx FIFO elements. Range: 0 to 32
  */
 IFX_INLINE uint8 IfxCan_Node_getTxFifoFillLevel(Ifx_CAN_N *node);
 
-/** \brief Sets the Extended Filter ID and mask
- * \param node Specifies the pointer to the CAN Node registers
- * \param extendedIdAndMask Extended Filter ID and mask
- * \return None
+/**
+ * \brief Sets the Extended Filter ID and mask for a CAN node.
+ *
+ * \param[inout] node              Pointer to the CAN node registers.
+ * \param[in]    extendedIdAndMask Extended Filter ID and mask. Range: 0 to 0x1FFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxCan_Node_setExtendedIdAndMask(Ifx_CAN_N *node, uint32 extendedIdAndMask);
 
-/** \brief Returns the 32-bit value of Node Interrupt Signalling register
- * \param node Specifies the pointer to the CAN Node registers
- * \return 32-bit unsigned value of Node interrupt signalling register
+/**
+ * \brief Returns the 32-bit value of the Node Interrupt Signalling register.
+ *
+ * \param[in] node Pointer to the CAN node registers.
+ *
+ * \retval uint32 The 32-bit unsigned value representing the Node interrupt signalling register. Range: 0 to 0x0000FFFF
  */
 IFX_INLINE uint32 IfxCan_Node_getInterruptSignallingStatus(Ifx_CAN_N *node);
 
@@ -1779,10 +2290,13 @@ IFX_INLINE uint32 IfxCan_Node_getInterruptSignallingStatus(Ifx_CAN_N *node);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the address of interrupt node source register
- * \param can Specifies the pointer to the CAN registers
- * \param interruptLine Interrupt line number
- * \return Address of interrupt node source register
+/**
+ * \brief Returns the address of the interrupt node source register for the specified CAN instance and interrupt line.
+ *
+ * \param[in] can           Pointer to the CAN module registers.
+ * \param[in] interruptLine Interrupt line number. Range: \ref IfxCan_InterruptLine
+ *
+ * \retval Ifx_SRC_SRCR* Address of the interrupt node source register.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxCan_getSrcPointer(Ifx_CAN *can, IfxCan_InterruptLine interruptLine);
 
@@ -1962,20 +2476,20 @@ IFX_INLINE uint8 IfxCan_Node_getMMFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoEl
 
 IFX_INLINE uint32 IfxCan_Node_getMesssageId(Ifx_CAN_RXMSG *rxBufferElement)
 {
-    /* get identifier extention */
+    /* Get identifier extention */
     IfxCan_MessageIdLength messageIdLength = (IfxCan_MessageIdLength)rxBufferElement->R0.B.XTD;
 
-    /* get identifier */
+    /* Get identifier */
     return rxBufferElement->R0.B.ID >> ((messageIdLength != IfxCan_MessageIdLength_standard) ? 0 : 18);
 }
 
 
 IFX_INLINE uint32 IfxCan_Node_getMesssageIdFromTxEventFifo(Ifx_CAN_TXEVENT *txEventFifoElement)
 {
-    /* get identifier extention */
+    /* Get identifier extention */
     IfxCan_MessageIdLength messageIdLength = (IfxCan_MessageIdLength)txEventFifoElement->E0.B.XTD;
 
-    /* get identifier */
+    /* Get identifier */
     return txEventFifoElement->E0.B.ID >> ((messageIdLength != IfxCan_MessageIdLength_standard) ? 0 : 18);
 }
 
@@ -2217,9 +2731,9 @@ IFX_INLINE void IfxCan_Node_setMessageMarker(Ifx_CAN_TXMSG *txBufferElement, Ifx
 
 IFX_INLINE void IfxCan_Node_setMsgId(Ifx_CAN_TXMSG *txBufferElement, uint32 messageId, IfxCan_MessageIdLength messageIdLength)
 {
-    /* set identifier extention */
+    /* Set identifier extention */
     txBufferElement->T0.B.XTD = (messageIdLength != IfxCan_MessageIdLength_extended) ? 0 : 1;
-    /* set identifier */
+    /* Set identifier */
     txBufferElement->T0.B.ID  = messageId << ((messageIdLength != IfxCan_MessageIdLength_standard) ? 0 : 18);
 }
 
@@ -2227,9 +2741,9 @@ IFX_INLINE void IfxCan_Node_setMsgId(Ifx_CAN_TXMSG *txBufferElement, uint32 mess
 IFX_INLINE void IfxCan_Node_setMesssageId(Ifx_CAN_N *node, Ifx_CAN_TXMSG *txBufferElement, uint32 messageId, IfxCan_MessageIdLength messageIdLength)
 {
     IFX_UNUSED_PARAMETER(node);
-    /* set identifier extention */
+    /* Set identifier extension */
     txBufferElement->T0.B.XTD = (messageIdLength != IfxCan_MessageIdLength_extended) ? 0 : 1;
-    /* set identifier */
+    /* Set identifier */
     txBufferElement->T0.B.ID  = messageId << ((messageIdLength != IfxCan_MessageIdLength_standard) ? 0 : 18);
 }
 
@@ -2375,9 +2889,9 @@ IFX_INLINE void IfxCan_Node_setStandardFilterType(Ifx_CAN_STDMSG *standardFilter
 
 IFX_INLINE void IfxCan_Node_setTransceiverDelayCompensationOffset(Ifx_CAN_N *node, uint8 delay)
 {
-    /* enable Transceiver Delay Compensation */
+    /* Enable Transceiver Delay Compensation */
     node->DBTP.B.TDC  = 1;
-    /* set Transceiver Delay Compensation offset */
+    /* Set Transceiver Delay Compensation offset */
     node->TDCR.B.TDCO = delay;
 }
 
@@ -2390,7 +2904,7 @@ IFX_INLINE void IfxCan_Node_setTransmitFifoQueueMode(Ifx_CAN_N *node, IfxCan_TxM
     }
     else
     {
-        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* wrong selection  */
+        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* Wrong selection  */
     }
 }
 
@@ -2474,10 +2988,10 @@ IFX_INLINE boolean IfxCan_isModuleSuspended(Ifx_CAN *can)
 {
     Ifx_CAN_OCS ocs;
 
-    // read the status
+    /* Read the status */
     ocs.U = can->OCS.U;
 
-    // return the status
+    /* Return the status */
     return ocs.B.SUSSTA;
 }
 
@@ -2495,7 +3009,7 @@ IFX_INLINE void IfxCan_setSuspendMode(Ifx_CAN *can, IfxCan_SuspendMode mode)
 {
     Ifx_CAN_OCS ocs;
 
-    // remove protection and configure the suspend mode.
+    /* Remove protection and configure the suspend mode. */
     ocs.B.SUS_P = 1;
     ocs.B.SUS   = mode;
     can->OCS.U  = ocs.U;
@@ -2591,13 +3105,13 @@ IFX_INLINE void IfxCan_Node_setTxEventFifoAcknowledgeIndex(Ifx_CAN_N *node, IfxC
 
 IFX_INLINE uint8 IfxCan_Node_getTxFifoFillLevel(Ifx_CAN_N *node)
 {
-    return node->TX.FQS.B.TFFL; /* returns number of consecutively free Tx FIFO elements */
+    return node->TX.FQS.B.TFFL; /* Returns number of consecutively free Tx FIFO elements */
 }
 
 
 IFX_INLINE void IfxCan_Node_setExtendedIdAndMask(Ifx_CAN_N *node, uint32 extendedIdAndMask)
 {
-    node->XIDAM.B.EIDM = extendedIdAndMask; /* sets extended ID and mask */
+    node->XIDAM.B.EIDM = extendedIdAndMask; /* Sets extended ID and mask */
 }
 
 

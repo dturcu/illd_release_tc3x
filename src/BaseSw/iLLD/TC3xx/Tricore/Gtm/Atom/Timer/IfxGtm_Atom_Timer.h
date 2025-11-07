@@ -3,7 +3,7 @@
  * \brief GTM TIMER details
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -91,7 +91,6 @@
 #include "_PinMap/IfxGtm_PinMap.h"
 #include "Gtm/Std/IfxGtm_Atom.h"
 #include "Gtm/Std/IfxGtm_Cmu.h"
-#include "Gtm/Std/IfxGtm_Dtm.h"
 #include "StdIf/IfxStdIf_Timer.h"
 
 /******************************************************************************/
@@ -104,7 +103,7 @@
  */
 typedef struct
 {
-    Ifx_TimerValue          period;               /**< \brief Timer period in ticks (cached value) */
+    Ifx_TimerValue          period;               /**< \brief Timer period in ticks (cached value). Range: 0 to 0x00FFFFFF */
     boolean                 triggerEnabled;       /**< \brief If TRUE, the trigger functionality is Initialised */
     float32                 clockFreq;            /**< \brief Timer input clock frequency (cached value) */
     IfxStdIf_Timer_CountDir countDir;             /**< \brief Timer counting mode */
@@ -125,12 +124,10 @@ typedef struct
     IfxGtm_Atom            atomIndex;              /**< \brief Enum for ATOM objects */
     IfxGtm_Atom_Ch         timerChannel;           /**< \brief ATOM channel used for the timer */
     IfxGtm_Atom_Ch         triggerChannel;         /**< \brief ATOM channel used for the trigger, if identical to the timerChannel, the trigger interrupt is having the same interrupt level as  the timer interrupt */
-    uint16                 channelsMask;           /**< \brief Mask for channels to be modified together */
-    Ifx_TimerValue         offset;                 /**< \brief Timer initial offset in ticks */
-    Ifx_GTM_CDTM_DTM      *dtm;                    /**< \brief Pointer to DTM object used by ATOM */
-    IfxGtm_Dtm_Ch          dtmChannel;             /**< \brief DTM channel */
-    uint32                 agcDisableUpdate;       /**< \brief AGC value for disable update */
-    uint32                 agcApplyUpdate;         /**< \brief AGC value for apply update */
+    uint16                 channelsMask;           /**< \brief Mask for channels to be modified together. Range: 0 to 0xFFFF */
+    Ifx_TimerValue         offset;                 /**< \brief Timer initial offset in ticks. Range: 0 to 0x00FFFFFF */
+    uint32                 agcDisableUpdate;       /**< \brief AGC value for disable update. Range: 0 to 0xFFFF0000 */
+    uint32                 agcApplyUpdate;         /**< \brief AGC value for apply update. Range: 0 to 0xFFFF0000 */
 } IfxGtm_Atom_Timer;
 
 /** \brief Configuration structure for ATOM Timer
@@ -145,7 +142,6 @@ typedef struct
     IfxGtm_Cmu_Clk         clock;                /**< \brief Timer input clock */
     IfxGtm_IrqMode         irqModeTimer;         /**< \brief Interrupt mode for the timer */
     IfxGtm_IrqMode         irqModeTrigger;       /**< \brief Interrupt mode for the trigger */
-    IfxGtm_Dtm_ClockSource dtmClockSource;       /**< \brief DTM clock source */
     boolean                initPins;             /**< \brief TRUE: Initialize pins in driver
                                                   * FALSE: Don't initialize pins in driver : user handles separately */
 } IfxGtm_Atom_Timer_Config;

@@ -2,7 +2,7 @@
  * \file IfxSdmmc.c
  * \brief SDMMC  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -127,7 +127,7 @@ void IfxSdmmc_configureClock(Ifx_SDMMC *sdmmcSFR, uint32 frequency)
 
     if (sdmmcSFR->CAPABILITIES1.B.BASE_CLK_FREQ != 0)
     {
-        /* update maxClockFreq to maximum allowed */
+        /* Update maxClockFreq to maximum allowed */
         maxClockFreq = sdmmcSFR->CAPABILITIES1.B.BASE_CLK_FREQ * IFXSDMMC_MAXCLOCKFREQ;
     }
 
@@ -135,7 +135,7 @@ void IfxSdmmc_configureClock(Ifx_SDMMC *sdmmcSFR, uint32 frequency)
     {
         divider = (uint8)(sdmmcFreq / (2 * frequency));
 
-        /* write the divider into register now */
+        /* Write the divider into register now */
         if (divider > (uint8)0)
         {
             dividerSetVal                       = divider - (uint16)1;
@@ -160,11 +160,11 @@ void IfxSdmmc_enableModule(Ifx_SDMMC *sdmmcSFR)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
 
-    if (IfxSdmmc_isModuleEnabled(sdmmcSFR) != 1) /* if module is not enabled already */
+    if (IfxSdmmc_isModuleEnabled(sdmmcSFR) != 1) /* If module is not enabled already */
     {
-        IfxScuWdt_clearCpuEndinit(psw);          /* clears the endinit protection*/
-        sdmmcSFR->CLC.B.DISR = 0;                /* set the enable request */
-        IfxScuWdt_setCpuEndinit(psw);            /* sets the endinit protection back on*/
+        IfxScuWdt_clearCpuEndinit(psw);          /* Clears the endinit protection */
+        sdmmcSFR->CLC.B.DISR = 0;                /* Set the enable request */
+        IfxScuWdt_setCpuEndinit(psw);            /* Sets the endinit protection back on */
     }
 
     IfxSdmmc_isModuleEnabled(sdmmcSFR);          /* read back to ensure proper enabling */
@@ -182,14 +182,14 @@ IfxSdmmc_Status IfxSdmmc_readResponse(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Command comm
     }
     else
     {
-        /* clear the structure for new response */
+        /* Clear the structure for new response */
         response->resp01       = 0;
         response->resp23       = 0;
         response->resp45       = 0;
         response->resp67       = 0;
         response->cardStatus.U = 0;
 
-        /* read first 32 bits of the response, excluding end bit and crc7 */
+        /* Read first 32 bits of the response, excluding end bit and crc7 */
         response->resp01 = IfxSdmmc_readResponseReg01(sdmmcSFR);
 
         /* Check response type */
@@ -198,14 +198,14 @@ IfxSdmmc_Status IfxSdmmc_readResponse(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Command comm
         /* Response R1 */
         case IfxSdmmc_ResponseType_r1:
             response->cardStatus.U = response->resp01;
-            /* check the error bits in the response */
+            /* Check the error bits in the response */
             status                 = IfxSdmmc_checkErrorInResponseR1(response->cardStatus.U);
             break;
 
         /* Response R1b */
         case IfxSdmmc_ResponseType_r1b:
             response->cardStatus.U = response->resp01;
-            /* check the error bits in the response */
+            /* Check the error bits in the response */
             status                 = IfxSdmmc_checkErrorInResponseR1(response->cardStatus.U);
 
             if (status != IfxSdmmc_Status_success)
@@ -241,7 +241,7 @@ IfxSdmmc_Status IfxSdmmc_readResponse(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Command comm
         /* Response R6 */
         case IfxSdmmc_ResponseType_r6:
             response->cardStatus.U = response->resp01;
-            /* check the error bits in the response */
+            /* Check the error bits in the response */
             status                 = IfxSdmmc_checkErrorInResponseR6(response->cardStatus.U);
             break;
 
@@ -265,7 +265,7 @@ void IfxSdmmc_resetModule(Ifx_SDMMC *sdmmcSFR)
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
     IfxScuWdt_clearCpuEndinit(passwd);
 
-    sdmmcSFR->KRST0.B.RST = 1;          /* Only if both Kernel reset bits are set a reset is executed */
+    sdmmcSFR->KRST0.B.RST = 1;             /* Only if both Kernel reset bits are set a reset is executed */
     sdmmcSFR->KRST1.B.RST = 1;
     IfxScuWdt_setCpuEndinit(passwd);
 
@@ -273,7 +273,7 @@ void IfxSdmmc_resetModule(Ifx_SDMMC *sdmmcSFR)
     {}
 
     IfxScuWdt_clearCpuEndinit(passwd);
-    sdmmcSFR->KRSTCLR.B.CLR = 1;            /* Clear Kernel reset status bit */
+    sdmmcSFR->KRSTCLR.B.CLR = 1;           /* Clear Kernel reset status bit */
 
     IfxScuWdt_setCpuEndinit(passwd);
 }
@@ -299,7 +299,7 @@ IfxSdmmc_Status IfxSdmmc_sendCommand(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Command comma
     uint32          timeout = 0;
     Ifx_SDMMC_CMD   cmd;
 
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6;
 
     while ((IfxSdmmc_isDataLineBusy(sdmmcSFR) || (IfxSdmmc_isCommandLineBusy(sdmmcSFR))) && (timeout > 0))
@@ -320,7 +320,7 @@ IfxSdmmc_Status IfxSdmmc_sendCommand(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Command comma
         IfxSdmmc_setCommand(sdmmcSFR, cmd.U);
         timeout = IFXSDMMC_TIMEOUT_1E6;
 
-        /* wait until command complete flag is set */
+        /* Wait until command complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdmmcSFR, IfxSdmmc_NormalInterrupt_commandComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -333,7 +333,7 @@ IfxSdmmc_Status IfxSdmmc_sendCommand(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Command comma
         else
         {
             IfxSdmmc_clearNormalInterrupt(sdmmcSFR, IfxSdmmc_NormalInterrupt_commandComplete);
-            /* read response */
+            /* Read response */
             status = IfxSdmmc_readResponse(sdmmcSFR, command, responseType, response);
         }
     }
@@ -347,7 +347,7 @@ IfxSdmmc_Status IfxSdmmc_setUpInternalClock(Ifx_SDMMC *sdmmcSFR)
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
 
-    /* enable internal clock */
+    /* Enable internal clock */
     IfxSdmmc_enableInternalClock(sdmmcSFR);
     timeout = IFXSDMMC_TIMEOUT_1E6;
 
@@ -361,7 +361,7 @@ IfxSdmmc_Status IfxSdmmc_setUpInternalClock(Ifx_SDMMC *sdmmcSFR)
         status = IfxSdmmc_Status_failure;
     }
 
-    /* enable PLL */
+    /* Enable PLL */
     IfxSdmmc_enablePll(sdmmcSFR);
     timeout = IFXSDMMC_TIMEOUT_1E6;
 
@@ -381,13 +381,13 @@ IfxSdmmc_Status IfxSdmmc_setUpInternalClock(Ifx_SDMMC *sdmmcSFR)
 
 void IfxSdmmc_switchClockFrequency(Ifx_SDMMC *sdmmcSFR, uint32 frequency)
 {
-    IfxSdmmc_disableCardClock(sdmmcSFR);          //disable clock
+    IfxSdmmc_disableCardClock(sdmmcSFR);          /* Disable clock */
 
-    IfxSdmmc_disablePll(sdmmcSFR);                //disable PLL
+    IfxSdmmc_disablePll(sdmmcSFR);                /* Disable PLL */
 
-    IfxSdmmc_configureClock(sdmmcSFR, frequency); //setup clock
+    IfxSdmmc_configureClock(sdmmcSFR, frequency); /* Setup clock */
 
-    IfxSdmmc_setUpInternalClock(sdmmcSFR);        //setup PLL and internal clock
+    IfxSdmmc_setUpInternalClock(sdmmcSFR);        /* Setup PLL and internal clock */
 }
 
 

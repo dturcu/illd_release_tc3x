@@ -3,7 +3,7 @@
  * \brief GTM PWM details
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -269,7 +269,8 @@ typedef enum
     IfxGtm_Pwm_ChannelState_stopped       /**< \brief Either channel or it's output is disabled */
 } IfxGtm_Pwm_ChannelState;
 
-/** \brief Reset event for channel counter CN0
+/** \brief Reset event for channel counter CN0.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.RST_CCU0
  */
 typedef enum
 {
@@ -386,7 +387,7 @@ typedef struct
 {
     IfxGtm_IrqMode      mode;              /**< \brief IRQ mode of interrupt. Note: Use IfxGtm_IrqMode_pulseNotify as default */
     IfxSrc_Tos          isrProvider;       /**< \brief Type of Service for Ccu0/1 interrupt */
-    Ifx_Priority        priority;          /**< \brief Priority for Ccu0/1 interrupt */
+    Ifx_Priority        priority;          /**< \brief Priority for Ccu0/1 interrupt. Range 0 to 255 */
     IfxGtm_Pwm_callBack periodEvent;       /**< \brief Period interrupt callback function pointer */
     IfxGtm_Pwm_callBack dutyEvent;         /**< \brief Duty interrupt callback function pointer */
 } IfxGtm_Pwm_InterruptConfig;
@@ -407,13 +408,13 @@ typedef struct
  */
 typedef struct
 {
-    IfxGtm_Pwm_ChannelRegisters registers;         /**< \brief Contains pointers to frequenctly accessed channel specific registers */
-    uint32                      upenMask;          /**< \brief Update enable mask of this channel */
+    IfxGtm_Pwm_ChannelRegisters registers;         /**< \brief Contains pointers to frequently accessed channel specific registers */
+    uint32                      upenMask;          /**< \brief Update enable mask of this channel. Range: 0 to 0xFFFF */
     IfxGtm_Pwm_callBack         periodEvent;       /**< \brief CCU0 interrupt callback function pointer */
     IfxGtm_Pwm_callBack         dutyEvent;         /**< \brief CCU1 interrupt callback function pointer */
     IfxGtm_Pwm_SubModule_Ch     timerCh;           /**< \brief Channel Index */
-    uint32                      phaseTicks;        /**< \brief Current phase ticks */
-    uint32                      dutyTicks;         /**< \brief Current duty ticks */
+    uint32                      phaseTicks;        /**< \brief Current phase ticks. Range: 0 to 0x00FFFFFF */
+    uint32                      dutyTicks;         /**< \brief Current duty ticks. Range: 0 to 0x00FFFFFF */
 } IfxGtm_Pwm_Channel;
 
 /** \brief PWM Channel Configuration structure
@@ -421,8 +422,8 @@ typedef struct
 typedef struct
 {
     IfxGtm_Pwm_SubModule_Ch     timerCh;         /**< \brief Channel Index */
-    float32                     phase;           /**< \brief Initial phase in radians (range: 0.0 .. 2pi; only for edge aligned sync channels) */
-    float32                     duty;            /**< \brief PWM duty in % (range: 0.0 .. 100.0) */
+    float32                     phase;           /**< \brief Initial phase in radians. Range: 0.0 .. 2pi; only for edge aligned sync channels */
+    float32                     duty;            /**< \brief PWM duty in %. Range: 0.0 .. 100.0 */
     IfxGtm_Pwm_DtmConfig       *dtm;             /**< \brief Dead time configuration for this channel */
     IfxGtm_Pwm_OutputConfig    *output;          /**< \brief Pin connections and polarities for this channel */
 #ifndef DEVICE_TC33X
@@ -452,8 +453,8 @@ typedef struct
 {
     volatile uint32 *reg0;                /**< \brief ATOM: points to AGC_GLB_CTRL. TOM: If channels span 2 TGCs then points to TGC0_GLB_CTRL else to the TGC being used TGCx_GLB_CTRL */
     volatile uint32 *reg1;                /**< \brief ATOM: Not used. TOM: Points to TGC1_GLB_CTRL if channels span across 2 TGCs. */
-    uint32           upenMask0;           /**< \brief UPEN Mask for reg0 [AGC/TGC[0/1]]_GLB_CTRL */
-    uint32           upenMask1;           /**< \brief UPEN Mask for reg1 [AGC/TGC[0/1]]_GLB_CTRL */
+    uint32           upenMask0;           /**< \brief UPEN Mask for reg0 [AGC/TGC[0/1]]_GLB_CTRL. Range: 0 to 0xFFFF0000 */
+    uint32           upenMask1;           /**< \brief UPEN Mask for reg1 [AGC/TGC[0/1]]_GLB_CTRL. Range: 0 to 0xFFFF0000 */
     volatile uint32 *endisCtrlReg0;       /**< \brief ATOM: points to AGC_ENDIS_CTRL.
                                            * TOM: If channels span 2 TGCs then points to TGC0_ENDIS_CTRL else to the TGC being used TGCx_GLB_CTRL */
     volatile uint32 *endisCtrlReg1;       /**< \brief ATOM: Not used. TOM: Points to TGC1_ENDIS_CTRL if channels span across 2 TGCs. */
@@ -468,13 +469,13 @@ typedef struct
     IfxGtm_Cluster           cluster;                 /**< \brief Index of the CLS object used */
     IfxGtm_Pwm_SubModule     subModule;               /**< \brief Sub module to be used for PWM */
     IfxGtm_Pwm_Alignment     alignment;               /**< \brief PWM alignment */
-    uint8                    numChannels;             /**< \brief Number of channels configured (base + sync) */
+    uint8                    numChannels;             /**< \brief Number of channels configured (base + sync). Range: 1 to 8 */
     IfxGtm_Pwm_Channel      *channels;                /**< \brief Stores state of PWM channels (base + sync) */
     IfxGtm_Pwm_GlobalControl globalControl;           /**< \brief Pointer and mask for GLB_CTRL */
     float32                  sourceFrequency;         /**< \brief Source clock frequency in Hz */
     float32                  dtmFrequency;            /**< \brief DTM clock frequency in Hz */
     float32                  frequency;               /**< \brief Current PWM frequency in Hz */
-    uint32                   periodTicks;             /**< \brief Current PWM Period in ticks */
+    uint32                   periodTicks;             /**< \brief Current PWM Period in ticks. Range: 0 to 0x00FFFFFF */
     IfxGtm_Pwm_ClockSource   clockSource;             /**< \brief Clock source for Atom/Tom channels */
     IfxGtm_Dtm_ClockSource   dtmClockSource;          /**< \brief Clock source for DTM channels */
     boolean                  syncUpdateEnabled;       /**< \brief TRUE: Update compare registers from shadow at the end of period */
@@ -489,7 +490,7 @@ typedef struct
     IfxGtm_Cluster            cluster;                /**< \brief Index of the CLS object used */
     IfxGtm_Pwm_SubModule      subModule;              /**< \brief Sub module to be used for PWM */
     IfxGtm_Pwm_Alignment      alignment;              /**< \brief PWM alignment */
-    uint8                     numChannels;            /**< \brief Number of channels (base + sync) to be configured */
+    uint8                     numChannels;            /**< \brief Number of channels (base + sync) to be configured. Range: 1 to 8 */
     IfxGtm_Pwm_ChannelConfig *channels;               /**< \brief Pointer to channel configuration */
     float32                   frequency;              /**< \brief Initial PWM frequency */
     IfxGtm_Pwm_ClockSource    clockSource;            /**< \brief Clock source for Atom/Tom channels */

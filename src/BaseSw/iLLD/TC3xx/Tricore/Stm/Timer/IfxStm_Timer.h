@@ -3,7 +3,7 @@
  * \brief STM TIMER details
  * \ingroup IfxLld_Stm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -128,10 +128,10 @@
 typedef struct
 {
     Ifx_TimerValue          period;               /**< \brief Timer period in ticks (cached value) */
-    boolean                 triggerEnabled;       /**< \brief If TRUE, the trigger functionality is Initialized */
+    boolean                 triggerEnabled;       /**< \brief TRUE if the trigger functionality is Initialized, FALSE if the trigger functionality is not Initialized. */
     float32                 clockFreq;            /**< \brief Timer input clock frequency (cached value) */
     IfxStdIf_Timer_CountDir countDir;             /**< \brief Timer counting mode */
-    boolean                 singleShot;           /**< \brief If TRUE, the timer will stop after 1st event */
+    boolean                 singleShot;           /**< \brief TRUE if the timer will stop after 1st event, FALSE if the timer will not stop after 1st event. */
 } IfxStm_Timer_Base;
 
 /** \} */
@@ -145,8 +145,8 @@ typedef struct
     IfxStm_Timer_Base base;                  /**< \brief Timer interface */
     Ifx_STM          *stm;                   /**< \brief STM module used for the timer functionality */
     IfxStm_Comparator comparator;            /**< \brief Comparator used for the timer functionality */
-    uint32            comparatorValue;       /**< \brief Value of the comparator for the next event */
-    uint8             comparatorShift;       /**< \brief Comparator shift */
+    uint32            comparatorValue;       /**< \brief Value of the comparator for the next event. Range: 0 to 0xFFFFFFFF. */
+    uint8             comparatorShift;       /**< \brief Comparator shift. Range: 0 to 31. */
 } IfxStm_Timer;
 
 /** \brief configuration structure for Timer
@@ -171,7 +171,9 @@ typedef struct
  *
  * \param[inout] driver Pointer to the STM Timer interface handle.
  *
- * \retval TRUE if the timer interrupt was successfully acknowledged, FALSE otherwise.
+ * \retval TRUE If the timer interrupt was successfully acknowledged.
+ *         FALSE If the timer interrupt was not successfully acknowledged.
+ *
  */
 IFX_EXTERN boolean IfxStm_Timer_acknowledgeTimerIrq(IfxStm_Timer *driver);
 
@@ -180,6 +182,7 @@ IFX_EXTERN boolean IfxStm_Timer_acknowledgeTimerIrq(IfxStm_Timer *driver);
  * \param[in] driver Pointer to the STM Timer interface handle.
  *
  * \retval float32 The frequency of the timer in Hz.
+ *
  */
 IFX_EXTERN float32 IfxStm_Timer_getFrequency(IfxStm_Timer *driver);
 
@@ -188,6 +191,7 @@ IFX_EXTERN float32 IfxStm_Timer_getFrequency(IfxStm_Timer *driver);
  * \param[in] driver Pointer to the STM Timer interface handle.
  *
  * \retval float32 Input clock frequency in Hz.
+ *
  */
 IFX_EXTERN float32 IfxStm_Timer_getInputFrequency(IfxStm_Timer *driver);
 
@@ -195,16 +199,17 @@ IFX_EXTERN float32 IfxStm_Timer_getInputFrequency(IfxStm_Timer *driver);
  *
  * \param[in] driver Pointer to the STM Timer interface handle.
  *
- * \retval Ifx_TimerValue The current period value of the timer in microseconds.
-           Range: 0 to 0xFFFFFFFF
+ * \retval Ifx_TimerValue The current period value of the timer in microseconds. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_EXTERN Ifx_TimerValue IfxStm_Timer_getPeriod(IfxStm_Timer *driver);
 
 /** \brief Gets the resolution of the STM timer in seconds.
  *
- * \param driver[in] Pointer to the STM Timer interface handle.
+ * \param[in] driver Pointer to the STM Timer interface handle.
  *
  * \retval float32 The resolution of the timer in seconds, calculated as 1 divided by the clock frequency.
+ *
  */
 IFX_EXTERN float32 IfxStm_Timer_getResolution(IfxStm_Timer *driver);
 
@@ -213,43 +218,49 @@ IFX_EXTERN float32 IfxStm_Timer_getResolution(IfxStm_Timer *driver);
  * \param[inout] driver Pointer to the STM Timer interface handle.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_Timer_run(IfxStm_Timer *driver);
 
 /** \brief Sets the frequency of the specified timer driver.
  *
- * \param[inout] driver Pointer to the STM Timer interface handle.
- * \param[in] frequency Desired frequency in Hertz (Hz).
+ * \param[inout] driver    Pointer to the STM Timer interface handle.
+ * \param[in]    frequency Desired frequency in Hertz (Hz).
  *
- * \retval TRUE if the frequency was successfully set, FALSE otherwise.
+ * \retval TRUE If the frequency was successfully set.
+ *         FALSE If the frequency was not successfully set.
+ *
  */
 IFX_EXTERN boolean IfxStm_Timer_setFrequency(volatile IfxStm_Timer *driver, float32 frequency);
 
 /** \brief Sets the period for the specified STM timer driver.
  *
  * \param[inout] driver Pointer to the STM Timer interface handle.
- * \param[in] period The new period value to be set for the timer.
-          Range: 0 to 0xFFFFFFFF
+ * \param[in]    period The new period value to be set for the timer. Range: 0 to 0xFFFFFFFF.
  *
- * \retval TRUE if the frequency was successfully set, FALSE otherwise.
+ * \retval TRUE If the frequency was successfully set.
+ *         FALSE If the frequency was not successfully set.
+ *
  */
 IFX_EXTERN boolean IfxStm_Timer_setPeriod(volatile IfxStm_Timer *driver, Ifx_TimerValue period);
 
 /** \brief Enables or disables the single-shot mode of the specified STM timer.
  *
- * \param[inout] driver Pointer to the STM Timer interface handle.
- * \param[in] If TRUE, enables single-shot mode. If FALSE, disables single-shot mode.
+ * \param[inout] driver  Pointer to the STM Timer interface handle.
+ * \param[in]    enabled TRUE If enables single-shot mode, FALSE If disables single-shot mode.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_Timer_setSingleMode(IfxStm_Timer *driver, boolean enabled);
 
 /** \brief Initializes the standard interface timer with the STM timer driver.
  *
  * \param[inout] stdif  Pointer to the standard interface timer object to be initialized.
- * \param[in] driver Pointer to the STM Timer interface handle.
+ * \param[in]    driver Pointer to the STM Timer interface handle.
  *
- * \retval TRUE if the initialization is successful, otherwise FALSE.
+ * \retval TRUE If the initialization is successful.
+ *         FALSE If the initialization is unsuccessful.
  */
 IFX_EXTERN boolean IfxStm_Timer_stdIfTimerInit(IfxStdIf_Timer *stdif, IfxStm_Timer *driver);
 
@@ -258,6 +269,7 @@ IFX_EXTERN boolean IfxStm_Timer_stdIfTimerInit(IfxStdIf_Timer *stdif, IfxStm_Tim
  * \param[inout] driver Pointer to the STM Timer interface handle.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_Timer_stop(IfxStm_Timer *driver);
 
@@ -266,24 +278,28 @@ IFX_EXTERN void IfxStm_Timer_stop(IfxStm_Timer *driver);
  * \param[inout] driver Pointer to the STM Timer interface handle.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_Timer_updateInputFrequency(volatile IfxStm_Timer *driver);
 
 /** \brief Initializes the STM timer with the provided configuration.
  *
  * \param[inout] driver Pointer to the STM Timer interface handle.
- * \param[in] config Pointer to the configuration structure containing the timer settings.
+ * \param[in]    config Pointer to the configuration structure containing the timer settings.
  *
- * \retval TRUE if the initialization is successful, otherwise FALSE.
+ * \retval TRUE If the initialization is successful.
+ *         FALSE If the initialization is unsuccessful.
+ *
  */
 IFX_EXTERN boolean IfxStm_Timer_init(volatile IfxStm_Timer *driver, const IfxStm_Timer_Config *config);
 
 /** \brief config Pointer to the STM timer configuration structure to be initialized.
  *
- * \param[inout] Pointer to the configuration structure for the STM timer.
- * \param[in] stm Pointer to the STM module registers.
+ * \param[inout] config Pointer to the configuration structure for the STM timer.
+ * \param[in]    stm    Pointer to the STM module registers.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_Timer_initConfig(IfxStm_Timer_Config *config, Ifx_STM *stm);
 

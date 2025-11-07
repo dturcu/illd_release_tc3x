@@ -3,7 +3,7 @@
  * \brief ERAY  basic functionality
  * \ingroup IfxLld_Eray
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -93,7 +93,7 @@ typedef enum
     IfxEray_BufferDirection_transmit = 1  /**< \brief buffer is configured as transmit buffer */
 } IfxEray_BufferDirection;
 
-/** \brief Channel Id
+/** \brief Selection of channel Id, defined in MODULE_ERAY0.SUCC1.B.WUCS
  */
 typedef enum
 {
@@ -349,7 +349,7 @@ typedef enum
     IfxEray_StrobePosition_6 = 2   /**< \brief Sample count 6 for strobing */
 } IfxEray_StrobePosition;
 
-/** \brief OCDS Suspend Control (OCDS.SUS)
+/** \brief OCDS Suspend Control, defined in MODULE_ERAY0.OCS.B.SUS
  */
 typedef enum
 {
@@ -394,16 +394,16 @@ typedef enum
  */
 typedef struct
 {
-    uint16                   frameId;                         /**< \brief slot ID of the selected Message Buffer. */
-    uint8                    cycleCode;                       /**< \brief the cycle set used for cycle counter filtering. */
+    uint16                   frameId;                         /**< \brief slot ID of the selected Message Buffer. Range: 0x0 to 0x7FF. */
+    uint8                    cycleCode;                       /**< \brief the cycle set used for cycle counter filtering. Range: 0x0 to 0x7F. */
     boolean                  channelAFiltered;                /**< \brief channel A serves as a control for transmit and filter for receive buffers. */
     boolean                  channelBFiltered;                /**< \brief channel B serves as a control for transmit and filter for receive buffers. */
     IfxEray_BufferDirection  bufferDirection;                 /**< \brief selects buffer as a transmit buffer or as a receive buffer. */
-    boolean                  transmitPayloadIndicatior;       /**< \brief weather payload indicator is set or not. */
+    boolean                  transmitPayloadIndicatior;       /**< \brief whether payload indicator is set or not. */
     IfxEray_TransmissionMode transmissionMode;                /**< \brief transmission mode of Header. */
-    boolean                  bufferServiceEnabled;            /**< \brief wether buffer service request is enabled or not. */
-    uint8                    payloadLength;                   /**< \brief length of data section. */
-    uint16                   dataPointer;                     /**< \brief pointer to the data section of message buffer in RAM. */
+    boolean                  bufferServiceEnabled;            /**< \brief whether buffer service request is enabled or not. */
+    uint8                    payloadLength;                   /**< \brief length of data section. Range: 0x0 to 0x7F. */
+    uint16                   dataPointer;                     /**< \brief pointer to the data section of message buffer in RAM. Range: 0x0 to 0x7FF.*/
     boolean                  startupFrameIndicator;           /**< \brief whether startup frame is indicated or not. */
     boolean                  syncFrameIndicator;              /**< \brief whether sync frame is indicated or not. */
 } IfxEray_Header;
@@ -412,24 +412,24 @@ typedef struct
  */
 typedef struct
 {
-    uint16 frameId : 11;                     /**< \brief received frame id. */
-    uint8  payloadLength : 7;                /**< \brief received payload length. */
-    uint16 headerCrc : 11;                   /**< \brief received header crc. */
-    uint8  nullFrameIndicator : 1;           /**< \brief 0 : no data frame received; 1: atleast one data frame received. */
-    uint8  syncFrame : 1;                    /**< \brief 0 : received frame is not a synch frame ; 1 : receive frame is a synch frame. */
-    uint8  startupFrame : 1;                 /**< \brief 0 : received frame is not a startup frame ; 1 : receive frame is a startup frame. */
-    uint8  cycleNumber : 7;                  /**< \brief cycle number in which frame is received. */
-    uint8  payloadPreambleIndicator : 1;     /**< \brief 1 : received payload segment has network management and message id or not; 0 : It hasn't. */
+    uint16 frameId : 11;                     /**< \brief received frame id. Range: 0x0 to 0x7FF. */
+    uint8  payloadLength : 7;                /**< \brief received payload length. Range: 0x0 to 0x7F. */
+    uint16 headerCrc : 11;                   /**< \brief received header crc. Range: 0x0 to 0x7FF. */
+    uint8  nullFrameIndicator : 1;           /**< \brief null frame indicator. Range: TRUE atleast one data frame received, FALSE no data frame received. */
+    uint8  syncFrame : 1;                    /**< \brief sync frame indicator. Range: TRUE receive frame is a synch frame. FALSE received frame is not a synch frame. */
+    uint8  startupFrame : 1;                 /**< \brief startup frame indicator. Range:TRUE receive frame is a startup frame, FALSE received frame is not a startup frame. */
+    uint8  cycleNumber : 7;                  /**< \brief cycle number in which frame is received.Range: 0x0 to 3F. */
+    uint8  payloadPreambleIndicator : 1;     /**< \brief payload preamble indicator. Range: TRUE received payload segment has network management and message id or not, FALSE it hasn't. */
 } IfxEray_ReceivedHeader;
 
 /** \brief Transmit control structure.
  */
 typedef struct
 {
-    boolean headerTransfered;        /**< \brief whether header is transfered from input buffers to Message RAM or not. */
-    boolean dataTransfered;          /**< \brief whether data is transfered from input buffers to Message RAM or not. */
-    boolean transferRequested;       /**< \brief transmit buffer released for transmission or not. */
-    uint8   bufferIndex;             /**< \brief buffer index in the Message RAM. */
+    boolean headerTransfered;        /**< \brief whether header is transfered from input buffers to Message RAM or not. Range: TRUE header transfer is requested, FALSE header transfer is not requested. */
+    boolean dataTransfered;          /**< \brief whether data is transfered from input buffers to Message RAM or not. Range: TRUE data transfer is requested, FALSE data transfer is not requested. */
+    boolean transferRequested;       /**< \brief transmit buffer released for transmission or not. Range: TRUE if set transmission request flag, FALSE if reset transmission request flag. */
+    uint8   bufferIndex;             /**< \brief buffer index in the Message RAM. Range: 0x0 to 0x7F. */
 } IfxEray_SlotConfig;
 
 /** \} */
@@ -441,103 +441,169 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears the error flag requested.
- * \param eray pointer to ERAY module registers.
- * \param errorFlag error flag to be cleared.
- * \return None
+/**
+ * \brief Clears the specified error flag in the ERAY module.
+ *
+ * \param[inout] eray      Pointer to the ERAY module registers.
+ * \param[in]    errorFlag The error flag to be cleared. Range: \ref IfxEray_ClearErrorFlag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_clearErrorFlag(Ifx_ERAY *eray, IfxEray_ClearErrorFlag errorFlag);
 
-/** \brief Clears the status flag requested.
- * \param eray pointer to ERAY module registers.
- * \param statusFlag status flag to be cleared.
- * \return None
+/**
+ * \brief Clears a specified status flag in the ERAY module.
+ *
+ * \param[inout] eray       Pointer to the ERAY module registers.
+ * \param[in]    statusFlag The status flag to be cleared. Range: \ref IfxEray_ClearStatusFlag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_clearStatusFlag(Ifx_ERAY *eray, IfxEray_ClearStatusFlag statusFlag);
 
-/** \brief Gets the error interrupt flags.
- * \param eray pointer to ERAY module registers.
- * \return error interrupt flags.
+/**
+ * \brief Retrieves the error interrupt flags for the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_ERAY_EIR The error interrupt flags.
+ *
  */
 IFX_INLINE Ifx_ERAY_EIR IfxEray_getErrorInterrupts(Ifx_ERAY *eray);
 
-/** \brief Gets the IBUSY service request.
- * \param eray pointer to ERAY module registers.
- * \return address of IBUSY service request value.
+/**
+ * \brief Gets the IBUSY service request control register pointer.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the IBUSY service request control register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getInputBufferBusySrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the INT0 service request.
- * \param eray pointer to ERAY module registers.
- * \return address of INT0 service request value.
+/**
+ * \brief Retrieves a pointer to the INT0 service request source register.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the INT0 service request source register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getInterruptLine0SrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the INT1 service request.
- * \param eray pointer to ERAY module registers.
- * \return address of INT1 service request value.
+/**
+ * \brief Retrieves a pointer to the INT1 service request source register.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the INT1 service request source register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getInterruptLine1SrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the message buffers interrupt status.
- * \param eray pointer to ERAY module registers.
- * \param messageBuffer message buffer to which interrupt status be checked.
- * \return message buffer interrupt status.
+/**
+ * \brief Retrieves the interrupt status of a specified message buffer in the ERAY module.
+ *
+ * \param[in] eray          Pointer to the ERAY module registers.
+ * \param[in] messageBuffer The message buffer to check the interrupt status for. Range: 0x0 to 0x7F.
+ *
+ * \retval TRUE An interrupt is pending for the specified message buffer.
+ *         FALSE No interrupt is pending for the specified message buffer.
+ *
  */
 IFX_INLINE boolean IfxEray_getMessageBufferInterruptStatus(Ifx_ERAY *eray, uint8 messageBuffer);
 
-/** \brief Gets the MBSC0 service request.
- * \param eray pointer to ERAY module registers.
- * \return address of MBSC0 service request value.
+/**
+ * \brief Gets the MBSC0 service request from the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the MBSC0 service request register (SRCR).
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getMessageBufferStatus0SrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the MBSC1 service request.
- * \param eray pointer to ERAY module registers.
- * \return address of MBSC1 service request value.
+/**
+ * \brief Gets the MBSC1 service request status register pointer.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the MBSC1 service request status register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getMessageBufferStatus1SrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the NDAT0 service request.
- * \param eray pointer to ERAY module registers.
- * \return address of NDAT0 service request value.
+/**
+ * \brief Gets the NDAT0 service request source pointer.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the NDAT0 service request source register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getNewDataInterrupt0SrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the NDAT1 service request.
- * \param eray pointer to ERAY module registers.
- * \return address of NDAT1 service request value.
+/**
+ * \brief Gets the NDAT1 service request source pointer.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the NDAT1 service request source register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getNewDataInterrupt1SrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the new data interrupt buffers status.
- * \param eray pointer to ERAY module registers.
- * \param ndat message buffer number configured to which ndat occurs.
- * \return ndat interrupt buffer.
+/**
+ * \brief Checks and returns the status of the new data interrupt for a specified message buffer.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ * \param[in] ndat Message buffer number to check the interrupt status for. Range: 0x0 to 0x7F.
+ *
+ * \retval TRUE New data interrupt is pending for the specified message buffer.
+ *         FALSE No new data interrupt is pending for the specified message buffer.
+ *
  */
 IFX_INLINE boolean IfxEray_getNewDataInterruptStatus(Ifx_ERAY *eray, uint8 ndat);
 
-/** \brief Gets the OBUSY service request.
- * \param eray pointer to ERAY module registers.
- * \return address of OBUSY service request value.
+/**
+ * \brief Gets the address of the OBUSY (Output Buffer Busy) service request register.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the OBUSY service request register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getOutputBufferBusySrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the status interrupt flags.
- * \param eray pointer to ERAY module registers.
- * \return status interrupt flags.
+/**
+ * \brief Retrieves the status interrupt flags for the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_ERAY_SIR A bitwise combination of flags indicating the current interrupt status.
+ *
  */
 IFX_INLINE Ifx_ERAY_SIR IfxEray_getStatusInterrupts(Ifx_ERAY *eray);
 
-/** \brief Gets the TINT0 service request.
- * \param eray pointer to ERAY module registers.
- * \return address of TINT0 service request value.
+/**
+ * \brief Gets the TINT0 service request.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the TINT0 service request register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getTimerInterrupt0SrcPtr(Ifx_ERAY *eray);
 
-/** \brief Gets the TINT1 service request.
- * \param eray pointer to ERAY module registers.
- * \return address of TINT1 service request value.
+/**
+ * \brief Gets the TINT1 service request register pointer.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the TINT1 service request register.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getTimerInterrupt1SrcPtr(Ifx_ERAY *eray);
 
@@ -545,31 +611,47 @@ IFX_INLINE volatile Ifx_SRC_SRCR *IfxEray_getTimerInterrupt1SrcPtr(Ifx_ERAY *era
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears all the error flags.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Clears all the error flags for the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxEray_clearAllFlags(Ifx_ERAY *eray);
 
-/** \brief Enables all the Interrupt lines.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Enables all the Interrupt lines for the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxEray_enableInterruptLines(Ifx_ERAY *eray);
 
-/** \brief Selects between MBSC0 and MBSC1 interrupt destination
- * \param eray pointer to ERAY module registers.
- * \param messageBuffer message buffer interrupt which should be configured
- * \param messageBufferDestination selects MBSC0 or MBSC1 interrupt output
- * \return None
+/**
+ * \brief Configures the interrupt destination for a specified message buffer.
+ *
+ * \param[inout] eray                     Pointer to the ERAY module registers.
+ * \param[in]    messageBuffer            The message buffer interrupt to configure. Range: 0x0 to 0x7F.
+ * \param[in]    messageBufferDestination The destination interrupt output to select. Range: 0x0 or 0x1.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxEray_setMessageBufferInterruptDestination(Ifx_ERAY *eray, uint8 messageBuffer, uint8 messageBufferDestination);
 
-/** \brief Selects between NDAT0 and NDAT1 interrupt destination
- * \param eray pointer to ERAY module registers.
- * \param ndat NDAT interrupt which should be configured
- * \param ndatDestination selects NDAT0 or NDAT1 interrupt output
- * \return None
+/**
+ * \brief Selects between NDAT0 and NDAT1 interrupt destinations for the ERAY module.
+ *
+ * \param[inout] eray            Pointer to the ERAY module registers.
+ * \param[in]    ndat            The NDAT interrupt to configure (NDAT0 or NDAT1). Range: 0x0 to 0x7F.
+ * \param[in]    ndatDestination The destination for the NDAT interrupt output. Range: 0x0 to 0x1.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxEray_setNewDataInterruptDestination(Ifx_ERAY *eray, uint8 ndat, uint8 ndatDestination);
 
@@ -582,26 +664,38 @@ IFX_EXTERN void IfxEray_setNewDataInterruptDestination(Ifx_ERAY *eray, uint8 nda
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises a RX pin.
- * \param rx the RX Pin which should be configured.
- * \param rxMode the pin input mode which should be configured.
- * \return None
+/**
+ * \brief Initializes a RX pin with a specified input mode.
+ *
+ * \param[in] rx     Pointer to the RX pin which should be configured.
+ * \param[in] rxMode The input mode to be configured for the RX pin. Range: \ref IfxPort_InputMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_initRxPin(const IfxEray_Rxd_In *rx, IfxPort_InputMode rxMode);
 
-/** \brief Initializes a TX Enable output.
- * \param txEn the TX Enable Pin which should be configured.
- * \param txEnMode the pin output mode which should be configured.
- * \param padDriver the pad driver mode which should be configured.
- * \return None
+/**
+ * \brief Initializes a TX Enable output pin with the specified mode and pad driver settings.
+ *
+ * \param[in] txEn      Pointer to the TX Enable Pin which should be configured.
+ * \param[in] txEnMode  The output mode to be configured for the TX Enable pin. Range: \ref IfxPort_OutputMode.
+ * \param[in] padDriver The pad driver mode to be configured for the TX Enable pin. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_initTxEnPin(const IfxEray_Txen_Out *txEn, IfxPort_OutputMode txEnMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a TX output.
- * \param tx the TX Pin which should be configured.
- * \param txMode the pin output mode which should be configured.
- * \param padDriver the pad driver mode which should be configured.
- * \return None
+/**
+ * \brief Initializes a TX output pin with specified mode and driver settings.
+ *
+ * \param[in] tx        Pointer to the TX Pin which should be configured.
+ * \param[in] txMode    The pin output mode which should be configured. Range: \ref IfxPort_OutputMode.
+ * \param[in] padDriver The pad driver mode which should be configured. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_initTxPin(const IfxEray_Txd_Out *tx, IfxPort_OutputMode txMode, IfxPort_PadDriver padDriver);
 
@@ -614,30 +708,45 @@ IFX_INLINE void IfxEray_initTxPin(const IfxEray_Txd_Out *tx, IfxPort_OutputMode 
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the ERAY module.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Disables the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_disableModule(Ifx_ERAY *eray);
 
-/** \brief Enables the ERAY module.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Enables the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_enableModule(Ifx_ERAY *eray);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param eray Pointer to ERAY module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Returns the module's suspend state.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval TRUE Module is suspended.
+ *         FALSE Module is not suspended.
+ *
  */
 IFX_INLINE boolean IfxEray_isModuleSuspended(Ifx_ERAY *eray);
 
-/** \brief Sets the sensitivity of the module to sleep signal
- * \param eray pointer to ERAY registers
- * \param mode mode selection (enable/disable)
- * \return None
+/**
+ * \brief Sets the sensitivity of the module to sleep signal, enabling or disabling it.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ * \param[in]    mode Mode selection for sensitivity. Range: \ref IfxEray_SleepMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setSleepMode(Ifx_ERAY *eray, IfxEray_SleepMode mode);
 
@@ -646,20 +755,32 @@ IFX_INLINE void IfxEray_setSleepMode(Ifx_ERAY *eray, IfxEray_SleepMode mode);
 /******************************************************************************/
 
 /**
- * \param eray Resource index of the ERAY
- * \return ERAY module register address
+ * \brief Retrieves the register address of the ERAY module for the specified index.
+ *
+ * \param[in] eray Resource index of the ERAY module. Range: \ref IfxEray_Index.
+ *
+ * \retval Ifx_ERAY* Pointer to the ERAY module's register address.
+ * 
  */
 IFX_EXTERN Ifx_ERAY *IfxEray_getAddress(IfxEray_Index eray);
 
-/** \brief API to get the resource index of the ERAY specified.
- * \param eray Pointer to the ERAY HW module (register memory map)
- * \return Resource index of the ERAY
+/**
+ * \brief Retrieves the resource index of the specified ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval IfxEray_Index The resource index of the ERAY module. Range: \ref IfxEray_Index.
+ *
  */
 IFX_EXTERN IfxEray_Index IfxEray_getIndex(Ifx_ERAY *eray);
 
-/** \brief Resets the ERAY kernel.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Resets the ERAY module to its initial state.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxEray_resetModule(Ifx_ERAY *eray);
 
@@ -672,52 +793,87 @@ IFX_EXTERN void IfxEray_resetModule(Ifx_ERAY *eray);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Gets the FIFO status.
- * \param eray pointer to ERAY module registers.
- * \return FIFO status.
+/**
+ * \brief Retrieves the current FIFO status of the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval Ifx_ERAY_FSR The FIFO status.
+ *
  */
 IFX_INLINE Ifx_ERAY_FSR IfxEray_getFifoStatus(Ifx_ERAY *eray);
 
-/** \brief Gets the Input Buffer Host Busy status.
- * \param eray pointer to ERAY module registers.
- * \return TRUE if Host is Busy otherwise FALSE.
+/**
+ * \brief Gets the Input Buffer Host Busy status.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval TRUE Host is busy.
+ *         FALSE Host is not busy.
+ *
  */
 IFX_INLINE boolean IfxEray_getInputBufferBusyHostStatus(Ifx_ERAY *eray);
 
-/** \brief Gets the Input Buffer Shadow status.
- * \param eray pointer to ERAY module registers.
- * \return TRUE if busy otherwise FALSE
+/**
+ * \brief Checks if the Input Buffer Shadow is currently busy.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval uint8 TRUE If the Input Buffer Shadow is busy.
+ *               FALSE If the Input Buffer Shadow is idle.
+ *
  */
 IFX_INLINE uint8 IfxEray_getInputBufferBusyShadowStatus(Ifx_ERAY *eray);
 
-/** \brief Gets the output buffer index.
- * \param eray pointer to ERAY module registers.
- * \return output buffer index.
+/**
+ * \brief Retrieves the current output buffer index from the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval uint8 The current output buffer index. Range: 0x0 to 0x7F.
+ * 
  */
 IFX_INLINE uint8 IfxEray_getOutputBuffer(Ifx_ERAY *eray);
 
-/** \brief Gets the Output Buffer Shadow status.
- * \param eray pointer to ERAY module registers.
- * \return TRUE if busy otherwise FALSE
+/**
+ * \brief Gets the Output Buffer Shadow status.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval TRUE If the output buffer shadow is busy.
+ *         FALSE If the output buffer shadow is not busy.
+ *
  */
 IFX_INLINE boolean IfxEray_getOutputBufferBusyShadowStatus(Ifx_ERAY *eray);
 
-/** \brief Gets the current POC state.
- * \param eray pointer to ERAY module registers.
- * \return current POC state.
+/**
+ * \brief Gets the current POC state of the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval IfxEray_PocState The current POC state. Range: \ref IfxEray_PocState.
+ *
  */
 IFX_INLINE IfxEray_PocState IfxEray_getPocState(Ifx_ERAY *eray);
 
-/** \brief Gets the received wakeup pattern channel.
- * \param eray pointer to ERAY module registers.
- * \return received wakeup pattern channel.
+/**
+ * \brief Retrieves the channel that received the wakeup pattern.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval IfxEray_WakeupChannel The channel that received the wakeup pattern. Range: \ref IfxEray_WakeupChannel.
+ *
  */
 IFX_INLINE IfxEray_WakeupChannel IfxEray_getWakeupPatternReceivedChannel(Ifx_ERAY *eray);
 
-/** \brief Waits until the controller enters required POC state.
- * \param eray pointer to ERAY module registers.
- * \param pocState POC state upto which controller waits.
- * \return None
+/**
+ * \brief Waits until the controller enters the specified POC state.
+ * 
+ * \param[in] eray     Pointer to the ERAY module registers.
+ * \param[in] pocState The target POC state to wait for. Range: \ref IfxEray_PocState.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_waitForPocState(Ifx_ERAY *eray, IfxEray_PocState pocState);
 
@@ -725,16 +881,25 @@ IFX_INLINE void IfxEray_waitForPocState(Ifx_ERAY *eray, IfxEray_PocState pocStat
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Changes the Commmunication Controller state.
- * \param eray pointer to ERAY module registers.
- * \param pocCommand POC command which triggers the Controller state.
- * \return TRUE if command accepted otherwise FALSE.
+/**
+ * \brief Changes the Communication Controller state.
+ *
+ * \param[inout] eray       Pointer to the ERAY module registers.
+ * \param[in]    pocCommand POC command to trigger the state change. Range: \ref IfxEray_PocCommand.
+ *
+ * \retval TRUE Command was successfully accepted.
+ *         FALSE Command was not accepted.
+ *
  */
 IFX_EXTERN boolean IfxEray_changePocState(Ifx_ERAY *eray, IfxEray_PocCommand pocCommand);
 
-/** \brief Sets the POC state to Ready state.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Configures the POC state to the Ready state.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxEray_setPocReady(Ifx_ERAY *eray);
 
@@ -747,371 +912,572 @@ IFX_EXTERN void IfxEray_setPocReady(Ifx_ERAY *eray);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief request to receive header section from message buffer.
- * \param eray pointer to ERAY module registers.
- * \param headerReceived whether header is received or not.
- * \return None
+/**
+ * \brief Requests to receive the header section from the message buffer.
+ *
+ * \param[inout] eray           Pointer to the ERAY module registers.
+ * \param[in]    headerReceived Boolean flag indicating whether the header was received.
+ *                              - TRUE: Header was received.
+ *                              - FALSE: Header was not received.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_receiveHeader(Ifx_ERAY *eray, boolean headerReceived);
 
-/** \brief sets the bit to send header in  frame.
- * \param eray pointer to ERAY module registers.
- * \param headerTransfered whether header transfered or not.
- * \return None
+/**
+ * \brief Configures the ERAY module to send the header in the frame.
+ *
+ * \param[inout] eray             Pointer to the ERAY module registers.
+ * \param[in]    headerTransfered Boolean flag indicating whether the header transfer should be initiated.
+ *                                - TRUE: Header transfer is requested.
+ *                                - FALSE: Header transfer is not requested.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_sendHeader(Ifx_ERAY *eray, boolean headerTransfered);
 
-/** \brief Sets number of cycle pairs for Active state.
- * \param eray pointer to ERAY module registers.
- * \param numberOfCyclePairsForActive number of cycle pairs for Active state.
- * \return None
+/**
+ * \brief Sets the number of cycle pairs for the Active state in the ERAY module.
+ *
+ * \param[inout] eray                        Pointer to the ERAY module registers.
+ * \param[in]    numberOfCyclePairsForActive The number of cycle pairs for the Active state. Range: 0x0 to 0x15.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setActiveCyclePairs(Ifx_ERAY *eray, uint8 numberOfCyclePairsForActive);
 
-/** \brief Sets auto delays between input, output buffers and message RAM
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Sets auto delays between input, output buffers, and message RAM.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setAutoDelayBuffers(Ifx_ERAY *eray);
 
-/** \brief Sets baudrate on Flexray bus.
- * \param eray pointer to ERAY module registers.
- * \param baudrate baudrate on flexray bus.
- * \return None
+/**
+ * \brief Sets the baudrate on the Flexray bus.
+ *
+ * \param[inout] eray     Pointer to the ERAY module registers.
+ * \param[in]    baudrate Baudrate value to be set. Range: \ref IfxEray_Baudrate.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setBaudrate(Ifx_ERAY *eray, IfxEray_Baudrate baudrate);
 
-/** \brief Sets secured buffers in message RAM.
- * \param eray pointer to ERAY module registers.
- * \param secureValue secure value.
- * \return None
+/**
+ * \brief Sets secured buffers in message RAM.
+ *
+ * \param[inout] eray        Pointer to the ERAY module registers.
+ * \param[in]    secureValue Secure value to be set. Range: 0x0 to 0x3.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setBufferReconfigSecure(Ifx_ERAY *eray, uint8 secureValue);
 
-/** \brief Sets channel A initial offstes.
- * \param eray pointer to ERAY module registers.
- * \param channelAMicrotickInitialOffset difference between reference points on channel A in microticks.
- * \param channelAMacrotickInitialOffset difference between reference points on channel A in macroticks.
- * \return None
+/**
+ * \brief Configures the initial offsets for channel A in the ERAY module.
+ * 
+ * \param[inout] eray                           Pointer to the ERAY module registers.
+ * \param[in]    channelAMicrotickInitialOffset Initial offset for channel A in microticks. Range: 0x0 to 0xF0.
+ * \param[in]    channelAMacrotickInitialOffset Initial offset for channel A in macroticks. Range: 0x0 to 0xF0.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setChannelAInitialOffsets(Ifx_ERAY *eray, uint8 channelAMicrotickInitialOffset, uint8 channelAMacrotickInitialOffset);
 
-/** \brief Sets channel B initial offstes.
- * \param eray pointer to ERAY module registers.
- * \param channelBMicrotickInitialOffset difference between reference points on channel B in microticks.
- * \param channelBMacrotickInitialOffset difference between reference points on channel B in macroticks.
- * \return None
+/**
+ * \brief Configures the initial offset settings for channel B in the ERAY module.
+ * 
+ * \param[inout] eray                           Pointer to the ERAY module registers.
+ * \param[in]    channelBMicrotickInitialOffset Initial offset for channel B in microticks. Range: 0x2 to 0x48.
+ * \param[in]    channelBMacrotickInitialOffset Initial offset for channel B in macroticks. Range: 0x2 to 0x48.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setChannelBInitialOffsets(Ifx_ERAY *eray, uint8 channelBMicrotickInitialOffset, uint8 channelBMacrotickInitialOffset);
 
-/** \brief Sets receive delays on channels.
- * \param eray pointer to ERAY module registers.
- * \param channelAReceptionDelay reception delay on channel A.
- * \param channelBReceptionDelay reception delay on channel B.
- * \return None
+/**
+ * \brief Configures the reception delay for both channel A and channel B.
+ *
+ * \param[inout] eray                   Pointer to the ERAY module registers.
+ * \param[in]    channelAReceptionDelay Reception delay value for channel A. Range: 0x0 to 0xC8.
+ * \param[in]    channelBReceptionDelay Reception delay value for channel B. Range: 0x0 to 0xC8.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setChannelsReceiveDelay(Ifx_ERAY *eray, uint8 channelAReceptionDelay, uint8 channelBReceptionDelay);
 
 /** \brief Sets clock correction cycles for Passive and Halt.
- * \param eray pointer to ERAY module registers.
- * \param clockCorrectionCyclesPassive maximum number of cycles missing clock correction leading for passive state.
- * \param clockCorrectionCyclesHalt maximum number of cycles missing clock correction leading for halt state.
- * \return None
+ *
+ * \param[inout] eray                         pointer to ERAY module registers.
+ * \param[in]    clockCorrectionCyclesPassive maximum number of cycles missing clock correction leading for passive state. Range: 0x1 to 0xF.
+ * \param[in]    clockCorrectionCyclesHalt    maximum number of cycles missing clock correction leading for halt state. Range: 0x1 to 0xF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setClockCorrectionCycles(Ifx_ERAY *eray, uint8 clockCorrectionCyclesPassive, uint8 clockCorrectionCyclesHalt);
 
-/** \brief lead to halt state in clock synch error.
- * \param eray pointer to ERAY module registers.
- * \param clockSyncErrorHalt whether to enter halt in clock synch error or not.
- * \return None
+/**
+ * \brief Configures whether the ERAY module enters a halt state upon detecting a clock synchronization error.
+ *
+ * \param[inout] eray               Pointer to the ERAY module registers.
+ * \param[in]    clockSyncErrorHalt Boolean flag indicating whether to enter halt state in case of a clock synchronization error.
+ *                                  - TRUE: communication controller will enter halt state.
+ *                                  - FALSE: communication controller will enter/remain in normal passive state.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setClockSynchErrorHalt(Ifx_ERAY *eray, boolean clockSyncErrorHalt);
 
-/** \brief Sets cluster drift values.
- * \param eray pointer to ERAY module registers.
- * \param clusterDrift cluster drift damping value used in clock synchronization.
- * \param maxDriftOffset maximum drift offset between two nodes.
- * \return None
+/**
+ * \brief Sets cluster drift values for clock synchronization in the ERAY module.
+ *
+ * \param[inout] eray           Pointer to the ERAY module registers.
+ * \param[in]    clusterDrift   Cluster drift damping value used in clock synchronization. Range: 0x0 to 0x14.
+ * \param[in]    maxDriftOffset Maximum drift offset between two nodes. Range: 0x2 to 0x783.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setClusterDriftValues(Ifx_ERAY *eray, uint8 clusterDrift, uint16 maxDriftOffset);
 
-/** \brief Sets cluster startup deviation.
- * \param eray pointer to ERAY module registers.
- * \param acceptedStartupDeviation deviation for startup Frames during integration.
- * \return None
+/**
+ * \brief Configures the acceptable deviation for cluster startup frames during the integration process.
+ *
+ * \param[inout] eray                     Pointer to the ERAY module registers.
+ * \param[in]    acceptedStartupDeviation The deviation value for startup frames during integration. Range: 0x0 to 0x753.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setClusterStartupDeviation(Ifx_ERAY *eray, uint16 acceptedStartupDeviation);
 
-/** \brief Sets CAS symbol window duration.
- * \param eray pointer to ERAY module registers.
- * \param collisionAvoidanceDuration accepted duration of CAS symbol.
- * \return None
+/**
+ * \brief Sets the duration for collision avoidance symbol window.
+ *
+ * \param[inout] eray                       Pointer to the ERAY module registers.
+ * \param[in]    collisionAvoidanceDuration The accepted duration of the CAS symbol window. Range: 0x43 to 0x63.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setCollisionAvoidanceDuration(Ifx_ERAY *eray, uint8 collisionAvoidanceDuration);
 
-/** \brief sets duration of the communication cycle in Macroticks.
- * \param eray pointer to ERAY module registers.
- * \param macroticks duration of the communication cycle in Macroticks.
- * \return None
+/**
+ * \brief Sets the duration of the communication cycle in Macroticks.
+ * 
+ * \param[inout] eray       Pointer to the ERAY module registers.
+ * \param[in]    macroticks Duration of the communication cycle in Macroticks. Range: 0xA to 0x3E80.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setCycleDurationMacroticks(Ifx_ERAY *eray, uint16 macroticks);
 
-/** \brief sets duration of the communication cycle in Microticks.
- * \param eray pointer to ERAY module registers.
- * \param microticks duration of the communication cycle in Microticks.
- * \return None
+/**
+ * \brief Configures the duration of the communication cycle in microticks.
+ *
+ * \param[inout] eray       Pointer to the ERAY module registers.
+ * \param[in]    microticks Specifies the duration of the communication cycle in microticks. Range: 0x280 to 0x9C400.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setCycleDurationMicroticks(Ifx_ERAY *eray, uint32 microticks);
 
-/** \brief Sets decoding correction value.
- * \param eray pointer to ERAY module registers.
- * \param decodingCorrection decoding correction value.
- * \return None
+/**
+ * \brief Configures the decoding correction value for the ERAY module.
+ *
+ * \param[inout] eray               Pointer to the ERAY module registers.
+ * \param[in]    decodingCorrection Decoding correction value. Range: 0xE to 0x8F.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setDecodingCorrectionValue(Ifx_ERAY *eray, uint8 decodingCorrection);
 
-/** \brief Sets dynamic slots count and length.
- * \param eray pointer to ERAY module registers.
- * \param dynamicSlotLength duration of dynamic slot in macroticks.
- * \param dynamicSlotCount number of dynamic slots in a communication cycle.
- * \param idleDynamicSlots duration of dynamic slot idle phase.
- * \return None
+/**
+ * \brief Configures dynamic slots settings for the ERAY module.
+ *
+ * \param[inout] eray              Pointer to the ERAY module registers.
+ * \param[in]    dynamicSlotLength Duration of dynamic slot in macroticks. Range: 0x2 to 0x3F.
+ * \param[in]    dynamicSlotCount  Number of dynamic slots in a communication cycle. Range: 0x0 to 0x1F32.
+ * \param[in]    idleDynamicSlots  Duration of dynamic slot idle phase. Range: \ref IfxEray_IdleDynamicSlots.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setDynamicSlots(Ifx_ERAY *eray, uint8 dynamicSlotLength, uint16 dynamicSlotCount, IfxEray_IdleDynamicSlots idleDynamicSlots);
 
-/** \brief Sets external correction controls.
- * \param eray pointer to ERAY module registers.
- * \param externalOffset External offset correction control.
- * \param externalRate External rate correction control.
- * \return None
+/**
+ * \brief Sets external correction controls for the ERAY module, allowing configuration of offset and rate corrections.
+ *
+ * \param[inout] eray           Pointer to the ERAY module registers.
+ * \param[in]    externalOffset External offset correction control. Range: \ref IfxEray_ExternalOffset.
+ * \param[in]    externalRate   External rate correction control. Range: \ref IfxEray_ExternalRate.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setExternalCorrectionControl(Ifx_ERAY *eray, IfxEray_ExternalOffset externalOffset, IfxEray_ExternalRate externalRate);
 
-/** \brief Sets external correction values.
- * \param eray pointer to ERAY module registers.
- * \param externalOffsetCorrection external clock offset correction value.
- * \param externalRateCorrection external clock rate correction value.
- * \return None
+/**
+ * \brief Sets external correction values for the ERAY module.
+ *
+ * \param[inout] eray                     Pointer to the ERAY module registers.
+ * \param[in]    externalOffsetCorrection External clock offset correction value. Range: \ref IfxEray_ExternalOffsetCorrection.
+ * \param[in]    externalRateCorrection   External clock rate correction value. Range: \ref IfxEray_ExternalRateCorrection.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setExternalCorrectionValues(Ifx_ERAY *eray, IfxEray_ExternalOffsetCorrection externalOffsetCorrection, IfxEray_ExternalRateCorrection externalRateCorrection);
 
-/** \brief Sets FIFO buffer start idex.
- * \param eray pointer to ERAY module registers.
- * \param fifoBufferStartIndex FIFO buffer start idex.
- * \return None
+/**
+ * \brief Sets the starting index of the FIFO buffer in the ERAY module.
+ *
+ * \param[inout] eray                 Pointer to the ERAY module registers.
+ * \param[in]    fifoBufferStartIndex The starting index value for the FIFO buffer. Range: 0x0 to 0xFF.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setFifoBufferStartIndex(Ifx_ERAY *eray, uint8 fifoBufferStartIndex);
 
-/** \brief Sets FIFO filter configurations.
- * \param eray pointer to ERAY module registers.
- * \param rejectedFrameId rejected frameId by FIFO.
- * \param filteredCycleNumber filtered cycle number.
- * \param fifoNullFramesRejected null frames rejection selection.
- * \param frameIdFilter filtered frameid by FIFO.
- * \return None
+/**
+ * \brief Configures the FIFO filter settings for the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ * \param[in]    rejectedFrameId        Frame ID to be rejected by the FIFO. Range: 0x0 to 0x7FF.
+ * \param[in]    filteredCycleNumber    Number of cycles to filter. Range: 0x0 to 0x7F.
+ * \param[in]    fifoNullFramesRejected Rejection of null frames. TRUE reject all null Frames, FALSE null Frames are stored in the FIFO.
+ * \param[in]    frameIdFilter          Frame ID to be filtered by the FIFO. Range: 0x0 to 0x3FF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setFifoFilterConfigurations(Ifx_ERAY *eray, uint16 rejectedFrameId, uint8 filteredCycleNumber, boolean fifoNullFramesRejected, uint16 frameIdFilter);
 
-/** \brief Sets FIFO configurations.
- * \param eray pointer to ERAY module registers.
- * \param receiveChannel FIFO receive channel.
- * \param staticFifoDisabled static FIFO selection.
- * \param fifoDepth FIFO depth.
- * \return None
+/**
+ * \brief Configures FIFO message buffer settings for the ERAY module.
+ *
+ * \param[inout] eray               Pointer to the ERAY module registers.
+ * \param[in]    receiveChannel     The receive channel to configure. Range: \ref IfxEray_ReceiveChannel.
+ * \param[in]    staticFifoDisabled Boolean flag indicating whether the static FIFO is disabled. TRUE if reject messages for static segment, FALSE if FIFO also used in static segment.
+ * \param[in] fifoDepth             The depth of the FIFO buffer. Range: 0x0 to 0xFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setFifoMessageBufferConfigurations(Ifx_ERAY *eray, IfxEray_ReceiveChannel receiveChannel, boolean staticFifoDisabled, uint8 fifoDepth);
 
-/** \brief Sets first dynamic buffer.
- * \param eray pointer to ERAY module registers.
- * \param firstDynamicBuffer first dynamic buffer.
- * \return None
+/**
+ * \brief Configures the first dynamic buffer for the ERAY module.
+ *
+ * \param[inout] eray               Pointer to the ERAY module registers.
+ * \param[in]    firstDynamicBuffer First dynamic buffer value to be set. Range: 0x0 to 0xFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setFirstDynamicBuffer(Ifx_ERAY *eray, uint8 firstDynamicBuffer);
 
 /** \brief Sets startup or wakeup listen timeouts.
- * \param eray pointer to ERAY module registers.
- * \param listenTimeOut wakeup or startup listen timeout in microticks.
- * \param listenTimeOutNoise upper limit for startup or wakeup listen timeout in presence of noise.
- * \return None
+ *
+ * \param[inout] eray                     Pointer to ERAY module registers.
+ * \param[in]    listenTimeOut            Wakeup or startup listen timeout in microticks. Range: 0x504 to 0x139706.
+ * \param[in]    listenTimeOutNoise upper Limit for startup or wakeup listen timeout in presence of noise. Range: \ref IfxEray_ListenTimeOutNoise.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxEray_setListenTimeOuts(Ifx_ERAY *eray, uint32 listenTimeOut, IfxEray_ListenTimeOutNoise listenTimeOutNoise);
 
-/** \brief Sets the maximum cold start attempts for active state.
- * \param eray pointer to ERAY module registers.
- * \param maxColdStartAttempts maximum number of attempts that a cold start node allows.
- * \return None
+/**
+ * \brief Sets the maximum number of cold start attempts allowed for the active state.
+ *
+ * \param[inout] eray                 Pointer to the ERAY module registers.
+ * \param[in]    maxColdStartAttempts Maximum number of cold start attempts allowed. Range: 0x2 to 0x1F.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setMaxColdStartAttempts(Ifx_ERAY *eray, uint8 maxColdStartAttempts);
 
-/** \brief Sets max limit correction values.
- * \param eray pointer to ERAY module registers.
- * \param maxOffsetCorrection maximum offset correction.
- * \param maxRateCorrection maximum rate correction.
- * \return None
+/**
+ * \brief Configures the maximum correction values for the ERAY module.
+ *
+ * \param[inout] eray                Pointer to the ERAY module registers.
+ * \param[in]    maxOffsetCorrection Maximum offset correction value. Range: 0x5 to 0x3BA2.
+ * \param[in]    maxRateCorrection   Maximum rate correction value. Range: 0x1 to 0x783.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setMaxCorrectionValues(Ifx_ERAY *eray, uint16 maxOffsetCorrection, uint16 maxRateCorrection);
 
-/** \brief Sets maximum synch frames in a cluster.
- * \param eray pointer to ERAY module registers.
- * \param maxSyncFrames maximum synch frames in a cluster.
- * \return None
+/**
+ * \brief Sets the maximum number of synchronization frames in a cluster.
+ *
+ * \param[inout] eray          Pointer to the ERAY module registers.
+ * \param[in]    maxSyncFrames Maximum number of synchronization frames in a cluster. Range: \ref IfxEray_MaxSynchFrames.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setMaxSynchFrames(Ifx_ERAY *eray, IfxEray_MaxSynchFrames maxSyncFrames);
 
-/** \brief Sets number of message buffers.
- * \param eray pointer to ERAY module registers.
- * \param numberOfMessageBuffers number of message buffers.
- * \return None
+/**
+ * \brief Configures the ERAY module with the specified number of message buffers.
+ *
+ * \param[inout] eray                   Pointer to the ERAY module registers.
+ * \param[in]    numberOfMessageBuffers The number of message buffers to be used. Range: 0x1 to 0xFF.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setMessageBufferCount(Ifx_ERAY *eray, uint8 numberOfMessageBuffers);
 
-/** \brief Sets Message Handler configurations.
- * \param eray pointer to ERAY module registers.
- * \param staticFramepayload payload length of static frames in double bytes.
- * \param latestTransmissionStart dynamic slots befor transmission of inhibit frame in dynamic segment.
- * \return None
+/**
+ * \brief Configures the message handler settings for the ERAY module, including static frame payload and transmission timing.
+ *
+ * \param[inout] eray                    Pointer to the ERAY module registers.
+ * \param[in]    staticFramepayload      Payload length of static frames in double bytes. Range: 0x0 to 0x7F.
+ * \param[in]    latestTransmissionStart Number of dynamic slots before transmission of the inhibit frame in the dynamic segment. Range: 0x0 to 0x1F2D.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setMessageHandlerConfigurations(Ifx_ERAY *eray, uint8 staticFramepayload, uint16 latestTransmissionStart);
 
-/** \brief Sets network start Idle time.
- * \param eray pointer to ERAY module registers.
- * \param networkStartIdleTime starting point of Network Idle Time Phase.
- * \return None
+/**
+ * \brief Sets the starting point of the Network Idle Time Phase for the ERAY module.
+ *
+ * \param[inout] eray                 Pointer to the ERAY module registers.
+ * \param[in]    networkStartIdleTime The starting point of the Network Idle Time Phase. Range: 0x7 to 0x3E7D.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setNetworkStartIdleTime(Ifx_ERAY *eray, uint16 networkStartIdleTime);
 
-/** \brief Sets network management vector length.
- * \param eray pointer to ERAY module registers.
- * \param networkVectorLength length of network management vector.
- * \return None
+/**
+ * \brief Configures the length of the network management vector for the ERAY module.
+ *
+ * \param[inout] eray                Pointer to the ERAY module registers.
+ * \param[in]    networkVectorLength The desired length of the network management vector. Range: 0x0 to 0xC.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setNetworkVectorLength(Ifx_ERAY *eray, uint32 networkVectorLength);
 
-/** \brief Sets channels connected to node.
- * \param eray pointer to ERAY module registers.
- * \param channelAConnectedNode whether node connected to channel A or not.
- * \param channelBConnectedNode whether node connected to channel B or not.
- * \return None
+/**
+ * \brief Configures the connection status of channels A and B to a node.
+ *
+ * \param[inout] eray                  Pointer to the ERAY module registers.
+ * \param[in]    channelAConnectedNode Boolean indicating whether channel A is connected to the node. TRUE if node connected to channel A, FALSE if not connected to channel A.
+ * \param[in]    channelBConnectedNode Boolean indicating whether channel B is connected to the node. TRUE if node connected to channel B, FALSE if not connected to channel B.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setNodeChannels(Ifx_ERAY *eray, boolean channelAConnectedNode, boolean channelBConnectedNode);
 
-/** \brief Sets offset correction starting point.
- * \param eray pointer to ERAY module registers.
- * \param correctionOffset offset correction start point.
- * \return None
+/**
+ * \brief Sets the offset correction starting point for the ERAY module.
+ *
+ * \param[inout] eray             Pointer to the ERAY module registers.
+ * \param[in]    correctionOffset Offset correction value to be applied. Range: 0x8 to 0x3E7E.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setOffsetCorrection(Ifx_ERAY *eray, uint16 correctionOffset);
 
-/** \brief requests to receive the frame.
- * \param eray pointer to ERAY module registers.
- * \param receiveRequested whether frame to be received or not.
- * \return None
+/**
+ * \brief Configures the ERAY module to request frame reception based on the given flag.
+ *
+ * \param[inout] eray             Pointer to the ERAY module registers.
+ * \param[in]    receiveRequested Boolean flag indicating whether frame reception is requested. TRUE if transfer to OBF shadow requested, FALSE no request.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setReceiveRequest(Ifx_ERAY *eray, boolean receiveRequested);
 
 /** \brief Sets receive wakeup times.
- * \param eray pointer to ERAY module registers.
- * \param receiveWakeupTestDuration duration of receive wakeup pattern.
- * \param receiveWakeupIdleTime duration of receive wakeup idle time.
- * \param receiveWakeupLowTime duration of receive wakeup low time.
- * \return None
+ *
+ * \param[inout] eray                      Pointer to ERAY module registers.
+ * \param[in]    receiveWakeupTestDuration Duration of receive wakeup pattern. Range: 0x4C to 0x12D.
+ * \param[in]    receiveWakeupIdleTime     Duration of receive wakeup idle time. Range: 0xE to 0x3B.
+ * \param[in]    receiveWakeupLowTime      Duration of receive wakeup low time. Range: 0xA to 0x37.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setReceiveWakeupTimes(Ifx_ERAY *eray, uint16 receiveWakeupTestDuration, uint8 receiveWakeupIdleTime, uint8 receiveWakeupLowTime);
 
-/** \brief sets buffer number in which frame is received.
- * \param eray pointer to ERAY module registers.
- * \param bufferIndex buffer number in which frame is received.
- * \return None
+/**
+ * \brief Configures the ERAY module to use a specific buffer for receiving frames.
+ *
+ * \param[inout] eray        Pointer to the ERAY module registers.
+ * \param[in]    bufferIndex The buffer number to be used for receiving frames.Range: 0x0 to 0x7F.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setRxBufferNumber(Ifx_ERAY *eray, uint8 bufferIndex);
 
-/** \brief Sets slots action points.
- * \param eray pointer to ERAY module registers.
- * \param staticActionPoint static slots and symbol window action point.
- * \param dynamicActionPoint dynamic slots action point.
- * \return None
+/**
+ * \brief Configures the static and dynamic action points for the ERAY module slots.
+ *
+ * \param[inout] eray               Pointer to the ERAY module registers.
+ * \param[in]    staticActionPoint  Static slots and symbol window action point. Range: 0x1 to 0x3F.
+ * \param[in]    dynamicActionPoint Dynamic slots action point. Range: 0x1 to 0x1F.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setSlotActionPoints(Ifx_ERAY *eray, uint8 staticActionPoint, uint8 dynamicActionPoint);
 
-/** \brief Sets static slots count and length.
- * \param eray pointer to ERAY module registers.
- * \param staticSlotLength duration of static slot in macroticks.
- * \param staticSlotsCount number of static slots in a communication cycle.
- * \return None
+/**
+ * \brief Configures the static slot settings for the ERAY module.
+ * 
+ * \param[inout] eray             Pointer to the ERAY module registers.
+ * \param[in]    staticSlotLength Duration of each static slot in macroticks. Range: 0x4 to 0x0293.
+ * \param[in]    staticSlotsCount Number of static slots in a communication cycle. Range: 0x2 to 0x3FF.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setStaticSlots(Ifx_ERAY *eray, uint16 staticSlotLength, uint16 staticSlotsCount);
 
-/** \brief Sets sample point for strobing.
- * \param eray pointer to ERAY module registers.
- * \param strobePosition strobing sample count.
- * \return None
+/**
+ * \brief Sets the sample point for strobing in the ERAY module.
+ *
+ * \param[inout] eray           Pointer to the ERAY module registers.
+ * \param[in]    strobePosition The sample count value for strobing. Range: \ref IfxEray_StrobePosition.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setStrobePosition(Ifx_ERAY *eray, IfxEray_StrobePosition strobePosition);
 
-/** \brief Sets channels which transmits symbols.
- * \param eray pointer to ERAY module registers.
- * \param channelASymbolTransmitted whether symbol is transmitted in Channel A or not.
- * \param channelBSymbolTransmitted whether symbol is transmitted in Channel B or not.
- * \return None
+/**
+ * \brief Configures the symbol transmission channels for the ERAY module.
+ *
+ * \param[inout] eray                      Pointer to the ERAY module registers.
+ * \param[in]    channelASymbolTransmitted Boolean flag indicating whether Channel A transmits symbols. TRUE if channel A selected for MTS transmission, FALSE if channel A disabled for MTS transmission.
+ * \param[in]    channelBSymbolTransmitted Boolean flag indicating whether Channel B transmits symbols. TRUE if channel B selected for MTS transmission, FALSE if channel B disabled for MTS transmission.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setSymbolChannels(Ifx_ERAY *eray, boolean channelASymbolTransmitted, boolean channelBSymbolTransmitted);
 
-/** \brief Sets the transmit slot mode.
- * \param eray pointer to ERAY module registers.
- * \param transmissionSlotMode transmission slot mode.
- * \return None
+/**
+ * \brief Sets the transmission slot mode for the ERAY module.
+ *
+ * \param[inout] eray                 Pointer to the ERAY module registers.
+ * \param[in]    transmissionSlotMode The transmission slot mode to be set. Range: \ref IfxEray_TransmissionSlotMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setTransmissionSlotMode(Ifx_ERAY *eray, IfxEray_TransmissionSlotMode transmissionSlotMode);
 
-/** \brief Sets transmission start time duration.
- * \param eray pointer to ERAY module registers.
- * \param transmissionStartTime transmission start time.
- * \return None
+/**
+ * \brief Sets the transmission start time duration for the ERAY module.
+ *
+ * \param[inout] eray                  Pointer to the ERAY module registers.
+ * \param[in]    transmissionStartTime The transmission start time duration. Range: 0x3 to 0xF.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setTransmissionStartTime(Ifx_ERAY *eray, uint8 transmissionStartTime);
 
-/** \brief Sets transfer request to send frame.
- * \param eray pointer to ERAY module registers.
- * \param transferRequested whether transfer requested or not.
- * \return None
+/**
+ * \brief Sets a request to transmit a frame through the ERAY module.
+ *
+ * \param[inout] eray              Pointer to the ERAY module registers.
+ * \param[in]    transferRequested Boolean flag indicating whether a transfer is requested. TRUE if set transmission request flag, FALSE if reset transmission request flag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setTransmitRequest(Ifx_ERAY *eray, boolean transferRequested);
 
 /** \brief Sets transmit wakeup times.
- * \param eray pointer to ERAY module registers.
- * \param transmitWakeupRepetitions transmission wakeup repetitions.
- * \param transmitWakeupIdleTime duration of transmit wakeup idle time.
- * \param transmitWakeupLowTime duration of transmit wakeup low time.
- * \return None
+ *
+ * \param[inout] eray                      Pointer to the ERAY module registers.
+ * \param[in]    transmitWakeupRepetitions Transmission wakeup repetitions. Range: 0x2 to 0x3F.
+ * \param[in]    transmitWakeupIdleTime    Duration of transmit wakeup idle time. Range: 0x2D to 0xB4.
+ * \param[in]    transmitWakeupLowTime     Duration of transmit wakeup low time. Range: 0xF to 0x3C.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setTransmitWakeupTimes(Ifx_ERAY *eray, uint8 transmitWakeupRepetitions, uint8 transmitWakeupIdleTime, uint8 transmitWakeupLowTime);
 
-/** \brief Configures transmitted frames for startup and synchronization.
- * \param eray pointer to ERAY module registers.
- * \param startupFrameTransmitted whether startup Frame transmitted or not.
- * \param synchFrameTransmitted whether synch Frame transmitted or not.
- * \return None
+/**
+ * \brief Configures the transmission status of startup and synchronization frames for the ERAY module.
+ * 
+ * \param[inout] eray                    Pointer to the ERAY module registers.
+ * \param[in]    startupFrameTransmitted Flag indicating whether the startup frame has been transmitted.
+ *                                       - TRUE: Startup frame has been transmitted.
+ *                                       - FALSE: Startup frame has not been transmitted.
+ * \param[in]    synchFrameTransmitted   Flag indicating whether the synchronization frame has been transmitted.
+ *                                       - TRUE: Synchronization frame has been transmitted.
+ *                                       - FALSE Synchronization frame has not been transmitted.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setTransmittedFrames(Ifx_ERAY *eray, boolean startupFrameTransmitted, boolean synchFrameTransmitted);
 
-/** \brief Sets the transmit buffer number.
- * \param eray pointer to ERAY module registers.
- * \param bufferIndex buffer number in which frame is sent.
- * \return None
+/**
+ * \brief Configures the transmit buffer number for the ERAY module.
+ * 
+ * \param[inout] eray        Pointer to the ERAY module registers.
+ * \param[in]    bufferIndex The buffer number to be used for transmission. Range: 0x0 to 0x7F.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setTxBufferNumber(Ifx_ERAY *eray, uint8 bufferIndex);
 
-/** \brief Swaps the shadow and Host output registers.
- * \param eray pointer to ERAY module registers.
- * \param swapRequested whether swap is requested or not.
- * \return None
+/**
+ * \brief Swaps the shadow and Host output registers if requested.
+ *
+ * \param[inout] eray          Pointer to the ERAY module registers.
+ * \param[in]    swapRequested Boolean flag indicating whether the swap operation should be performed. TRUE if swap OBF shadow and OBF host, FALSE no action.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_setViewData(Ifx_ERAY *eray, boolean swapRequested);
 
-/** \brief Sets the cluster wakeup channel.
- * \param eray pointer to ERAY module registers.
- * \param wakeupPatternChannel cluster wakeup pattern channel.
- * \return None
+/**
+ * \brief Configures the specified wakeup pattern channel for the ERAY module.
+ *
+ * \param[inout] eray                 Pointer to the ERAY module registers.
+ * \param[in]    wakeupPatternChannel The cluster wakeup pattern channel to configure. Range: \ref IfxEray_WakeupChannel.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setWakeupPatternChannel(Ifx_ERAY *eray, IfxEray_WakeupChannel wakeupPatternChannel);
 
@@ -1124,17 +1490,25 @@ IFX_INLINE void IfxEray_setWakeupPatternChannel(Ifx_ERAY *eray, IfxEray_WakeupCh
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief requests to receive data from message buffer.
- * \param eray pointer to ERAY module registers.
- * \param dataReceived whether data to be received or not.
- * \return None
+/**
+ * \brief Requests to receive data from the message buffer.
+ *
+ * \param[inout] eray         Pointer to the ERAY module registers.
+ * \param[in]    dataReceived Boolean flag indicating whether data should be received. TRUE data section selected for transfer from message RAM to output buffer, FALSE data Section is not read.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_receiveData(Ifx_ERAY *eray, boolean dataReceived);
 
-/** \brief sets the bit to send data in  frame.
- * \param eray pointer to ERAY module registers.
- * \param dataTransfered whether data transfered or not.
- * \return None
+/**
+ * \brief Sets the data transfer bit in the ERAY module to indicate whether data has been transferred.
+ *
+ * \param[inout] eray           Pointer to the ERAY module registers.
+ * \param[in]    dataTransfered Boolean flag indicating whether data has been transferred. TRUE data section selected for transfer from input buffer to the message RAM, FALSE data section is not updated.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_sendData(Ifx_ERAY *eray, boolean dataTransfered);
 
@@ -1142,46 +1516,66 @@ IFX_INLINE void IfxEray_sendData(Ifx_ERAY *eray, boolean dataTransfered);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Calculate and returns the CRC for frame.
- * \param payloadLength payload length configured for frame.
- * \param frameId slot id
- * \param startupFrameIndicator whether startup frame is indicated or not.
- * \param syncFrameIndicator whether sync frame is indicated or not.
- * \return calculated CRC value.
+/**
+ * \brief Calculate and returns the CRC for frame.
+ *
+ * \param[in] payloadLength         Payload length configured for frame. Range: 0x0 to 0x7F.
+ * \param[in] frameId               Slot id. Range: 0x0 to 0xFFFF.
+ * \param[in] startupFrameIndicator Whether startup frame is indicated or not.
+ * \param[in] syncFrameIndicator    Whether sync frame is indicated or not.
+ *
+ * \retval uint16 calculated CRC value. Range: 0x0 to 0xFFFF.
+ *
  */
 IFX_EXTERN uint16 IfxEray_calcHeaderCrc(uint8 payloadLength, uint16 frameId, boolean startupFrameIndicator, boolean syncFrameIndicator);
 
-/** \brief Reads the received data from output registers.
- * \param eray pointer to ERAY module registers.
- * \param data pointer to received data buffer.
- * \param payloadLength payload length received in a frame.
- * \return None
+/**
+ * \brief Reads the received data from the output registers of the ERAY module into a buffer.
+ *
+ * \param[in]    eray          Pointer to the ERAY module registers.
+ * \param[inout] data          Pointer to the buffer where the received data will be stored.
+ * \param[in]    payloadLength The length of the payload data received in the current frame, specified in bytes. Range: 0x0 to 0x7F.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxEray_readData(Ifx_ERAY *eray, uint32 *data, uint8 payloadLength);
 
-/** \brief Reads header and data from output buffers.
- * \param eray pointer to ERAY module registers.
- * \param header header received in a frame.
- * \param data data received in a frame.
- * \param maxPayloadLength maximum payload length received in a frame.
- * \return None
+/**
+ * \brief Reads header and payload data from the ERAY module's output buffers.
+ *
+ * \param[in]    eray             Pointer to the ERAY module registers.
+ * \param[inout] header           Pointer to the structure that will hold the received header information.
+ * \param[inout] data             Pointer to the buffer that will store the received payload data.
+ * \param[in]    maxPayloadLength Maximum length of the payload data to be received. Range: 0x0 to 0x7F.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxEray_readFrame(Ifx_ERAY *eray, IfxEray_ReceivedHeader *header, uint32 *data, Ifx_SizeT maxPayloadLength);
 
-/** \brief Writes header and data to Input buffers and set the slots.
- * \param eray pointer to ERAY module registers.
- * \param header Header section of message buffer.
- * \param data data section of message buffer.
- * \param slotConfig pointer slot allocation configuration structure.
- * \return None
+/**
+ * \brief Configures and writes header and data to the input buffers and sets the slot configuration for the ERAY module.
+ *
+ * \param[inout] eray       Pointer to the ERAY module registers.
+ * \param[in]    header     Pointer to the header section of the message buffer containing frame ID, cycle code, channel filtering, buffer direction, and other control flags.
+ * \param[in]    data       Pointer to the data section of the message buffer to be written to the input buffers.
+ * \param[in]    slotConfig Pointer to the slot allocation configuration structure specifying transfer status, buffer index, and transmission requests.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxEray_setSlot(Ifx_ERAY *eray, const IfxEray_Header *header, const uint32 *data, const IfxEray_SlotConfig *slotConfig);
 
-/** \brief Writes data section of a frame to input data registers.
- * \param eray pointer to ERAY module registers.
- * \param data data segment in a frame.
- * \param payloadLength payload length configured for slot buffer.
- * \return None
+/**
+ * \brief Writes data section of a frame to input data registers.
+ *
+ * \param[inout] eray          Pointer to the ERAY module registers.
+ * \param[in]    data          Pointer to the data segment in a frame to be written.
+ * \param[in]    payloadLength Payload length configured for the slot buffer. Range: 0x0 to 0x7F.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxEray_writeData(Ifx_ERAY *eray, const uint32 *data, uint8 payloadLength);
 
@@ -1191,115 +1585,187 @@ IFX_EXTERN void IfxEray_writeData(Ifx_ERAY *eray, const uint32 *data, uint8 payl
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Gets the FIFO index.
- * \param eray pointer to ERAY module registers.
- * \return FIFO buffer index.
+/**
+ * \brief Gets the FIFO buffer index for the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval uint8 The current FIFO buffer index Range: 0x0 to 0xFF.
+ *
  */
 IFX_INLINE uint8 IfxEray_getFifoIndex(Ifx_ERAY *eray);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param eray Pointer to ERAY module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Configures the ERAY module's suspend mode to hard, soft, or none.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ * \param[in]    mode Suspend mode to be configured. Range: \ref IfxEray_SuspendMode.
+ *
+ * \note The function only works when the OCDS is enabled and the system is in Supervisor Mode.
+ *       When OCDS is disabled, the OCS suspend control is ineffective.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setSuspendMode(Ifx_ERAY *eray, IfxEray_SuspendMode mode);
 
-/** \brief Provides functionality for both setting of pin direction as input and configuring pad driver.
- * \param rx the RX Pin which should be configured.
- * \param rxMode the pin input mode which should be configured.
- * \param padDriver Pad Driver Configuration
- * \return None
+/**
+ * \brief Initializes the RX pin configuration with the specified input mode and pad driver settings.
+ *
+ * \param[in] rx        The RX pin to be configured.
+ * \param[in] rxMode    The input mode to be set for the RX pin. Range: \ref IfxPort_InputMode.
+ * \param[in] padDriver The pad driver configuration to be applied. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_initRxPinWithPadLevel(const IfxEray_Rxd_In *rx, IfxPort_InputMode rxMode, IfxPort_PadDriver padDriver);
 
-/** \brief Provides functionality to select the receiver channel input
- * \param eray pointer to ERAY module registers.
- * \param nodeId ERAY node id.
- * \param select receive channel.
- * \return None
+/**
+ * \brief Selects the receiver channel input for the specified ERAY node.
+ *
+ * \param[inout] eray   Pointer to the ERAY module registers.
+ * \param[in]    nodeId ERAY node identifier. Range: \ref IfxEray_NodeId.
+ * \param[in]    select Receive channel selection. Range: \ref Ifx_RxSel.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_selectRecieveInput(Ifx_ERAY *eray, IfxEray_NodeId nodeId, Ifx_RxSel select);
 
-/** \brief Provides functionality to provide the command to change the transmit mode.
- * \param eray pointer to ERAY module registers.
- * \param cmd POC command which triggers the Controller state.
- * \return None
+/**
+ * \brief Sets the POC command to control the ERAY module's state.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ * \param[in]    cmd  POC command to be executed. Range: \ref IfxEray_PocCommand.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setPocCommand(Ifx_ERAY *eray, IfxEray_PocCommand cmd);
 
-/** \brief Provides functionality to find out that any CHI command is being executed or not.
- * \param eray pointer to ERAY module registers.
- * \return status (TRUE / FALSE)
+/**
+ * \brief Checks if the ERAY module's RAMs are cleared.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval TRUE If the ERAY module's RAMs are cleared.
+ *         FALSE If the ERAY module's RAMs are not cleared.
+ *
  */
 IFX_INLINE boolean IfxEray_isRamsCleared(Ifx_ERAY *eray);
 
-/** \brief Provides functionality to check whether POC is busy or not.
- * \param eray pointer to ERAY module registers.
- * \return status (TRUE / FALSE)
+/**
+ * \brief Checks whether the POC (Point of Control) is currently busy.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval TRUE POC is busy.
+ *         FALSE POC is not busy.
+ *
  */
 IFX_INLINE boolean IfxEray_isPocBusy(Ifx_ERAY *eray);
 
-/** \brief Provides functionality to enble the interrupt lines.
- * \param eray pointer to ERAY module registers.
- * \param intLine interrupt line.
- * \return None
+/**
+ * \brief Enables the specified interrupt line for the ERAY module.
+ *
+ * \param[inout] eray    Pointer to the ERAY module registers.
+ * \param[in]    intLine The interrupt line to be enabled. Range: \ref IfxEray_InterruptLine.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_enableInterruptLine(Ifx_ERAY *eray, IfxEray_InterruptLine intLine);
 
-/** \brief Provides functionality to enable the transmit interrupt.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Enables the transmit interrupt functionality.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_enableTransmitInterrupt(Ifx_ERAY *eray);
 
-/** \brief Provides functionality to enable all the error iterrupts.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Enables all error interrupts for the specified ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_enableAllErrorInterrupts(Ifx_ERAY *eray);
 
-/** \brief Provides functionality to enable the test mode.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Unlocks the test mode key for the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_unlockTestModeKey(Ifx_ERAY *eray);
 
-/** \brief Provides functionality to enable write to the test mode registers.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Enables write access to the test mode registers of the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_enableWriteTestRegister(Ifx_ERAY *eray);
 
-/** \brief Provides functionality to enable the external loopback.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Enables the external loopback functionality for the ERAY module.
+ *
+ * \param[inout] eray  Pointer to the ERAY module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_enableExternalLoopback(Ifx_ERAY *eray);
 
-/** \brief Provides functionality to unlock the test mode configuration.
- * \param eray pointer to ERAY module registers.
- * \return None
+/**
+ * \brief Unlocks the test mode configuration for the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxEray_unlockConfigurationKey(Ifx_ERAY *eray);
 
-/** \brief Provides functionality to configure SUC configuration registers 1.
- * \param eray pointer to ERAY module registers.
- * \param configValue
- * \return None
+/**
+ * \brief Configures the SUC1 register of the ERAY module with the specified configuration value.
+ *
+ * \param[inout] eray        Pointer to the ERAY module registers.
+ * \param[in]    configValue The 32-bit configuration value to be written to the SUC1 register.Range: 0x0 to 0xFFFFB8F.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_configureSuc1Register(Ifx_ERAY *eray, uint32 configValue);
 
-/** \brief Provides functionality to configure MTCCV register.
- * \param eray pointer to ERAY module registers.
- * \param tickValue
- * \return None
+/**
+ * \brief Configures the macro tick value for the ERAY module by setting the MTCCV register.
+ *
+ * \param[inout] eray      Pointer to the ERAY module registers.
+ * \param[in]    tickValue The value to be set for the macro tick. Range: 0x0 to 0x3F3FFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_setMacroTickValue(Ifx_ERAY *eray, uint32 tickValue);
 
-/** \brief Returns the Cycle Counter Value
- * \param eray pointer to ERAY module registers.
- * \return Cycle Count Value
+/**
+ * \brief Returns the current cycle counter value of the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module registers.
+ *
+ * \retval uint8 The current cycle count value. Range: 0x0 to 0x3F.
+ *
  */
 IFX_INLINE uint8 IfxEray_getCycleCountValue(Ifx_ERAY *eray);
 

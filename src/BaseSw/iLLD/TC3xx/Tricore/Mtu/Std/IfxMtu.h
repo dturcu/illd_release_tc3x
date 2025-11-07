@@ -3,7 +3,7 @@
  * \brief MTU  basic functionality
  * \ingroup IfxLld_Mtu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -379,10 +379,10 @@ typedef struct
 typedef struct
 {
     IfxMtu_MbistSel sshSel;                            /**< \brief Member (config0) */
-    uint8           lowAddress;                        /**< \brief Lower address (scrambled) of memory Range to be tested */
-    uint8           highAddress;                       /**< \brief Higher address (scrambled) of memory Range to be tested */
-    uint8           uncorrectableErrorThreshold;       /**< \brief Threshold number for uncorrectable errors */
-    uint8           preClearEnable;                    /**< \brief Enable SRAM clearing before the test */
+    uint8           lowAddress;                        /**< \brief Lower address (scrambled) of memory Range to be tested. Range: 0. */
+    uint8           highAddress;                       /**< \brief Higher address (scrambled) of memory Range to be tested. Range: 1 to 0x7F. */
+    uint8           uncorrectableErrorThreshold;       /**< \brief Threshold number for uncorrectable errors. Range: 0 to 5. */
+    uint8           preClearEnable;                    /**< \brief Enable SRAM clearing before the test. Range: 0 to 1. */
 } IfxMtu_MbistSshConfig;
 
 /** \} */
@@ -392,8 +392,8 @@ typedef struct
 typedef struct
 {
     Ifx_MTU_MC_MCONTROL                  mcontrol;                     /**< \brief Value of MCONTROL register except START bit */
-    uint8                                numOfSshConfigurations;       /**< \brief Number of SSH Configurations in the memory test */
-    uint8                                numOfConfigPatterns;          /**< \brief Number of configuration patterns */
+    uint8                                numOfSshConfigurations;       /**< \brief Number of SSH Configurations in the memory test. Range: 0 to 0xFF. */
+    uint8                                numOfConfigPatterns;          /**< \brief Number of configuration patterns. Range: 0 to 0xFF. */
     IFX_CONST IfxMtu_MbistSshConfig     *sshConfigurations;            /**< \brief Pointer to number of SSH configuration structures */
     IFX_CONST IfxMtu_MbistConfigPattern *configPatterns;               /**< \brief Pointer to number of configuration patterns */
 } IfxMtu_MbistConfig;
@@ -407,9 +407,12 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the MBIST Shell of the given SRAM
- * \param mbistSel Memory Selection
- * \return None
+/**
+ * \brief Disables the MBIST Shell of the given SRAM.
+ *
+ * \param[in] mbistSel The memory selection to disable the MBIST Shell for. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval None
  *
  * Usage Example
  * \code
@@ -424,9 +427,12 @@ typedef struct
  */
 IFX_INLINE void IfxMtu_disableMbistShell(IfxMtu_MbistSel mbistSel);
 
-/** \brief Enables the MBIST Shell of the given SRAM.
- * \param mbistSel Memory Selection
- * \return None
+/**
+ * \brief Enables the MBIST Shell of the given SRAM.
+ *
+ * \param[in] mbistSel The memory selection for which the MBIST Shell should be enabled. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval None
  *
  * Usage Example
  * \code
@@ -450,27 +456,42 @@ IFX_INLINE void IfxMtu_disableMbistShell(IfxMtu_MbistSel mbistSel);
  */
 IFX_INLINE void IfxMtu_enableMbistShell(IfxMtu_MbistSel mbistSel);
 
-/** \brief Enables the MTU module
- * \return None
+/**
+ * \brief Enables the MTU module and its operations.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxMtu_enableModule(void);
 
-/** \brief returns register offset (x) and register bit offset (y) (MEMDONE[x].B.y)
- * \param mbistSel Memory Selection
- * \return returns register offset (x) and register bit offset (y) (MEMDONE[x].B.y)
+/**
+ * \brief Returns register offset (x) and register bit offset (y) (MEMDONE[x].B.y).
+ *
+ * \param[in] mbistSel Memory Selection. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval uint32 A 32-bit unsigned integer representing the combined register offset (x) and bit offset (y) for MEMDONE[x].B.y. Range: 0 to 0xFFFF FFFF.
+ *
  */
 IFX_INLINE uint32 IfxMtu_getMemDoneRegisterIndex(IfxMtu_MbistSel mbistSel);
 
-/** \brief Returns TRUE if Auto-Initialisation is running for the given SRAM.
- *
+/**
+ * \brief Returns TRUE if Auto-Initialisation is running for the given SRAM.
  * Should be polled after MBIST enableMbistShell to ensure that an auto-init operation is finished before starting a new operation.
- * \param mbistSel Memory Selection
- * \return TRUE if auto-initialisation running.
+ *
+ * \param[in] mbistSel Memory Selection. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval TRUE If Auto-Initialisation is running for the selected memory block.
+ *         FALSE If Auto-Initialisation is not running for the selected memory block.
+ *
  */
 IFX_INLINE boolean IfxMtu_isAutoInitRunning(IfxMtu_MbistSel mbistSel);
 
-/** \brief Returns the status of whether the module is enabled or not
- * \return
+/**
+ * \brief Checks if the MTU module is enabled  or not.
+ *
+ * \retval TRUE If the module is enabled.
+ *         FALSE If the module is disabled.
+ *
  */
 IFX_INLINE boolean IfxMtu_isModuleEnabled(void);
 
@@ -483,23 +504,33 @@ IFX_INLINE boolean IfxMtu_isModuleEnabled(void);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief This function disables alarm-reporting flags
- * \param mbistSel Memory Selection
- * \return None
+/**
+ * \brief Disables alarm-reporting flags for the specified memory block.
+ *
+ * \param[in] mbistSel Memory Selection. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxMtu_disableErrorReporting(IfxMtu_MbistSel mbistSel);
 
-/** \brief This function enables alarm-reporting flags
- * \param mbistSel Memory Selection
- * \return None
+/**
+ * \brief Enables alarm-reporting flags for the specified memory block.
+ *
+ * \param[in] mbistSel Memory Selection. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxMtu_enableErrorReporting(IfxMtu_MbistSel mbistSel);
 
-/** \brief This Function returns the status of MBIST clear Sram operation.
- * \param mbistSel Memory Selection
- * \return status of Mbist Clear Sram operation (TRUE - Operation completed, FALSE - Operation still in progress)
+/**
+ * \brief Checks if the MBIST clear SRAM operation is completed.
  *
- * A coding example can be found in \ref IfxLld_Mtu_Usage
+ * \param[in] mbistSel Memory Selection. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval TRUE Operation is completed.
+ *         FALSE Operation is still in progress.
  *
  */
 IFX_INLINE boolean IfxMtu_isMbistDone(IfxMtu_MbistSel mbistSel);
@@ -508,82 +539,112 @@ IFX_INLINE boolean IfxMtu_isMbistDone(IfxMtu_MbistSel mbistSel);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to Clear the MBIST SRAM (Synchronous mode).
- * Note: The function clears & sets safety endinit bit while running the test to prevent watchdog TO and automatically restores the endinit state (same state at the time of entering the function) at the end.
- * \param mbistSel Memory Selection
- * \return None
+/**
+ * \brief Clears the MBIST SRAM in synchronous mode.
+ * This function clears the MBIST SRAM and manages the endinit bit to prevent watchdog timeouts.
+ * The endinit state is automatically restored to its original value at the end of the function.
  *
+ * \param[in] mbistSel Memory Selection. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval None
+ * 
  * A coding example can be found in \ref IfxLld_Mtu_Usage
  *
  */
 IFX_EXTERN void IfxMtu_clearSram(IfxMtu_MbistSel mbistSel);
 
-/** \brief This Function should be called after MBIST Clear SRAM operation is completed.
- * Note: The function should be called with safety endinit bit cleared.
- * \param mbistSel Memory Selection
- * \return None
+/**
+ * \brief Continues the MBIST Clear SRAM operation after it has been completed.
+ * Note: The function must be called with the safety endinit bit cleared.
+ *
+ * \param[in] mbistSel Memory Selection. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Mtu_Usage
- *
+ * 
  */
 IFX_EXTERN void IfxMtu_clearSramContinue(IfxMtu_MbistSel mbistSel);
 
-/** \brief This Function triggers the Clear the MBIST SRAM operation (Asynchronous operation). It doesn't wait till the end of operation.
+/**
+ * \brief This Function triggers the Clear the MBIST SRAM operation (Asynchronous operation). It doesn't wait till the end of operation.
  * The application has to poll the Mbist status (IfxMtu_isMbistDone()) in a task and once the operation is done, the IfxMtu_clearSramContinue() function should be called to complete the operation.
  * Alternately the application can enable the "memory test done" interrupt. And in the ISR, the IfxMtu_clearSramContinue()  has to be called.
  * If Synchronous usage is need, use IfxMtu_clearSram() function.
  * Note: The function should be called with safety endinit bit cleared.
- * \param mbistSel Memory Selection
- * \return None
+ *
+ * \param[in] mbistSel Memory Selection. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Mtu_Usage
  *
  */
 IFX_EXTERN void IfxMtu_clearSramStart(IfxMtu_MbistSel mbistSel);
 
-/** \brief Check if the last MBIST Passed
+/**
+ * \brief Checks if the last MBIST test passed for all configured SSH cells.
  *  This function shall check for all the configured SSH cells if the tests were passed
- * \param mbistConfig pointer to the configuration structure for the RAM test
- * \return TRUE: Test passed; FALSE: Test failed.
+ *
+ * \param[in] mbistConfig Pointer to the configuration structure for the RAM test.
+ *
+ * \retval TRUE All MBIST tests passed successfully.
+ *         FALSE At least one MBIST test failed.
+ *
  */
 IFX_EXTERN boolean IfxMtu_isTestPass(const IfxMtu_MbistConfig *mbistConfig);
 
 /**
- * \param mbistSel Memory Selection
- * \param sramAddress SRAM address which should be read
- * \return None
+ * \brief Reads data from the specified SRAM address in the MTU module based on the memory selection.
+ *
+ * \param[in] mbistSel    Memory Selection. Range: \ref IfxMtu_MbistSel.
+ * \param[in] sramAddress SRAM address to be read. Range: 0 to 65535.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Mtu_Usage
  *
  */
 IFX_EXTERN void IfxMtu_readSramAddress(IfxMtu_MbistSel mbistSel, uint16 sramAddress);
 
-/** \brief Run CheckerBoard test.  This test consists of writing the physical checkerboard pattern into the memory, then reading it back for verification
+/**
+ * \brief Run CheckerBoard test. This test consists of writing the physical checkerboard pattern into the memory, then reading it back for verification.
  * Note: The function clears & sets safety endinit bit while running the test to prevent watchdog TO and automatically restores the endinit state (same state at the time of entering the function) at the end.
  * Note: Though 8-bit function arguments are used for "range", only 7-bits are valid, and the user must check documentation before passing the correct values.
- * \param mbistSel Memory Selection
- * \param rangeSel enable/disable range Selection (0 - disable, 1- enable)
- * \param rangeAddrUp when range mode is enabled, it specifies the upper logical block address limit in 64 word increments.
- * \param rangeAddrLow when range mode is enabled, it specifies the lower logical block address limit.
- * \param errorAddr If the test fails, it contains the error address (bit0 - bit12) and memory block index (Bit13 - Bit15)
- * \param numberRedundancyLines Number of redundancy lines
- * \return Test Status (0-PASS, 1- FAIL)
+ *
+ * \param[in]    mbistSel              Memory block selection. Specifies which memory block to test. Range: \ref IfxMtu_MbistSel.
+ * \param[in]    rangeSel              Enable/disable range Selection (0 - disable, 1- enable). Range: 0 to 255.
+ * \param[in]    rangeAddrUp           when range mode is enabled, it specifies the upper logical block address limit in 64 word increments. Range: 0 to 255.
+ * \param[in]    rangeAddrLow          when range mode is enabled, it specifies the lower logical block address limit. Range: 0 to 255.
+ * \param[inout] errorAddr             If the test fails, it contains the error address (bit0 - bit12) and memory block index (Bit13 - Bit15). Range: 0 to 65535.
+ * \param[in]    numberRedundancyLines Number of redundancy lines. Range: 0 to 65535.
+ *
+ * \retval TRUE Test failed.
+ *         FALSE Test passed successfully.
+ *
  */
 IFX_EXTERN uint8 IfxMtu_runCheckerBoardTest(IfxMtu_MbistSel mbistSel, uint8 rangeSel, uint8 rangeAddrUp, uint8 rangeAddrLow, uint16 *errorAddr, uint32 numberRedundancyLines);
 
-/** \brief Run March U test.  This test MARCHES 0 and 1 values through the memory array in an up and down direction. More precisely, 0 and 1 values are propagated through the memory in each direction; i.e. a single bit cell toggles into each direction with the neighboring cells having a given value and, in another run, the inverse given value.
+/**
+ * \brief Run March U test.  This test MARCHES 0 and 1 values through the memory array in an up and down direction. More precisely, 0 and 1 values are propagated through the memory in each direction;
+ * i.e. a single bit cell toggles into each direction with the neighboring cells having a given value and, in another run, the inverse given value.
  * Note: The function clears & sets safety endinit bit while running the test to prevent watchdog TO and automatically restores the endinit state (same state at the time of entering the function) at the end.
  * Note: Though 8-bit function arguments are used for "range", only 7-bits are valid, and the user must check documentation before passing the correct values.
- * \param mbistSel Memory Selection
- * \param rangeSel enable/disable range Selection (0 - disable, 1- enable)
- * \param rangeAddrUp when range mode is enabled, it specifies the upper logical block address limit in 64 word increments.
- * \param rangeAddrLow when range mode is enabled, it specifies the lower logical block address limit.
- * \param errorAddr If the test fails, it contains the error address (bit0 - bit12) and memory block index (Bit13 - Bit15)
- * \return Test Status (0-PASS, 1- FAIL)
+ *
+ * \param[in]    mbistSel     Memory block selection. Specifies which memory block to test. Range: \ref IfxMtu_MbistSel.
+ * \param[in]    rangeSel     Enable/disable range Selection (0 - disable, 1- enable). Range: 0 to 255.
+ * \param[in]    rangeAddrUp  when range mode is enabled, it specifies the upper logical block address limit in 64 word increments. Range: 0 to 255.
+ * \param[in]    rangeAddrLow when range mode is enabled, it specifies the lower logical block address limit. Range: 0 to 255.
+ * \param[inout] errorAddr    If the test fails, it contains the error address (bit0 - bit12) and memory block index (Bit13 - Bit15). Range: 0 to 65535.
+ *
+ * \retval TRUE Test failed.
+ *         FALSE Test passed successfully.
+ *
  */
 IFX_EXTERN uint8 IfxMtu_runMarchUTest(IfxMtu_MbistSel mbistSel, uint8 rangeSel, uint8 rangeAddrUp, uint8 rangeAddrLow, uint16 *errorAddr);
 
-/** \brief This function runs the Non-Destructive Inversion test algorithm.
+/**
+ * \brief This function runs the Non-Destructive Inversion test algorithm.
  * Non-Destructive Inversion test can be considered as a simple linear test that is able to find all Stuck-At faults (the cell remains stuck at a value for any operation) without destroying any user data. The test accesses every Word in the address range defined by the RANGE register, four times.
  * Test Steps:
  * 1. Read data Word including check bits
@@ -594,23 +655,31 @@ IFX_EXTERN uint8 IfxMtu_runMarchUTest(IfxMtu_MbistSel mbistSel, uint8 rangeSel, 
  * Note: The function clears & sets safety endinit bit while running the test to prevent watchdog TO and automatically restores the endinit state (same state at the time of entering the function) at the end.
  * The Error flags need to be cleared to enable further tracking after the test
  * Note: Though 8-bit function arguments are used for "range", only 7-bits are valid, and the user must check documentation before passing the correct values.
- * \param mbistSel Memory Selection
- * \param rangeSel enable/disable range Selection (0 - disable, 1- enable)
- * \param rangeAddrUp when range mode is enabled, it specifies the upper logical block address limit in 64 word increments.
- * \param rangeAddrLow when range mode is enabled, it specifies the lower logical block address limit.
- * \param errorAddr If the test fails, it contains the error address (bit0 - bit12) and memory block index (Bit13 - Bit15)
- * \return Test Status (0-PASS, 1- FAIL)
+ * 
+ * \param[in]    mbistSel     The memory block selection. Range: \ref IfxMtu_MbistSel.
+ * \param[in]    rangeSel     Enable/disable range Selection (0 - disable, 1- enable). Range: 0 to 255.
+ * \param[in]    rangeAddrUp  when range mode is enabled, it specifies the upper logical block address limit in 64 word increments. Range: 0 to 255.
+ * \param[in]    rangeAddrLow when range mode is enabled, it specifies the lower logical block address limit. Range: 0 to 255.
+ * \param[inout] errorAddr    If the test fails, it contains the error address (bit0 - bit12) and memory block index (Bit13 - Bit15). Range: 0 to 65535.
+ * 
+ * \retval TRUE Test failed with errors detected.
+ *         FALSE Test passed without errors.
  */
 IFX_EXTERN uint8 IfxMtu_runNonDestructiveInversionTest(IfxMtu_MbistSel mbistSel, uint8 rangeSel, uint8 rangeAddrUp, uint8 rangeAddrLow, uint16 *errorAddr);
 
 /**
- * \param mbistSel Memory Selection
- * \param sramAddress SRAM address which should be written
- * \return None
+ * \brief Writes the SRAM address for the selected MBIST memory region.
+ *
+ * \param[in] mbistSel    Memory selection for the MBIST operation. Range: \ref IfxMtu_MbistSel.
+ * \param[in] sramAddress SRAM address to be written. The address must be within the range of a 16-bit unsigned integer. Range: 0 to 65535.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxMtu_writeSramAddress(IfxMtu_MbistSel mbistSel, uint16 sramAddress);
 
-/** \brief Run the MBIST on all configured Gang configurations
+/**
+ * \brief Run the MBIST on all configured Gang configurations
  *    Requirements:
  *    1) This function shall run the tests on all SRAMs, which configured by the SSH structure array
  *    1.1) Address range (already scrambled address info) is made available through configuration
@@ -625,12 +694,17 @@ IFX_EXTERN void IfxMtu_writeSramAddress(IfxMtu_MbistSel mbistSel, uint16 sramAdd
  *    1) This function is not interrupted.
  *    2) DSPRAM of the CPU on which this function is running is being tested
  *    2) For destructive tests, the tested ram shall be re initialized by user
- * \param mbistConfig pointer to the configuration structure for the RAM test
- * \return TRUE: Test is successfully finished; FALSE: Test is not successfully finished.
+ *
+ * \param[in] mbistConfig Pointer to the configuration structure for the RAM test.
+ *
+ * \retval TRUE Test execution is still running (at least one configuration pattern has not finished).
+ *         FALSE Test execution has completed for all configuration patterns.
+ *
  */
 IFX_EXTERN boolean IfxMtu_runMbistAll(const IfxMtu_MbistConfig *const mbistConfig[]);
 
-/** \brief Run the MBIST on configured Gang configuration
+/**
+ * \brief Run the MBIST on configured Gang configuration.
  *    Requirements:
  *    1) This function shall run the tests on all SRAMs, which configured by the SSH structure array
  *    1.1) Address range (already scrambled address info) is made available through configuration
@@ -645,8 +719,12 @@ IFX_EXTERN boolean IfxMtu_runMbistAll(const IfxMtu_MbistConfig *const mbistConfi
  *    1) This function is not interrupted.
  *    2) DSPRAM of the CPU on which this function is running is being tested
  *    2) For destructive tests, the tested ram shall be re initialized by user
- * \param mbistConfig pointer to the configuration structure for the RAM test
- * \return TRUE: Test is successfully finished; FALSE: Test is not successfully finished.
+ *
+ * \param[in] mbistConfig Pointer to the configuration structure for the RAM test.
+ * 
+ * \retval TRUE Test is successfully finished.
+ *         FALSE Test is not successfully finished.
+ *
  */
 IFX_EXTERN boolean IfxMtu_runMbist(const IfxMtu_MbistConfig *mbistConfig);
 
@@ -659,21 +737,36 @@ IFX_EXTERN boolean IfxMtu_runMbist(const IfxMtu_MbistConfig *mbistConfig);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the status of the error tracking
- * \param mbistSel Memory Selection
- * \return TRUE if error tracking enabled.
+/**
+ * \brief Checks if error tracking is enabled for the specified memory selection.
+ *
+ * \param[in] mbistSel The memory block selection for which to check error tracking status. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval TRUE Error tracking is enabled for the specified memory selection.
+ *         FALSE Error tracking is disabled for the specified memory selection.
+ *
  */
 IFX_INLINE boolean IfxMtu_isErrorTrackingEnabled(IfxMtu_MbistSel mbistSel);
 
-/** \brief Returns the error tracking overflow status.
- * \param mbistSel Memory Selection
- * \return TRUE if more errors were detected since last clear than error tracking registers are available, or if more than one memory block was in error at the same time.
+/**
+ * \brief Checks if error tracking has overflowed or multiple memory blocks have errors.
+ *
+ * \param[in] mbistSel The memory block selection to check. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval TRUE If error tracking overflow has occurred or multiple memory blocks are in error.
+ *         FALSE If no overflow or single memory block error is detected.
+ *
  */
 IFX_INLINE boolean IfxMtu_isErrorTrackingOverflow(IfxMtu_MbistSel mbistSel);
 
-/** \brief Returns True if any Error Flags are set
- * \param mbistSel Memory slection
- * \return True if any error Flag is set
+/**
+ * \brief Checks if any error flags are set for the specified memory selection.
+ *
+ * \param[in] mbistSel The memory selection to check for error flags. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval TRUE If any error flags are set for the specified memory selection.
+ *         FALSE If no error flags are set for the specified memory selection.
+ *
  */
 IFX_INLINE boolean IfxMtu_checkErrorFlags(IfxMtu_MbistSel mbistSel);
 
@@ -681,44 +774,54 @@ IFX_INLINE boolean IfxMtu_checkErrorFlags(IfxMtu_MbistSel mbistSel);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears the error tracking registers (ETRR), valid and overflow bits.
- * \param mbistSel Memory Selection
- * \return None
+/**
+ * \brief Clears the error tracking registers (ETRR), valid, and overflow bits for the specified memory selection.
+ *
+ * \param[in] mbistSel The memory block selection for which to clear the error tracking registers. Range: \ref IfxMtu_MbistSel.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Mtu_Usage
  *
  */
 IFX_EXTERN void IfxMtu_clearErrorTracking(IfxMtu_MbistSel mbistSel);
 
-/** \brief Enables the tracking of SRAM errors.
- * \param mbistSel Memory Selection
- * \param enable TRUE to enable error tracking, FALSE to disable error tracking.
- * \return None
+/**
+ * \brief Enables or disables the tracking of SRAM errors based on the provided parameters.
  *
+ * \param[in] mbistSel The memory block selection identifier. This parameter specifies which memory block's error tracking is to be enabled or disabled. Range: \ref IfxMtu_MbistSel.
+ * \param[in] enable   A boolean flag to control the error tracking feature. Set to TRUE to enable error tracking, FALSE to disable it.
+ *
+ * \retval None
+ * 
  * A coding example can be found in \ref IfxLld_Mtu_Usage
  *
  */
 IFX_EXTERN void IfxMtu_enableErrorTracking(IfxMtu_MbistSel mbistSel, boolean enable);
 
 /** \brief Returns the descrambled system address based on a tracked SRAM error which consists of ADDR and MBI (SRAM address and block)
- *
  * Please note that not all memories of the system are supported by this function.
  * Additional memories will be considered on request.
- * \param mbistSel Memory Selection
- * \param trackedSramAddress tracked SRAM address which consists of an ADDR and MBI field (SRAM address and block)
- * \return descrambled system address if supported by this function, otherwise 0
  *
+ * \param[in] mbistSel           Memory Selection. Range: \ref IfxMtu_MbistSel.
+ * \param[in] trackedSramAddress Tracked SRAM address which consists of an ADDR and MBI field (SRAM address and block).
+ *
+ * \retval uint32 Descrambled system address if supported by this function, otherwise 0. Range: 0 t0 0xFFFF FFFF.
+ * 
  * Example usage: see \ref IfxMtu_getTrackedSramAddresses
  *
  */
 IFX_EXTERN uint32 IfxMtu_getSystemAddress(IfxMtu_MbistSel mbistSel, Ifx_MTU_MC_ETRR trackedSramAddress);
 
-/** \brief Returns the tracked SRAM error addresses and memory blocks which are stored in the MBIST ETRR registers.
- * \param mbistSel Memory Selection
- * \param trackedSramAddresses will contain the tracked error addresses in trackedSramAdresses[x].B.ADDR and affected blocks in sramAddresses[x].B.MBI
+/**
+ * \brief Returns the tracked SRAM error addresses and memory blocks which are stored in the MBIST ETRR registers.
+ *
+ * \param[in]    mbistSel             Memory Selection. Range: \ref IfxMtu_MbistSel.
+ * \param[inout] trackedSramAddresses will contain the tracked error addresses in trackedSramAdresses[x].B.ADDR and affected blocks in sramAddresses[x].B.MBI.
  *
  * The array size shall be IFXMTU_MAX_TRACKED_ADDRESSES
- * \return number of tracked errors (0..IFXMTU_MAX_TRACKED_ADDRESSES)
+ *
+ * \retval uint8 number of tracked errors (0..IFXMTU_MAX_TRACKED_ADDRESSES). Range: 0 to 4.
  *
  * Example usage to print out tracked errors of a given memory:
  *

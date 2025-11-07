@@ -2,7 +2,7 @@
  * \file IfxHspdm.c
  * \brief HSPDM  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -76,7 +76,7 @@ void IfxHspdm_setStartAddress(Ifx_HSPDM *hspdm, IfxHspdm_Buffer buffer, uint32 a
     }
     else
     {
-        /* do nothin */
+        /* Do nothing */
     }
 }
 
@@ -99,7 +99,7 @@ void IfxHspdm_setEndAddress(Ifx_HSPDM *hspdm, IfxHspdm_Buffer buffer, uint32 add
     }
     else
     {
-        /* do nothin */
+        /* Do nothing */
     }
 }
 
@@ -117,7 +117,7 @@ void IfxHspdm_setMuteAddresses(Ifx_HSPDM *hspdm, IfxHspdm_MuteRange muteRange, u
         hspdm->MUTE1.B.END1   = endAddress;
         break;
     default:
-        /* do nothing */
+        /* Do nothing */
         break;
     }
 }
@@ -134,7 +134,8 @@ void IfxHspdm_enableBSB(Ifx_HSPDM *hspdm, IfxHspdm_BSB bsb, boolean enable)
         hspdm->CON.B.EN1 = (uint32)enable;
         break;
     default:
-        break; /* do nothing here */
+    	/* Do nothing */
+        break;
     }
 }
 

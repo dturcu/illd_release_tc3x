@@ -2,7 +2,7 @@
  * \file IfxCpu.c
  * \brief CPU  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -1150,5 +1150,338 @@ void IfxCpu_disableInterruptsAllExceptMaster(IfxCpu_ResourceCpu masterCpu)
     /* Set the endinit protection again */
     IfxScuWdt_setGlobalEndinit(password);
 }
+
+void IfxCpu_enableMemoryProtection(void)
+{
+    Ifx_CPU_SYSCON sysconValue;
+    sysconValue.U = __mfcr(CPU_SYSCON);                 /* Get the System Configuration Register (SYSCON) value     */
+    sysconValue.B.PROTEN = 1;                           /* Set the PROTEN bitfield to enable the Memory Protection  */
+    __mtcr(CPU_SYSCON, sysconValue.U);                  /* Set the System Configuration Register (SYSCON)           */
+
+#if !defined(__TASKING__)
+    __isync();
+#endif
+}
+
+void IfxCpu_disableMemoryProtection(void)
+{
+    Ifx_CPU_SYSCON sysconValue;
+    sysconValue.U = __mfcr(CPU_SYSCON);                 /* Get the System Configuration Register (SYSCON) value     */
+    sysconValue.B.PROTEN = 0;                           /* Set the PROTEN bitfield to disable the Memory Protection  */
+    __mtcr(CPU_SYSCON, sysconValue.U);                  /* Set the System Configuration Register (SYSCON)           */
+
+#if !defined(__TASKING__)
+    __isync();
+#endif
+}
+
+void IfxCpu_defineDataProtectionRange(uint32 lowerBoundAddress, uint32 upperBoundAddress, IfxCpu_DataProtectionRange range)
+{
+    /* Set the lower and upper bound of CPU Data Protection Range */
+    switch(range)
+    {
+        case IfxCpu_DataProtectionRange_0:
+            __mtcr(CPU_DPR0_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR0_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_1:
+            __mtcr(CPU_DPR1_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR1_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_2:
+            __mtcr(CPU_DPR2_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR2_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_3:
+            __mtcr(CPU_DPR3_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR3_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_4:
+            __mtcr(CPU_DPR4_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR4_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_5:
+            __mtcr(CPU_DPR5_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR5_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_6:
+            __mtcr(CPU_DPR6_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR6_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_7:
+            __mtcr(CPU_DPR7_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR7_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_8:
+            __mtcr(CPU_DPR8_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR8_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_9:
+            __mtcr(CPU_DPR9_L,  lowerBoundAddress);
+            __mtcr(CPU_DPR9_U,  upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_10:
+            __mtcr(CPU_DPR10_L, lowerBoundAddress);
+            __mtcr(CPU_DPR10_U, upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_11:
+            __mtcr(CPU_DPR11_L, lowerBoundAddress);
+            __mtcr(CPU_DPR11_U, upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_12:
+            __mtcr(CPU_DPR12_L, lowerBoundAddress);
+            __mtcr(CPU_DPR12_U, upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_13:
+            __mtcr(CPU_DPR13_L, lowerBoundAddress);
+            __mtcr(CPU_DPR13_U, upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_14:
+            __mtcr(CPU_DPR14_L, lowerBoundAddress);
+            __mtcr(CPU_DPR14_U, upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_15:
+            __mtcr(CPU_DPR15_L, lowerBoundAddress);
+            __mtcr(CPU_DPR15_U, upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_16:
+            __mtcr(CPU_DPR16_L, lowerBoundAddress);
+            __mtcr(CPU_DPR16_U, upperBoundAddress);
+            break;
+        case IfxCpu_DataProtectionRange_17:
+            __mtcr(CPU_DPR17_L, lowerBoundAddress);
+            __mtcr(CPU_DPR17_U, upperBoundAddress);
+            break;
+        default:
+            break; /* Invalid range */
+    }
+
+#if !defined(__TASKING__)
+    __isync();
+#endif
+}
+
+
+void IfxCpu_defineCodeProtectionRange(uint32 lowerBoundAddress, uint32 upperBoundAddress, IfxCpu_CodeProtectionRange range)
+{
+    /* Set the lower and upper bound of CPU Code Protection Range */
+    switch(range)
+    {
+        case IfxCpu_CodeProtectionRange_0:
+            __mtcr(CPU_CPR0_L, lowerBoundAddress);
+            __mtcr(CPU_CPR0_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_1:
+            __mtcr(CPU_CPR1_L, lowerBoundAddress);
+            __mtcr(CPU_CPR1_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_2:
+            __mtcr(CPU_CPR2_L, lowerBoundAddress);
+            __mtcr(CPU_CPR2_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_3:
+            __mtcr(CPU_CPR3_L, lowerBoundAddress);
+            __mtcr(CPU_CPR3_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_4:
+            __mtcr(CPU_CPR4_L, lowerBoundAddress);
+            __mtcr(CPU_CPR4_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_5:
+            __mtcr(CPU_CPR5_L, lowerBoundAddress);
+            __mtcr(CPU_CPR5_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_6:
+            __mtcr(CPU_CPR6_L, lowerBoundAddress);
+            __mtcr(CPU_CPR6_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_7:
+            __mtcr(CPU_CPR7_L, lowerBoundAddress);
+            __mtcr(CPU_CPR7_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_8:
+            __mtcr(CPU_CPR8_L, lowerBoundAddress);
+            __mtcr(CPU_CPR8_U, upperBoundAddress);
+            break;
+        case IfxCpu_CodeProtectionRange_9:
+            __mtcr(CPU_CPR9_L, lowerBoundAddress);
+            __mtcr(CPU_CPR9_U, upperBoundAddress);
+            break;
+        default:
+            break; /* Invalid range */
+    }
+
+#if !defined(__TASKING__)
+    __isync();
+#endif
+}
+
+void IfxCpu_enableDataRead(IfxCpu_ProtectionSet protectionSet, IfxCpu_DataProtectionRange range)
+{
+    Ifx_CPU_DPRE dpreRegisterValue;
+
+    /* Get the CPU Data Protection Read Enable Register value
+     * Set the bit corresponding to the given Data Protection Range
+     * Set the CPU Data Protection Read Enable Register value to enable data read access */
+    switch(protectionSet)
+    {
+        case IfxCpu_ProtectionSet_0:
+        dpreRegisterValue.U = __mfcr(CPU_DPRE_0);
+        dpreRegisterValue.B.RE_N |= (1 << range);
+        __mtcr(CPU_DPRE_0, dpreRegisterValue.U);
+        break;
+    case IfxCpu_ProtectionSet_1:
+        dpreRegisterValue.U = __mfcr(CPU_DPRE_1);
+        dpreRegisterValue.B.RE_N |= (1 << range);
+        __mtcr(CPU_DPRE_1, dpreRegisterValue.U);
+        break;
+    case IfxCpu_ProtectionSet_2:
+        dpreRegisterValue.U = __mfcr(CPU_DPRE_2);
+        dpreRegisterValue.B.RE_N |= (1 << range);
+        __mtcr(CPU_DPRE_2, dpreRegisterValue.U);
+        break;
+    case IfxCpu_ProtectionSet_3:
+        dpreRegisterValue.U = __mfcr(CPU_DPRE_3);
+        dpreRegisterValue.B.RE_N |= (1 << range);
+        __mtcr(CPU_DPRE_3, dpreRegisterValue.U);
+        break;
+    case IfxCpu_ProtectionSet_4:
+        dpreRegisterValue.U = __mfcr(CPU_DPRE_4);
+        dpreRegisterValue.B.RE_N |= (1 << range);
+        __mtcr(CPU_DPRE_4, dpreRegisterValue.U);
+        break;
+    case IfxCpu_ProtectionSet_5:
+        dpreRegisterValue.U = __mfcr(CPU_DPRE_5);
+        dpreRegisterValue.B.RE_N |= (1 << range);
+        __mtcr(CPU_DPRE_5, dpreRegisterValue.U);
+        break;
+    default:
+        break; /* Invalid protection set */
+    }
+
+#if !defined(__TASKING__)
+    __isync();
+#endif
+}
+
+void IfxCpu_enableDataWrite(IfxCpu_ProtectionSet protectionSet, IfxCpu_DataProtectionRange range)
+{
+    Ifx_CPU_DPWE dpweRegisterValue;
+
+    /* Get the CPU Data Protection Write Enable Register value
+     * Set the bit corresponding to the given Data Protection Range
+     * Set the CPU Data Protection Write Enable Register value to enable data write access */
+    switch(protectionSet)
+    {
+        case IfxCpu_ProtectionSet_0:
+            dpweRegisterValue.U = __mfcr(CPU_DPWE_0);
+            dpweRegisterValue.B.WE_N |= (0x1 << range);
+            __mtcr(CPU_DPWE_0, dpweRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_1:
+            dpweRegisterValue.U = __mfcr(CPU_DPWE_1);
+            dpweRegisterValue.B.WE_N |= (0x1 << range);
+            __mtcr(CPU_DPWE_1, dpweRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_2:
+            dpweRegisterValue.U = __mfcr(CPU_DPWE_2);
+            dpweRegisterValue.B.WE_N |= (0x1 << range);
+            __mtcr(CPU_DPWE_2, dpweRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_3:
+            dpweRegisterValue.U = __mfcr(CPU_DPWE_3);
+            dpweRegisterValue.B.WE_N |= (0x1 << range);
+            __mtcr(CPU_DPWE_3, dpweRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_4:
+            dpweRegisterValue.U = __mfcr(CPU_DPWE_4);
+            dpweRegisterValue.B.WE_N |= (0x1 << range);
+            __mtcr(CPU_DPWE_4, dpweRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_5:
+            dpweRegisterValue.U = __mfcr(CPU_DPWE_5);
+            dpweRegisterValue.B.WE_N |= (0x1 << range);
+            __mtcr(CPU_DPWE_5, dpweRegisterValue.U);
+            break;
+        default:
+            break; /* Invalid protection set */
+    }
+
+#if !defined(__TASKING__)
+    __isync();
+#endif
+}
+
+void IfxCpu_enableCodeExecution(IfxCpu_ProtectionSet protectionSet, IfxCpu_CodeProtectionRange range)
+{
+    Ifx_CPU_CPXE cpxeRegisterValue;
+
+    /* Get the CPU Code Protection Execute Enable Register value
+     * Set the bit corresponding to the given Code Protection Range
+     * Set the CPU Code Protection Execute Enable Register value to enable code execution */
+    switch(protectionSet)
+    {
+        case IfxCpu_ProtectionSet_0:
+            cpxeRegisterValue.U = __mfcr(CPU_CPXE_0);
+            cpxeRegisterValue.B.XE_N |= (0x1 << range);
+            __mtcr(CPU_CPXE_0, cpxeRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_1:
+            cpxeRegisterValue.U = __mfcr(CPU_CPXE_1);
+            cpxeRegisterValue.B.XE_N |= (0x1 << range);
+            __mtcr(CPU_CPXE_1, cpxeRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_2:
+            cpxeRegisterValue.U = __mfcr(CPU_CPXE_2);
+            cpxeRegisterValue.B.XE_N |= (0x1 << range);
+            __mtcr(CPU_CPXE_2, cpxeRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_3:
+            cpxeRegisterValue.U = __mfcr(CPU_CPXE_3);
+            cpxeRegisterValue.B.XE_N |= (0x1 << range);
+            __mtcr(CPU_CPXE_3, cpxeRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_4:
+            cpxeRegisterValue.U = __mfcr(CPU_CPXE_4);
+            cpxeRegisterValue.B.XE_N |= (0x1 << range);
+            __mtcr(CPU_CPXE_4, cpxeRegisterValue.U);
+            break;
+        case IfxCpu_ProtectionSet_5:
+            cpxeRegisterValue.U = __mfcr(CPU_CPXE_5);
+            cpxeRegisterValue.B.XE_N |= (0x1 << range);
+            __mtcr(CPU_CPXE_5, cpxeRegisterValue.U);
+            break;
+        default:
+            break; /* Invalid protection set */
+    }
+
+#if !defined(__TASKING__)
+    __isync();
+#endif
+}
+
+void IfxCpu_loadMpuConfig(const IfxCpu_MpuConfig *mpuConfig)
+{
+    /* Configure Data Protection Ranges */
+    for (int i = 0; i < DATA_PROT_RANGE_COUNT; ++i)
+    {
+        IfxCpu_defineDataProtectionRange(mpuConfig->dataProtectionRange[i].L.U, mpuConfig->dataProtectionRange[i].U.U, (IfxCpu_DataProtectionRange)i);
+    }
+
+    /* Configure Code Protection Ranges */
+    for (int i = 0; i < CODE_PROT_RANGE_COUNT; ++i)
+    {
+        IfxCpu_defineCodeProtectionRange(mpuConfig->codeProtectionRange[i].L.U, mpuConfig->codeProtectionRange[i].U.U, (IfxCpu_CodeProtectionRange)i);
+    }
+
+    /* Set Access Permissions */
+    for (int i = 0; i < PROTECTION_SET_COUNT; ++i)
+    {
+        IfxCpu_enableCodeExecution((IfxCpu_ProtectionSet)i, (IfxCpu_CodeProtectionRange)mpuConfig->accessPermissions[i].executionEnable.B.XE_N);
+        IfxCpu_enableDataRead((IfxCpu_ProtectionSet)i, (IfxCpu_DataProtectionRange)mpuConfig->accessPermissions[i].readEnable.B.RE_N);
+        IfxCpu_enableDataWrite((IfxCpu_ProtectionSet)i, (IfxCpu_DataProtectionRange)mpuConfig->accessPermissions[i].writeEnable.B.WE_N);
+    }
+}
+
 #endif /*#if IFXCPU_NUM_MODULES > 1*/
 

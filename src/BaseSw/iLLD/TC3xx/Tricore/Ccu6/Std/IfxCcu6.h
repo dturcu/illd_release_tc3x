@@ -3,7 +3,7 @@
  * \brief CCU6  basic functionality
  * \ingroup IfxLld_Ccu6
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -74,7 +74,7 @@
 
 /** \addtogroup IfxLld_Ccu6_Std_Enum
  * \{ */
-/** \brief Input selection, ( CC6x capture input / CTRAP input / CCPOSx input )\n
+/** \brief Input selection, ( CC6x capture input / CTRAP input / CCPOSx input ).
  * Definition in Ifx_CCU.PISEL0
  */
 typedef enum
@@ -175,7 +175,7 @@ typedef enum
     IfxCcu6_HallSensorTriggerMode_cM61CountingDown  = 7   /**< \brief A T12 Compare-Match of compare channel CC61 while counting down (CM_61 and CDIR = 1) */
 } IfxCcu6_HallSensorTriggerMode;
 
-/** \brief Interrupt source selection
+/** \brief Interrupt source selection.
  * Description in Ifx_CCU.IEN
  */
 typedef enum
@@ -247,6 +247,7 @@ typedef enum
 } IfxCcu6_SleepMode;
 
 /** \brief OCDS Suspend Control (OCDS.SUS)
+ * Definition in ocs.B.SUS
  */
 typedef enum
 {

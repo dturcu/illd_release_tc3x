@@ -2,7 +2,7 @@
  * \file IfxEmem.c
  * \brief EMEM  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -65,7 +65,7 @@ IfxEmem_LockedState IfxEmem_getLockedState(void)
 
 void IfxEmem_setClockEnableState(const IfxEmem_State state)
 {
-    /* bit is inverted */
+    /* Bit is inverted */
     if (IfxEmem_State_enabled == state)
     {
         MODULE_EMEM.CLC.B.DISR = 0;
@@ -75,7 +75,7 @@ void IfxEmem_setClockEnableState(const IfxEmem_State state)
         MODULE_EMEM.CLC.B.DISR = 1;
     }
 
-    /* wait one cycle for module to be enabled */
+    /* Wait one cycle for module to be enabled */
     __nop();
 }
 
@@ -91,44 +91,54 @@ void IfxEmem_setUnlockMode(Ifx_EMEM *ememCore)
 void IfxEmem_enableModule(Ifx_EMEM *ememCore)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); // clears the endinit protection
-    ememCore->CLC.B.DISR = 0;       // enables the module
-    IfxScuWdt_setCpuEndinit(psw);   // sets the endinit protection back on
+    /* Clears the endinit protection */
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Enables the module */
+    ememCore->CLC.B.DISR = 0;
+    /* Sets the endinit protection back on */
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 
 void IfxEmem_disableModule(Ifx_EMEM *ememCore)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); // clears the endinit protection
-    ememCore->CLC.B.DISR = 1;       // disables the module
-    IfxScuWdt_setCpuEndinit(psw);   // sets the endinit protection back on
+    /* Clears the endinit protection */
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Disables the module */
+    ememCore->CLC.B.DISR = 1;
+    /* Sets the endinit protection back on */
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 
 void IfxEmem_disableEccErrorReporting(IfxEmem_MpuIndex mpuIndex)
 {
     uint16        psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); // clears the endinit protection
+    /* Clears the endinit protection */
+    IfxScuWdt_clearCpuEndinit(psw);
 
     Ifx_EMEM_MPU *ememMpu = IfxEmem_getAddress(mpuIndex);
 
     ememMpu->MEMCON.U = ((ememMpu->MEMCON.U & ~(3 << 8)) | ((1 << 8) | (1 << 9)));
 
-    IfxScuWdt_setCpuEndinit(psw);   // sets the endinit protection back on
+    /* Sets the endinit protection back on */
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 
 void IfxEmem_enableEccErrorReporting(IfxEmem_MpuIndex mpuIndex)
 {
     uint16        psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); // clears the endinit protection
+    /* Clears the endinit protection */
+    IfxScuWdt_clearCpuEndinit(psw);
 
     Ifx_EMEM_MPU *ememMpu = IfxEmem_getAddress(mpuIndex);
 
     ememMpu->MEMCON.U = ((ememMpu->MEMCON.U & ~(3 << 8)) | (1 << 8));
 
-    IfxScuWdt_setCpuEndinit(psw);   // sets the endinit protection back on
+    /* Sets the endinit protection back on */
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 

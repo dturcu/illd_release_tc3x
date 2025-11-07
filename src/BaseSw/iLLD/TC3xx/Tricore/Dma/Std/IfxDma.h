@@ -3,7 +3,7 @@
  * \brief DMA  basic functionality
  * \ingroup IfxLld_Dma
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -250,6 +250,9 @@ typedef enum
     IfxDma_ChannelShadow_conditionalLinkedList                = 15   /**< \brief Shadow address register (MExSHADR) and source and destination address CRC register (MExSDCRC) are used as address pointers to a Linked List. The selection of the address pointer is determined by DMA channel pattern detection conditions */
 } IfxDma_ChannelShadow;
 
+/** \brief hardware resource partition definition
+ * Definition in Ifx_DMA.HRR[128].B.HRP
+ */
 typedef enum
 {
     IfxDma_HardwareResourcePartition_0 = 0,      /**< \brief "Set of DMA channels are associated with hardware resource partition " + str(x)  */
@@ -287,15 +290,13 @@ typedef enum
 /**
  * \brief Checks if a DMA channel is in the reset state.
  *
- * This function determines whether a specific DMA channel is currently in a reset state.
- * It should be used after invoking the IfxDma_resetChannel() function to verify the reset status.
+ * This API needs to be used after the IfxDma_resetChannel()
  *
  * \param[in] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to check.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[in] channelId The identifier of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE The DMA channel is in the reset state.
- * \retval FALSE The DMA channel is not in the reset state.
+ *         FALSE The DMA channel is not in the reset state.
  *
  * \code
  *      // check whether the channel is reset or not and also the hardware trigger disabled
@@ -314,8 +315,7 @@ IFX_INLINE boolean IfxDma_isChannelReset(Ifx_DMA *dma, IfxDma_ChannelId channelI
  * \brief Resets the specified DMA channel to its initial state.
  *
  * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to be reset.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[in]    channelId The identifier of the DMA channel to be reset. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -339,9 +339,8 @@ IFX_INLINE void IfxDma_resetChannel(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 /**
  * \brief Clears the transaction request lost flag status for a specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel for which the flag should be cleared.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel for which the flag should be cleared. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -356,9 +355,8 @@ IFX_INLINE void IfxDma_clearChannelTransactionRequestLost(Ifx_DMA *dma, IfxDma_C
 /**
  * \brief Disables a DMA channel hardware transaction request.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId DMA channel number to disable the transaction for.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId DMA channel number to disable the transaction for. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -370,9 +368,8 @@ IFX_INLINE void IfxDma_disableChannelTransaction(Ifx_DMA *dma, IfxDma_ChannelId 
 /**
  * \brief Disables the generation of a channel transaction lost error interrupt for a specific DMA channel.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    channelId  The ID of the DMA channel for which the transaction lost error interrupt should be disabled.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  The ID of the DMA channel for which the transaction lost error interrupt should be disabled. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -387,9 +384,8 @@ IFX_INLINE void IfxDma_disableChannelTransactionLostError(Ifx_DMA *dma, IfxDma_C
 /**
  * \brief Enables a DMA channel hardware transaction request.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The ID of the DMA channel to enable. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -432,9 +428,8 @@ IFX_INLINE void IfxDma_enableChannelTransaction(Ifx_DMA *dma, IfxDma_ChannelId c
 /**
  * \brief Enables the generation of a channel transaction lost error interrupt for the specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to enable the transaction lost error interrupt for.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to enable the transaction lost error interrupt for. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -449,12 +444,11 @@ IFX_INLINE void IfxDma_enableChannelTransactionLostError(Ifx_DMA *dma, IfxDma_Ch
 /**
  * \brief Checks if the transaction request lost (TRL) flag is set for a specific DMA channel.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The ID of the DMA channel to check. The valid range depends on the specific DMA module configuration.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The ID of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE The TRL flag is set, indicating a lost transaction request.
- * \retval FALSE The TRL flag is not set, indicating no lost transaction request.
+ *         FALSE The TRL flag is not set, indicating no lost transaction request.
  *
  * \code
  *      boolean trlFlag;
@@ -469,26 +463,23 @@ IFX_INLINE boolean IfxDma_getChannelTransactionRequestLost(Ifx_DMA *dma, IfxDma_
 /**
  * \brief Converts a DMA circular range value to the corresponding circular code.
  *
- * \param[in] range The DMA circular range value to be converted.
- *            Range: 0 to 0xFFFF.
+ * \param[in] range The DMA circular range value to be converted. Range: 0 to 0xFFFF.
  *
- * \retval IfxDma_ChannelIncrementCircular The circular code corresponding to the given range.
- *                                        The return value indicates whether the conversion was successful.
- *         Range: \ref IfxDma_ChannelIncrementCircular.
+ * \retval IfxDma_ChannelIncrementCircular The circular code corresponding to the given range. Range: \ref IfxDma_ChannelIncrementCircular.
  *
- *  A coding example can be found in \ref IfxDma_isChannelReset
  */
 IFX_INLINE IfxDma_ChannelIncrementCircular IfxDma_getCircularRangeCode(uint16 range);
 
 /**
  * \brief Checks if the hardware transaction request is enabled for a specific DMA channel.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The ID of the DMA channel to check.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The ID of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE  The hardware transaction request is enabled for the specified channel.
- * \retval FALSE The hardware transaction request is disabled for the specified channel.
+ *         FALSE The hardware transaction request is disabled for the specified channel.
+ *
+ *  A coding example can be found in \ref IfxDma_isChannelReset
  *
  */
 IFX_INLINE boolean IfxDma_isChannelTransactionEnabled(Ifx_DMA *dma, IfxDma_ChannelId channelId);
@@ -496,11 +487,11 @@ IFX_INLINE boolean IfxDma_isChannelTransactionEnabled(Ifx_DMA *dma, IfxDma_Chann
 /**
  * \brief Checks if a transaction request for a specific DMA channel is pending.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The identifier of the DMA channel to check.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The identifier of the DMA channel to check. Range: \ref IfxDma_ChannelId.
+ *
  * \retval TRUE If a transaction request for the specified channel is pending.
- * \retval FALSE If no transaction request for the specified channel is pending.
+ *         FALSE If no transaction request for the specified channel is pending.
  *
  * \code
  *      // check for the channel request pending with the channel
@@ -516,9 +507,8 @@ IFX_INLINE boolean IfxDma_isChannelTransactionPending(Ifx_DMA *dma, IfxDma_Chann
 /**
  * \brief Sets the sensitivity of the module to the sleep signal.
  *
- * \param[inout] dma  Pointer to the DMA registers structure.
- * \param[in]    mode Mode selection for sleep signal sensitivity.
- *               Range: \ref IfxDma_SleepMode.
+ * \param[inout] dma  Pointer to the DMA registers.
+ * \param[in]    mode Mode selection for sleep signal sensitivity. Range: \ref IfxDma_SleepMode.
  *
  * \retval None.
  *
@@ -528,9 +518,8 @@ IFX_INLINE void IfxDma_setSleepMode(Ifx_DMA *dma, IfxDma_SleepMode mode);
 /**
  * \brief Requests a DMA channel transaction to start.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The ID of the DMA channel to be used for the transaction. This is an enumeration value.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The ID of the DMA channel to be used for the transaction. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -551,14 +540,9 @@ IFX_INLINE void IfxDma_startChannelTransaction(Ifx_DMA *dma, IfxDma_ChannelId ch
 /**
  * \brief Clears the specified DMA error status flags for a given move engine.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    moveEngine The move engine for which to clear error flags.
- *               Range: \ref IfxDma_MoveEngine.
- *
- * \param[in]    mask  Bitmask specifying the error flags to clear. Each bit in the mask
- *                     corresponds to a specific error flag. Setting a bit to 1 clears the
- *                     corresponding error flag.
- *               Range: 0 to 0xFFFFFFFF
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    moveEngine The move engine for which to clear error flags. Range: \ref IfxDma_MoveEngine.
+ * \param[in]    mask       Bitmask specifying the error flags to clear. Range: 0 to 0x7330000.
  *
  * \retval None
  *
@@ -580,9 +564,8 @@ IFX_INLINE void IfxDma_clearErrorFlags(Ifx_DMA *dma, IfxDma_MoveEngine moveEngin
 /**
  * \brief Disables the generation of a Move engine destination error interrupt.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    moveEngine The move engine to configure.
- *               Range: \ref IfxDma_MoveEngine.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    moveEngine DMA move engine. Range: \ref IfxDma_MoveEngine.
  *
  * \retval None
  *
@@ -594,9 +577,8 @@ IFX_INLINE void IfxDma_disableMoveEngineDestinationError(Ifx_DMA *dma, IfxDma_Mo
 /**
  * \brief Disables the generation of a Move engine source error interrupt.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    moveEngine The move engine to configure.
- *               Range: \ref IfxDma_MoveEngine.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    moveEngine DMA move engine. Range: \ref IfxDma_MoveEngine.
  *
  * \retval None
  *
@@ -612,9 +594,8 @@ IFX_INLINE void IfxDma_disableMoveEngineSourceError(Ifx_DMA *dma, IfxDma_MoveEng
 /**
  * \brief Enable the generation of a Move engine destination error interrupt.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    moveEngine The move engine to configure.
- *               Range: \ref IfxDma_MoveEngine.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    moveEngine DMA move engine. Range: \ref IfxDma_MoveEngine.
  *
  * \retval None
  *
@@ -626,9 +607,8 @@ IFX_INLINE void IfxDma_enableMoveEngineDestinationError(Ifx_DMA *dma, IfxDma_Mov
 /**
  * \brief Enables the generation of a Move engine source error interrupt for the specified DMA move engine.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    moveEngine The move engine instance to configure.
- *               Range: \ref IfxDma_MoveEngine.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    moveEngine DMA move engine. Range: \ref IfxDma_MoveEngine.
  *
  * \retval None
  *
@@ -644,12 +624,10 @@ IFX_INLINE void IfxDma_enableMoveEngineSourceError(Ifx_DMA *dma, IfxDma_MoveEngi
 /**
  * \brief Retrieves the error status flags for the specified DMA move engine.
  *
- * \param[in] dma        Pointer to the DMA module instance.
- * \param[in] moveEngine The move engine instance to configure.
- *            Range: \ref IfxDma_MoveEngine.
+ * \param[in] dma        Pointer to the DMA module registers.
+ * \param[in] moveEngine DMA move engine. Range: \ref IfxDma_MoveEngine.
  *
- * \return The content of the DMA.ERRSR register.
- *         Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The content of the DMA.ERRSR register. Range: 0 to 0x733007F.
  *
  * \code
  *      uint32 errorFlags = 0;
@@ -700,12 +678,10 @@ IFX_INLINE uint32 IfxDma_getErrorFlags(Ifx_DMA *dma, IfxDma_MoveEngine moveEngin
 /**
  * \brief Get the destination address of a DMA channel
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId Identifier of the DMA channel
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId Identifier of the DMA channel. Range: \ref IfxDma_ChannelId.
  *
- * \retval uint32 The actual destination address of the specified DMA channel
- *         Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The actual destination address of the specified DMA channel. Range: 0 to 0xFFFFFFFF.
  *
  * \code
  *      uint32 destAddr = IfxDma_getChannelDestinationAddress(chn[2].dma, chn[2].channelId);
@@ -717,12 +693,11 @@ IFX_INLINE uint32 IfxDma_getChannelDestinationAddress(Ifx_DMA *dma, IfxDma_Chann
 /**
  * \brief Retrieves the source address associated with a specified DMA channel.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The identifier of the DMA channel.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The identifier of the DMA channel. Range: \ref IfxDma_ChannelId.
  *
- * \retval uint32 The source address associated with the specified DMA channel.
- *         Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The source address associated with the specified DMA channel. Range: 0 to 0xFFFFFFFF.
+ *
  * \code
  *      uint32 sourceAddr = IfxDma_getChannelSourceAddress(chn[2].dma, chn[2].channelId);
  * \endcode
@@ -733,12 +708,11 @@ IFX_INLINE uint32 IfxDma_getChannelSourceAddress(Ifx_DMA *dma, IfxDma_ChannelId 
 /**
  * \brief Returns the suspend mode or frozen state status of a specified DMA channel.
  *
- * \param[in] dma        Pointer to the DMA module instance.
- * \param[in] channelId  DMA channel identifier to query.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma        Pointer to the DMA module registers.
+ * \param[in] channelId  DMA channel identifier to query. Range: \ref IfxDma_ChannelId.
  *
- * \retval 1  DMA channel is in suspend mode or frozen state.
- * \retval 0  DMA channel is not in suspend mode or frozen state.
+ * \retval TRUE  DMA channel is in suspend mode or frozen state.
+ *         FALSE  DMA channel is not in suspend mode or frozen state.
  *
  */
 IFX_INLINE boolean IfxDma_getChannelSuspendModeStatus(Ifx_DMA *dma, IfxDma_ChannelId channelId);
@@ -746,12 +720,10 @@ IFX_INLINE boolean IfxDma_getChannelSuspendModeStatus(Ifx_DMA *dma, IfxDma_Chann
 /**
  * \brief Returns the remaining DMA transfer count for the specified channel.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The ID of the DMA channel to query. This must be a valid channel ID for the DMA module.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The ID of the DMA channel to query. Range: \ref IfxDma_ChannelId.
  *
- * \retval uint32 The remaining number of transfers to be completed by the DMA channel. A value of 0 indicates that no transfers are remaining.
- *         Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The remaining number of transfers to be completed by the DMA channel. Range: 0 to 0x3FFF.
  *
  * \code
  *      // Wait till transfer count (TCOUNT) becomes 0
@@ -772,11 +744,9 @@ IFX_INLINE uint32 IfxDma_getChannelTransferCount(Ifx_DMA *dma, IfxDma_ChannelId 
 /**
  * \brief Retrieves the current timestamp from the specified DMA module.
  *
- * \param dma [in] Pointer to the DMA module instance.
+ * \param[in] dma Pointer to the DMA module registers.
  *
- * \retval uint32 The current timestamp value in units of clock cycles since the
- *                DMA module was last reset or initialized.
- *         Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The current timestamp value. Range: 0 to 0xFFFFFFFF.
  *
  * \code
  *      uint32 timestamp = IfxDma_getTimestamp(chn[0].dma);
@@ -788,11 +758,9 @@ IFX_INLINE uint32 IfxDma_getTimestamp(Ifx_DMA *dma);
 /**
  * \brief Configures the block transfer mode for a specified DMA channel.
  * 
- * \param[inout] dma Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    blockMode value holds the number of moves with in a DMA transfer
- *               Range: \ref IfxDma_ChannelMove.
+ * \param[inout] dma Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    blockMode value holds the number of moves with in a DMA transfer Range: \ref IfxDma_ChannelMove.
  *
  * \retval None
  *
@@ -805,21 +773,20 @@ IFX_INLINE void IfxDma_setChannelBlockMode(Ifx_DMA *dma, IfxDma_ChannelId channe
  * \brief Configure a DMA channel to enable continuous transaction mode.
  * After a transaction, the hardware request for transactions remains enabled.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    channelId  The ID of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  The ID of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
  * \retval None
  * 
  * A coding example can be found in \ref IfxDma_enableChannelTransaction
+ *
  */
 IFX_INLINE void IfxDma_setChannelContinuousMode(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 
 /**
  * \brief Configures the destination address for a specific DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
  * \param[in]    address   The initial destination address in memory where the data will be written.
  *
  * \retval None
@@ -832,15 +799,11 @@ IFX_INLINE void IfxDma_setChannelDestinationAddress(Ifx_DMA *dma, IfxDma_Channel
 /**
  * \brief Configures the destination pointer increment step for a specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The ID of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    incStep      Specifies the pointer incrementation step size.
- *               Range: \ref IfxDma_ChannelIncrementStep.
- * \param[in]    direction    Specifies the direction of the pointer incrementation.
- *               Range: \ref IfxDma_ChannelIncrementDirection.
- * \param[in]    size         Specifies the size of the circular buffer for the destination pointer.
- *               Range: \ref IfxDma_ChannelIncrementCircular.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The ID of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    incStep   Specifies the pointer incrementation step size. Range: \ref IfxDma_ChannelIncrementStep.
+ * \param[in]    direction Specifies the direction of the pointer incrementation. Range: \ref IfxDma_ChannelIncrementDirection.
+ * \param[in]    size      Specifies the size of the circular buffer for the destination pointer. Range: \ref IfxDma_ChannelIncrementCircular.
  *
  * \retval None
  *
@@ -852,11 +815,9 @@ IFX_INLINE void IfxDma_setChannelDestinationIncrementStep(Ifx_DMA *dma, IfxDma_C
 /**
  * \brief Configures the move size for a specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    moveSize  value holds the opcode or size of data of individual moves with in a DMA transfer
- *               Range: \ref IfxDma_ChannelMoveSize.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    moveSize  value holds the opcode or size of data of individual moves with in a DMA transfer. Range: \ref IfxDma_ChannelMoveSize.
  *
  * \retval None
  *
@@ -868,11 +829,9 @@ IFX_INLINE void IfxDma_setChannelMoveSize(Ifx_DMA *dma, IfxDma_ChannelId channel
 /**
  * \brief Configures the shadow pointer for a specified DMA channel.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    channelId  The ID of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    shadow     Specifies the shadow mode to be configured.
- *               Range: \ref IfxDma_ChannelShadow.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  The ID of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    shadow     Specifies the shadow mode to be configured. Range: \ref IfxDma_ChannelShadow.
  *
  * \retval None
  *
@@ -888,7 +847,7 @@ IFX_INLINE void IfxDma_setChannelShadow(Ifx_DMA *dma, IfxDma_ChannelId channelId
 /**
  * \brief Configure a DMA channel to operate in single transaction mode.
  * 
- * \param[inout] dma        Pointer to the DMA module instance.
+ * \param[inout] dma        Pointer to the DMA module registers.
  * \param[in]    channelId  The ID of the DMA channel to configure.
  * 
  * \retval None
@@ -902,9 +861,8 @@ IFX_INLINE void IfxDma_setChannelSingleMode(Ifx_DMA *dma, IfxDma_ChannelId chann
  * \brief Configure a DMA channel to "single transaction mode"
  * One transfer request starts a complete DMA transaction
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    channelId  DMA channel number to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  DMA channel number to configure. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  * 
@@ -917,22 +875,22 @@ IFX_INLINE void IfxDma_setChannelSingleTransaction(Ifx_DMA *dma, IfxDma_ChannelI
  * \brief Configures a DMA channel to operate in single transfer mode.
  * In this mode, a transfer request is required for each individual transfer.
  * 
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure. The valid range depends on the specific DMA implementation.
- *               Range: \ref IfxDma_ChannelId.
- * \retval None This function does not return a value.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ *
+ * \retval None
  * 
  * A coding example can be found in \ref IfxDma_setChannelTransferCount.
+ *
  */
 IFX_INLINE void IfxDma_setChannelSingleTransfer(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 
 /**
  * \brief Configures the source address for the specified DMA channel.
  *
- * \param[inout] dma Pointer to the DMA module instance.
- * \param[in]    channelId DMA channel identifier.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    address Initial source address for the DMA channel.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId DMA channel identifier. Range: \ref IfxDma_ChannelId.
+ * \param[in]    address   Initial source address for the DMA channel.
  *
  * \retval None
  *
@@ -958,15 +916,11 @@ IFX_INLINE void IfxDma_setChannelSourceAddress(Ifx_DMA *dma, IfxDma_ChannelId ch
 /**
  * \brief Configures the source pointer incrementation step, direction, and circular buffer size for a DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The ID of the DMA channel to configure. Range: Dependent on the specific DMA module implementation.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    incStep   Specifies the step size for the source pointer incrementation.
- *               Range: \ref IfxDma_ChannelIncrementStep.
- * \param[in]    direction Specifies the direction of the source pointer incrementation.
- *               Range: \ref IfxDma_ChannelIncrementDirection.
- * \param[in]    size      Specifies the size of the circular buffer for the source pointer.
- *               Range: \ref IfxDma_ChannelIncrementCircular.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The ID of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    incStep   Specifies the step size for the source pointer incrementation. Range: \ref IfxDma_ChannelIncrementStep.
+ * \param[in]    direction Specifies the direction of the source pointer incrementation. Range: \ref IfxDma_ChannelIncrementDirection.
+ * \param[in]    size      Specifies the size of the circular buffer for the source pointer. Range: \ref IfxDma_ChannelIncrementCircular.
  * 
  \retval None
  *
@@ -983,10 +937,9 @@ IFX_INLINE void IfxDma_setChannelSourceIncrementStep(Ifx_DMA *dma, IfxDma_Channe
 /**
  * \brief Configures whether a DMA channel can be suspended during a transfer.
  *
- * \param[inout] dma Pointer to the DMA module instance.
- * \param[in]    channelId DMA channel identifier.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    enable Enable (1) or disable (0) the suspend feature for the channel.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId DMA channel identifier. Range: \ref IfxDma_ChannelId.
+ * \param[in]    enable    TRUE if DMA channel is enabled for DMA channel suspend, FALSE DMA channel is disabled for DMA channel suspend.
  *
  * \retval None
  *
@@ -996,11 +949,10 @@ IFX_INLINE void IfxDma_setChannelSuspendEnable(Ifx_DMA *dma, IfxDma_ChannelId ch
 /**
  * \brief Configures the number of transfers for a DMA channel transaction.
  *
- * \param[inout] dma           Pointer to the DMA module instance.
- * \param[in]    channelId     The ID of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    transferCount value holds the DMA transfers within a transaction (1..16383; 0 handled like 1 transaction).
- *               Range: 0 to 0xFFFFFFFF
+ * \param[inout] dma           Pointer to the DMA module registers.
+ * \param[in]    channelId     The ID of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    transferCount value holds the DMA transfers within a transaction. Range: 1 to 0x3FFF.
+ *
  * \retval None
  *
  * \code
@@ -1038,9 +990,8 @@ IFX_INLINE void IfxDma_setChannelTransferCount(Ifx_DMA *dma, IfxDma_ChannelId ch
 /**
  * \brief Disables the shadow mode for the specified DMA channel.
  * 
- * \param[inout] dma Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -1055,9 +1006,8 @@ IFX_INLINE void IfxDma_writeChannelShadowDisable(Ifx_DMA *dma, IfxDma_ChannelId 
 /**
  * \brief Enables write access to the shadow pointer register for the specified DMA channel.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    channelId  The identifier of the DMA channel to configure.
- *                          Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -1081,11 +1031,10 @@ IFX_INLINE void IfxDma_writeChannelShadowEnable(Ifx_DMA *dma, IfxDma_ChannelId c
 /**
  * \brief Clears the channel halt request and acknowledgment for the specified DMA channel.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    channelId  The identifier of the DMA channel to clear the halt for.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  The identifier of the DMA channel to clear the halt for. Range: \ref IfxDma_ChannelId.
  *
- * \return None
+ * \retval None
  *
  * \code
  *      // Quit the halt mode of operation
@@ -1098,12 +1047,11 @@ IFX_INLINE void IfxDma_clearChannelHalt(Ifx_DMA *dma, IfxDma_ChannelId channelId
 /**
  * \brief Checks if the specified DMA channel has halted.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The ID of the DMA channel to check.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The ID of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
- * \retval true  The channel has halted (acknowledgment received).
- * \retval false The channel has not halted.
+ * \retval TRUE  The channel has halted (acknowledgment received).
+ *         FALSE The channel has not halted.
  *
  * \code
  *      // Check for the channel halt aknowledgement
@@ -1116,9 +1064,8 @@ IFX_INLINE boolean IfxDma_getChannelHalt(Ifx_DMA *dma, IfxDma_ChannelId channelI
 /**
  * \brief Sets a halt request for the specified DMA channel, stopping its processing.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to be halted.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to be halted. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -1142,12 +1089,11 @@ IFX_INLINE void IfxDma_setChannelHalt(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 /**
  * \brief Checks if one of the buffers is being read by software in double buffer operation mode and clears the notification flag.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    channelId  The identifier of the DMA channel to check.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  The identifier of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE   If one of the buffers is currently being read by software.
- * \retval FALSE  If one of the buffers has already been read by software.
+ *         FALSE  If one of the buffers has already been read by software.
  *
  * \code
  *      // Check the buffer being read (Double buffer operation mode)
@@ -1160,12 +1106,11 @@ IFX_INLINE boolean IfxDma_getDoubleBufferRead(Ifx_DMA *dma, IfxDma_ChannelId cha
 /**
  * \brief Gets the current double buffer selection for the specified DMA channel.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The ID of the DMA channel to query. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE  Buffer 1 is currently being filled.
- * \retval FALSE Buffer 0 is currently being filled.
+ *         FALSE Buffer 0 is currently being filled.
  *
  * \code
  *      boolean buffer_being_filled;
@@ -1180,9 +1125,8 @@ IFX_INLINE boolean IfxDma_getDoubleBufferSelection(Ifx_DMA *dma, IfxDma_ChannelI
 /**
  * \brief Keeps the double buffer mechanism active for the specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -1196,12 +1140,8 @@ IFX_INLINE void IfxDma_keepDoubleBufferActive(Ifx_DMA *dma, IfxDma_ChannelId cha
 /**
  * \brief Switches the double buffer for the specified DMA channel.
  *
- * This function triggers a software buffer switch for the double-buffering mechanism
- * associated with the given DMA channel.
- *
- * \param[inout] dma Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to switch the buffer for. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -1225,22 +1165,21 @@ IFX_INLINE void IfxDma_switchDoubleBuffer(Ifx_DMA *dma, IfxDma_ChannelId channel
 /**
  * \brief Clears the interrupt flag for a specified DMA channel transfer.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId Identifier of the DMA channel for which the interrupt flag should be cleared.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId Identifier of the DMA channel for which the interrupt flag should be cleared. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
  * \see Dma.INTSR
+ *
  */
 IFX_INLINE void IfxDma_clearChannelInterrupt(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 
 /**
  * \brief Disables the interrupt trigger for the specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel for which the interrupt should be disabled.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel for which the interrupt should be disabled. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -1254,9 +1193,8 @@ IFX_INLINE void IfxDma_disableChannelInterrupt(Ifx_DMA *dma, IfxDma_ChannelId ch
 /**
  * \brief Enables the interrupt trigger for the specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance to configure.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The ID of the DMA channel for which to enable the interrupt. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -1271,12 +1209,11 @@ IFX_INLINE void IfxDma_enableChannelInterrupt(Ifx_DMA *dma, IfxDma_ChannelId cha
  * \brief Checks and clears the interrupt flag for a specified DMA channel.
  * The flag is automatically cleared with the call to this function.
  *
- * \param[inout] dma Pointer to the DMA module instance.
- * \param[in]    channelId The ID of the DMA channel to check.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma Pointer to the DMA module registers.
+ * \param[in]    channelId The ID of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE The interrupt flag was set for the specified channel.
- * \retval FALSE The interrupt flag was not set for the specified channel.
+ *         FALSE The interrupt flag was not set for the specified channel.
  *
  * \code
  *      // wait for the end of transaction for intended channel by checking the channel interrupt flag
@@ -1292,12 +1229,11 @@ IFX_INLINE boolean IfxDma_getAndClearChannelInterrupt(Ifx_DMA *dma, IfxDma_Chann
 /**
  * \brief Returns and clears the pattern detection interrupt flag for a specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module.
- * \param[in]    channelId Identifier of the DMA channel to check.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId Identifier of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE Pattern detection interrupt was detected and cleared for the specified channel.
- * \retval FALSE No pattern detection interrupt was found for the specified channel.
+ *         FALSE No pattern detection interrupt was found for the specified channel.
  *
  * \code
  *      // wait till pattern match is found for given channel
@@ -1313,12 +1249,11 @@ IFX_INLINE boolean IfxDma_getAndClearChannelPatternDetectionInterrupt(Ifx_DMA *d
 /**
  * \brief Returns and clears the status of the channel wrap destination buffer interrupt trigger flag.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId Identifier of the DMA channel to check.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId Identifier of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE The wrap destination buffer interrupt trigger flag was set and has been cleared.
- * \retval FALSE The wrap destination buffer interrupt trigger flag was not set or has already been cleared.
+ *         FALSE The wrap destination buffer interrupt trigger flag was not set or has already been cleared.
  *
  * \code
  *      // wait for the destination buffer wrap interrupt flag
@@ -1334,12 +1269,11 @@ IFX_INLINE boolean IfxDma_getAndClearChannelWrapDestinationBufferInterrupt(Ifx_D
 /**
  * \brief Returns and clears the status of the channel wrap source buffer interrupt trigger flag.
  *
- * \param[inout] dma        Pointer to the DMA module.
- * \param[in]    channelId  DMA channel number to check.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  DMA channel number to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE  If the wrap source buffer interrupt trigger flag is set.
- * \retval FALSE If the wrap source buffer interrupt trigger flag is not set or has already been cleared.
+ *         FALSE If the wrap source buffer interrupt trigger flag is not set or has already been cleared.
  *
  * \code
  *      // wait for the source buffer wrap interrupt flag
@@ -1355,26 +1289,25 @@ IFX_INLINE boolean IfxDma_getAndClearChannelWrapSourceBufferInterrupt(Ifx_DMA *d
 /**
  * \brief Returns the channel transfer interrupt flag status.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId Identifier of the DMA channel to check.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId Identifier of the DMA channel to check. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE Interrupt flag is set for the specified channel.
- * \retval FALSE Interrupt flag is not set for the specified channel.
+ *         FALSE Interrupt flag is not set for the specified channel.
  *
  * \see Dma.INTSR
+ *
  */
 IFX_INLINE boolean IfxDma_getChannelInterrupt(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 
 /**
  * \brief Returns whether the old value of pattern detection found a match in the previous DMA read move.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId DMA channel identifier of type IfxDma_ChannelId.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId DMA channel identifier of type IfxDma_ChannelId. Range: \ref IfxDma_ChannelId.
  *
  * \retval TRUE Pattern match was detected in the previous DMA read move.
- * \retval FALSE No pattern match was detected in the previous DMA read move.
+ *         FALSE No pattern match was detected in the previous DMA read move.
  *
  * \code
  *      boolean patternDetectOldVal;
@@ -1389,11 +1322,10 @@ IFX_INLINE boolean IfxDma_getChannelPatternDetectionOldValue(Ifx_DMA *dma, IfxDm
 /**
  * \brief Returns the SRC (Source) pointer for the specified DMA channel.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The identifier of the DMA channel to configure.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The identifier of the DMA channel to access. Range: \ref IfxDma_ChannelId.
  *
- * \retval volatile Ifx_SRC_SRCR* Pointer to the SRC register of the specified DMA channel.
+ * \retval Ifx_SRC_SRCR* Pointer to the SRC register of the specified DMA channel.
  *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxDma_getSrcPointer(Ifx_DMA *dma, IfxDma_ChannelId channelId);
@@ -1401,9 +1333,8 @@ IFX_INLINE volatile Ifx_SRC_SRCR *IfxDma_getSrcPointer(Ifx_DMA *dma, IfxDma_Chan
 /**
  * \brief Sets a channel interrupt service request by software.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to trigger the interrupt for. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
  *
@@ -1426,11 +1357,10 @@ IFX_INLINE void IfxDma_setChannelInterruptServiceRequest(Ifx_DMA *dma, IfxDma_Ch
  *
  * This function configures the DMA module to swap the byte order of CRC data for the specified channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
  *
- * \return None
+ * \retval None
  *
  * \code
  *      // Enable the Swap Data CRC Byte order
@@ -1443,13 +1373,11 @@ IFX_INLINE void IfxDma_enableSwapDataByte(Ifx_DMA *dma, IfxDma_ChannelId channel
 /**
  * \brief Configure the hardware resource partition for a DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    resourcePartition Hardware resource partition to assign to the channel.
- *               Range: \ref IfxDma_HardwareResourcePartition.
+ * \param[inout] dma               Pointer to the DMA module registers.
+ * \param[in]    channelId         The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    resourcePartition Hardware resource partition to assign to the channel. Range: \ref IfxDma_HardwareResourcePartition.
  *
- * \return None
+ * \retval None
  *
  * \code
  *      // Set the required hardware resource partition
@@ -1462,154 +1390,146 @@ IFX_INLINE void IfxDma_setChannelHardwareResourcePartition(Ifx_DMA *dma, IfxDma_
 /**
  * \brief Sets the interrupt control value for a specific DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in] value Interrupt control value.
- *               Range: 0 to 0xFF
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    value     Interrupt control value. Range: 0 to 3.
  *
- * \return None.
+ * \retval None.
+ *
  */
 IFX_INLINE void IfxDma_setInterruptControlValue(Ifx_DMA *dma, IfxDma_ChannelId channelId, uint8 value);
 
 /**
  * \brief Sets the length of the circular buffer destination for a specific DMA channel.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    channelId  The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    length     The new length of the circular buffer destination.
- *               Range: 0 to 0xFFFF.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    channelId  The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    length     The new length of the circular buffer destination. Range: 0 to 15.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxDma_setCircularBufferDestinationLength(Ifx_DMA *dma, IfxDma_ChannelId channelId, uint16 length);
 
 /**
  * \brief Configures the length of the circular buffer source for the specified DMA channel.
  *
- * \param[inout] dma       Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \param[in]    length  The length of the circular buffer source in bytes.
- *               Range: 0 to 0xFFFF.
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ * \param[in]    length  The length of the circular buffer source in bytes. Range: 0 to 15.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxDma_setCircularBufferSourceLength(Ifx_DMA *dma, IfxDma_ChannelId channelId, uint16 length);
 
 /**
  * \brief Enables the source circular buffer for the specified DMA channel.
  *
- * \param[inout] dma Pointer to the DMA module instance.
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
+ * \param[inout] dma Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxDma_enableSourceCircularBuffer(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 
 /**
  * \brief Enable the Destination Circular Buffer
  * 
- * \param[inout] dma       Pointer to the DMA module instance
- * \param[in]    channelId The identifier of the DMA channel to configure.
- *               Range: \ref IfxDma_ChannelId.
- * \return None
+ * \param[inout] dma       Pointer to the DMA module registers.
+ * \param[in]    channelId The identifier of the DMA channel to configure. Range: \ref IfxDma_ChannelId.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxDma_enableDestinationCircularBuffer(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 
 /**
  * \brief Retrieves the Data CRC value for a specified DMA channel.
  *
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The ID of the DMA channel to retrieve the CRC from.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The ID of the DMA channel to retrieve the CRC from. Range: \ref IfxDma_ChannelId.
  *
- * \retval uint32 The calculated CRC value for the data in the specified DMA channel.
- *         Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The calculated CRC value for the data in the specified DMA channel. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxDma_getDataCRC(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 
 /**
  * \brief Returns the combined Source and Destination CRC values for the specified DMA channel.
  * 
- * \param[in] dma       Pointer to the DMA module instance.
- * \param[in] channelId The identifier of the DMA channel to configure.
- *            Range: \ref IfxDma_ChannelId.
+ * \param[in] dma       Pointer to the DMA module registers.
+ * \param[in] channelId The identifier of the DMA channel to query. Range: \ref IfxDma_ChannelId.
  *
- * \retval uint32 A 32-bit value containing the combined Source and Destination CRC values.
- *          Range: 0 to 0xFFFFFFFF
+ * \retval uint32 A 32-bit value containing the combined Source and Destination CRC values. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxDma_getSourceAndDestinationCRC(Ifx_DMA *dma, IfxDma_ChannelId channelId);
 
 /**
  * \brief Returns the error (ERR) pointer for the specified DMA hardware resource partition.
  *
- * \param[in] dma               Pointer to the DMA module instance.
- * \param[in] resourcePartition Hardware resource partition identifier.
- *            Range: \ref IfxDma_HardwareResourcePartition.
+ * \param[in] dma               Pointer to the DMA module registers.
+ * \param[in] resourcePartition Hardware resource partition identifier. Range: \ref IfxDma_HardwareResourcePartition.
  *
- * \retval volatile Ifx_SRC_SRCR* Pointer to the error register for the specified DMA resource partition.
+ * \retval Ifx_SRC_SRCR* Pointer to the error register for the specified DMA resource partition.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxDma_getErrPointer(Ifx_DMA *dma, IfxDma_HardwareResourcePartition resourcePartition);
 
 /**
  * \brief Configures the Resource Partition (RPr) Mode register.
  *
- * \param[inout] dma                Pointer to the DMA module instance.
- * \param[in]    resourcePartition  Hardware resource partition to configure.
- *               Range: \ref IfxDma_HardwareResourcePartition.
- * \param[in] busMasterMode Bus master mode to configure. 
- *               Range: \ref IfxDma_BusMasterMode.
+ * \param[inout] dma                Pointer to the DMA module registers.
+ * \param[in]    resourcePartition  Hardware resource partition to configure. Range: \ref IfxDma_HardwareResourcePartition.
+ * \param[in]    busMasterMode      Bus master mode to configure.  Range: \ref IfxDma_BusMasterMode.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxDma_setRpMode(Ifx_DMA *dma, IfxDma_HardwareResourcePartition resourcePartition, IfxDma_BusMasterMode busMasterMode);
 
 /** \brief Set RPr access enable register 0.
  *
- * \param[inout] dma                Pointer to the DMA module instance.
- * \param[in]    resourcePartition  Hardware resource partition to configure.
- *               Range: \ref IfxDma_HardwareResourcePartition.
- * \param[in]    accen0EnableRegisterValue RPr access enable value.
- *               Range: 0 to 0xFFFFFFFF
+ * \param[inout] dma                       Pointer to the DMA module registers.
+ * \param[in]    resourcePartition         Hardware resource partition to configure. Range: \ref IfxDma_HardwareResourcePartition.
+ * \param[in]    accen0EnableRegisterValue RPr access enable value. Range: 0 to 0xFFFFFFFF.
  *
- * \return None
+ * \retval None
+ *
  */
 IFX_INLINE void IfxDma_setAccen0(Ifx_DMA *dma, IfxDma_HardwareResourcePartition resourcePartition, uint32 accen0EnableRegisterValue);
 
 /** \brief Returns RPr access enable register value for given DMA resource partition.
  *
- * \param[in] dma                Pointer to the DMA module instance.
- * \param[in] resourcePartition  Hardware resource partition to configure.
- *            Range: \ref IfxDma_HardwareResourcePartition.
+ * \param[in] dma                Pointer to the DMA module registers.
+ * \param[in] resourcePartition  Hardware resource partition to configure. Range: \ref IfxDma_HardwareResourcePartition.
  *
- * \return RPr access enable register value for given DMA resource partition.
- *         Range: 0 to 0xFFFFFFFF
+ * \retval uint32 RPr access enable register value for given DMA resource partition. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxDma_getAccen0(Ifx_DMA *dma, IfxDma_HardwareResourcePartition resourcePartition);
 
 /**
  * \brief Enable the Move Engine DMA Linked List Error for the specified move engine.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    moveEngine The move engine number to enable the linked list error for.
- *               Range: \ref IfxDma_MoveEngine.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    moveEngine The move engine number to enable the linked list error for. Range: \ref IfxDma_MoveEngine.
  *
  * \retval None
- * 
+ *
  */
 IFX_INLINE void IfxDma_enableMoveEngineDmaLinkedListError(Ifx_DMA *dma, IfxDma_MoveEngine moveEngine);
 
 /**
  * \brief Disables the Move Engine DMA Linked List Error for the specified move engine.
  *
- * \param[inout] dma        Pointer to the DMA module instance.
- * \param[in]    moveEngine The move engine number to disable the error for.
- *               Range: \ref IfxDma_MoveEngine.
+ * \param[inout] dma        Pointer to the DMA module registers.
+ * \param[in]    moveEngine The move engine number to disable the error for. Range: \ref IfxDma_MoveEngine.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxDma_disableMoveEngineDmaLinkedListError(Ifx_DMA *dma, IfxDma_MoveEngine moveEngine);
 

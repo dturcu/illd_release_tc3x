@@ -3,7 +3,7 @@
  * \brief GTM PWMHL details
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -128,15 +128,15 @@ typedef void                     (*IfxGtm_Atom_PwmHl_UpdatePulse)(IfxGtm_Atom_Pw
  */
 typedef struct
 {
-    Ifx_TimerValue  deadtime;               /**< \brief Dead time between the top and bottom channel in ticks */
-    Ifx_TimerValue  minPulse;               /**< \brief minimum pulse that is output, shorter pulse time will be output as 0% duty cycle */
-    Ifx_TimerValue  maxPulse;               /**< \brief internal parameter */
+    Ifx_TimerValue  deadtime;               /**< \brief Dead time between the top and bottom channel in ticks. Range: 0 to 0x00FFFFFF */
+    Ifx_TimerValue  minPulse;               /**< \brief minimum pulse that is output, shorter pulse time will be output as 0% duty cycle. Range: 0 to 0x00FFFFFF */
+    Ifx_TimerValue  maxPulse;               /**< \brief internal parameter. Range: 0 to 0x00FFFFFF */
     Ifx_Pwm_Mode    mode;                   /**< \brief actual PWM mode */
     sint8           setMode;                /**< \brief A non zero flag indicates that the PWM mode is being modified */
     Ifx_ActiveState ccxActiveState;         /**< \brief Top PWM active state */
     Ifx_ActiveState coutxActiveState;       /**< \brief Bottom PWM active state */
-    boolean         inverted;               /**< \brief Flag indicating the center aligned inverted mode (TRUE) */
-    uint8           channelCount;           /**< \brief Number of PWM channels, one channel is made of a top and bottom channel */
+    boolean         inverted;               /**< \brief Flag indicating the center aligned inverted mode (TRUE). Range: TRUE: Inverted, FALSE : Not inverted */
+    uint8           channelCount;           /**< \brief Number of PWM channels, one channel is made of a top and bottom channel. Range 1 to 8 */
 } IfxGtm_Atom_PwmHl_Base;
 
 /** \} */
@@ -161,7 +161,7 @@ typedef struct
 typedef struct
 {
     Ifx_Pwm_Mode                  mode;                 /**< \brief Pwm Mode */
-    boolean                       inverted;             /**< \brief Inverted configuration for the selected mode */
+    boolean                       inverted;             /**< \brief Inverted configuration for the selected mode. Range: TRUE: Inverted, FALSE : Not inverted */
     IfxGtm_Atom_PwmHl_Update      update;               /**< \brief update call back function for the selected mode */
     IfxGtm_Atom_PwmHl_UpdateShift updateAndShift;       /**< \brief update shift call back function for the selected mode */
     IfxGtm_Atom_PwmHl_UpdatePulse updatePulse;          /**< \brief update pulse call back function for the selected mode */

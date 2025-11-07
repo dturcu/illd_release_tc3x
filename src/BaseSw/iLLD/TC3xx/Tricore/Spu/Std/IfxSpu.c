@@ -2,7 +2,7 @@
  * \file IfxSpu.c
  * \brief SPU  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -64,14 +64,36 @@
 /******************************************************************************/
 
 /**
+ * \brief Calculates the CRC-32 checksum of a single 32-bit data value.
+ *
+ * \param[in] data  The 32-bit data value for which the CRC-32 checksum is to be calculated.
+ *                   Range: 0 to 0xFFFF FFFF.
+ * \param[in]  crc   The initial CRC value.
+ *                   Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval uint32 The calculated CRC-32 checksum.
  */
 IFX_STATIC uint32 IfxSpu_crc32single(uint32 data, uint32 crc);
 
 /**
+ * \brief Retrieves finalize CRC-32 checksum calculation.
+ *
+ * \param[in] data  The CRC value to be finalized.
+ *                   Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval uint32 The finalized CRC-32 checksum.
  */
 IFX_STATIC uint32 IfxSpu_crc32final(uint32 crc);
 
 /**
+ * \brief Calculates the CRC-32 checksum of a block of data.
+ *
+ * \param[in] data   Pointer to the data block for which the CRC-32 checksum is to be calculated.
+ *                   Range: 0 to 0xFFFF FFFF.
+ * \param[in]  crc   The initial CRC value.
+ *                   Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval uint32 The calculated CRC-32 checksum.
  */
 IFX_STATIC uint32 IfxSpu_crc32calculate(void *data, uint32 count);
 

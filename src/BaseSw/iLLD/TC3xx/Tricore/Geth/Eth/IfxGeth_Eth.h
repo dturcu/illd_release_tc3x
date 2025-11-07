@@ -3,7 +3,7 @@
  * \brief GETH ETH details
  * \ingroup IfxLld_Geth
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -351,49 +351,49 @@ typedef struct
  */
 typedef struct
 {
-    boolean                channelEnable;               /**< \brief Rx DMA channel Enable */
+    boolean                channelEnable;               /**< \brief Rx DMA channel Enable. Range: TRUE Enable Rx DMA channel, FLASE Disable Rx DMA channel */
     IfxGeth_RxDmaChannel   channelId;                   /**< \brief Rx DMA channel Index */
     IfxGeth_DmaBurstLength maxBurstLength;              /**< \brief Maximum burst length of the channel */
     IfxGeth_RxDescrList   *rxDescrList;                 /**< \brief pointer to RX descriptors RAM */
     uint32                *rxBuffer1StartAddress;       /**< \brief Start address of Rx Buffer 1 */
-    uint16                 rxBuffer1Size;               /**< \brief Size of Rx Buffer 1 */
+    uint16                 rxBuffer1Size;               /**< \brief Size of Rx Buffer 1. Range: 0 to 0x3FFF */
 } IfxGeth_Eth_RxChannelConfig;
 
 /** \brief Rx Queue Configuration
  */
 typedef struct
 {
-    boolean              queueEnable;                           /**< \brief Rx Queue enable/disable field */
-    boolean              storeAndForward;                       /**< \brief Receive Store and Forward Enable/Disable */
+    boolean              queueEnable;                           /**< \brief Rx Queue enable/disable field. Range: TRUE Enable Rx Queue,  FLASE Disable Rx Queue */
+    boolean              storeAndForward;                       /**< \brief Receive Store and Forward Enable/Disable. Range: TRUE Enable store and forward, FLASE Disable store and forward */
     IfxGeth_QueueSize    rxQueueSize;                           /**< \brief Rx Queue size */
-    boolean              forwardErrorPacket;                    /**< \brief Error Packet Forwarding Enable/Disable */
-    boolean              forwardUndersizedGoodPacket;           /**< \brief Undersized Good Packet Forwarding Enable/Disable */
-    boolean              daBasedDmaChannelEnabled;              /**< \brief DA-based DMA Channel Selection Enable/Disable */
+    boolean              forwardErrorPacket;                    /**< \brief Error Packet Forwarding Enable/Disable. Range: TRUE Enable Rx Forward Error packet, FLASE Disable Rx Forward Error packet */
+    boolean              forwardUndersizedGoodPacket;           /**< \brief Undersized Good Packet Forwarding Enable/Disable. Range: TRUE Enable Rx Forward undersized good packet, FALSE Disable Rx Forward undersized good packet */
+    boolean              daBasedDmaChannelEnabled;              /**< \brief DA-based DMA Channel Selection Enable/Disable. Range: TRUE Enable DA-based DMA Channel Selection, FALSE- Disable DA-based DMA Channel Selection */
     IfxGeth_RxDmaChannel rxDmaChannelMap;                       /**< \brief Mapped DMA Channel of Rx Queue */
-    boolean              rxQueueOverflowInterruptEnabled;       /**< \brief Enable/Disable Rx Queue Overflow Interrupt */
+    boolean              rxQueueOverflowInterruptEnabled;       /**< \brief Enable/Disable Rx Queue Overflow Interrupt. Range: TRUE Enable Rx Queue Overflow Interrupt, FALSE- Disable Rx Queue Overflow Interrupt */
 } IfxGeth_Eth_RxQueueConfig;
 
 /** \brief Configuration sturcture for DMA tx channel
  */
 typedef struct
 {
-    boolean                channelEnable;               /**< \brief Tx DMA channel Enable */
+    boolean                channelEnable;               /**< \brief Tx DMA channel Enable. Range: TRUE Enable Tx DMA channel, FLASE Disable Tx DMA channel */
     IfxGeth_TxDmaChannel   channelId;                   /**< \brief Tx DMA channel Index */
     IfxGeth_DmaBurstLength maxBurstLength;              /**< \brief Maximum burst length of the channel */
     IfxGeth_TxDescrList   *txDescrList;                 /**< \brief pointer to TX descriptors RAM */
     uint32                *txBuffer1StartAddress;       /**< \brief Start address of Tx Buffer 1 */
-    uint16                 txBuffer1Size;               /**< \brief Size of Tx Buffer 1 */
-    boolean                enableOSF;                   /**< \brief Operate on Second Frame, True: Enabled, False: Disabled */
+    uint16                 txBuffer1Size;               /**< \brief Size of Tx Buffer 1. Range: 0 to 0x3FFF */
+    boolean                enableOSF;                   /**< \brief Operate on Second Frame. Range: TRUE Enabled, FALSE Disabled */
 } IfxGeth_Eth_TxChannelConfig;
 
 /** \brief Tx Queue Configuration
  */
 typedef struct
 {
-    boolean           queueEnable;                            /**< \brief Tx Queue enable/disable field */
-    boolean           storeAndForward;                        /**< \brief Transmit Store and Forward Enable/Disable */
+    boolean           queueEnable;                            /**< \brief Tx Queue enable/disable field. Range: TRUE Enable Tx Queue, FLASE Disable Tx Queue */
+    boolean           storeAndForward;                        /**< \brief Transmit Store and Forward Enable/Disable. Range: TRUE- Enable store and forward, FLASE Disable store and forward */
     IfxGeth_QueueSize txQueueSize;                            /**< \brief Tx Queue size */
-    boolean           txQueueUnderflowInterruptEnabled;       /**< \brief Enable/Disable Tx Queue Underflow Interrupt */
+    boolean           txQueueUnderflowInterruptEnabled;       /**< \brief Enable/Disable Tx Queue Underflow Interrupt. Range: TRUE Enable Tx Queue Overflow Interrupt, FALSE- Disable Tx Queue Overflow Interrupt */
 } IfxGeth_Eth_TxQueueConfig;
 
 /** \} */
@@ -404,11 +404,11 @@ typedef struct
  */
 typedef struct
 {
-    uint32                         numOfTxChannels;                             /**< \brief Number of Tx Dma channels */
-    uint32                         numOfRxChannels;                             /**< \brief Number of Rx Dma channels */
-    boolean                        addressAlignedBeatsEnabled;                  /**< \brief Enable/Disable Address Aligned Beats */
-    boolean                        fixedBurstEnabled;                           /**< \brief Enable/Disable Fixed Burst length */
-    boolean                        mixedBurstEnabled;                           /**< \brief Enable/Disable Mixed Burst length */
+    uint32                         numOfTxChannels;                             /**< \brief Number of Tx Dma channels. Range: 1 to 4 */
+    uint32                         numOfRxChannels;                             /**< \brief Number of Rx Dma channels. Range: 1 to 4 */
+    boolean                        addressAlignedBeatsEnabled;                  /**< \brief Enable/Disable Address Aligned Beats. Range: TRUE Enable Address Aligned Beats, FALSE- Disable Address Aligned Beats */
+    boolean                        fixedBurstEnabled;                           /**< \brief Enable/Disable Fixed Burst length. Range: TRUE Enable Fixed Burst length, FALSE Disable Fixed Burst length */
+    boolean                        mixedBurstEnabled;                           /**< \brief Enable/Disable Mixed Burst length. Range: TRUE Enable Mixed Burst length, FALSE Disable Mixed Burst length */
     IfxGeth_Eth_TxChannelConfig    txChannel[IFXGETH_NUM_TX_CHANNELS];          /**< \brief Tx Channels configurations of selected Channels */
     IfxGeth_Eth_RxChannelConfig    rxChannel[IFXGETH_NUM_RX_CHANNELS];          /**< \brief Rx Channels configurations of selected Channels */
     IfxGeth_Eth_DmaInterruptConfig txInterrupt[IFXGETH_NUM_DMA_CHANNELS];       /**< \brief Transmit Interrupt configuration structure for DMA Channel */
@@ -422,17 +422,17 @@ typedef struct
     IfxGeth_DuplexMode   duplexMode;          /**< \brief Duplex Mode */
     IfxGeth_LineSpeed    lineSpeed;           /**< \brief Ethernet Line Speed */
     IfxGeth_LoopbackMode loopbackMode;        /**< \brief Loopback mode enable/disable */
-    uint8                macAddress[6];       /**< \brief MAC address for the ethernet, should be unique in the network */
-    uint16               maxPacketSize;       /**< \brief Maximum size of the ethernet packet */
+    uint8                macAddress[6];       /**< \brief MAC address for the ethernet, should be unique in the network. Range: 0 to 0xFF */
+    uint16               maxPacketSize;       /**< \brief Maximum size of the ethernet packet. Range: 0 to 0x3FFF */
 } IfxGeth_Eth_MacConfig;
 
 /** \brief Configuration Structure for the MTL initialisation
  */
 typedef struct
 {
-    uint32                         numOfTxQueues;                        /**< \brief Number of Tx Queues, will also be used to enable the selected number of queues */
+    uint32                         numOfTxQueues;                        /**< \brief Number of Tx Queues, will also be used to enable the selected number of queues. Range: 1 to 4 */
     IfxGeth_TxSchedulingAlgorithm  txSchedulingAlgorithm;                /**< \brief Tx Scheduling Algorithm for Tx queues when no of queues are more than 1 */
-    uint32                         numOfRxQueues;                        /**< \brief Number of Rx Queues */
+    uint32                         numOfRxQueues;                        /**< \brief Number of Rx Queues. Range: 1 to 4 */
     IfxGeth_RxArbitrationAlgorithm rxArbitrationAlgorithm;               /**< \brief Rx Arbitration Algorithm for Rx queues when no of queues are more than 1 */
     IfxGeth_Eth_TxQueueConfig      txQueue[IFXGETH_NUM_TX_QUEUES];       /**< \brief Tx queue configurations of selected queues */
     IfxGeth_Eth_RxQueueConfig      rxQueue[IFXGETH_NUM_RX_QUEUES];       /**< \brief Rx queue configurations of selected queues */
@@ -455,7 +455,7 @@ typedef struct
     IfxGeth_RxDmaChannel      channelId;         /**< \brief Rx DMA channel Index */
     IfxGeth_RxDescrList      *rxDescrList;       /**< \brief pointer to RX descriptors RAM */
     volatile IfxGeth_RxDescr *rxDescrPtr;        /**< \brief Pointer to Rx Descriptor (current descriptor) */
-    uint32                    rxCount;           /**< \brief Number of frames received */
+    uint32                    rxCount;           /**< \brief Number of frames received. Range: 0 to 0xFFFFFFFF */
 } IfxGeth_Eth_RxChannel;
 
 /** \brief handle sturcture for DMA tx channel
@@ -465,8 +465,8 @@ typedef struct
     IfxGeth_TxDmaChannel      channelId;         /**< \brief Tx DMA channel Index */
     IfxGeth_TxDescrList      *txDescrList;       /**< \brief pointer to TX descriptors RAM */
     volatile IfxGeth_TxDescr *txDescrPtr;        /**< \brief Pointer to Tx Descriptor (current descriptor) */
-    uint32                    txCount;           /**< \brief Number of frames transmitted */
-    uint16                    txBuf1Size;        /**< \brief configured tx buffer 1 size */
+    uint32                    txCount;           /**< \brief Number of frames transmitted. Range: 0 to 0xFFFFFFFF */
+    uint16                    txBuf1Size;        /**< \brief configured tx buffer 1 size. Range: 0 to 0x3FFF */
 } IfxGeth_Eth_TxChannel;
 
 /** \} */
@@ -478,8 +478,8 @@ typedef struct
 typedef struct
 {
     Ifx_GETH             *gethSFR;                                  /**< \brief Pointer to GETH register base address */
-    uint32                numOfTxChannels;                          /**< \brief Number of Tx Dma channels */
-    uint32                numOfRxChannels;                          /**< \brief Number of Rx Dma channels */
+    uint32                numOfTxChannels;                          /**< \brief Number of Tx Dma channels. Range: 1 to 4 */
+    uint32                numOfRxChannels;                          /**< \brief Number of Rx Dma channels. Range: 1 to 4 */
     IfxGeth_Eth_TxChannel txChannel[IFXGETH_NUM_TX_CHANNELS];       /**< \brief Tx Channels handle of selected Channels */
     IfxGeth_Eth_RxChannel rxChannel[IFXGETH_NUM_RX_CHANNELS];       /**< \brief Rx Channels handle of selected Channels */
 } IfxGeth_Eth;
@@ -494,8 +494,8 @@ typedef struct
     IfxGeth_Eth_MacConfig    mac;                      /**< \brief Configuration Structure for the the MAC initialisation */
     IfxGeth_Eth_MtlConfig    mtl;                      /**< \brief Configuration Structure for the MTL initialisation */
     IfxGeth_Eth_DmaConfig    dma;                      /**< \brief Configuration Structure for the DMA initialisation */
-    uint8                    rgmiiTxSkewControl;       /**< \brief TX Clock delay control for RGMII Mode - TXCFG. Refer to SKEWCTL.B.TXCFG */
-    uint8                    rgmiiRxSkewControl;       /**< \brief RX Clock delay control for RGMII Mode - RXCFG. Refer to SKEWCTL.B.RXCFG */
+    uint8                    rgmiiTxSkewControl;       /**< \brief TX Clock delay control for RGMII Mode - TXCFG. Refer to SKEWCTL.B.TXCFG. Range: 0 to 0xF */
+    uint8                    rgmiiRxSkewControl;       /**< \brief RX Clock delay control for RGMII Mode - RXCFG. Refer to SKEWCTL.B.RXCFG. Range: 0 to 0xF */
 } IfxGeth_Eth_Config;
 
 /** \} */
@@ -505,7 +505,7 @@ typedef struct
 typedef struct
 {
     IfxGeth_TxDmaChannel channelId;          /**< \brief Tx DMA channel Index */
-    uint32               packetLength;       /**< \brief the length of the packet to be transmitted in bytes */
+    uint32               packetLength;       /**< \brief The length of the packet to be transmitted in bytes. Range: 0 to 0x3FFF */
 } IfxGeth_Eth_FrameConfig;
 
 /** \addtogroup IfxLld_Geth_Eth_MAC_Functions
@@ -515,10 +515,13 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Configures the MAC core
- * \param geth GETH driver Handle
- * \param macConfig Configuration Structure for the MAC initialisation
- * \return None
+/**
+ * \brief Configures the MAC core with specified settings.
+ *
+ * \param[inout] geth      Pointer to the GETH driver handle.
+ * \param[in]    macConfig Pointer to the MAC configuration structure.
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -544,11 +547,15 @@ IFX_EXTERN void IfxGeth_Eth_configureMacCore(IfxGeth_Eth *geth, IfxGeth_Eth_MacC
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Waits for one TX buffer becomes available
- * \param geth GETH driver Handle
- * \param channelId Tx channel Id
- * retval non NULL_PTR TX buffer is available at the address pointed by the returned value
- * retval NULL_PTR TX buffer is busy.
+/**
+ * \brief Waits for a transmit buffer to become available for use.
+ *
+ * \param[in] geth      Pointer to the GETH driver handle.
+ * \param[in] channelId The TX DMA channel ID.
+ *                      Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval Non NULL_PTR TX buffer is available at the address pointed by the returned value.
+ *         NULL_PTR TX buffer is busy.
  *
  * \code
  *
@@ -563,12 +570,17 @@ IFX_INLINE void *IfxGeth_Eth_waitTransmitBuffer(IfxGeth_Eth *geth, IfxGeth_TxDma
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Gets receive buffer\n
- * note: IfxEth_freeReceiveBuffer() shall be called after the data from the RX buffer has been processed
- * \param geth GETH driver Handle
- * \param channelId Rx channel Id
- * \return retval NULL_PTR no received frame
- * retval !NULL_PTR a frame has been received
+/**
+ * \brief Retrieves the receive buffer for a specified RX DMA channel.
+ *
+ * \note: IfxEth_freeReceiveBuffer() shall be called after the data from the RX buffer has been processed
+ *
+ * \param[inout] geth      Handle to the GETH driver instance, containing configuration and state information.
+ * \param[in]    channelId The RX DMA channel identifier.
+ *                         Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval NULL_PTR No frame has been received in the buffer.
+ *         !NULL_PTR Frame has been received, and the pointer to the buffer is returned.
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -579,18 +591,25 @@ IFX_INLINE void *IfxGeth_Eth_waitTransmitBuffer(IfxGeth_Eth *geth, IfxGeth_TxDma
  */
 IFX_EXTERN void *IfxGeth_Eth_getReceiveBuffer(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel channelId);
 
-/** \brief Get the transmit buffer pointer of current descriptor
- * \param geth GETH driver Handle
- * \param channelId Tx channel Id
- * \return retval NULL_PTR no free transmit buffer is available
- * retval !NULL_PTR a free transmit buffer is available
+/**
+ * \brief Retrieves a pointer to a free transmit buffer for the specified DMA channel.
+ *
+ * \param[in] geth      Pointer to the GETH driver handle.
+ * \param[in] channelId The TX DMA channel ID.
+ *                      Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval NULL_PTR No free transmit buffer is available for the specified channel.
+ *         !NULL_PTR A pointer to a free transmit buffer is available for use.
  */
 IFX_EXTERN void *IfxGeth_Eth_getTransmitBuffer(IfxGeth_Eth *geth, IfxGeth_TxDmaChannel channelId);
 
-/** \brief Initialises the Geth Module with given configuration
- * \param geth GETH driver Handle
- * \param config Configuration Structure for the Module initialisation
- * \return None
+/**
+ * \brief Initialises the GETH Module with the provided configuration.
+ *
+ * \param[inout] geth    Pointer to the GETH driver handle structure.
+ * \param[in]    config  Configuration Structure for the Module initialization.
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -603,10 +622,13 @@ IFX_EXTERN void *IfxGeth_Eth_getTransmitBuffer(IfxGeth_Eth *geth, IfxGeth_TxDmaC
  */
 IFX_EXTERN void IfxGeth_Eth_initModule(IfxGeth_Eth *geth, IfxGeth_Eth_Config *config);
 
-/** \brief Initialises the config structure with default values
- * \param config Configuration Structure for the Module initialisation
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Initializes the Ethernet module configuration structure with default values.
+ *
+ * \param[inout] config  Pointer to configuration structure to be initialized.
+ * \param[in]    gethSFR Pointer to the GETH register base address.
+ *
+ * \retval None
  *
  * \code
  * IfxGeth_Eth_Config config;
@@ -616,55 +638,77 @@ IFX_EXTERN void IfxGeth_Eth_initModule(IfxGeth_Eth *geth, IfxGeth_Eth_Config *co
  */
 IFX_EXTERN void IfxGeth_Eth_initModuleConfig(IfxGeth_Eth_Config *config, Ifx_GETH *gethSFR);
 
-/** \brief Set up MII mode input pins
- * \param geth GETH driver Handle
- * \param miiPins Mii Pins
- * \return None
+/**
+ * \brief Configures the MII mode input pins for the Ethernet controller.
+ *
+ * \param[inout] geth    Pointer to the GETH driver handle structure.
+ * \param[in]    miiPins Pointer to a structure containing configurations for MII-related input and output pins.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Eth_setupMiiInputPins(IfxGeth_Eth *geth, const IfxGeth_Eth_MiiPins *miiPins);
 
-/** \brief setup MII mode output pins
- * \param geth GETH driver Handle
- * \param miiPins Mii Pins
- * \return None
+/**
+ * \brief Configures the MII mode output pins for the GETH driver.
+ *
+ * \param[in] geth    Pointer to the GETH driver handle structure.
+ * \param[in] miiPins Pointer to a structure containing configurations for MII-related input and output pins.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Eth_setupMiiOutputPins(IfxGeth_Eth *geth, const IfxGeth_Eth_MiiPins *miiPins);
 
-/** \brief Set up RGMII mode input pins
- * \param geth GETH driver Handle
- * \param rgmiiPins RGMII Pins
- * \return None
+/**
+ * \brief Configures and initializes the RGMII mode input pins for Ethernet operation.
+ *
+ * \param[inout] geth      Pointer to the GETH driver handle structure.
+ * \param[in]    rgmiiPins RGMII pin configuration structure containing pointers to input pin configurations.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Eth_setupRgmiiInputPins(IfxGeth_Eth *geth, const IfxGeth_Eth_RgmiiPins *rgmiiPins);
 
-/** \brief Set up RGMII mode output pins
- * \param geth GETH driver Handle
- * \param rgmiiPins RGMII Pins
- * \return None
+/**
+ * \brief Configures the output pins for RGMII mode operation.
+ *
+ * \param[in] geth      Pointer to the GETH driver handle structure.
+ * \param[in] rgmiiPins RGMII pin configuration structure containing pointers to output pin configurations.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Eth_setupRgmiiOutputPins(IfxGeth_Eth *geth, const IfxGeth_Eth_RgmiiPins *rgmiiPins);
 
-/** \brief setup RMII mode input pins
- * \param geth GETH driver Handle
- * \param rmiiPins Rmii Pins
- * \return None
+/**
+ * \brief Configures the input pins for RMII mode operation.
+ *
+ * \param[inout] geth     Pointer to the GETH driver handle structure.
+ * \param[in]    rmiiPins Pointer to Rmii pin configurations.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Eth_setupRmiiInputPins(IfxGeth_Eth *geth, const IfxGeth_Eth_RmiiPins *rmiiPins);
 
-/** \brief setup RMII mode output pins
- * \param geth GETH driver Handle
- * \param rmiiPins Rmii Pins
- * \return None
+/**
+ * \brief Configures the output pins for RMII mode operation.
+ *
+ * \param[in] geth     Pointer to the GETH driver handle structure.
+ * \param[in] rmiiPins Pointer to Rmii pin configurations.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Eth_setupRmiiOutputPins(IfxGeth_Eth *geth, const IfxGeth_Eth_RmiiPins *rmiiPins);
 
-/** \brief writes the header format into buffrer
- * \param geth GETH driver Handle
- * \param txBuffer pointer to tx buffer
- * \param destinationAddress pointer to destination address
- * \param sourceAddress pointer to source address
- * \param payloadLength size of the payload
- * \return None
+/**
+ * \brief Constructs and writes an Ethernet header into the provided transmit buffer.
+ *
+ * \param[in]    geth                Pointer to the GETH driver handle structure.
+ * \param[inout] txBuffer            Pointer to the transmit buffer where the Ethernet header will be written.
+ * \param[in]    destinationAddress  Pointer to destination address.
+ * \param[in]    sourceAddress       Pointer to source address.
+ * \param[in]    payloadLength       The length of the payload that follows the header.
+ *                                   Range: 0 to 0xFFFF
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -690,10 +734,13 @@ IFX_EXTERN void IfxGeth_Eth_writeHeader(IfxGeth_Eth *geth, uint8 *txBuffer, uint
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Configures the MTL
- * \param geth GETH driver Handle
- * \param mtlConfig Configuration Structure for the MTL initialisation
- * \return None
+ /**
+ * \brief Configures the MTL with specified parameters.
+ *
+ * \param[inout] geth        Pointer to the GETH driver handle structure.
+ * \param[in]    mtlConfig   Pointer to the MTL configuration structure.
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -735,10 +782,14 @@ IFX_EXTERN void IfxGeth_Eth_configureMTL(IfxGeth_Eth *geth, IfxGeth_Eth_MtlConfi
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the pointer to current RX descriptor
- * \param geth GETH driver Handle
- * \param channelId Rx channel Id
- * \return pointer to base RX descriptor in the list
+/**
+ * \brief Returns the pointer to the current RX descriptor for the specified channel.
+ *
+ * \param[in] geth      Pointer to the GETH driver handle structure.
+ * \param[in] channelId The RX DMA channel identifier.
+ *                      Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval  IfxGeth_RxDescr* Pointer to base RX descriptor in the list.
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -749,10 +800,14 @@ IFX_EXTERN void IfxGeth_Eth_configureMTL(IfxGeth_Eth *geth, IfxGeth_Eth_MtlConfi
  */
 IFX_INLINE volatile IfxGeth_RxDescr *IfxGeth_Eth_getActualRxDescriptor(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel channelId);
 
-/** \brief Returns the pointer to current TX descriptor
- * \param geth GETH driver Handle
- * \param channelId Tx channel Id
- * \return pointer to base TX descriptor in the list
+/**
+ * \brief Returns the pointer to the current TX descriptor for the specified DMA channel.
+ *
+ * \param[in] geth      Pointer to the GETH driver handle structure.
+ * \param[in] channelId The TX DMA channel ID.
+ *                      Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval IfxGeth_TxDescr* Pointer to base TX descriptor in the list.
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -763,11 +818,15 @@ IFX_INLINE volatile IfxGeth_RxDescr *IfxGeth_Eth_getActualRxDescriptor(IfxGeth_E
  */
 IFX_INLINE volatile IfxGeth_TxDescr *IfxGeth_Eth_getActualTxDescriptor(IfxGeth_Eth *geth, IfxGeth_TxDmaChannel channelId);
 
-/** \brief Checks whether one or more RX data is available
- * \param geth GETH driver Handle
- * \param channelId Rx channel Id
- * \return TRUE : if one or more RX data available
- * FALSE: if Rx data not available
+/**
+ * \brief Checks whether one or more RX data is available for the specified channel.
+ *
+ * \param[in] geth      Pointer to the GETH driver handle structure.
+ * \param[in] channelId The RX DMA channel identifier.
+ *                      Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval TRUE  If one or more RX data is available in the specified channel.
+ *         FALSE If no RX data is available in the specified channel.
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -782,10 +841,14 @@ IFX_INLINE boolean IfxGeth_Eth_isRxDataAvailable(IfxGeth_Eth *geth, IfxGeth_RxDm
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Configures the DMA
- * \param geth GETH driver Handle
- * \param dmaConfig Configuration Structure for the DMA initialisation
- * \return None
+/**
+ * \brief Configures the DMA for the GETH driver with the specified configuration.
+ *
+ * \param[inout] geth      Pointer to the GETH driver handle structure.
+ * \param[in]    dmaConfig Configuration Structure for the DMA initialization.
+ *
+ * \retval None
+ *
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -817,24 +880,34 @@ IFX_INLINE boolean IfxGeth_Eth_isRxDataAvailable(IfxGeth_Eth *geth, IfxGeth_RxDm
  */
 IFX_EXTERN void IfxGeth_Eth_configureDMA(IfxGeth_Eth *geth, IfxGeth_Eth_DmaConfig *dmaConfig);
 
-/** \brief Initialises the Rx descriptors of a single channel
- * \param geth GETH driver Handle
- * \param config Rx channel configuration
- * \return None
+/**
+ * \brief Initializes the Rx descriptors of a single channel.
+ *
+ * \param[inout] geth   Pointer to the GETH driver handle structure.
+ * \param[in]    config Pointer to the Rx channel configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Eth_initReceiveDescriptors(IfxGeth_Eth *geth, const IfxGeth_Eth_RxChannelConfig *config);
 
-/** \brief Initialises the Tx descriptors of a single channel
- * \param geth GETH driver Handle
- * \param config Tx channel configuration
- * \return None
+/**
+ * \brief Initializes the transmit descriptors for a single channel.
+ *
+ * \param[inout] geth   Pointer to the GETH driver handle structure.
+ * \param[in]    config Pointer to the Tx channel configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Eth_initTransmitDescriptors(IfxGeth_Eth *geth, const IfxGeth_Eth_TxChannelConfig *config);
 
-/** \brief Transmits a frame from a single channel
- * \param geth GETH driver Handle
- * \param config Tx Frame configuration
- * \return None
+/**
+ * \brief Transmits a frame from a single channel.
+ *
+ * \param[inout] geth   Pointer to the GETH driver handle structure.
+ * \param[in]    config Pointer to the TX frame configuration.
+ *
+ * \retval None
+ *
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -865,11 +938,16 @@ IFX_EXTERN void IfxGeth_Eth_initTransmitDescriptors(IfxGeth_Eth *geth, const Ifx
  */
 IFX_EXTERN void IfxGeth_Eth_sendFrame(IfxGeth_Eth *geth, IfxGeth_Eth_FrameConfig *config);
 
-/** \brief Transmits a frame from a single channel
- * \param geth GETH driver Handle
- * \param packetLength Length of the packet to be transmitted in bytes
- * \param channelId Tx channel Id
- * \return None
+/**
+ * \brief Transmits a frame from a single channel using the specified TX DMA channel.
+ *
+ * \param[inout] geth         Pointer to the GETH driver handle structure.
+ * \param[inout] packetLength Length of the packet to be transmitted in bytes.
+ *                            Range: 0 to 0xFFFF
+ * \param[in]    channelId    Tx channel Id.
+ *                            Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -897,10 +975,14 @@ IFX_EXTERN void IfxGeth_Eth_sendFrame(IfxGeth_Eth *geth, IfxGeth_Eth_FrameConfig
  */
 IFX_EXTERN void IfxGeth_Eth_sendTransmitBuffer(IfxGeth_Eth *geth, uint32 packetLength, IfxGeth_TxDmaChannel channelId);
 
-/** \brief Updates the current Rx descriptor pointer in the handle to next Rx descriptor
- * \param geth GETH driver Handle
- * \param channelId Rx channel Id
- * \return None
+/**
+ * \brief Updates the current Rx descriptor pointer in the handle to the next Rx descriptor for the specified channel.
+ *
+ * \param[inout] geth       Pointer to the GETH driver handle structure.
+ * \param[in]    channelId  The RX DMA channel identifier.
+ *                          Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -911,10 +993,14 @@ IFX_EXTERN void IfxGeth_Eth_sendTransmitBuffer(IfxGeth_Eth *geth, uint32 packetL
  */
 IFX_EXTERN void IfxGeth_Eth_shuffleRxDescriptor(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel channelId);
 
-/** \brief Updates the current Tx descriptor pointer in the handle to next Tx descriptor
- * \param geth GETH driver Handle
- * \param channelId Tx channel Id
- * \return None
+/**
+ * \brief Updates the current Tx descriptor pointer for the specified channel in the GETH driver handle.
+ *
+ * \param[inout] geth       Pointer to the GETH driver handle structure.
+ * \param[in]    channelId  The TX DMA channel identifier.
+ *                          Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -925,10 +1011,14 @@ IFX_EXTERN void IfxGeth_Eth_shuffleRxDescriptor(IfxGeth_Eth *geth, IfxGeth_RxDma
  */
 IFX_EXTERN void IfxGeth_Eth_shuffleTxDescriptor(IfxGeth_Eth *geth, IfxGeth_TxDmaChannel channelId);
 
-/** \brief Start the Receiver functions of MAC and selected channel of DMA
- * \param geth GETH driver Handle
- * \param channelId Rx channel Id
- * \return None
+/**
+ * \brief Starts the Receiver functions of MAC and selected DMA channel.
+ *
+ * \param[inout] geth       Pointer to the GETH driver handle structure.
+ * \param[in]    channelId  The RX DMA channel identifier.
+ *                          Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -939,10 +1029,14 @@ IFX_EXTERN void IfxGeth_Eth_shuffleTxDescriptor(IfxGeth_Eth *geth, IfxGeth_TxDma
  */
 IFX_EXTERN void IfxGeth_Eth_startReceiver(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel channelId);
 
-/** \brief Start the Receiver functions of MAC and all selected number of DMA channels
- * \param geth GETH driver Handle
- * \param numOfChannels number of channels to be started for transmission (starting from channel 0)
- * \return None
+/**
+ * \brief Starts the Receiver functions of MAC and the specified number of DMA channels.
+ *
+ * \param[inout] geth          Pointer to the GETH driver handle structure.
+ * \param[in]    numOfChannels Number of channels to be started for transmission (starting from channel 0).
+ *                             Range: 0 to 3
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -953,10 +1047,14 @@ IFX_EXTERN void IfxGeth_Eth_startReceiver(IfxGeth_Eth *geth, IfxGeth_RxDmaChanne
  */
 IFX_EXTERN void IfxGeth_Eth_startReceivers(IfxGeth_Eth *geth, uint32 numOfChannels);
 
-/** \brief Start the transmitter functions of MAC and selected channel of DMA
- * \param geth GETH driver Handle
- * \param channelId Tx channel Id
- * \return None
+/**
+ * \brief Starts the transmitter functions of the MAC and the selected DMA channel.
+ *
+ * \param[inout] geth      Pointer to the GETH driver handle structure.
+ * \param[in]    channelId The TX DMA channel identifier.
+ *                          Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -967,10 +1065,14 @@ IFX_EXTERN void IfxGeth_Eth_startReceivers(IfxGeth_Eth *geth, uint32 numOfChanne
  */
 IFX_EXTERN void IfxGeth_Eth_startTransmitter(IfxGeth_Eth *geth, IfxGeth_TxDmaChannel channelId);
 
-/** \brief Start the transmitter functions of MAC and all selected number of DMA channels
- * \param geth GETH driver Handle
- * \param numOfChannels number of channels to be started for transmission (starting from channel 0)
- * \return None
+/**
+ * \brief Starts the transmitter functions of the MAC and the selected DMA channel.
+ *
+ * \param[inout] geth          Pointer to the GETH driver handle structure.
+ * \param[in]    numOfChannels number of channels to be started for transmission (starting from channel 0).
+ *                             Range: 0 to 3
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -981,10 +1083,14 @@ IFX_EXTERN void IfxGeth_Eth_startTransmitter(IfxGeth_Eth *geth, IfxGeth_TxDmaCha
  */
 IFX_EXTERN void IfxGeth_Eth_startTransmitters(IfxGeth_Eth *geth, uint32 numOfChannels);
 
-/** \brief Stops the transmitter functions of MAC and all selected number of DMA channels
- * \param geth GETH driver Handle
- * \param numOfChannels number of channels to be started for transmission (starting from channel 0)
- * \return None
+/**
+ * \brief Stops the transmitter functions of the MAC and the selected DMA channels.
+ *
+ * \param[inout] geth          Pointer to the GETH driver handle structure.
+ * \param[in]    numOfChannels number of channels to be started for transmission (starting from channel 0).
+ *                             Range: 0 to 3
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -995,10 +1101,14 @@ IFX_EXTERN void IfxGeth_Eth_startTransmitters(IfxGeth_Eth *geth, uint32 numOfCha
  */
 IFX_EXTERN void IfxGeth_Eth_stopTransmitters(IfxGeth_Eth *geth, uint32 numOfChannels);
 
-/** \brief Wakes up the Receiver functions of MAC and selected channel of DMA
- * \param geth GETH driver Handle
- * \param channelId Rx channel Id
- * \return None
+/**
+ * \brief Wakes up the Receiver functions of MAC and selected channel of DMA.
+ *
+ * \param[inout] geth       Pointer to the GETH driver handle structure.
+ * \param[in]    channelId  The RX DMA channel identifier.
+ *                          Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1009,10 +1119,14 @@ IFX_EXTERN void IfxGeth_Eth_stopTransmitters(IfxGeth_Eth *geth, uint32 numOfChan
  */
 IFX_EXTERN void IfxGeth_Eth_wakeupReceiver(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel channelId);
 
-/** \brief Wakes up the transmitter functions of MAC and selected channel of DMA
- * \param geth GETH driver Handle
- * \param channelId Tx channel Id
- * \return None
+/**
+ * \brief Wakes up the transmitter functions of MAC and selected channel of DMA.
+ *
+ * \param[inout] geth       Pointer to the GETH driver handle structure.
+ * \param[in]    channelId  The RX DMA channel identifier.
+ *                          Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1029,10 +1143,14 @@ IFX_EXTERN void IfxGeth_Eth_wakeupTransmitter(IfxGeth_Eth *geth, IfxGeth_TxDmaCh
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the pointer to base RX descriptor in the list
- * \param geth GETH driver Handle
- * \param channelId Rx channel Id
- * \return pointer to base RX descriptor in the list
+/**
+ * \brief Returns the base RX descriptor pointer for the specified RX DMA channel.
+ *
+ * \param[in] geth       Pointer to the GETH driver handle structure.
+ * \param[in] channelId  The RX DMA channel identifier.
+ *                       Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval IfxGeth_RxDescr* Pointer to the base RX descriptor for the specified channel.
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1043,10 +1161,14 @@ IFX_EXTERN void IfxGeth_Eth_wakeupTransmitter(IfxGeth_Eth *geth, IfxGeth_TxDmaCh
  */
 IFX_INLINE volatile IfxGeth_RxDescr *IfxGeth_Eth_getBaseRxDescriptor(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel channelId);
 
-/** \brief Returns the pointer to base TX descriptor in the list
- * \param geth GETH driver Handle
- * \param channelId Tx channel Id
- * \return pointer to base TX descriptor in the list
+/**
+ * \brief Returns the base TX descriptor pointer for the specified RX DMA channel.
+ *
+ * \param[in] geth       Pointer to the GETH driver handle structure.
+ * \param[in] channelId  The TX DMA channel identifier.
+ *                       Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval IfxGeth_RxDescr* Pointer to the base TX descriptor for the specified channel.
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1061,10 +1183,14 @@ IFX_INLINE volatile IfxGeth_TxDescr *IfxGeth_Eth_getBaseTxDescriptor(IfxGeth_Eth
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Free the receive buffer, enabling it for the further reception
- * \param geth GETH driver Handle
- * \param channelId Rx channel Id
- * \return None
+/**
+ * \brief Frees the receive buffer for the specified Rx DMA channel, enabling it for further reception.
+ *
+ * \param[inout] geth       Pointer to the GETH driver handle structure.
+ * \param[in]    channelId  The RX DMA channel identifier.
+ *                          Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1136,11 +1262,14 @@ IFX_INLINE void *IfxGeth_Eth_waitTransmitBuffer(IfxGeth_Eth *geth, IfxGeth_TxDma
     return tx;
 }
 
-/** \brief Initializes the DMA channels allocated for TX \n
- * \param geth GETH driver Handle
- * \param txChannelIndex Tx DMA channel Index
- * \param txChannelConfig Configuration Structure for the DMA Tx Channel initialization
- * \return none
+/**
+ * \brief Initializes a TX DMA channel with the specified configuration.
+ *
+ * \param[inout] geth            Pointer to the GETH driver handle structure.
+ * \param[in]    txChannelIndex  TX DMA channel index to be initialized.
+ * \param[in]    txChannelConfig Pointer to the configuration structure for the TX DMA channel.
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1152,11 +1281,14 @@ IFX_INLINE void *IfxGeth_Eth_waitTransmitBuffer(IfxGeth_Eth *geth, IfxGeth_TxDma
  */
 IFX_EXTERN void IfxGeth_Eth_initTxDmaChannel(IfxGeth_Eth *geth, uint32 txChannelIndex, const IfxGeth_Eth_TxChannelConfig *txChannelConfig);
 
-/** \brief Initializes the DMA channels allocated for RX \n
- * \param geth GETH driver Handle
- * \param rxChannelIndex Rx DMA channel Index
- * \param rxChannelConfig Configuration Structure for the Rx DMA channel initialization
- * \return none
+/**
+ * \brief Initializes a RX DMA channel with the specified configuration.
+ *
+ * \param[inout] geth            Pointer to the GETH driver handle structure.
+ * \param[in]    rxChannelIndex  RX DMA channel index to be initialized.
+ * \param[in]    rxChannelConfig Pointer to the configuration structure for the RX DMA channel.
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1168,11 +1300,14 @@ IFX_EXTERN void IfxGeth_Eth_initTxDmaChannel(IfxGeth_Eth *geth, uint32 txChannel
  */
 IFX_EXTERN void IfxGeth_Eth_initRxDmaChannel(IfxGeth_Eth *geth, uint32 rxChannelIndex, const IfxGeth_Eth_RxChannelConfig *rxChannelConfig);
 
-/** \brief Initializes the interrupts for the DMA channels allocated for TX \n
- * \param geth GETH driver Handle
- * \param channelIndex Tx DMA channel Index
- * \param dmaInterruptConfig Configuration Structure for the Tx DMA interrupt initialization
- * \return none
+/**
+ * \brief Initializes the interrupts for the DMA channels allocated for TX.
+ *
+ * \param[inout] geth               Pointer to the GETH driver handle structure.
+ * \param[in]    channelIndex       TX DMA channel index to configure.
+ * \param[in]    dmaInterruptConfig Configuration Structure for the Tx DMA interrupt initialization.
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1184,11 +1319,14 @@ IFX_EXTERN void IfxGeth_Eth_initRxDmaChannel(IfxGeth_Eth *geth, uint32 rxChannel
  */
 IFX_EXTERN void IfxGeth_Eth_initTxDmaInterrupts(IfxGeth_Eth *geth, uint32 channelIndex, const IfxGeth_Eth_DmaInterruptConfig *dmaInterruptConfig);
 
-/** \brief Initializes the interrupts for the DMA channels allocated for RX \n
- * \param geth GETH driver Handle
- * \param channelIndex Rx DMA channel Index
- * \param dmaInterruptConfig Configuration Structure for the Rx DMA interrupt initialization
- * \return none
+/**
+ * \brief Initializes the interrupts for the DMA channels allocated for RX.
+ *
+ * \param[inout] geth               Pointer to the GETH driver handle structure.
+ * \param[in]    channelIndex       RX DMA channel index to configure.
+ * \param[in]    dmaInterruptConfig Configuration Structure for the Rx DMA interrupt initialization.
+ *
+ * \retval None
  *
  * \code
  * // IfxGeth_Eth geth; // assumed to be defined globally
@@ -1200,11 +1338,15 @@ IFX_EXTERN void IfxGeth_Eth_initTxDmaInterrupts(IfxGeth_Eth *geth, uint32 channe
  */
 IFX_EXTERN void IfxGeth_Eth_initRxDmaInterrupts(IfxGeth_Eth *geth, uint32 channelIndex, const IfxGeth_Eth_DmaInterruptConfig *dmaInterruptConfig);
 
-/** \brief Initializes the Tx queues in MTL \n
- * \param gethSFR GETH SFR Handle
- * \param txQueueIndex Tx queue Index
- * \param txQueueConfig Configuration Structure for the MTL Tx queue initialization
- * \return none
+/**
+ * \brief Configures the specified Tx queue in the MTL with the provided settings.
+ *
+ * \param[inout] gethSFR        Pointer to the GETH driver handle structure.
+ * \param[in]    txQueueIndex   Tx queue Index
+ *                              Range: 0 to 0xFFFFFFFF
+ * \param[in]    txQueueConfig  Configuration Structure for the MTL Tx queue initialization.
+ *
+ * \retval None
  *
  * \code
  * // Ifx_GETH gethSFR; // assumed to be defined globally
@@ -1216,11 +1358,15 @@ IFX_EXTERN void IfxGeth_Eth_initRxDmaInterrupts(IfxGeth_Eth *geth, uint32 channe
  */
 IFX_EXTERN void IfxGeth_Eth_configureTxQueue(Ifx_GETH *gethSFR, uint32 txQueueIndex, const IfxGeth_Eth_TxQueueConfig *txQueueConfig);
 
-/** \brief Initializes the Rx queues in MTL \n
- * \param gethSFR GETH SFR Handle
- * \param rxQueueIndex Rx queue Index
- * \param rxQueueConfig Configuration Structure for the MTL Rx queue initialization
- * \return none
+/**
+ * \brief Configures the specified Rx queue in the MTL with the provided settings.
+ *
+ * \param[inout] gethSFR        Pointer to the GETH driver handle structure.
+ * \param[in]    txQueueIndex   Rx queue Index
+ *                              Range: 0 to 0xFFFFFFFF
+ * \param[in]    txQueueConfig  Configuration Structure for the MTL Rx queue initialization.
+ *
+ * \retval None
  *
  * \code
  * // Ifx_GETH gethSFR; // assumed to be defined globally

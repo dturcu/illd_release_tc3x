@@ -3,7 +3,7 @@
  * \brief EDSADC EDSADC details
  * \ingroup IfxLld_Edsadc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -211,8 +211,8 @@ typedef struct
  */
 typedef struct
 {
-    uint16 decimationFactor;       /**< \brief decimation rate of comb filter 4 .. 256 */
-    uint16 startValue;             /**< \brief 4 .. decimationFactor */
+    uint16 decimationFactor;       /**< \brief decimation rate of comb filter (OSR = 4 to 512). Range: 0 to 0x1FF */
+    uint16 startValue;             /**< \brief CIC filter start value (4 to selected OSR). Range: 0x3 to CFMDF (Decimation factor) */
 } IfxEdsadc_Edsadc_CombFilterConfig;
 
 /** \brief enable the voltage generators and select which input pins are connected to the common mode hold voltage
@@ -222,8 +222,8 @@ typedef struct
     IfxEdsadc_FractionalRefVoltageSelection fractionalRefVoltage;       /**< \brief Fractional Reference Voltage selection */
     IfxEdsadc_FractionalRefVoltage          refVoltageEnable;           /**< \brief Fractional Reference Voltage enable/disable */
     uint8                                   positiveInput;              /**< \brief Defines the connection of the respective positive input y to the common
-                                                                         * mode hold voltage. */
-    uint8                                   negativeInput;              /**< \brief Defines the connection of the respective negative input y to the common mode hold voltage */
+                                                                         * mode hold voltage. Range: 0 to 0xF */
+    uint8                                   negativeInput;              /**< \brief Defines the connection of the respective negative input y to the common mode hold voltage. Range: 0 to 0xF */
 } IfxEdsadc_Edsadc_CommonModeVoltageConfig;
 
 /** \brief Demodulator configuration structure
@@ -254,13 +254,13 @@ typedef struct
     IfxEdsadc_OffsetCompensationFilter offsetCompensation;              /**< \brief Offset Compensation Filter enable/disable selection */
     boolean                            fir0Enabled;                     /**< \brief FIR filter 0 enable/disable selection */
     boolean                            fir1Enabled;                     /**< \brief FIR filter 0 enable/disable selection */
-    boolean                            fir1DecimateRate;                /**< \brief FIR1 Filter Decimation Rate */
-    boolean                            cicMode;                         /**< \brief CIC Filter mode */
+    boolean                            fir1DecimateRate;                /**< \brief FIR1 Filter Decimation Rate. Range: TRUE: FIR1 filter does not decimate, FALSE: Decimation 2:1 for FIR1 */
+    boolean                            cicMode;                         /**< \brief CIC Filter mode. Range: TRUE: Reserved, FALSE: CIC3 */
     boolean                            prefilterEnabled;                /**< \brief Enable/Disable the PreFilter */
-    boolean                            calibrationTrigger;              /**< \brief triggger the calibration */
-    boolean                            calibrationControl;              /**< \brief Automatic Calibration Control */
+    boolean                            calibrationTrigger;              /**< \brief triggger the calibration. Range: TRUE: Start the calibration algorithm now, FALSE: No action */
+    boolean                            calibrationControl;              /**< \brief Automatic Calibration Control. Range: TRUE: Start the calibration algorithm now, FALSE: No action */
     IfxEdsadc_OvershootCompensation    overshootCompensation;           /**< \brief Overshoot Compensation Enable/Disable */
-    uint16 							   offsetCompensationValue;         /**< \brief Offset Compensation Value  */
+    uint16 							   offsetCompensationValue;         /**< \brief Offset Compensation Value. Range: 0 to 0xFFFF */
 } IfxEdsadc_Edsadc_FirFilterConfig;
 
 /** \brief Integrator configuration structure
@@ -268,9 +268,9 @@ typedef struct
 typedef struct
 {
     IfxEdsadc_IntegrationWindowSize   windowSize;              /**< \brief Integrator window size */
-    uint16                            discardCount;            /**< \brief Number of discarded values to after active trigger: 1 .. 64 */
-    uint16                            integrationCycles;       /**< \brief Number of integration cycles: 1 .. 16. Used only when \ref IfxEdsadc_IntegrationWindowSize_internalControl */
-    uint16                            integrationCount;        /**< \brief Number of integrated values after discard step: 1 .. 64 */
+    uint16                            discardCount;            /**< \brief Number of discarded values to after active trigger: 1 .. 64. Range: 0 to 0x3F */
+    uint16                            integrationCycles;       /**< \brief Number of integration cycles: 1 .. 16. Used only when \ref IfxEdsadc_IntegrationWindowSize_internalControl. Range: 0 to 0xF */
+    uint16                            integrationCount;        /**< \brief Number of integrated values after discard step: 1 .. 64. Range: 0 to 0x3F */
     IfxEdsadc_IntegrationShiftControl shiftControl;            /**< \brief Integrator shift control */
     IfxEdsadc_RestartFilterChain      fcRestartControl;        /**< \brief Filter Chain Restart Control */
 } IfxEdsadc_Edsadc_IntegratorConfig;
@@ -286,18 +286,18 @@ typedef struct
     IfxEdsadc_InputConfig            negativeInput;                /**< \brief Modulator configuration of negative input line */
     IfxEdsadc_InputPin               inputPin;                     /**< \brief Modulator input pin selection */
     IfxEdsadc_dithering              ditheringEnabled;             /**< \brief Control the Dithering Function for each modulator */
-    boolean                          integratorResetEnabled;       /**< \brief control the modulator overload handling */
+    boolean                          integratorResetEnabled;       /**< \brief control the modulator overload handling. Range: TRUE: Integrators are reset in case of an overdrive, FALSE: No integrator reset */
     IfxEdsadc_AutomaticPowerControl  automaticPowerControl;        /**< \brief Automatic Power Control */
     boolean                          inputMuxActionControl;        /**< \brief Defines the mechanism by which the input multiplexer is controlled */
-    IfxEdsadc_InputMuxControlMode    triggerEvent;                 /**< \brief Defines the condition for a trigger event to control the input multiplexer */
+    IfxEdsadc_InputMuxControlMode    triggerEvent;                 /**< \brief Defines the condition for a trigger event to control the input multiplexer. Range: TRUE: Single-step mode, FALSE: Preset mode */
 } IfxEdsadc_Edsadc_ModulatorConfig;
 
 /** \brief Rectifier configuration structure
  */
 typedef struct
 {
-    uint8                         signDelay;        /**< \brief Sign delay value */
-    uint8                         signPeriod;       /**< \brief Sign period */
+    uint8                         signDelay;        /**< \brief Sign delay value. Range: 0 to 0xFF */
+    uint8                         signPeriod;       /**< \brief Sign period. Range: 0 to 0xFF */
     IfxEdsadc_RectifierSignSource signSource;       /**< \brief Rectifier sign source */
     IfxEdsadc_SignSourceChannel   signSourceChannel; /**< \brief Sign Source Channel */
     boolean                       enabled;          /**< \brief Rectification enable/disable selection */
@@ -316,8 +316,8 @@ typedef struct
  */
 typedef struct
 {
-    uint16                      lowerBound;             /**< \brief Lower Boundary for limit checking */
-    uint16                      upperBound;             /**< \brief Upper Boundary for limit checking */
+    uint16                      lowerBound;             /**< \brief Lower Boundary for limit checking. Range: 0 to 0xFFFF */
+    uint16                      upperBound;             /**< \brief Upper Boundary for limit checking. Range: 0 to 0xFFFF */
 } IfxEdsadc_Edsadc_BoundaryConfig;
 
 /** \} */
@@ -326,11 +326,11 @@ typedef struct
  */
 typedef struct
 {
-    uint16 gainFactor;              /**< \brief Multiplication Factor for Gain Correction During Calibration(in GAINCTR register) */
-    uint8  cicShift;
-    uint8  cicDecimationRate;       /**< \brief Decimation Rate of the CIC Filter During Calibration(GAINCTR register) */
-    uint16 calFactor;               /**< \brief Multiplication Factor for Gain Calibration */
-    uint16 calTarget;               /**< \brief Target Value for Calibrated Fullscale */
+    uint16 gainFactor;              /**< \brief Multiplication Factor for Gain Correction During Calibration(in GAINCTR register). Range: 0 to 0x1FFF */
+    uint8  cicShift;				/**< \brief Selects the valid outputs bits from the CIC filter, depending on the chosen decimation factor. Range: 0 to 0x1F */
+    uint8  cicDecimationRate;       /**< \brief Decimation Rate of the CIC Filter During Calibration(GAINCTR register). Range: 0 to 0x7 */
+    uint16 calFactor;               /**< \brief Multiplication Factor for Gain Calibration. Range: 0 to 0x1FFF */
+    uint16 calTarget;               /**< \brief Target Value for Calibrated Fullscale. Range: 0 to 0x7FFF */
 } IfxEdsadc_Edsadc_GainCalibrationConfig;
 
 /** \brief Auxiliary Filter Configuration
@@ -371,7 +371,7 @@ typedef struct
 	IfxEdsadc_SlewRateFilterStrength  slewRateFilterStrength;      /**< \brief Defines the time constant for the slew rate filter */
 	IfxEdsadc_SlewrateFilterRuntime   slewRateFilterRunTime;        /**< \brief Defines the time constant for the slew rate filter. */
 	IfxEdsadc_StepDetectionMode       stepDetectionMode;            /**< \brief Defines when the slew rate filter is activated */
-	uint16                            stepDetectionThreshold;       /**< \brief Defines the threshold value (magnitude) used for step detection. The threshold value is <SDTH> × 32 */
+	uint16                            stepDetectionThreshold;       /**< \brief Defines the threshold value (magnitude) used for step detection. The threshold value is <SDTH> × 32. Range: 0 to 0x7FF */
 } IfxEdsadc_Edsadc_OvershootCompensationConfig;
 
 /** \brief Channel handle structure
@@ -406,8 +406,8 @@ typedef struct
     IfxEdsadc_Edsadc_CombFilterConfig              combFilter;                  /**< \brief Comb filter configuration structure */
     IfxEdsadc_Edsadc_TimeStampCounter              timeStamp;                   /**< \brief Configure Time Stamp Counter */
     IfxEdsadc_Edsadc_CommonModeVoltageConfig       commonMode;                  /**< \brief Common Mode Voltage Configuration */
-    uint16                                         gainFactor;                  /**< \brief Multiplication Factor for Gain Correction */
-    uint8                                          cicShift;                    /**< \brief Position of the CIC Filter Output Shifter */
+    uint16                                         gainFactor;                  /**< \brief Multiplication Factor for Gain Correction. Range: 0 to 0x1FFF */
+    uint8                                          cicShift;                    /**< \brief Position of the CIC Filter Output Shifter. Range: 0 to 0x1F */
     IFX_CONST IfxEdsadc_Edsadc_ChannelPins        *channelPins;                 /**< \brief Channel Pins Configuration structure */
     IfxEdsadc_Edsadc_GainCalibrationConfig         gainCalibrationConfig;       /**< \brief Configuration Settings for Gain Calibration */
     IfxEdsadc_Edsadc_OvershootCompensationConfig   overshootCompensationConfig; /**< \brief Overshoot Compensation Cfg. Register structure */

@@ -3,7 +3,7 @@
  * \brief GTM TIMER details
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -135,7 +135,6 @@
 #include "_PinMap/IfxGtm_PinMap.h"
 #include "Gtm/Std/IfxGtm_Tom.h"
 #include "Gtm/Std/IfxGtm_Cmu.h"
-#include "Gtm/Std/IfxGtm_Dtm.h"
 #include "StdIf/IfxStdIf_Timer.h"
 
 /******************************************************************************/
@@ -148,7 +147,7 @@
  */
 typedef struct
 {
-    Ifx_TimerValue          period;               /**< \brief Timer period in ticks (cached value) */
+    Ifx_TimerValue          period;               /**< \brief Timer period in ticks (cached value). Range: 0 to 0xFFFF */
     boolean                 triggerEnabled;       /**< \brief If TRUE, the trigger functionality is Initialised */
     float32                 clockFreq;            /**< \brief Timer input clock frequency (cached value) */
     IfxStdIf_Timer_CountDir countDir;             /**< \brief Timer counting mode */
@@ -169,12 +168,10 @@ typedef struct
     IfxGtm_Tom            tomIndex;                               /**< \brief Enum for TOM objects */
     IfxGtm_Tom_Ch         timerChannel;                           /**< \brief TOM channel used for the timer */
     IfxGtm_Tom_Ch         triggerChannel;                         /**< \brief TOM channel used for the trigger, can be identical to the timer channel */
-    uint16                channelsMask[2];                        /**< \brief Mask for channels to be modified together, The 1st value corresponds to the Timer's TGC, the 2nd value corresponds to the timer's next TGC if any */
-    Ifx_TimerValue        offset;                                 /**< \brief Timer initial offset in ticks */
-    uint32                tgcGlobalControlDisableUpdate[2];       /**< \brief Cached value for TGC GLOB_CTR */
-    uint32                tgcGlobalControlApplyUpdate[2];         /**< \brief Cached value for TGC GLOB_CTR */
-    Ifx_GTM_CDTM_DTM     *dtm;                                    /**< \brief Pointer to DTM object used by TOM */
-    IfxGtm_Dtm_Ch         dtmChannel;                             /**< \brief DTM Channel */
+    uint16                channelsMask[2];                        /**< \brief Mask for channels to be modified together, The 1st value corresponds to the Timer's TGC, the 2nd value corresponds to the timer's next TGC if any. Range: 0 to 0xFFFF */
+    Ifx_TimerValue        offset;                                 /**< \brief Timer initial offset in ticks. Range: 0 to 0xFFFF */
+    uint32                tgcGlobalControlDisableUpdate[2];       /**< \brief Cached value for TGC GLOB_CTR. Range: 0 to 0xFFFF0000 */
+    uint32                tgcGlobalControlApplyUpdate[2];         /**< \brief Cached value for TGC GLOB_CTR. Range: 0 to 0xFFFF0000 */
 } IfxGtm_Tom_Timer;
 
 /** \brief Configuration structure for TOM Timer
@@ -189,7 +186,6 @@ typedef struct
     IfxGtm_Tom_Ch_ClkSrc   clock;                /**< \brief Timer input clock */
     IfxGtm_IrqMode         irqModeTimer;         /**< \brief Interrupt mode for the timer */
     IfxGtm_IrqMode         irqModeTrigger;       /**< \brief Interrupt mode for the trigger */
-    IfxGtm_Dtm_ClockSource dtmClockSource;       /**< \brief DTM clock source */
     boolean                initPins;             /**< \brief TRUE : Initialize pins in driver.
                                                   * FALSE: Don't initialize pins : handled separately by user */
 } IfxGtm_Tom_Timer_Config;

@@ -2,7 +2,7 @@
  * \file IfxCif_Cam.c
  * \brief CIF CAM details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -72,7 +72,13 @@
 /******************************************************************************/
 
 /**
- * \param cam cam handle
+ * \brief Initialises and calculates memory allocation for all image data paths.
+ *
+ * \param[inout] cam    Pointer to the CIF-CAM module handle.
+ * \param[in]    config Pointer to the camera configuration structure.
+ *
+ * \retval IfxCif_Cam_Status Status of the memory initialization process.
+ *                           Range: \ref IfxCif_Cam_Status
  */
 IFX_STATIC IfxCif_Cam_Status IfxCif_Cam_initMemSize(IfxCif_Cam *cam, const IfxCif_Cam_Config *config);
 
@@ -85,25 +91,54 @@ IFX_STATIC IfxCif_Cam_Status IfxCif_Cam_initMemSize(IfxCif_Cam *cam, const IfxCi
 /******************************************************************************/
 
 /**
+ * \brief Calculates the aligned memory size.
+ *
+ * \param[in] bytes  Size of a single image frame in bytes.
+ * 					 Range: 0 to 0xFFFFFFFF
+ * \param[in] frames Number of frames to be stored.
+ *
+ * \retval uint32 Aligned total memory size in bytes.
+ *                Range: 0 to 0xFFFFFFFF
  */
 IFX_INLINE uint32 IfxCif_Cam_calcMem(uint32 bytes, float32 frames);
 
 /**
- * \return None
+ * \brief Initialises picture information parameters by setting image size and offset values from the memory configuration.
+ *
+ * \param[inout] m    Pointer to the picture information structure to be initialized.
+ * \param[in]    mcfg Pointer to the memory configuration structure.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCif_Cam_initPictInfo(IfxCif_Cam_PictureInfo *m, const IfxCif_Cam_MemConfig *mcfg);
 
-/** \brief initializes GPIO Ports for image capturing
- * \return None
+/** \brief Initialises GPIO Ports for image capturing.
+ * 
+ * \param[in] inputMode Input mode for the port pins.
+ * 						Range: \ref IfxPort_InputMode
+ * \param[in] padDriver Pad driver configuration for the port pins.
+ * 						Range: \ref IfxPort_PadDriver
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxCif_Cam_initPortPins(IfxPort_InputMode inputMode, IfxPort_PadDriver padDriver);
 
 /**
+ * \brief Checks if the emulation extension feature is available for the CIF-CAM module.
+ *
+ * \retval Indicates if the emulation or ADAS extension hardware is available or not.
+ *         Range: TRUE  if EEC is available (SAK-TC3xxxE or SAK-TC3xxxF).
+ *                FALSE if EEC is not available (SAK-TC3xxxU or SAK-TC3xxxP).
  */
 IFX_INLINE boolean IfxCif_Cam_isEmulationExtensionAvailable(void);
 
 /**
- * \param cam cam handle
+ * \brief Returns the total memory size required for storing YUV image frames.
+ *
+ * \param[in] cam Pointer to the CIF-CAM module handle.
+ * 
+ * \return uint32 Total memory size in bytes needed for YUV image storage.
+ *                Range: 0 to 0xFFFFFFFF
  */
 IFX_INLINE uint32 IfxCif_Cam_yuvMemSize(const IfxCif_Cam *cam);
 
@@ -111,45 +146,77 @@ IFX_INLINE uint32 IfxCif_Cam_yuvMemSize(const IfxCif_Cam *cam);
 /*-----------------------Private Function Prototypes--------------------------*/
 /******************************************************************************/
 
-/** \brief OVT OV10630 sensor Camera SensorcConfig subroutine , Config file is preloaded to pflash
+/** \brief OVT OV10630 sensor Camera SensorcConfig subroutine , Config file is preloaded to pflash.
+ * 
+ * \param[in] config Pointer to the camera configuration structure.
+ * 
+ * \retval IfxCif_Cam_Status Status of the camera initialization process.
+ *                           Range: \ref IfxCif_Cam_Status
  */
 IFX_STATIC IfxCif_Cam_Status IfxCif_Cam_initCamera(const IfxCif_Cam_Config *config);
 
-/** \brief Initialises the CIF for image capturing
- * \param cam cam handel
- * \return None
+/**
+ * \brief Initialises the CIF hardware module with the specified camera configuration.
+ *
+ * \param[in] cam    Pointer to the CIF-CAM module handle.
+ * \param[in] config Pointer to the camera configuration structure.
+ * 
+ * \retval None
  */
 IFX_STATIC void IfxCif_Cam_initCif(const IfxCif_Cam *cam, const IfxCif_Cam_Config *config);
 
 /**
- * \return None
+ * \brief Initialises the CIF downscaler with the specified downscaling configuration.
+ *
+ * \param[in] ds Pointer to the downscaling configuration structure.
+ * 
+ * \retval None
  */
 IFX_STATIC void IfxCif_Cam_initCifDownscaler(const IfxCif_Cam_Downscaling *ds);
 
 /**
- * \param cam cam handle
- * \return None
+ * \brief Initialises the specified CIF extra path with the provided configuration.
+ *
+ * \param[in] cam    Pointer to the CIF-CAM module handle.
+ * \param[in] ep     Identifier for the extra path to be initialized.
+ * 					 Range: \ref IfxCif_ExtraPath
+ * \param[in] config Pointer to the camera configuration structure.
+ *
+ * \retval None
  */
 IFX_STATIC void IfxCif_Cam_initCifExtraPath(const IfxCif_Cam *cam, IfxCif_ExtraPath ep, const IfxCif_Cam_Config *config);
 
 /**
- * \return None
+ * \brief Initialises the CIF ISP unit with the specified configuration.
+ *
+ * \param[in] config Pointer to the camera configuration structure.
+ *
+ * \retval None
  */
 IFX_STATIC void IfxCif_Cam_initCifIspUnit(const IfxCif_Cam_Config *config);
 
 /**
- * \return None
+ * \brief Initialises the CIF JPEG encoder with the specified configuration.
+ *
+ * \param[in] config Pointer to the camera configuration structure.
+ *
+ * \retval None
  */
 IFX_STATIC void IfxCif_Cam_initCifJpegEncoder(const IfxCif_Cam_Config *config);
 
 /**
- * \param cam cam handle
+ * \brief Initialises the CIF memory interface using the specified camera configuration.
+ *
+ * \param[in] cam    Pointer to the CIF-CAM module handle.
+ * \param[in] config Pointer to the camera configuration structure.
+ *
  * \return None
  */
 IFX_STATIC void IfxCif_Cam_initCifMemInterface(const IfxCif_Cam *cam, const IfxCif_Cam_Config *config);
 
-/** \brief Enables CIF and EMEM and initialises all memory to 0
- * \return None
+/** \brief Enables CIF and EMEM and initialises all memory to 0.
+ *
+ * \retval None
  */
 IFX_STATIC void IfxCif_Cam_initEmem(void);
 
@@ -826,7 +893,7 @@ IFX_STATIC IfxCif_Cam_Status IfxCif_Cam_initMemSize(IfxCif_Cam *cam, const IfxCi
 }
 
 
-void IfxCif_Cam_restartCapture(const IfxCif_Cam *cam, uint8 frames)
+void IfxCif_Cam_restartCapture(const IfxCif_Cam *cam, uint16 frames)
 {
     (void)cam;
     IfxCif_setNumberOfAcquisitionFrames(frames);
@@ -835,7 +902,7 @@ void IfxCif_Cam_restartCapture(const IfxCif_Cam *cam, uint8 frames)
 }
 
 
-void IfxCif_Cam_startCapture(const IfxCif_Cam *cam, uint8 frames)
+void IfxCif_Cam_startCapture(const IfxCif_Cam *cam, uint16 frames)
 {
     (void)cam;
     IfxCif_setMiOffsetCounterInitializationEnableState(IfxCif_State_Enabled);

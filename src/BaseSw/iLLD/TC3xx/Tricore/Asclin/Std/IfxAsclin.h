@@ -3,7 +3,7 @@
  * \brief ASCLIN  basic functionality
  * \ingroup IfxLld_Asclin
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -124,6 +124,8 @@ typedef enum
     IfxAsclin_CtsInputSelect_3      /**< \brief CTS input pin 3  */
 } IfxAsclin_CtsInputSelect;
 
+/** \brief Data buffer mode
+ */
 typedef enum
 {
     IfxAsclin_DataBufferMode_normal = 0,      /**< \brief normal mode, each received byte is moved to the rx fifo */
@@ -413,7 +415,8 @@ typedef enum
     IfxAsclin_StopBit_7      /**< \brief number of stop bits 7  */
 } IfxAsclin_StopBit;
 
-/** \brief OCDS Suspend Control (OCDS.SUS)
+/** \brief OCDS Suspend Control (OCDS.SUS)\n
+ * Definition in Ifx_ASCLIN_OCS.B.SUS
  */
 typedef enum
 {

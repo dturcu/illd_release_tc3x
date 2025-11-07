@@ -3,7 +3,7 @@
  * \brief SDMMC SD details
  * \ingroup IfxLld_Sdmmc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -260,13 +260,13 @@ typedef struct
  */
 typedef struct
 {
-    boolean f8;                  /**< \brief F8 flag status */
-    boolean f2;                  /**< \brief F2 flag status */
-    boolean memInit;             /**< \brief Memory Init status */
-    boolean ioInit;              /**< \brief IO init status */
-    boolean supportIO;           /**< \brief Support for IO mode */
-    boolean supportMEM;          /**< \brief support for MEM mode */
-    boolean memoryPresent;       /**< \brief Memory present in card */
+    boolean f8;                  /**< \brief F8 flag status. Range: TRUE - Set the f8 flag, FALSE - Reset the flag f8. */
+    boolean f2;                  /**< \brief F2 flag status. Range: TRUE - Set the F2 flag, FALSE - Reset the flag F2. */
+    boolean memInit;             /**< \brief Memory Init status. Range: TRUE - Set the memInit flag, FALSE - Reset the memInit flag. */
+    boolean ioInit;              /**< \brief IO init status. Range: TRUE - Set the ioInit flag, FALSE - Reset the ioInit flag. */
+    boolean supportIO;           /**< \brief Support for IO mode. Range: TRUE - Set the supportIO flag, FALSE - Reset the supportIO flag. */
+    boolean supportMEM;          /**< \brief support for MEM mode. Range: TRUE - Set the supportMEM flag, FALSE - Reset the supportMEM flag. */
+    boolean memoryPresent;       /**< \brief Memory present in card. Range: TRUE - Set the memoryPresent flag, FALSE - Reset the memoryPresent flag. */
 } IfxSdmmc_Sd_Flags;
 
 /** \brief Configuration structure for Host
@@ -274,8 +274,9 @@ typedef struct
 typedef struct
 {
     IfxSdmmc_DataLineTimeout timeoutValue;          /**< \brief The interval by which DAT line timeouts are detected */
-    boolean                  usePresetValues;       /**< \brief Selection of whether to use automatic selection of SDCLK frequency and Driver strength Preset Value registers. */
-    uint32                   frequency;             /**< \brief clock frequency select */
+    boolean                  usePresetValues;       /**< \brief Selection of whether to use automatic selection of SDCLK frequency and Driver strength Preset Value registers.
+    												 * - Range: TRUE Use SDCLK frequency and Driver strength Preset Value registers. FALSE No SDCLK frequency and Driver strength Preset Value registers are used */
+    uint32                   frequency;             /**< \brief clock frequency select. Range: 0 to 0x2FAF080 (0 Hz to 50 MHz) */
     IfxSdmmc_SdModes         supportedModes;        /**< \brief supported modes of SD card */
 } IfxSdmmc_Sd_HostConfig;
 
@@ -303,14 +304,15 @@ typedef struct
 {
     Ifx_SDMMC          *sdmmcSFR;            /**< \brief pointer to register base address of SDMMC */
     IfxSdmmc_CardInfo   cardInfo;            /**< \brief Card information */
-    uint8               cardCapacity;        /**< \brief Card Capacity */
-    uint8               cardState;           /**< \brief State of the card */
-    boolean             dmaUsed;             /**< \brief Status of selection whether to use DMA for data transfers or not */
+    uint8               cardCapacity;        /**< \brief Card Capacity.
+    										  * - Range: \ref IfxSdmmc_EmmcCardCapacity_byteAddressing (0) - less than 2GB: Byte Addressing. \ref IfxSdmmc_EmmcCardCapacity_sectorAddressing (1) - More than 2GB : Sector Addressing. */
+    uint8               cardState;           /**< \brief State of the card. Range: \ref IfxSdmmc_CardState */
+    boolean             dmaUsed;             /**< \brief Status of selection whether to use DMA for data transfers or not. Range: TRUE - Use Dma for data transfers, FALSE - Dma is not used for data transfers. */
     IfxSdmmc_DmaType    dmaType;             /**< \brief Type of DMA used for data transfers */
     IfxSdmmc_SdCardType cardType;            /**< \brief Type of Card */
     IfxSdmmc_Sd_Flags   flags;               /**< \brief Flags */
-    boolean             presetMode;          /**< \brief Flag to identify for Preset Mode setting */
-    uint32              userFrequency;       /**< \brief Frequency of operation set by user */
+    boolean             presetMode;          /**< \brief Flag to identify for Preset Mode setting. Range: TRUE - Set the presetMode flag, FALSE - Reset the presetMode flag. */
+    uint32              userFrequency;       /**< \brief Frequency of operation set by user. Range: 0 to 0x2FAF080 (0 Hz to 50 MHz) */
 } IfxSdmmc_Sd;
 
 /** \brief Configuration Structure of SDMMC driver
@@ -322,7 +324,7 @@ typedef struct
     IfxSdmmc_InterruptConfig interruptConfig;       /**< \brief Configuration structure for Normal and Error interrupts */
     IfxSdmmc_Sd_Pins        *pins;                  /**< \brief Configuration structure for SD card pins */
     IfxSdmmc_Sd_CardConfig   cardConfig;            /**< \brief Configuration structure for SD card */
-    boolean                  useDma;                /**< \brief selection of whether to use DMA for transfers or not */
+    boolean                  useDma;                /**< \brief selection of whether to use DMA for transfers or not Range: TRUE Use Dma for data transfers, FALSE Dma is not used for data transfers */
     IfxSdmmc_Sd_DmaConfig    dmaConfig;             /**< \brief Configuration structure for ADMA */
 } IfxSdmmc_Sd_Config;
 
@@ -335,71 +337,119 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the SD card
- * \param sd Handle for SD interface
- * \param cardConfig Configuration structure for SD card
- * \return Status
+/**
+ * \brief Initializes the SD card using the provided handle and configuration structure.
+ *
+ * \param[inout] sd         Pointer to the SD interface handle.
+ * \param[in]    cardConfig Configuration structure containing settings for the SD card, such as data width and speed mode.
+ *
+ * \retval IfxSdmmc_Status The status of SD card Initialisation, A return value of 0 indicates success,
+ * 						   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_initCard(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *cardConfig);
 
-/** \brief Initialises IO mode of SD card
- * \param sd Handle for SD interface
- * \param cardConfig Configuration structure for SD card
- * \return Status
+/**
+ * \brief Initialises IO mode of SD card
+ *
+ * \param[inout] sd         Pointer to the SD interface handle.
+ * \param[in]    cardConfig Configuration structure for SD card. This includes settings like data width and speed mode for the card transfers.
+ *
+ * \retval IfxSdmmc_Status The status of SD IO initialisation, A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioInit(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *cardConfig);
 
-/** \brief Configures speed and bus width of SD card
- * \param sd Handle for SD interface
- * \param cardConfig Configuration structure for SD card
- * \return Status
+/**
+ * \brief Configures the speed and bus width for the SD card interface.
+ *
+ * \param[inout] sd 		Pointer to the SD interface handle.
+ * \param[in]    cardConfig Configuration structure for SD card. This includes settings like data width and speed mode for the card transfers.
+ *
+ * \retval IfxSdmmc_Status The status of Speed and Bus Width configuration, A return value of 0 indicates success,
+ * 						   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_configureSpeedAndBusWidth(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *cardConfig);
 
-/** \brief Initialises the Host controller
- * \param sd Handle for SD interface
- * \param hostConfig Configuration structure for Host Controller
- * \return Status
+/**
+ * \brief Initializes the Host controller for the SD interface.
+ *
+ * \param[inout] sd         Pointer to the SD interface handle.
+ * \param[in]    hostConfig Configuration structure for the Host controller. This includes settings such as timeout values,
+ *                          clock frequency, usePresetValues and supported operation modes.
+ *
+ * \retval IfxSdmmc_Status The status of Host controller Initialisation, A return value of 0 indicates success,
+ * 						   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_initHostController(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_HostConfig *hostConfig);
 
-/** \brief initialises the SDMMC module, both host interface and card
- * \param sd handle of SD interface
- * \param config Configuration structure of SDMMC driver
- * \return Status
+/**
+ * \brief Initialises the SDMMC module, configuring both the host interface and the card.
+ *
+ * \param[inout] sd  	Pointer to the SD interface handle.
+ * \param[inout] config Configuration structure for the SDMMC driver. This includes settings for the host, interrupts, pins,
+ * 						card configuration, and DMA usage.
+ *
+ * \retval IfxSdmmc_Status The status of Module Initialisation, A return value of 0 indicates success,
+ * 						   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_initModule(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_Config *config);
 
-/** \brief configures interrupts
- * \param sd handle of SD interface
- * \param interruptConfig Configuration structure of SD interrupts
- * \return None
+/**
+ * \brief Configures interrupt settings for the SD interface.
+ *
+ * \param[inout] sd 			 Pointer to the SD interface handle.
+ * \param[in]    interruptConfig Configuration structure for SD interrupts. This includes settings for enabling/disabling interrupts,
+ * 								 priority levels and specific interrupt sources.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_Sd_configureInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_InterruptConfig *interruptConfig);
 
-/** \brief Filld the configuration structure with default values
- * \param config configuration strcture of SDMMC driver
- * \param sdmmcSFR pointer to register base address of SDMMC
- * \return None
+/**
+ * \brief Initialises the SDMMC driver configuration structure with default values.
+ *
+ * \param[inout] config   Configuration structure for the SDMMC driver. This includes settings for the host, interrupts, pins,
+ * 						  card configuration and DMA usage.
+ * \param[in]    sdmmcSFR Pointer to the register base address of the SDMMC module.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_Sd_initModuleConfig(IfxSdmmc_Sd_Config *config, Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Sets up the SD card pins
- * \param sd Handle for SD interface
- * \param pins Configuration dtructure for SD card Pins
- * \return None
+/**
+ * \brief Configures the SD card pins according to the specified pin configuration.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] pins Configuration structure for SD card pins. This includes settings for clock, command, data lines,
+ * 				   inputMode and pin driver configurations.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_Sd_setupPins(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_Pins *pins);
 
-/** \brief Validate Op Condition of the SDIO card
- * \param sd Pointer to Sd device handle
- * \return status
+/**
+ * \brief Validates the operating conditions of the SDIO card to ensure proper functionality.
+ *
+ * \param[in] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of Operating Conditions validation, indicating success or failure. A return value of 0 indicates success,
+ * 						   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioValidateOperatingCondition(IfxSdmmc_Sd *sd);
 
-/** \brief Set voltage window
- * \param sd Pointer to SD device handle
- * \return Status
+/**
+ * \brief Configures the voltage window for the SD interface.
+ *
+ * \param[inout] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of Voltage Window configuration, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioSetVoltageWindow(IfxSdmmc_Sd *sd);
 
@@ -412,115 +462,209 @@ IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioSetVoltageWindow(IfxSdmmc_Sd *sd);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reads data from Card
- * \param sd Handle for SD interface
- * \param address Address where to read the data from
- * \param data Pointer of the buffer to read the data into
- * \return Status
+/**
+ * \brief Reads a block of data from the specified address on the SD card into the provided data buffer.
+ *
+ * \param[in] sd      Pointer to the SD interface handle.
+ * \param[in] address The logical address on the SD card from which to read data.
+ * 					  Range: 0 to 0xFFFFFFFF
+ * \param[in] data    Pointer to the buffer where the read data will be stored.
+ *
+ * \retval IfxSdmmc_Status The status of read Block operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_readBlock(IfxSdmmc_Sd *sd, uint32 address, uint32 *data);
 
-/** \brief Transfers one block of data from Hostcontroller to Card or Vice versa using ADMA2
- * \param sd Handle for SD interface
- * \param command Command to send
- * \param address Address where to send the data
- * \param blockSize Size of the block
- * \param descrAddress Pointer to the descriptor containing data to read/write
- * \param direction Transfer direction
- * \return Status
+/**
+ * \brief Transfers one block of data using ADMA2 between the host and the SD card.
+ *
+ * \param[in] sd 	       Pointer to the SD interface handle.
+ * \param[in] command      The command to send to the SD card.
+ * 						   Range: \ref IfxSdmmc_Command
+ * \param[in] address      The memory address where the data block is located.
+ * 						   Range: 0 to 0xFFFFFFFF
+ * \param[in] blockSize    The size of the data block to be transferred, specified as a 16-bit unsigned integer.
+ * 						   Range: 0 to 0xFFF
+ * \param[in] descrAddress Pointer to the descriptor containing the data to be read or written.
+ * \param[in] direction    The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 						   Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of single Block ADMA2 Transfer, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_singleBlockAdma2Transfer(IfxSdmmc_Sd *sd, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint32 *descrAddress, IfxSdmmc_TransferDirection direction);
 
-/** \brief Transfers one block of data from Hostcontroller to Card or Vice versa using SDMA
- * \param sd Handle for SD interface
- * \param command Command to send
- * \param address Address where to send the data
- * \param blockSize Size of the block
- * \param data Pointer of the buffer containing data to read/write
- * \param direction Transfer direction
- * \return Status
+/**
+ * \brief Transfers a single block of data between the host controller and the SD card using SDMA.
+ *
+ * \param[in] sd        Pointer to the SD interface handle.
+ * \param[in] command   The command to send to the SD card.
+ * 						Range: \ref IfxSdmmc_Command
+ * \param[in] address   The address in the SD card where the data will be read from or written to.
+ * 						Range: 0 to 0xFFFFFFFF
+ * \param[in] blockSize The size of the block to be transferred.
+ * 						Range: 0 to 0xFFF
+ * \param[in] data      Pointer to the buffer containing the data to be read or written.
+ * 						The direction of data flow is determined by the direction parameter.
+ * \param[in] direction The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 						Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of single Block DMA Transfer, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_singleBlockDmaTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint32 *data, IfxSdmmc_TransferDirection direction);
 
-/** \brief Transfers one block of data from Hostcontroller to Card or Vice versa
- * \param sd Handle for SD interface
- * \param command Command to send
- * \param address Address where to send the data
- * \param blockSize Size of the block
- * \param data Pointer of the buffer containing data to read/write
- * \param direction Transfer direction
- * \return Status
+/**
+ * \brief Transfers one block of data between the host controller and the SD card.
+ *
+ * \param[in] 	 sd        Pointer to the SD interface handle.
+ * \param[in]    command   The command to be sent to the SD card.
+ * 						   Range: \ref IfxSdmmc_Command
+ * \param[in]    address   The memory address where the data will be read from or written to.
+ * 						   Range: 0 to 0xFFFFFFFF
+ * \param[in]    blockSize The size of the data block to be transferred.
+ * 						   Range: 0 to 0xFFF
+ * \param[in]    data      Pointer to the data buffer containing the data to be read or written.
+ * 						   The direction of data flow is determined by the direction parameter.
+ * \param[in]    direction The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 				           Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of single Block Transfer, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_singleBlockTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint32 *data, IfxSdmmc_TransferDirection direction);
 
-/** \brief Sends data from Hostcontroller to Card
- * \param sd Handle for SD interface
- * \param address Address where to send the data
- * \param data Pointer of the buffer containing data to write
- * \return Status
+/**
+ * \brief Writes data from the host controller to the specified address on the SD card.
+ *
+ * \param[in]    sd      Pointer to the SD interface handle.
+ * \param[in]    address Destination address on the SD card where the data will be written.
+ * 					     Range: 0 to 0xFFFFFFFF
+ * \param[in]    data    Pointer to the data buffer to be written to the SD card.
+ *
+ * \retval IfxSdmmc_Status The status of write Block operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_writeBlock(IfxSdmmc_Sd *sd, uint32 address, uint32 *data);
 
-/** \brief Function to read a single register directly in SDIO mode (CMD52)
- * \param sd Pointer to SD device handle
- * \param func Function
- * \param addr Address of register
- * \param reg destination pointer
- * \return status
+/**
+ * \brief Reads a single register directly in SDIO mode using CMD52.
+ *
+ * \param[in]    sd   Pointer to the SD interface handle.
+ * \param[in]    func The function number to access.
+ * 				      Range: \ref IfxSdmmc_SdIoFunction
+ * \param[in]    addr The address of the register to read from.
+ * 				      Range: 0 to 0x1FFFF
+ * \param[inout] reg  Pointer to the destination where the read value will be stored.
+ *
+ * \retval IfxSdmmc_Status The status of Sdio Read Register operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioReadRegister(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func, uint32 addr, uint8 *reg);
 
-/** \brief Function to write a single register directly in SDIO mode (CMD52)
- * \param sd Pointer to SD device handle
- * \param func Function
- * \param addr Address of register
- * \param reg data to be written
- * \return status
+/**
+ * \brief Writes a single register directly in SDIO mode using CMD52 command.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] func The function number to which the register write operation is directed.
+ * 				   Range: \ref IfxSdmmc_SdIoFunction
+ * \param[in] addr The address of the register to write to.
+ * 				   Range: 0 to 0x1FFFF
+ * \param[in] reg  Data value to be written to the specified register.
+ * 				   Range: 0 to 0xFF
+ *
+ * \retval IfxSdmmc_Status The status of Sdio Write Register operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioWriteRegister(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func, uint32 addr, uint8 reg);
 
-/** \brief Reads multi block of data from Card
- * \param sd Handle for SD interface
- * \param address Address where to read the data from
- * \param data Pointer of the buffer to read the data into
- * \param blockCount Number of data block to read
- * \param blockBoundarySize Boundary size for DMA block
- * \return Status
+/**
+ * \brief Reads multiple blocks of data from the SD card into a buffer.
+ *
+ * \param[in]    sd 	       Pointer to the SD interface handle.
+ * \param[in]    address       The starting address on the SD card from where data will be read.
+ * 							   Range: 0 to 0xFFFFFFFF
+ * \param[in]    data          Pointer to the buffer where the read data will be stored.
+ * \param[in]    blockCount    The number of blocks to read from the SD card.
+ * 							   Range: 0 to 0xFFFFFFFF
+ * \param[in]    blockBoundary The size of each block boundary for DMA transfers.
+ * 							   Range: \ref IfxSdmmc_BlockBoundarySize
+ *
+ * \retval IfxSdmmc_Status The status of read Multi Block operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_readMultiBlock(IfxSdmmc_Sd *sd, uint32 address, uint32 *data, uint32 blockCount, IfxSdmmc_BlockBoundarySize blockBoundarySize);
 
-/** \brief Transfers multi block of data from Hostcontroller to Card or Vice versa using ADMA2
- * \param sd Handle for SD interface
- * \param command Command to send
- * \param address Address where to send the data
- * \param blockSize Size of the block
- * \param descrAddress Pointer to the descriptor containing data to read/write
- * \param direction Transfer direction
- * \param blockCount Number of block to transfer
- * \return Status
+/**
+ * \brief Transfers multiple blocks of data between the Hostcontroller and the SD card using ADMA2.
+ * 
+ * \param[in] sd 		   Pointer to the SD interface handle.
+ * \param[in] command      The command to be sent to the SD card.
+ * 						   Range: \ref IfxSdmmc_Command
+ * \param[in] address      The memory address where the data will be sent or read from.
+ * 						   Range: 0 to 0xFFFFFFFF
+ * \param[in] blockSize    The size of each block to be transferred, specified in bytes.
+ * 						   Range: 0 to 0xFFF
+ * \param[in] descrAddress Pointer to the descriptor containing the data to be read or written.
+ * \param[in] direction    The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 						   Range: \ref IfxSdmmc_TransferDirection
+ * \param[in] blockCount   The number of blocks to be transferred.
+ * 						   Range: 0 to 0xFFFFFFFF
+ * 
+ * \retval IfxSdmmc_Status The status of multiple Blocks Adma2 Transfer, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_multiBlockAdma2Transfer(IfxSdmmc_Sd *sd, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint32 *descrAddress, IfxSdmmc_TransferDirection direction, uint32 blockCount);
 
-/** \brief Transfers one block of data from Hostcontroller to Card or Vice versa using SDMA
- * \param sd Handle for SD interface
- * \param command Command to send
- * \param address Address where to send the data
- * \param blockSize Size of the block
- * \param data Pointer of the buffer containing data to read/write
- * \param direction Transfer direction
- * \param blockCount Number of block to transfer
- * \param blockBoundarySize Boundary size for DMA block
- * \return Status
+/**
+ * \brief Transfers multiple blocks of data between the host controller and the SD card using SDMA.
+ *
+ * \param[in] sd         	    Pointer to the SD interface handle.
+ * \param[in] command 		    The command to be sent to the SD card.
+ * 								Range: \ref IfxSdmmc_Command
+ * \param[in] address 		    The memory address where the data will be read from or written to.
+ * 								Range: 0 to 0xFFFFFFFF
+ * \param[in] blockSize 		The size of each block to be transferred, in bytes.
+ * 								Range: Range: 0 to 0xFFF
+ * \param[in] data       	    Pointer to the buffer containing the data to be read or written.
+ * 								The direction of data flow is determined by the direction parameter.
+ * \param[in] direction  	    The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 								Range: \ref IfxSdmmc_TransferDirection
+ * \param[in] blockCount 	    The number of blocks to be transferred.
+ * 								Range: 0 to 0xFFFFFFFF
+ * \param[in] blockBoundarySize The boundary size for the DMA block transfer.
+ * 								Range: \ref IfxSdmmc_BlockBoundarySize
+ *
+ * \retval IfxSdmmc_Status The status of MultiBlock Dma Transfer, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_multiBlockDmaTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint32 *data, IfxSdmmc_TransferDirection direction, uint32 blockCount, IfxSdmmc_BlockBoundarySize blockBoundarySize);
 
-/** \brief Sends multi block of data from Hostcontroller to Card
- * \param sd Handle for SD interface
- * \param address Address where to send the data
- * \param data Pointer of the buffer containing data to write
- * \param blockCount Number of data block to write
- * \param blockBoundarySize Boundary size for DMA block
- * \return Status
+/**
+ * \brief Sends multiple blocks of data from the host controller to the SD card.
+ *
+ * \param[in] sd 				Pointer to the SD interface handle.
+ * \param[in] address 			The starting address on the SD card where the data will be written.
+ * 							    Range: 0 to 0xFFFFFFFF
+ * \param[in] data 				Pointer to the buffer containing the data to be written.
+ * \param[in] blockCount 		The number of data blocks to be written.
+ * 								Range: 0 to 0xFFFFFFFF
+ * \param[in] blockBoundarySize The size of each data block, determining the boundary for DMA transfers.
+ * 								Range: \ref IfxSdmmc_BlockBoundarySize
+ *
+ * \retval IfxSdmmc_Status The status of write Multi Blocks operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_writeMultiBlock(IfxSdmmc_Sd *sd, uint32 address, uint32 *data, uint32 blockCount, IfxSdmmc_BlockBoundarySize blockBoundarySize);
 
@@ -533,46 +677,82 @@ IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_writeMultiBlock(IfxSdmmc_Sd *sd, uint32 a
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reads RCA register of the card
- * \param sd Handle for SD interface
- * \param lockStatus Lock status
- * \return Status
+/**
+ * \brief Retrieves the current lock status of the SD card.
+ *
+ * \param[in]    sd 		Pointer to the SD interface handle.
+ * \param[inout] lockStatus Pointer to store the lock status of the card.
+ * 						    Range: \ref IfxSdmmc_CardLockStatus
+ *
+ * \retval IfxSdmmc_Status The status of Lock operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_getLockStatus(IfxSdmmc_Sd *sd, IfxSdmmc_CardLockStatus *lockStatus);
 
-/** \brief Reads CID register of the card
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Reads the CID register from the SD card.
+ *
+ * \param[inout] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of read CID operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_readCid(IfxSdmmc_Sd *sd);
 
-/** \brief Reads RCA register of the card
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Reads the RCA from the SD card.
+ *
+ * \param[inout] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of read RCA operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_readRca(IfxSdmmc_Sd *sd);
 
-/** \brief Reads SCR register of the card
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Reads the SCR from the SD card to retrieve configuration information.
+ *
+ * \param[inout] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of read SCR operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_readScr(IfxSdmmc_Sd *sd);
 
-/** \brief Switches the transfer bus width to 4bit wide
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Switches the SD card interface to a 4-bit wide bus for data transfers.
+ *
+ * \param[in] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of switch Bus Width to 4-bit operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_switchToBusWidth4(IfxSdmmc_Sd *sd);
 
-/** \brief Switches the Speed mode from normal to HIgh speed
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Switches the SD interface to high-speed mode.
+ *
+ * \param[in] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of switch to high speed operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_switchToHighSpeed(IfxSdmmc_Sd *sd);
 
-/** \brief Switches the card state to transferring state
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Switches the SD card to the transfer state, enabling data transfer operations.
+ *
+ * \param[in] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of switch to Transfer State operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_switchToTransferState(IfxSdmmc_Sd *sd);
 
@@ -582,140 +762,256 @@ IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_switchToTransferState(IfxSdmmc_Sd *sd);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to check if Multiple Block Transfer is supported
- * \param sd Pointer to SD device handle
- * \return status
+/**
+ * \brief Checks if the SD card supports multiple block transfers.
+ *
+ * \param[in] sd Pointer to the SD interface handle.
+ *
+ * \retval boolean TRUE  if multiple block transfers are supported by the SD card.
+ * 		           FALSE if multiple block transfers are not supported by the SD card.
  */
 IFX_EXTERN boolean IfxSdmmc_Sd_ioIsMultiBlockSupported(IfxSdmmc_Sd *sd);
 
-/** \brief Set Block Size of a function
- * \param sd Pointer to SD device handle
- * \param func function
- * \param blockSize block Size in bytes
- * \return status
+/**
+ * \brief Configures the block size for a specific I/O function associated with the SD device.
+ *
+ * \param[in] sd        Pointer to the SD interface handle.
+ * \param[in] func      The I/O function for which the block size is to be configured.
+ * 					    Range: \ref IfxSdmmc_SdIoFunction
+ * \param[in] blockSize The block size in bytes to be set for the specified I/O function.
+ * 					    Range: 0 to 0xFFFF
+ *
+ * \retval IfxSdmmc_Status The status of Set Function Block Size, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioSetFuncBlockSize(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func, uint16 blockSize);
 
-/** \brief Function to read register blocks (of upto 512 registers / block)
- * \param sd Pointer to SD device handle
- * \param func function
- * \param startAddr Start Address of the register
- * \param regptr pointer to destination
- * \param blocksize block size in bytes
- * \param blockCount Number of blocks
- * \return status
+/**
+ * \brief Reads multiple blocks of registers from the SD card.
+ *
+ * \param[in]  sd         Pointer to the SD interface handle.
+ * \param[in]  func 	  The function number to be used for the register read operation.
+ * 						  Range: \ref IfxSdmmc_SdIoFunction
+ * \param[in]  startAddr  The starting address of the register block to read from.
+ * 						  Range: 0 to 0xFFFFFFFF
+ * \param[out] regptr     Pointer to the destination buffer where the read data will be stored. The buffer must be large enough to accommodate the total data size (blocksize * blockCount).
+ * \param[in]  blocksize  The size of each block in bytes.
+ *						  Range: 0 to 0xFFF
+ * \param[in]  blockCount The number of blocks to read.
+ * 						  Range: 0 to 0xFFFFFFFF
+ *
+ * \retval IfxSdmmc_Status The status of read Multiple Blocks of Sdio Registers operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioReadRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func, uint32 startAddr, uint8 *regptr, uint16 blocksize, uint32 blockCount);
 
-/** \brief Function to write register blocks (of upto 512 registers / block)
- * \param sd Pointer to SD device handle
- * \param func function
- * \param startAddr Start Address of the register
- * \param regptr pointer to destination
- * \param blocksize block size in bytes
- * \param blockCount Number of blocks
- * \return status
+/**
+ * \brief Writes multiple blocks of registers to the SD card.
+ *
+ * \param[in]  sd          Pointer to the SD interface handle.
+ * \param[in]  func        The function number to be used for the register write operation.
+ * 						   Range: \ref IfxSdmmc_SdIoFunction
+ * \param[in]  startAddr   The starting address of the register where the write operation begins.
+ * 						   Range: 0 to 0xFFFFFFFF
+ * \param[in]  regptr      Pointer to the data that will be written to the SD card's registers.
+ * \param[in]  blocksize   The size of each block in bytes. Maximum block size is 512 bytes.
+ * 						   Range: 0 to 0xFFF
+ * \param[in]  blockCount  The number of blocks to be written.
+ *						   Range: 0 to 0xFFFFFFFF
+ *
+ * \retval IfxSdmmc_Status The status of write Multiple Blocks of Sdio Registers operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioWriteRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func, uint32 startAddr, uint8 *regptr, uint16 blocksize, uint32 blockCount);
 
-/** \brief function to support Multiple block tansfer operation (with CMD53)
- * \param sd Pointer to SD device handle
- * \param argument argument of command
- * \param blockSize block Size in bytes
- * \param blockCount Number of blocks to for tx/rx
- * \param data Pointer to data
- * \param direction Transfer direction
- * \return status
+/**
+ * \brief Performs multiple block transfer operations using CMD53 for SD I/O.
+ *
+ * \param[in]    sd 	    Pointer to the SD device handle.
+ * \param[in]    argument   Command argument for the SDMMC operation.
+ * 						    Range: 0 to 0xFFFFFFFF
+ * \param[in]    blockSize  Size of each block in bytes.
+ * 							Range: 0 to 0xFFF
+ * \param[in]    blockCount Number of blocks to transfer.
+ * 							Range: 0 to 0xFFFF
+ * \param[in]    data       Pointer to the data buffer.
+ * 							The direction of data flow is determined by the direction parameter.
+ * \param[in]    direction  The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ *							Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of IO Multiple Blocks Transfer operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioBlockTransfer(IfxSdmmc_Sd *sd, uint32 argument, uint16 blockSize, uint32 blockCount, uint32 *data, IfxSdmmc_TransferDirection direction);
 
-/** \brief ADMA2 based block tansfer operation (with CMD53)
- * \param sd Pointer to SD device handle
- * \param argument argument of command
- * \param blockSize block Size in bytes
- * \param blockCount Number of blocks to for tx/rx
- * \param descrAddress Pointer to data
- * \param direction Transfer direction
- * \return status
+/**
+ * \brief Performs an ADMA2-based block transfer operation for SD I/O using CMD53.
+ *
+ * \param[in] sd           Pointer to the SD interface handle.
+ * \param[in] argument     Command argument for the SD I/O operation. This is command-specific and typically includes address or parameter information for the operation.
+ *                         Range: 0 to 0xFFFFFFFF
+ * \param[in] blockSize    Size of each block in bytes.
+ * 						   Range: 0 to 0xFFF
+ * \param[in] blockCount   Number of blocks to transfer.
+ * 						   Range: 0 to 0xFFFF
+ * \param[in] descrAddress Pointer to the ADMA2 descriptor address. This parameter specifies the location of the ADMA2 descriptor table in system memory.
+ * \param[in] direction    The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ *						   Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of ADMA2 based Block Transfer operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioBlockAdma2Transfer(IfxSdmmc_Sd *sd, uint32 argument, uint16 blockSize, uint32 blockCount, uint32 *descrAddress, IfxSdmmc_TransferDirection direction);
 
-/** \brief DMA based block tansfer operation (with CMD53)
- * \param sd Pointer to SD device handle
- * \param argument argument of command
- * \param blockSize block Size in bytes
- * \param blockCount Number of blocks to for tx/rx
- * \param data Pointer to data
- * \param direction Transfer direction
- * \return status
+/**
+ * \brief Performs a DMA-based block transfer operation for SD I/O using CMD53.
+ *
+ * \param[in]    sd         Pointer to the SD device handle.
+ * \param[in]    argument   Command argument for the SD I/O operation. This is typically used to specify the address or parameters for the command.
+ * 							Range: 0 to 0xFFFFFFFF
+ * \param[in]    blockSize  Size of each block in bytes. The block size must be a value supported by the SD card (e.g., 512 bytes for standard SD cards).
+ * 							Range: 0 to 0xFFF
+ * \param[in] 	 blockCount Number of blocks to transfer. The maximum value is limited by the available memory and the SD card's capacity.
+ * 							Range: 0 to 0xFFFF
+ * \param[inout] data       Pointer to the data buffer.
+ * 							The direction of data flow is determined by the direction parameter.
+ * \param[in]    direction  The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 							Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of DMA based Block Transfer operation, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioBlockDmaTransfer(IfxSdmmc_Sd *sd, uint32 argument, uint16 blockSize, uint32 blockCount, uint32 *data, IfxSdmmc_TransferDirection direction);
 
-/** \brief function to switch to transfer state (CMD7)
- * \param sd Pointer to SD device handle
- * \return status
+/**
+ * \brief Switches the SD card to the transfer state (CMD7) to prepare for data transfer operations.
+ *
+ * \param[in] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of Switching SD card to the Transfer State, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioSwitchToTransferState(IfxSdmmc_Sd *sd);
 
-/** \brief Get function Enabled / Disabled status
- * \param sd Pointer to SD device handle
- * \param func Function
- * \return IO enable status
+/**
+ * \brief Checks if a specific I/O function is enabled for the SD device.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] func The I/O function to check.
+ * 				   Range: \ref IfxSdmmc_SdIoFunction
+ *
+ * \retval IfxSdmmc_FunctionIO The status of I/O Function Enablement, indicating function disabled or enabled. A return value of 0 indicates function disabled,
+ *                             while return value 1 indicates enabled and return value 2 indicates status unknown.
+ *                         	   Range: \ref IfxSdmmc_FunctionIO
  */
 IFX_EXTERN IfxSdmmc_FunctionIO IfxSdmmc_Sd_ioIsFunctionEnabled(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func);
 
-/** \brief Enable Function
- * \param sd Pointer to SD device handle
- * \param func Function
- * \return Status
+/**
+ * \brief Enables a specific I/O function on the SD device.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] func The I/O function to enable.
+ * 				   Range: \ref IfxSdmmc_SdIoFunction
+ *
+ * \retval IfxSdmmc_Status The status of I/O Function Enablement, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioEnableFunction(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func);
 
-/** \brief Get Interrupt Enable Status
- * \param sd Pointer to SD device handle
- * \param func Function
- * \return Interrupt enable status
+/**
+ * \brief Get the interrupt enable status for a specific SD I/O function.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] func The SD I/O function for which to retrieve the interrupt enable status.
+ * 				   Range: \ref IfxSdmmc_SdIoFunction
+ *
+ * \retval IfxSdmmc_SdIoInterruptStatus The status of SdIo Interrupt, A return value of 0 indicates interrupt disabled, while return value 1 indicates interrupt enabled and
+ * 										interrupt status unknown return value 2 indicates.
+ *                         				Range: \ref IfxSdmmc_SdIoInterruptStatus
  */
 IFX_EXTERN IfxSdmmc_SdIoInterruptStatus IfxSdmmc_Sd_ioGetInterruptEnableStatus(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func);
 
-/** \brief Enable function Interrupt
- * \param sd Pointer to SD device handle
- * \param func Function
- * \return Status
+/**
+ * \brief Enables the function interrupt for the specified SD I/O function.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] func The function number to enable the interrupt for.
+ * 				   Range: \ref IfxSdmmc_SdIoFunction
+ *
+ * \retval IfxSdmmc_Status The status of Function Interrupt Enablement, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioEnableFuncInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func);
 
-/** \brief Disable Function Interrupt
- * \param sd Pointer to SD device handle
- * \param func Function
- * \return Status
+/**
+ * \brief Disables the specified I/O function interrupt for the given SD device.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] func The I/O function to disable the interrupt for.
+ * 				   Range: \ref IfxSdmmc_SdIoFunction
+ *
+ * \retval IfxSdmmc_Status The status of Function Interrupt Disable, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioDisableFuncInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func);
 
-/** \brief Enable/Disable Master Interrupt
- * \param sd Pointer to SD device handle
- * \param irqEnable Interrupt status
- * \return Status
+/**
+ * \brief Enables or disables the master interrupt for the SD device.
+ *
+ * \param[in] sd        Pointer to the SD interface handle.
+ * \param[in] irqEnable Interrupt status to be set.
+ * 					    Range: \ref IfxSdmmc_SdIoInterruptStatus
+ *
+ *\retval IfxSdmmc_Status The status of Master Interrupt Enablement, indicating success or failure. A return value of 0 indicates success,
+ *                        while any non-zero value indicates an error.
+ *                        Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioSetMasterInterruptEnable(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoInterruptStatus irqEnable);
 
-/** \brief get pending interrupt status
- * \param sd Pointer to SD device handle
- * \param func Function
- * \return Interrupt pending status
+/**
+ * \brief Retrieves the pending interrupt status for a specific SD I/O function.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] func The I/O function number to check for pending interrupts.
+ * 				   Range: \ref IfxSdmmc_SdIoFunction
+ *
+ * \retval IfxSdmmc_SdIoInterruptPendingStatus Interrupt pending status for the specified function. A return value of 0 indicates Interrupt cleared,
+ *                        					   while return value of 0 indicates Interrupt is pending and return value of 2 indicates Interrupt Pending Status unknown.
+ *                        					   Range: \ref IfxSdmmc_SdIoInterruptPendingStatus
  */
 IFX_EXTERN IfxSdmmc_SdIoInterruptPendingStatus IfxSdmmc_Sd_ioGetInterruptPendingStatus(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func);
 
-/** \brief Clear pending function Interrupt
- * \param sd Pointer to SD device handle
- * \param func Function
- * \return Status
+/**
+ * \brief Clears pending interrupts for a specific I/O function of the SD interface.
+ *
+ * \param[in] sd   Pointer to the SD interface handle.
+ * \param[in] func The I/O function identifier. This parameter specifies which I/O function's pending interrupt is to be cleared.
+ * 				   Range: \ref IfxSdmmc_SdIoFunction
+ *
+ * \retval IfxSdmmc_Status The status of Clearing Pending Interrupts, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioClearPendingInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunction func);
 
-/** \brief Enable Multi Block Interrupt
- * \param sd Pointer to SD device handle
- * \return Status
+/**
+ * \brief Enables the multi-block interrupt for the specified SD device, allowing the system to handle multiple block transfers with interrupt-driven notifications.
+ *
+ * \param[in] sd Pointer to the SD interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of Multi Block Interrupt Enablement, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Sd_ioEnableMultiBlockInterrupt(IfxSdmmc_Sd *sd);
 #endif /* IFXSDMMC_SD_H */

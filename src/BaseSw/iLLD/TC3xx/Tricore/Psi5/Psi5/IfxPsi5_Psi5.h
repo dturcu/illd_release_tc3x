@@ -3,7 +3,7 @@
  * \brief PSI5 PSI5 details
  * \ingroup IfxLld_Psi5
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -169,15 +169,15 @@ typedef struct
  */
 typedef struct
 {
-    uint32 channelTriggerValue;         /**< \brief Specifies the channel trigger value CTV */
-    uint32 channelTriggerCounter;       /**< \brief Specifies the channel trigger counter */
+    uint32 channelTriggerValue;         /**< \brief Specifies the channel trigger value CTV. Range 0 to 0xFFFF*/
+    uint32 channelTriggerCounter;       /**< \brief Specifies the channel trigger counter. Range 0 to 0xFFFF */
 } IfxPsi5_Psi5_ChannelTrigger;
 
 /** \brief Clock configuration data structure
  */
 typedef struct
 {
-    uint32              frequency;       /**< \brief Specifies the frequency for the clock */
+    uint32              frequency;       /**< \brief Specifies the frequency for the clock 0 to 200 MHz*/
     IfxPsi5_DividerMode mode;            /**< \brief Specifies the mode of division for the clock */
     IfxPsi5_ClockType   type;            /**< \brief Specifies the type of clock (fracDiv / slow 125kHz / fast 189 kHz / timestamp) */
 } IfxPsi5_Psi5_Clock;
@@ -186,24 +186,24 @@ typedef struct
  */
 typedef struct
 {
-    uint8  crcError : 1;                         /**< \brief Crc error flag */
-    uint8  crc : 3;                              /**< \brief Received crc */
-    uint32 readData : 28;                        /**< \brief Received data */
-    uint32 timestamp : 24;                       /**< \brief Timestamp */
-    uint8  slotCounter : 3;                      /**< \brief Slot counter */
-    uint8  timeslotError : 1;                    /**< \brief Time slot error flag */
-    uint8  numberOfBitsError : 1;                /**< \brief Number of bits error flag */
-    uint8  messagingBitsError : 1;               /**< \brief Messaging bits error flag */
-    uint8  noFrameReceivedError : 1;             /**< \brief No frame received flag */
-    uint8  receiveMemoryOverflowError : 1;       /**< \brief Receive buffer overflow error flag */
+    uint8  crcError : 1;                         /**< \brief Crc error flag. Range 0: correct CRC / Parity, 1: wrong CRC / Parity */
+    uint8  crc : 3;                              /**< \brief Received crc: Range 0 to 0x7 */
+    uint32 readData : 28;                        /**< \brief Received data. Range 0x0000000 to 0xFFFFFFF*/
+    uint32 timestamp : 24;                       /**< \brief Timestamp. Range 0x000000 to 0xFFFFFF */
+    uint8  slotCounter : 3;                      /**< \brief Slot counter. Range 0 to 6 */
+    uint8  timeslotError : 1;                    /**< \brief Time slot error flag. Range 0: No error, 1: Error */
+    uint8  numberOfBitsError : 1;                /**< \brief Number of bits error flag. Range 0: All bits received, 1: Not all bits received*/
+    uint8  messagingBitsError : 1;               /**< \brief Messaging bits error flag. Range 0: Frame is correct, 1: Frame is not correct  */
+    uint8  noFrameReceivedError : 1;             /**< \brief No frame received flag. Range 0: No error, 1: Error */
+    uint8  receiveMemoryOverflowError : 1;       /**< \brief Receive buffer overflow error flag. Range 0: No overflow, 1: Overflow */
 } IfxPsi5_Psi5_FrameData;
 
 /** \brief Input output configuration structure
  */
 typedef struct
 {
-    boolean                         outputInverterEnabled;         /**< \brief Specifies the pulse polarity of the output */
-    boolean                         inputInverterEnabled;          /**< \brief Specifies the pulse polarity of the input */
+    boolean                         outputInverterEnabled;         /**< \brief Specifies the pulse polarity of the output. Range 0: Pulse polarity is not inverted, 1: Pulse polarity is inverted  */
+    boolean                         inputInverterEnabled;          /**< \brief Specifies the pulse polarity of the input. Range 0: Pulse polarity is not inverted, 1: Pulse polarity is inverted */
     IfxPsi5_DigitalInputFilterDepth digitalInputFilterDepth;       /**< \brief Specifies the the number of port input samples considered for floating average */
 } IfxPsi5_Psi5_InputOutputControl;
 
@@ -211,24 +211,24 @@ typedef struct
  */
 typedef struct
 {
-    uint16 serialData : 16;                       /**< \brief Serial message data */
-    uint8  messageId : 8;                         /**< \brief Serial message Id */
-    uint8  crc : 6;                               /**< \brief Serial message crc */
-    uint8  serialMessageCRCFailedError : 1;       /**< \brief Serial message crc error flag */
-    uint8  configuration : 1;                     /**< \brief Serial message configuration */
+    uint16 serialData : 16;                       /**< \brief Serial message data. Range 0 to 0xFFFF */
+    uint8  messageId : 8;                         /**< \brief Serial message Id. Range 0 to 0xFF */
+    uint8  crc : 6;                               /**< \brief Serial message crc. Range 0 to 0x3F */
+    uint8  serialMessageCRCFailedError : 1;       /**< \brief Serial message crc error flag. Range 0: CRC of serial message is success, 1: CRC of serial message is not success */
+    uint8  configuration : 1;                     /**< \brief Serial message configuration. Range 0: 12-bit data and 8-bit message ID, 1: 16-bit data and 4-bit message ID  */
 } IfxPsi5_Psi5_Message;
 
 /** \brief Sync pulse generation configuration structure
  */
 typedef struct
 {
-    uint32              pulseLength;                      /**< \brief Specifies the standard pulse width without data coding for standard pulse width or for coding a '0' */
-    uint32              delayLength;                      /**< \brief Specifies the additional length of the pulse width for coding a '1' */
-    IfxPsi5_TimeBase    timeBaseSelect;                   /**< \brief Specifies the clock source for CTV as internal or external */
-    IfxPsi5_Trigger     externalTimeBaseSelect;           /**< \brief Specifies the clock source for CTV in the case of external */
+    uint32              pulseLength;                      /**< \brief Specifies the standard pulse width without data coding for standard pulse width or for coding a '0'. Range 0 to 0x3F */
+    uint32              delayLength;                      /**< \brief Specifies the additional length of the pulse width for coding a '1'. Range 0 to 0x3F */
+    IfxPsi5_TimeBase    timeBaseSelect;                   /**< \brief Specifies the clock source for CTV as internal or external. */
+    IfxPsi5_Trigger     externalTimeBaseSelect;           /**< \brief Specifies the clock source for CTV in the case of external.*/
     IfxPsi5_TriggerType periodicOrExternalOrBypass;       /**< \brief Specifies whether periodic trigger or external trigger or bypass is selected */
     IfxPsi5_Trigger     externalTriggerSelect;            /**< \brief Specifies the trigger source in case of external triggerring */
-    uint32              blankoutTime;                     /**< \brief Specifies the duration of blank out period */
+    uint32              blankoutTime;                     /**< \brief Specifies the duration of blank out period. Range 0 to 0x7F */
 } IfxPsi5_Psi5_PulseGeneration;
 
 /** \brief Psi5 frame in double word format
@@ -250,9 +250,9 @@ typedef struct
  */
 typedef struct
 {
-    boolean                              asynchronousModeSelected;                       /**< \brief Specifies the asynchronous mode of operation */
-    uint32                               fifoWarningLevel;                               /**< \brief Specifies the fifo warning level */
-    uint32                               payloadLength[IFXPSI5_NUM_SLOTS];               /**< \brief Specifies the payload length for the slots 0 to 5 */
+    boolean                              asynchronousModeSelected;                       /**< \brief Specifies the asynchronous mode of operation. Range 0: ASYN Mode OFF, 1: ASYN Mode ON */
+    uint32                               fifoWarningLevel;                               /**< \brief Specifies the fifo warning level. Range 0 to 0x1F */
+    uint32                               payloadLength[IFXPSI5_NUM_SLOTS];               /**< \brief Specifies the payload length for the slots 0 to 5.  Range 0 to 0x1F */
     IfxPsi5_Verbose                      verboseForAsynchronousMode;                     /**< \brief Specifies the verbose mode selection in asynchronous mode of operation */
     IfxPsi5_MessagingBits                messagingBitsPresence[IFXPSI5_NUM_SLOTS];       /**< \brief Specifies the presence or absence of messaging bits in the slots 0 to 5 */
     IfxPsi5_CRCorParity                  crcOrParity[IFXPSI5_NUM_SLOTS];                 /**< \brief Specifies the crc or parity selection for the slots 0 to 5 */
@@ -276,14 +276,14 @@ typedef struct
  */
 typedef struct
 {
-    boolean enhancedProtocolSelected;                 /**< \brief Specifies whether the enhanced protocol is selected or not */
-    boolean bitStuffingEnabled;                       /**< \brief Specifies whether the bit stuffing is turned on or not */
-    boolean crcGenerationEnabled;                     /**< \brief Specifies whether the crc generation is turned on or not */
-    boolean startSequenceGenerationEnabled;           /**< \brief Specifies whether the start sequence generation is turned on or not */
-    boolean inhibitingAutomaticTransferEnabled;       /**< \brief Specifies whether automatic transfer from the shift registers SSRL/H to SORL/H is inhibited or not */
-    uint32  payloadLength;                            /**< \brief Specifies the payload length to be sent */
-    uint32  ssrPayloadLength;                         /**< \brief Specifies the payload length of SSR */
-    uint32  sorPayloadLength;                         /**< \brief Specifies the payload length of SOR */
+    boolean enhancedProtocolSelected;                 /**< \brief Specifies whether the enhanced protocol is selected or not. Range 0: PSI5 V1.3. No Pulse length extension, 1: Enhanced Protocol with Pulse length extension.  */
+    boolean bitStuffingEnabled;                       /**< \brief Specifies whether the bit stuffing is turned on or not. Range 0: No automatic bit stuffing, 1: Automatic bit stuffing is enabled.  */
+    boolean crcGenerationEnabled;                     /**< \brief Specifies whether the crc generation is turned on or not. Range 0: CRC is not generated automatically, 1: CRC is generated automatically */
+    boolean startSequenceGenerationEnabled;           /**< \brief Specifies whether the start sequence generation is turned on or not. Range 0: No start sequence generated, 1: Start sequence automatically generated */
+    boolean inhibitingAutomaticTransferEnabled;       /**< \brief Specifies whether automatic transfer from the shift registers SSRL/H to SORL/H is inhibited or not. Range 0: Automatic transfer, 1: GO bit must be set before transfer */
+    uint32  payloadLength;                            /**< \brief Specifies the payload length to be sent. Range 0 to 0x3F */
+    uint32  ssrPayloadLength;                         /**< \brief Specifies the payload length of SSR. Range 0: Don't stop the shifting process and flushes, 1: Stop the shifting process and flushes */
+    uint32  sorPayloadLength;                         /**< \brief Specifies the payload length of SOR. Range 0: Don't stop the sending process and flushes, 1: Stops the sending process and flushes */
 } IfxPsi5_Psi5_TransmitControl;
 
 /** \} */
@@ -315,7 +315,7 @@ typedef struct
 typedef struct
 {
     IFX_CONST IfxPsi5_Psi5            *module;                                     /**< \brief Specifies pointer to the IfxPsi5_Psi5 module handle */
-    uint32                             watchdogTimerLimit[IFXPSI5_NUM_WDTS];       /**< \brief Specifies the watchdog timer limit for each of the slots 0 to 6 */
+    uint32                             watchdogTimerLimit[IFXPSI5_NUM_WDTS];       /**< \brief Specifies the watchdog timer limit for each of the slots 0 to 6. Range 0 to 0xFFFF */
     IfxPsi5_ChannelId                  channelId;                                  /**< \brief Specifies the channel index */
     boolean                            enableChannel;                              /**< \brief TRUE: All channels will be enabled, FALSE: Specific channel needs to be explicitly enabled using the API IfxPsi5_enableChannel() */
     IfxPsi5_Psi5_PulseGeneration       pulseGeneration;                            /**< \brief Specifies the configuration for sync pulse generation */
@@ -373,41 +373,57 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Resets the PSI5 module
- * \param psi5 pointer to the PSI5 module
- * \return None
+/**
+ * \brief Deinitializes and resets the PSI5 module to its default state.
+ *
+ * \param[inout]    psi5        Pointer to the PSI5 handle data structure.
+ *
+ * \retval None
+ *
+ * A coding example can be found in \ref IfxLld_Psi5_Psi5_Usage
  */
 IFX_EXTERN void IfxPsi5_Psi5_deInitModule(IfxPsi5_Psi5 *psi5);
 
-/** \brief Enable PSI5 kernel
- * \param psi5 pointer to the base of PSI5 registers
- * \return None
+/**
+ * \brief Enables the PSI5 kernel module
+ *
+ * \param[inout]    psi5        Pointer to the base of PSI5 registers. 
+ *
+ * \retval None 
  */
 IFX_EXTERN void IfxPsi5_Psi5_enableModule(Ifx_PSI5 *psi5);
 
-/** \brief Initialise the PSI5 with the supplied configureation
- * \param psi5 pointer to the PSI5 module
- * \param config pointer to the PSI5 configuration
- * \return return TRUE on success & FALSE if configuration not valid
+/**
+ * \brief Initializes the PSI5 module with the provided configuration.
  *
+ * \param[inout]    psi5        Pointer to the PSI5 module handle data structure.
+ * \param[in]       config      Pointer to the PSI5 configuration structure containing clock and timestamp settings.
+ *
+ * \retval TRUE  Initialization was successful.
+ *         FALSE The configuration is invalid.
+ * 
  * A coding example can be found in \ref IfxLld_Psi5_Psi5_Usage
- *
  */
 IFX_EXTERN boolean IfxPsi5_Psi5_initModule(IfxPsi5_Psi5 *psi5, const IfxPsi5_Psi5_Config *config);
 
-/** \brief Initialise buffer with default PSI5 configuration
- * \param config pointer to the PSI5 module configuration
- * \param psi5 base address of the PSI5 register space
- * \return None
+/**
+ * \brief Initializes the PSI5 module configuration structure with default values.
+ *
+ * \param[inout]    config      Pointer to the PSI5 module configuration structure to be initialized.
+ * \param[in]       psi5        Base address of the PSI5 register space.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Psi5_Psi5_Usage
- *
  */
 IFX_EXTERN void IfxPsi5_Psi5_initModuleConfig(IfxPsi5_Psi5_Config *config, Ifx_PSI5 *psi5);
 
-/** \brief Reset PSI5 kernel
- * \param psi5 pointer to the base of PSI5 registers
- * \return None
+/**
+ * \brief Resets the PSI5 kernel to its initial state
+ *
+ * \param[inout]    psi5        Pointer to the base of PSI5 registers
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5_Psi5_resetModule(Ifx_PSI5 *psi5);
 
@@ -420,13 +436,14 @@ IFX_EXTERN void IfxPsi5_Psi5_resetModule(Ifx_PSI5 *psi5);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief start the channel with the selected options
- * \param channel pointer to the PSI5 channel
- * \param options startup related options
- * \return TRUE if successful; FALSE otherwise
+/**
+ * \brief Starts the specified PSI5 channel with the provided options.
  *
- * A coding example can be found in \ref IfxLld_Psi5_Psi5_Usage
+ * \param[in]       channel     Pointer to the PSI5 channel handle structure. 
+ * \param[in]       options     Pointer to the startup options structure. 
  *
+ * \retval TRUE If the channel startup was successful.
+ *         FALSE If the channel startup failed.
  */
 IFX_INLINE boolean IfxPsi5_Psi5_startupChannel(IfxPsi5_Psi5_Channel *channel, IfxPsi5_Psi5_StartupOptions *options);
 
@@ -434,55 +451,66 @@ IFX_INLINE boolean IfxPsi5_Psi5_startupChannel(IfxPsi5_Psi5_Channel *channel, If
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialize the channel with the supplied configuration
- * \param channel pointer to the PSI5 channel
- * \param config pointer to the PSI5 channel configuration
- * \return TRUE on success & FALSE if configuration not valid
+/**
+ * \brief Initializes a PSI5 channel with the specified configuration.
+ *
+ * \param[inout]    channel     Pointer to the PSI5 channel handle structure.
+ * \param[in]       config      Pointer to the PSI5 channel configuration structure.
+ *
+ * \retval TRUE If the channel was successfully initialized with a valid configuration.
+ *         FALSE If the configuration is invalid or initialization failed.
  *
  * A coding example can be found in \ref IfxLld_Psi5_Psi5_Usage
- *
  */
 IFX_EXTERN boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Psi5_ChannelConfig *config);
 
-/** \brief Get the current channel configuration (e.g. sample settings)
- * \param config pointer to the PSI5 channel configuration
- * \param psi5 pointer to the PSI5 module
- * \return None
+/**
+ * \brief Initializes the PSI5 channel configuration with default or specified settings.
+ *
+ * \param[inout]    config      Pointer to the PSI5 channel configuration structure to be initialized.
+ * \param[in]       psi5        Pointer to the PSI5 module handle.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Psi5_Psi5_Usage
- *
  */
 IFX_EXTERN void IfxPsi5_Psi5_initChannelConfig(IfxPsi5_Psi5_ChannelConfig *config, IfxPsi5_Psi5 *psi5);
 
-/** \brief Gets the received psi5 frame for the channel
- * \param channel pointer to the PSI5 channel
- * \param frame pointer to the PSI5 frame buffer
- * \return TRUE if successful; FALSE if no frame available
+/**
+ * \brief Reads the received PSI5 frame for the specified channel.
+ *
+ * \param[inout]    channel     Handle to the PSI5 channel structure. 
+ * \param[inout]    frame       Pointer to the PSI5 frame buffer where the received frame data
+ *                              will be stored.
+ *
+ * \retval TRUE The function successfully read a frame from the channel.
+ *         FALSE No frame was available in the channel.
  *
  * A coding example can be found in \ref IfxLld_Psi5_Psi5_Usage
- *
  */
 IFX_EXTERN boolean IfxPsi5_Psi5_readChannelFrame(IfxPsi5_Psi5_Channel *channel, IfxPsi5_Psi5_Frame *frame);
 
 /** \brief Get the received serial message for the channel
- * \param channel pointer to the PSI5 channel
- * \param slot Slot Id
- * \param message pointer to the PSI5 serial message buffer
- * \return TRUE if successful; FALSE if no serial message available
+ * 
+ * \param[in]       channel     pointer to the PSI5 channel
+ * \param[in]       slot        Slot Id
+ * \param[inout]    message     pointer to the PSI5 serial message buffer
+ * 
+ * \retval TRUE if successful. 
+ *         FALSE if no serial message available
  */
 IFX_EXTERN boolean IfxPsi5_Psi5_readChannelSerialMessage(IfxPsi5_Psi5_Channel *channel, IfxPsi5_Slot slot, IfxPsi5_Psi5_SerialMessage *message);
 
-/** \brief Transmit the data through the channel
- * \param channel pointer to the PSI5 channel
- * \param data data to be sent
- * \return TRUE if successful; FALSE otherwise
+/**
+ * \brief Transmit the data through the PSI5 channel.
  *
- * A coding example can be found in \ref IfxLld_Psi5_Psi5_Usage
+ * \param[inout]    channel     Pointer to the PSI5 channel handle structure.
+ * \param[in]       data        The 64-bit data to be transmitted. Range: 0 to 0xFFFFFFFFFFFFFFFF.
  *
+ * \retval TRUE If the data was successfully sent.
+ *         FALSE If the transmission failed 
  */
 IFX_EXTERN boolean IfxPsi5_Psi5_sendChannelData(IfxPsi5_Psi5_Channel *channel, uint64 data);
-
-/** \} */
 
 /** \addtogroup IfxLld_Psi5_Psi5_Clock
  * \{ */
@@ -491,16 +519,22 @@ IFX_EXTERN boolean IfxPsi5_Psi5_sendChannelData(IfxPsi5_Psi5_Channel *channel, u
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the configured fracDiv psi5 clock frequency in Hz.
- * \param psi5 Pointer to the base of PSI5 registers
- * \return Returns the configured fracDiv psi5 clock frequency in Hz.
+/**
+ * \brief Retrieves the configured fractional divider (fracDiv) clock frequency for the PSI5 module.
+ *
+ * \param[in]       psi5        Pointer to the base of PSI5 registers.
+ * 
+ * \retval uint32 The configured fracDiv clock frequency in Hz. Range 0 to 1MHz.
  */
 IFX_EXTERN uint32 IfxPsi5_Psi5_getFracDivClock(Ifx_PSI5 *psi5);
 
-/** \brief Configure the fracDiv clock.
- * \param psi5 Pointer to the base of PSI5 registers
- * \param clock Specifies the required clock frequency in Hz.
- * \return Returns the configured clock frequency in Hz.
+/**
+ * \brief Configures the specified clock with the given parameters.
+ *
+ * \param[inout]    psi5        Pointer to the base of PSI5 registers.
+ * \param[in]       clock       Specifies the clock configuration, including frequency, mode, and type.
+ *
+ * \retval uint32 The actual configured clock frequency in Hz. Range 0 to 1MHz.
  */
 IFX_EXTERN uint32 IfxPsi5_Psi5_initializeClock(Ifx_PSI5 *psi5, const IfxPsi5_Psi5_Clock *clock);
 

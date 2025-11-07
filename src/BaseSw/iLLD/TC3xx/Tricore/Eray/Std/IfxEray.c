@@ -2,7 +2,7 @@
  * \file IfxEray.c
  * \brief ERAY  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -81,7 +81,7 @@ uint16 IfxEray_calcHeaderCrc(uint8 payloadLength, uint16 frameId, boolean startu
         headerTemp    = headerValue & 0x80000000;
         regTemp       = crcRegX & 0x80000000;
 
-        if (headerTemp ^ regTemp) // Step 1
+        if (headerTemp ^ regTemp) /* Step 1 */
         {
             crcNext = 1;
         }
@@ -90,11 +90,11 @@ uint16 IfxEray_calcHeaderCrc(uint8 payloadLength, uint16 frameId, boolean startu
             crcNext = 0;
         }
 
-        crcRegX <<= 1;          // Step 2
+        crcRegX <<= 1;          /* Step 2 */
 
         if (crcNext)
         {
-            crcRegX ^= crcPoly; // Step 3
+            crcRegX ^= crcPoly; /* Step 3 */
         }
 
         length--;
@@ -110,13 +110,13 @@ boolean IfxEray_changePocState(Ifx_ERAY *eray, IfxEray_PocCommand pocCommand)
 {
     boolean result;
 
-    // wait if Communication controller is busy
+    /* Wait if Communication controller is busy */
     while (eray->SUCC1.B.PBSY == 1)
     {}
 
     eray->SUCC1.B.CMD = pocCommand;
 
-    // if command not accepted, return FALSE
+    /* If command not accepted, return FALSE */
     if (eray->SUCC1.B.CMD == 0)
     {
         result = FALSE;
@@ -132,29 +132,47 @@ boolean IfxEray_changePocState(Ifx_ERAY *eray, IfxEray_PocCommand pocCommand)
 
 void IfxEray_clearAllFlags(Ifx_ERAY *eray)
 {
-    eray->EIR.U  = 0xFFFFFFFFU;   /* Clear Error Int.                        */
-    eray->SIR.U  = 0xFFFFFFFFU;   /* Clear Status Int.                       */
-    eray->EIER.U = 0xFFFFFFFFU;   /* Disable all Error Int.                  */
-    eray->SIER.U = 0xFFFFFFFFU;   /* Disable all Status Int.                 */
-    eray->MHDS.U = 0x7F7F7FFFU;   /* Clear Error Int.                        */
+	/* Clear Error Int. */
+    eray->EIR.U  = 0xFFFFFFFFU;
+    /* Clear Status Int. */
+    eray->SIR.U  = 0xFFFFFFFFU;
+    /* Disable all Error Int. */
+    eray->EIER.U = 0xFFFFFFFFU;
+    /* Disable all Status Int. */
+    eray->SIER.U = 0xFFFFFFFFU;
+    /* Clear Error Int. */
+    eray->MHDS.U = 0x7F7F7FFFU;
 }
 
 
 void IfxEray_enableInterruptLines(Ifx_ERAY *eray)
 {
-    eray->ILE.U   = 0x00000003U; //enable both the interrupt lines
-    eray->EILS.U  = 0x00000000U; // all interrupt lines to INT0SRC
-    eray->SILS.U  = 0x00000800U; // TOBC interrupt line to INT1SRC
-    eray->SIES.U  = 0x0303FFFFU; // all status interrupts are enabled
-    eray->EIES.U  = 0x07070FFFU; // all error interrupts are enabled
-    eray->NDIC1.U = 0x00000000U; // all interrupt lines to NADT0SRC
-    eray->NDIC2.U = 0x00000000U; // all interrupt lines to NADT0SRC
-    eray->NDIC3.U = 0x00000000U; // all interrupt lines to NADT0SRC
-    eray->NDIC4.U = 0x00000000U; // all interrupt lines to NADT0SRC
-    eray->MSIC1.U = 0x00000000U; // all interrupt lines to MBSC0SRC
-    eray->MSIC2.U = 0x00000000U; // all interrupt lines to MBSC0SRC
-    eray->MSIC3.U = 0x00000000U; // all interrupt lines to MBSC0SRC
-    eray->MSIC4.U = 0x00000000U; // all interrupt lines to MBSC0SRC
+	/* Enable both the interrupt lines */
+    eray->ILE.U   = 0x00000003U;
+    /* All interrupt lines to INT0SRC */
+    eray->EILS.U  = 0x00000000U;
+    /* TOBC interrupt line to INT1SRC */
+    eray->SILS.U  = 0x00000800U;
+    /* All status interrupts are enabled */
+    eray->SIES.U  = 0x0303FFFFU;
+    /* All error interrupts are enabled */
+    eray->EIES.U  = 0x07070FFFU;
+    /* All interrupt lines to NADT0SRC */
+    eray->NDIC1.U = 0x00000000U;
+    /* All interrupt lines to NADT0SRC */
+    eray->NDIC2.U = 0x00000000U;
+    /* All interrupt lines to NADT0SRC */
+    eray->NDIC3.U = 0x00000000U;
+    /* All interrupt lines to NADT0SRC */
+    eray->NDIC4.U = 0x00000000U;
+    /* All interrupt lines to MBSC0SRC */
+    eray->MSIC1.U = 0x00000000U;
+    /* All interrupt lines to MBSC0SRC */
+    eray->MSIC2.U = 0x00000000U;
+    /* All interrupt lines to MBSC0SRC */
+    eray->MSIC3.U = 0x00000000U;
+    /* All interrupt lines to MBSC0SRC */
+    eray->MSIC4.U = 0x00000000U;
 }
 
 
@@ -237,19 +255,25 @@ void IfxEray_readFrame(Ifx_ERAY *eray, IfxEray_ReceivedHeader *header, uint32 *d
 void IfxEray_resetModule(Ifx_ERAY *eray)
 {
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    eray->KRST1.B.RST = 1;      /* Only if both Kernel reset bits are set a reset is executed */
+    /* Only if both Kernel reset bits are set a reset is executed */
+    eray->KRST1.B.RST = 1;
     eray->KRST0.B.RST = 1;
 
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
+    /* Wait until reset is executed */
     while (eray->KRST0.B.RSTSTAT == 0)
     {
-        /* Wait until reset is executed */
     }
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    eray->KRSTCLR.B.CLR = 1;     /* Clear Kernel reset status bit */
+    /* Clear Kernel reset status bit */
+    eray->KRSTCLR.B.CLR = 1;
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 }
 
@@ -290,11 +314,11 @@ void IfxEray_setNewDataInterruptDestination(Ifx_ERAY *eray, uint8 ndat, uint8 nd
 
 void IfxEray_setPocReady(Ifx_ERAY *eray)
 {
-    // wait CC is busy
+    /* Wait CC is busy */
     while (eray->SUCC1.B.PBSY == 1)
     {}
 
-    // Ready unlock sequence
+    /* Ready unlock sequence */
     eray->LCK.B.CLK   = 0xCE;
     eray->LCK.B.CLK   = 0x31;
     eray->SUCC1.B.CMD = IfxEray_PocCommand_ready;
@@ -303,7 +327,7 @@ void IfxEray_setPocReady(Ifx_ERAY *eray)
 
 void IfxEray_setSlot(Ifx_ERAY *eray, const IfxEray_Header *header, const uint32 *data, const IfxEray_SlotConfig *slotConfig)
 {
-    // wait if Host is busy with another transfer
+    /* Wait if Host is busy with another transfer */
     while (IfxEray_getInputBufferBusyHostStatus(eray) == TRUE)
     {}
 
@@ -345,10 +369,10 @@ void IfxEray_setSlot(Ifx_ERAY *eray, const IfxEray_Header *header, const uint32 
     eray->IBCM.B.STXRH = slotConfig->transferRequested;
     eray->IBCR.B.IBRH  = slotConfig->bufferIndex;
 
-    // wait if Shadow is busy with another transfer
+    /* Wait if Shadow is busy with another transfer */
     while (IfxEray_getInputBufferBusyShadowStatus(eray) == TRUE)
     {}
-
+    /* Wait if Host is busy with another transfer */
     while (IfxEray_getInputBufferBusyHostStatus(eray) == TRUE)
     {}
 }

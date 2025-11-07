@@ -2,7 +2,7 @@
  * \file IfxFce.c
  * \brief FCE  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -74,15 +74,21 @@ void IfxFce_resetModule(Ifx_FCE *fce)
     uint16 password = IfxScuWdt_getCpuWatchdogPassword();
 
     IfxScuWdt_clearCpuEndinit(password);
-    fce->KRST1.B.RST = 1;  /* Only if both Kernel reset bits are set a reset is executed */
+
+    /* Only if both Kernel reset bits are set a reset is executed */
+    fce->KRST1.B.RST = 1;
     fce->KRST0.B.RST = 1;
+
     IfxScuWdt_setCpuEndinit(password);
 
-    while (0 == fce->KRST0.B.RSTSTAT)  /* Wait until reset is executed */
-
+    /* Wait until reset is executed */
+    while (0 == fce->KRST0.B.RSTSTAT)
     {}
 
     IfxScuWdt_clearCpuEndinit(password);
-    fce->KRSTCLR.B.CLR = 1;     /* Clear Kernel reset status bit */
+
+    /* Clear Kernel reset status bit */
+    fce->KRSTCLR.B.CLR = 1;
+
     IfxScuWdt_setCpuEndinit(password);
 }

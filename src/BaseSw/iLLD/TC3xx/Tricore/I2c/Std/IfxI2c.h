@@ -3,7 +3,7 @@
  * \brief I2C  basic functionality
  * \ingroup IfxLld_I2c
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -85,6 +85,9 @@ typedef enum
     IfxI2c_AddressMode_10Bit = 1  /**< \brief sets 10 bit address */
 } IfxI2c_AddressMode;
 
+/** \brief Shows the current Bus status on the I2C-bus.
+ * Definition in Ifx_I2C.BUSSTAT.B.BS
+ */
 typedef enum
 {
     IfxI2c_BusStatus_idle        = 0, /**< \brief idle */
@@ -94,7 +97,7 @@ typedef enum
 } IfxI2c_BusStatus;
 
 /** \brief enables DTR interrupt flags
- * Definition in Ifx.I2C.IMSC.U
+ * Definition in Ifx_I2C.IMSC.U
  */
 typedef enum
 {
@@ -105,7 +108,7 @@ typedef enum
 } IfxI2c_DtrInterruptSource;
 
 /** \brief enable error interrupt request source
- * Definition in Ifx.I2C.ERRIRQSM.U
+ * Definition in Ifx_I2C.ERRIRQSM.U
  */
 typedef enum
 {
@@ -123,6 +126,9 @@ typedef enum
     IfxI2c_Mode_HighSpeed       = 1   /**< \brief Sets HighSpeed Mode */
 } IfxI2c_Mode;
 
+/** \brief Used to select the input pins providing the serial data and clock input signals
+ * Definition in Ifx_I2C.GPCTL.B.PISEL
+ */
 typedef enum
 {
     IfxI2c_PinSelect_a = 0,
@@ -136,7 +142,7 @@ typedef enum
 } IfxI2c_PinSelect;
 
 /** \brief enable protocol interrupt source
- * Definition in Ifx.I2C.PIRQSM.U
+ * Definition in Ifx_I2C.PIRQSM.U
  */
 typedef enum
 {
@@ -161,7 +167,7 @@ typedef enum
 /** \} */
 
 /** \brief set interrupt request
- * Definition in Ifx.I2C.ISR.U
+ * Definition in Ifx_I2C.ISR.U
  */
 typedef enum
 {
@@ -368,12 +374,15 @@ typedef enum
  */
 typedef struct
 {
-    uint32             slaveAddress;               /**< \brief slave address, use default value 0 when used in master mode */
+    uint32             slaveAddress;               /**< \brief slave address, use default value 0 when used in master mode.
+    												* - Range: 0 to 0x3FF. Depending on setting of TBAM, this is either a 7-bit address (bits [7:1]) or a 10-bit address (bits [9:0]). */
     IfxI2c_AddressMode addressMode;                /**< \brief Ten bit address mode */
-    boolean            generalCallEnable;          /**< \brief General call enable */
-    boolean            masterCodeEnable;           /**< \brief Master code enable */
-    boolean            stopOnNotAcknowledge;       /**< \brief stop on Not-acknowledge */
-    boolean            stopOnPacketEnd;            /**< \brief stop on packet end */
+    boolean            generalCallEnable;          /**< \brief General call enable. Range: TRUE - Enable general call detection. When detected, an acknowledge will be put on the bus, FALSE - Ignore general call occurrence. */
+    boolean            masterCodeEnable;           /**< \brief Master code enable. Range: TRUE - Device is able to handle master code, FALSE - Device is not able to get along with high-speed mode. */
+    boolean            stopOnNotAcknowledge;       /**< \brief stop on Not-acknowledge. Range: TRUE - Device puts a stop condition on the bus and changes to LISTENING state, FALSE - Device changes to MASTER RESTART state. */
+    boolean            stopOnPacketEnd;            /**< \brief stop on packet end.
+    												* - Range: TRUE - Device puts a stop condition on the bus when the data packet end is indicated by the FIFO and changes to MASTER LISTENING state,
+    												* - FALSE - Device enters MASTER RESTART state when the data packet end is indicated by the FIFO. */
 } IfxI2c_AddrConfig;
 
 /** \brief Structure for FIFO configuration register
@@ -386,7 +395,7 @@ typedef struct
     IfxI2c_TxFifoAlignment   txFifoAlignment;            /**< \brief tx fifo alignment */
     IfxI2c_RxFifoFlowControl rxFifoFlowControl;          /**< \brief rx fifo flow control */
     IfxI2c_TxFifoFlowControl txFifoFlowControl;          /**< \brief tx fifo flow control */
-    boolean                  clearRequestBehavior;       /**< \brief clear request behavior configuration */
+    boolean                  clearRequestBehavior;       /**< \brief clear request behavior configuration. Range: TRUE - Data request is cleared automatically when Write/Read access to FIFO occurs, FALSE - Data request is cleared by Software. */
 } IfxI2c_FifoConfig;
 
 /** \brief Structure for Timing configuration
@@ -396,10 +405,12 @@ typedef struct
 	IfxI2c_SdaDelayStages                 sdaDelHdDat;      	/**< \brief SDA Delay Stages for Data Hold Time in Standard and Fast modes (6-bits) */
 	IfxI2c_SdaHsModeDelayStages           hsSdaDelHdDat; 		/**< \brief SDA Delay Stages for Data Hold Time in High-Speed Mode (3-bits) */
 	IfxI2c_SclDelayStages                 sclDelHdSta;      	/**< \brief SCL Delay Stages for Hold Time Start (Restart) Bit (3-bits) */
-	boolean                               enSclLowLen;     	    /**< \brief Enable Direct Configuration of SCL Low Period Length in Fast Mode (1-bit) */
-	boolean                               fsSclLow;        	    /**< \brief Set Fast Mode SCL Low Period Timing (1-bit) */
+	boolean                               enSclLowLen;     	    /**< \brief Enable Direct Configuration of SCL Low Period Length in Fast Mode (1-bit).
+																 * - Range: TRUE - SCL low period is determined by the setting of SCL_LOW_LEN, FALSE - SCL low period is a fixed part of the whole period, as defined by FS_SCL_LOW. */
+	boolean                               fsSclLow;        	    /**< \brief Set Fast Mode SCL Low Period Timing (1-bit).
+																 * - Range: TRUE - Fast mode SCL low period timing. For INC = 1 it is 6/8 of period, FALSE - Standard mode SCL low period timing. For INC = 1 it is 5/8 of period. */
 	IfxI2c_SdaHsModeStartStopDelayStages  hsSdaDel; 	        /**< \brief SDA Delay Stages for Start/Stop Bit in High-Speed Mode (5-bits) */
-    uint8 								  sclLowLen;        	/**< \brief SCL Low Period Length in Fast Mode (8-bits) */
+    uint8 								  sclLowLen;        	/**< \brief SCL Low Period Length in Fast Mode (8-bits). Range: 0 to 0xFF */
 } IfxI2c_TimingConfig;
 
 /** \addtogroup IfxLld_I2c_Std_structures
@@ -668,7 +679,7 @@ IFX_INLINE boolean IfxI2c_getErrorInterruptFlagStatus(Ifx_I2C *i2c);
 IFX_INLINE boolean IfxI2c_getErrorInterruptSourceStatus(Ifx_I2C *i2c, IfxI2c_ErrorInterruptSource source);
 
 /**
- * \brief Returns the SRC pointer for I2C Error interrupt
+ * \brief Returns the SRC pointer for I2C Error interrupt.
  *
  * \param[in] i2c Pointer to the I2C module handle.
  *
@@ -703,7 +714,7 @@ IFX_INLINE boolean IfxI2c_getProtocolInterruptSourceStatus(Ifx_I2C *i2c, IfxI2c_
  *
  * \param[in] i2c Pointer to the I2C module handle.
  *
- * \retval Ifx_SRC_SRCR * Pointer to the SRCR register for the I2C Protocol interrupt.
+ * \retval Ifx_SRC_SRCR* Pointer to the SRCR register for the I2C Protocol interrupt.
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxI2c_getProtocolSrcPointer(Ifx_I2C *i2c);
 
@@ -765,6 +776,7 @@ IFX_INLINE void IfxI2c_setReceivePacketSize(Ifx_I2C *i2c, Ifx_SizeT size);
  * \param[inout] i2c     Pointer to the I2C module instance.
  * \param[in]    address The slave device address to be set. Depending on setting of TBAM(Ten bit Address Mode),
  *            	         this is either a 7-bit address (bits [7:1]) or a 10-bit address (bits [9:0])
+ *            	         Range: 0x1 to 0x7F (7-bit address), 0x00 to 0x3FF (10-bit address).
  *
  * \retval None
  */

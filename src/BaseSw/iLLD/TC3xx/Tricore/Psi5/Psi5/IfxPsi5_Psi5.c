@@ -2,7 +2,7 @@
  * \file IfxPsi5_Psi5.c
  * \brief PSI5 PSI5 details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -63,7 +63,7 @@
 void IfxPsi5_Psi5_deInitModule(IfxPsi5_Psi5 *psi5)
 {
     Ifx_PSI5 *psi5SFR = psi5->psi5;
-
+    /* Reset PSI5 kernel */
     IfxPsi5_Psi5_resetModule(psi5SFR);
 }
 
@@ -77,6 +77,7 @@ void IfxPsi5_Psi5_enableModule(Ifx_PSI5 *psi5)
 uint32 IfxPsi5_Psi5_getFracDivClock(Ifx_PSI5 *psi5)
 {
     uint32 result;
+    /* Retrieves the SPB divider frequency */
     uint32 fPsi5 = IfxScuCcu_getSpbFrequency();
 
     switch (psi5->FDR.B.DM)
@@ -96,7 +97,7 @@ uint32 IfxPsi5_Psi5_getFracDivClock(Ifx_PSI5 *psi5)
     default:
         result = 0;
     }
-
+    /* Returns the configured fracDiv Psi5 clock frequency in Hz */
     return result;
 }
 
@@ -105,9 +106,11 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
 {
     uint32       wdtIdx;
     boolean      status = TRUE;
-
+    
+    /* Fetch the current password of the CPU Watchdog module*/
     uint16       passwd = IfxScuWdt_getCpuWatchdogPassword();
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
 
     Ifx_PSI5    *psi5   = config->module->psi5;
@@ -116,6 +119,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
     channel->module    = (IfxPsi5_Psi5 *)config->module;
     channel->channelId = config->channelId;
 
+    /* Initialize the Pulse Generation Control Register*/
     Ifx_PSI5_CH_PGC tempPGC;
     tempPGC.B.PLEN = config->pulseGeneration.pulseLength;
     tempPGC.B.DEL  = config->pulseGeneration.delayLength;
@@ -147,6 +151,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
 
     psi5Ch->PGC.U = tempPGC.U;
 
+    /* Initialize the Channel Trigger Value Register*/
     Ifx_PSI5_CH_CTV tempCTV;
     tempCTV.B.CTV = config->channelTrigger.channelTriggerValue;
     tempCTV.B.CTC = config->channelTrigger.channelTriggerCounter;
@@ -157,6 +162,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
         psi5Ch->WDT[wdtIdx].U = config->watchdogTimerLimit[wdtIdx];
     }
 
+    /* Initialize the Receiver Control Register A */
     Ifx_PSI5_CH_RCRA tempRCRA;
     tempRCRA.B.PDL0 = config->receiveControl.payloadLength[0];
     tempRCRA.B.PDL1 = config->receiveControl.payloadLength[1];
@@ -168,6 +174,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
     tempRCRA.B.AVBS = config->receiveControl.verboseForAsynchronousMode;
     psi5Ch->RCRA.U  = tempRCRA.U;
 
+    /* Initialize the Receiver Control Register B */
     Ifx_PSI5_CH_RCRB tempRCRB;
     tempRCRB.B.MSG0 = config->receiveControl.messagingBitsPresence[0];
     tempRCRB.B.MSG1 = config->receiveControl.messagingBitsPresence[1];
@@ -195,6 +202,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
     tempRCRB.B.VBS5 = config->receiveControl.verbose[5];
     psi5Ch->RCRB.U  = tempRCRB.U;
 
+    /* Initialize the Receiver Control Register C */
     Ifx_PSI5_CH_RCRC tempRCRC;
     tempRCRC.B.BRS = config->receiveControl.baudrateSelect;
     tempRCRC.B.TSP = config->receiveControl.pulseTimestampSelect;
@@ -202,10 +210,12 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
     tempRCRC.B.TSR = config->receiveControl.receiveDataRegisterTimestamp;
     psi5Ch->RCRC.U = tempRCRC.U;
 
+    /* Initialize the Receive FIFO Control Register */
     Ifx_PSI5_RFC    tempRFC;
     tempRFC.B.FWL                  = config->receiveControl.fifoWarningLevel;
     psi5->RFC[config->channelId].U = tempRFC.U;
 
+    /* Initialize the Send Control Register */
     Ifx_PSI5_CH_SCR tempSCR;
     tempSCR.B.PLL = config->sendControl.payloadLength;
     tempSCR.B.EPS = config->sendControl.enhancedProtocolSelected;
@@ -217,6 +227,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
     tempSCR.B.INH = config->sendControl.inhibitingAutomaticTransferEnabled;
     psi5Ch->SCR.U = tempSCR.U;
 
+    /* Initialize the Input and Output Control Register */
     Ifx_PSI5_CH_IOCR tempIOCR;
     tempIOCR.B.DEPTH = config->inputOutputControl.digitalInputFilterDepth;
     tempIOCR.B.OIE   = config->inputOutputControl.outputInverterEnabled;
@@ -230,6 +241,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
         psi5->GCR.U |= (IFXPSI5_ENABLE_CHANNEL << config->channelId);
     }
 
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
     const IfxPsi5_Psi5_PinsConfig *pins = config->pinsConfig;
@@ -240,6 +252,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
 
         if (rx != NULL_PTR)
         {
+            /* Initializes a RX input */
             IfxPsi5_initRxPin(rx, pins->inMode, pins->pinDriver);
         }
 
@@ -247,6 +260,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
 
         if (tx != NULL_PTR)
         {
+            /* Initializes a TX input */
             IfxPsi5_initTxPin(tx, pins->outMode, pins->pinDriver);
         }
     }
@@ -257,6 +271,7 @@ boolean IfxPsi5_Psi5_initChannel(IfxPsi5_Psi5_Channel *channel, const IfxPsi5_Ps
 
 void IfxPsi5_Psi5_initChannelConfig(IfxPsi5_Psi5_ChannelConfig *config, IfxPsi5_Psi5 *psi5)
 {
+    /* Initialise buffer with default channel configuration*/
     IfxPsi5_Psi5_ChannelConfig IfxPsi5_Psi5_defaultChannelConfig = {
         .channelId       = IfxPsi5_ChannelId_0,
         .module          = NULL_PTR,
@@ -348,14 +363,16 @@ boolean IfxPsi5_Psi5_initModule(IfxPsi5_Psi5 *psi5, const IfxPsi5_Psi5_Config *c
 
     psi5->psi5 = psi5SFR;
 
+    /* Fetch the current password of the CPU Watchdog module*/
     uint16    passwd = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
     IfxPsi5_Psi5_enableModule(psi5SFR);
 
     if (IfxPsi5_Psi5_initializeClock(psi5SFR, &config->fracDiv) == 0)
     {
+         /* Clock initialization failed*/
         status = FALSE;
-
         return status;
     }
     else
@@ -363,8 +380,8 @@ boolean IfxPsi5_Psi5_initModule(IfxPsi5_Psi5 *psi5, const IfxPsi5_Psi5_Config *c
 
     if (IfxPsi5_Psi5_initializeClock(psi5SFR, &config->slowClock) == 0)
     {
+        /* Clock initialization failed*/
         status = FALSE;
-
         return status;
     }
     else
@@ -372,8 +389,8 @@ boolean IfxPsi5_Psi5_initModule(IfxPsi5_Psi5 *psi5, const IfxPsi5_Psi5_Config *c
 
     if (IfxPsi5_Psi5_initializeClock(psi5SFR, &config->fastClock) == 0)
     {
+        /* Clock initialization failed*/
         status = FALSE;
-
         return status;
     }
     else
@@ -381,13 +398,13 @@ boolean IfxPsi5_Psi5_initModule(IfxPsi5_Psi5 *psi5, const IfxPsi5_Psi5_Config *c
 
     if (IfxPsi5_Psi5_initializeClock(psi5SFR, &config->timestampClock) == 0)
     {
+        /* Clock initialization failed*/
         status = FALSE;
-
         return status;
     }
     else
     {}
-
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
     return status;
@@ -396,8 +413,9 @@ boolean IfxPsi5_Psi5_initModule(IfxPsi5_Psi5 *psi5, const IfxPsi5_Psi5_Config *c
 
 void IfxPsi5_Psi5_initModuleConfig(IfxPsi5_Psi5_Config *config, Ifx_PSI5 *psi5)
 {
+    /* Retrieves the SPB divider frequency */
     uint32 spbFrequency = IfxScuCcu_getSpbFrequency();
-
+    /* Initialise buffer with default module configuration */
     config->psi5                                     = psi5;
     config->fracDiv.frequency                        = spbFrequency;
     config->fracDiv.mode                             = IfxPsi5_DividerMode_normal;
@@ -432,16 +450,18 @@ uint32 IfxPsi5_Psi5_initializeClock(Ifx_PSI5 *psi5, const IfxPsi5_Psi5_Clock *cl
 
     if (clockType == IfxPsi5_ClockType_fracDiv)
     {
+        /* Retrieves the SPB divider frequency */
         fInput = IfxScuCcu_getSpbFrequency();
     }
     else
     {
+        /* Get the fracDiv clock frequency */
         fInput = IfxPsi5_Psi5_getFracDivClock(psi5);
 
         if (fInput == 0)
         {
+            /* If the fracDiv clock frequency is 0, return 0 */
             result = 0;
-
             return result;
         }
         else
@@ -459,7 +479,7 @@ uint32 IfxPsi5_Psi5_initializeClock(Ifx_PSI5 *psi5, const IfxPsi5_Psi5_Clock *cl
         }
         else
         {
-            /* do nothing */
+            /* Do nothing */
         }
 
         result = (uint32)(fInput / (IFXPSI5_STEP_RANGE - step));
@@ -521,23 +541,28 @@ uint32 IfxPsi5_Psi5_initializeClock(Ifx_PSI5 *psi5, const IfxPsi5_Psi5_Clock *cl
         }
     }
 
+    /* Returns the configured clock frequency in Hz */
     return result;
 }
 
 
 boolean IfxPsi5_Psi5_readChannelFrame(IfxPsi5_Psi5_Channel *channel, IfxPsi5_Psi5_Frame *frame)
 {
+    /* Check if the received frame is moved to a Receive Data Register by checking the RDI flag */
     if (channel->module->psi5->INTSTATA[channel->channelId].B.RDI == TRUE)
     {
+        /* Read the frame from the Receive Data Register */
         frame->rdm.lowWord                                    = channel->channel->RDRL.U;
         frame->rdm.highWord                                   = channel->channel->RDRH.U;
 
+        /* Clear the RDI & RSI Interrupts */
         channel->module->psi5->INTCLRA[channel->channelId].U |= (IFX_PSI5_INTCLRA_RDI_MSK << IFX_PSI5_INTCLRA_RDI_OFF) | (IFX_PSI5_INTCLRA_RSI_MSK << IFX_PSI5_INTCLRA_RSI_OFF);
 
         return TRUE;
     }
     else
     {
+        /* If the RDI flag is not set, it means that no frame is available in the Receive Data Register */
         return FALSE;
     }
 }
@@ -545,6 +570,7 @@ boolean IfxPsi5_Psi5_readChannelFrame(IfxPsi5_Psi5_Channel *channel, IfxPsi5_Psi
 
 boolean IfxPsi5_Psi5_readChannelSerialMessage(IfxPsi5_Psi5_Channel *channel, IfxPsi5_Slot slot, IfxPsi5_Psi5_SerialMessage *message)
 {
+    /* Get the received serial message for the channel */
     message->rds.value = channel->channel->SDS[slot].U;
 
     return TRUE;
@@ -553,18 +579,26 @@ boolean IfxPsi5_Psi5_readChannelSerialMessage(IfxPsi5_Psi5_Channel *channel, Ifx
 
 void IfxPsi5_Psi5_resetModule(Ifx_PSI5 *psi5)
 {
+    /* Fetch the current password of the CPU Watchdog module*/
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearSafetyEndinit(passwd);
-    psi5->KRST1.B.RST = 1;      /* Only if both Kernel reset bits are set a reset is executed */
+
+    /* Only if both Kernel reset bits are set a reset is executed */
+    psi5->KRST1.B.RST = 1;      
     psi5->KRST0.B.RST = 1;
 
+    /* Wait until reset is executed */
     while (psi5->KRST0.B.RSTSTAT == 0)
     {
-        /* Wait until reset is executed */
+        
     }
 
-    psi5->KRSTCLR.B.CLR = 1;    /* Clear Kernel reset status bit */
+    /* Clear Kernel reset status bit */
+    psi5->KRSTCLR.B.CLR = 1;   
+    
+    /* Setting the endinit protection back on */
     IfxScuWdt_setSafetyEndinit(passwd);
 }
 
@@ -573,15 +607,19 @@ boolean IfxPsi5_Psi5_sendChannelData(IfxPsi5_Psi5_Channel *channel, uint64 data)
 {
     uint32 dataLowWord  = (uint32)(data & 0xFFFFFFFF);
     uint32 dataHighWord = (uint32)((data >> 32) & 0xFFFFFFFF);
+    /* Load to data low word to the SDRL register*/
     channel->channel->SDRL.U = dataLowWord;
+    /* Load to data high word to the SDRH register*/
     channel->channel->SDRH.U = dataHighWord;
 
     if (channel->module->psi5->INTSTATA[channel->channelId].B.TPOI)
     {
+        /* The Data didn't send successfully */
         return FALSE;
     }
     else
     {
+        /* The Data send successfully */
         return TRUE;
     }
 }

@@ -3,7 +3,7 @@
  * \brief PORT IO details
  * \ingroup IfxLld_Port
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -175,9 +175,9 @@
  * \{ */
 typedef struct
 {
-    IFX_CONST IfxPort_Pin *pin;
-    IfxPort_Mode           mode;
-    IfxPort_PadDriver      padDriver;
+    IFX_CONST IfxPort_Pin *pin;         /**< \brief Pointer to port pin structure. */
+    IfxPort_Mode           mode;        /**< \brief Port input / output mode. */
+    IfxPort_PadDriver      padDriver;   /**< \brief Pad driver mode. */
 } IfxPort_Io_ConfigPin;
 
 /** \} */
@@ -186,8 +186,8 @@ typedef struct
  * \{ */
 typedef struct
 {
-    uint32                size;
-    IfxPort_Io_ConfigPin *pinTable;
+    uint32                size;       /**< \brief Specifies the size of port pin. */
+    IfxPort_Io_ConfigPin *pinTable;   /**< \brief Pointer to port Io data structure. */
 } IfxPort_Io_Config;
 
 /** \} */

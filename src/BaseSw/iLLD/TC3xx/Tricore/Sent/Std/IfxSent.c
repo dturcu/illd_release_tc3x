@@ -2,7 +2,7 @@
  * \file IfxSent.c
  * \brief SENT  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -68,6 +68,7 @@ float32 IfxSent_getChannelUnitTime(Ifx_SENT *sent, IfxSent_ChannelId channelId)
 
     if (div > 0)
     {
+    	/* Calculate the tick frequency using the pre-divider frequency and the divider value */
         float32 fTick = (fPdiv * 56) / div;
         return 1 / fTick;
     }
@@ -102,6 +103,7 @@ float32 IfxSent_getModuleClock(Ifx_SENT *sent)
 
 void IfxSent_initializeChannelUnitTime(Ifx_SENT *sent, IfxSent_ChannelId channelId, float32 tUnit)
 {
+	/* Get the SPB (System Peripheral Bus) frequency */
     float32      fFracDiv = IfxSent_getModuleClock(sent);
 
     /* const uint32 divMin   = 560; */
@@ -146,17 +148,23 @@ void IfxSent_resetModule(Ifx_SENT *sent)
 {
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    sent->KRST1.B.RST = 1;      /* Only if both Kernel reset bits are set a reset is executed */
+    /* Only if both Kernel reset bits are set a reset is executed */
+    sent->KRST1.B.RST = 1;
     sent->KRST0.B.RST = 1;
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
-    while (0 == sent->KRST0.B.RSTSTAT)  /* Wait until reset is executed */
-
+    /* Wait until reset is executed */
+    while (0 == sent->KRST0.B.RSTSTAT)
     {}
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    sent->KRSTCLR.B.CLR = 1;    /* Clear Kernel reset status bit */
+    /* Clear Kernel reset status bit */
+    sent->KRSTCLR.B.CLR = 1;
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 }
 #endif

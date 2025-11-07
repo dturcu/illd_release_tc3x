@@ -3,7 +3,7 @@
  * \brief EBU SRAM details
  * \ingroup IfxLld_Ebu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -133,11 +133,13 @@
 
 /** \addtogroup IfxLld_Ebu_Sram_Enum
  * \{ */
+/** \brief Types of SRAM Device Support
+ */
 typedef enum
 {
-    IfxEbu_Sram_Device_deMuxedAsynchronousType,
-    IfxEbu_Sram_Device_muxedAsynchronousType,
-    IfxEbu_Sram_Device_synchronousSramType
+    IfxEbu_Sram_Device_deMuxedAsynchronousType,  /**< \brief deMuxed Asynchronous Type */
+    IfxEbu_Sram_Device_muxedAsynchronousType,    /**< \brief Muxed Asynchronous Type */
+    IfxEbu_Sram_Device_synchronousSramType		 /**< \brief Synchronous Sram Type */
 } IfxEbu_Sram_Device;
 
 /** \} */
@@ -148,29 +150,33 @@ typedef enum
 
 /** \addtogroup IfxLld_Ebu_Sram_DataStructures
  * \{ */
+/** \brief Structure containing the Sram configuration
+ */
 typedef struct
 {
-    Ifx_EBU          *ebu;
-    IfxEbu_ChipSelect chipSelect;
-    uint32            baseAddress;
+    Ifx_EBU          *ebu;					/**< \brief Pointer to the base of EBU registers */
+    IfxEbu_ChipSelect chipSelect;			/**< \brief Chip select control */
+    uint32            baseAddress;			/**< \brief EBU base address. Range: 0 to 0xFFFFF */
 } IfxEbu_Sram;
 
+/** \brief Sram configuration
+ */
 typedef struct
 {
-    Ifx_EBU                    *module;
-    IfxEbu_ExternalClockRatio   externalClockRatio;
-    IfxEbu_ReadConfig           readConfig;
-    IfxEbu_WriteConfig          writeConfig;
-    IfxEbu_ReadAccessParameter  readAccessParameter;
-    IfxEbu_WriteAccessParameter writeAccessParameter;
-    IfxEbu_ChipSelect           chipSelect;
-    IfxEbu_ModuleConfig         moduleConfig;
-    IfxEbu_MemoryRegionConfig   memoryRegionConfig;
-    IfxEbu_Sram_Device          device;
-    IfxEbu_ReadConfig           syncReadConfig;
-    IfxEbu_WriteConfig          syncWriteConfig;
-    IfxEbu_ReadAccessParameter  syncReadAccessParameter;
-    IfxEbu_WriteAccessParameter syncWriteAccessParameter;
+    Ifx_EBU                    *module;							/**< \brief Pointer to the base of EBU registers */
+    IfxEbu_ExternalClockRatio   externalClockRatio;				/**< \brief External clock ratio configuration */
+    IfxEbu_ReadConfig           readConfig;						/**< \brief Read configuration */
+    IfxEbu_WriteConfig          writeConfig;					/**< \brief Write configuration */
+    IfxEbu_ReadAccessParameter  readAccessParameter;			/**< \brief Read access parameter configuration */
+    IfxEbu_WriteAccessParameter writeAccessParameter;			/**< \brief Write access parameter configuration */
+    IfxEbu_ChipSelect           chipSelect;						/**< \brief Chip select control configuration */
+    IfxEbu_ModuleConfig         moduleConfig;					/**< \brief Module configuration settings */
+    IfxEbu_MemoryRegionConfig   memoryRegionConfig;				/**< \brief Memory region configuration settings */
+    IfxEbu_Sram_Device          device;							/**< \brief Types of SRAM Device Support */
+    IfxEbu_ReadConfig           syncReadConfig;					/**< \brief Synchronous read configuration */
+    IfxEbu_WriteConfig          syncWriteConfig;				/**< \brief Synchronous write configuration */
+    IfxEbu_ReadAccessParameter  syncReadAccessParameter;		/**< \brief Synchronous read access parameter configuration */
+    IfxEbu_WriteAccessParameter syncWriteAccessParameter;		/**< \brief Synchronous write access parameter configuration */
 } IfxEbu_Sram_Config;
 
 /** \} */
@@ -183,12 +189,22 @@ typedef struct
 /******************************************************************************/
 
 /**
- * \return None
+ * \brief Initializes the SRAM instance with the provided configuration.
+ *
+ * \param[inout] sram   Pointer to the SRAM instance to be initialized.
+ * \param[in]    config Pointer to the configuration structure containing initialization parameters.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config);
 
 /**
- * \return None
+ * \brief Initializes the memory configuration for the SRAM module.
+ *
+ * \param[inout] config  Pointer to the SRAM configuration structure.
+ * \param[in]    ebu     Pointer to the EBU module instance.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu);
 

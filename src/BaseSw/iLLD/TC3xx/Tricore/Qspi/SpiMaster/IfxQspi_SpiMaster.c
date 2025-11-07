@@ -2,7 +2,7 @@
  * \file IfxQspi_SpiMaster.c
  * \brief QSPI SPIMASTER details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -119,7 +119,9 @@ IFX_STATIC void IfxQspi_SpiMaster_writeLong(IfxQspi_SpiMaster_Channel *chHandle)
 
 IFX_STATIC void IfxQspi_SpiMaster_activateSlso(IfxQspi_SpiMaster_Channel *chHandle)
 {
+	 /* Determine the action to set the Slso pin state based on the active state configuration */
     IfxPort_State action = (chHandle->slsoActiveState == Ifx_ActiveState_low) ? IfxPort_State_low : IfxPort_State_high;
+    /* Set the state of the SLSO pin to activate the chip select */
     IfxPort_setPinState(chHandle->slso.port, chHandle->slso.pinIndex, action);
 }
 
@@ -132,7 +134,9 @@ IFX_STATIC IfxQspi_SpiMaster_Channel *IfxQspi_SpiMaster_getActiveChannel(IfxQspi
 
 IFX_STATIC void IfxQspi_SpiMaster_deactivateSlso(IfxQspi_SpiMaster_Channel *chHandle)
 {
+	/* Determine the action to set the Slso pin state based on the active state configuration */
     IfxPort_State action = (chHandle->slsoActiveState == Ifx_ActiveState_low) ? IfxPort_State_high : IfxPort_State_low;
+    /* Set the state of the SLSO pin to deactivate the chip select */
     IfxPort_setPinState(chHandle->slso.port, chHandle->slso.pinIndex, action);
 }
 
@@ -144,10 +148,11 @@ IfxQspi_Status IfxQspi_SpiMaster_exchange(IfxQspi_SpiMaster_Channel *chHandle, c
 
     if (status == IfxQspi_Status_ok)
     {
+    	/* Get the SPI master handle from the channel handle */
         IfxQspi_SpiMaster *spiMaster = (IfxQspi_SpiMaster *)chHandle->spiMaster;
         spiMaster->activeChannel = chHandle;
 
-        /* initiate transfer when resource is free */
+        /* Initiate transfer when resource is free */
         chHandle->flags.onTransfer = 1;
         chHandle->tx.data          = (void *)src;
         chHandle->tx.remaining     = count;
@@ -186,17 +191,20 @@ IfxQspi_chConfig IfxQspi_SpiMaster_getChannelConfig(IfxQspi_SpiMaster_Channel *c
     {
         IfxQspi_chConfig     chConfig;
 
+        /* Get the SPI master handle from the channel handle */
         IfxQspi_SpiMaster *spiMaster         = (IfxQspi_SpiMaster *)chHandle->spiMaster;
         Ifx_QSPI          *qspiSFR           = spiMaster->qspi;
 
         Ifx_QSPI_ECON      econ;
         econ.U                        = qspiSFR->ECON[chHandle->channelId % 8].U;
 
+        /* Initialize error checks to 0 */
         chConfig.baudrate             = IfxQspi_calcRealBaudrate(qspiSFR, (IfxQspi_ChannelId)(chHandle->channelId % 8));
         chConfig.errorChecks.baudrate = 0;
         chConfig.errorChecks.phase    = 0;
         chConfig.errorChecks.receive  = 0;
         chConfig.errorChecks.transmit = 0;
+        /* Configure the mode settings for the channel */
         chConfig.mode.autoCS          = (chHandle->useSlso == FALSE);
         chConfig.mode.clockPolarity   = econ.B.CPOL == 0 ? IfxQspi_ClockPolarity_idleLow : IfxQspi_ClockPolarity_idleHigh;
         chConfig.mode.csActiveLevel   = chHandle->slsoActiveState;
@@ -249,13 +257,14 @@ IfxQspi_Status IfxQspi_SpiMaster_initChannel(IfxQspi_SpiMaster_Channel *chHandle
     uint32         loopback = chConfig->ch.mode.loopback;
     qspiSFR->GLOBALCON.B.LB = loopback;
 
-    /* chip-select output pin */
+    /* Chip-select output pin */
     const IfxQspi_SpiMaster_Output *slso = &(chConfig->sls.output);
 
-    /* if loopback is enabled, but pin is not configured, default to channel 0  */
+    /* If loopback is enabled, but pin is not configured, default to channel 0  */
     if ((loopback == 1) && (slso->pin == NULL_PTR))
     {
-        chHandle->channelId = (IfxQspi_ChannelId)0;     /* select 0 as default, if not specified */
+    	/* Select 0 as default, if not specified */
+        chHandle->channelId = (IfxQspi_ChannelId)0;
     }
 	/* If pin is configured, select the corresponding channel. Loopback mode enablement doesn't matter */
     else if (slso->pin != NULL_PTR)
@@ -271,8 +280,8 @@ IfxQspi_Status IfxQspi_SpiMaster_initChannel(IfxQspi_SpiMaster_Channel *chHandle
     uint8 cs = chHandle->channelId % 8;
 
     {
-        /* assert warning if desired baud rate is more than max baud rate */
-        IFX_ASSERT(IFX_VERBOSE_LEVEL_WARNING, chHandle->spiMaster->maximumBaudrate > chConfig->ch.baudrate);
+        /* Assert warning if desired baud rate is more than max baud rate */
+        IFX_ASSERT(IFX_VERBOSE_LEVEL_WARNING, chHandle->spiMaster->maximumBaudrate >= chConfig->ch.baudrate);
 
         qspiSFR->ECON[cs].U = IfxQspi_calculateExtendedConfigurationValue(qspiSFR, cs, &chConfig->ch);
         chHandle->bacon.U   = IfxQspi_calculateBasicConfigurationValue(qspiSFR, chHandle->channelId, &chConfig->ch.mode, chConfig->ch.baudrate);
@@ -335,9 +344,10 @@ IfxQspi_Status IfxQspi_SpiMaster_initChannel(IfxQspi_SpiMaster_Channel *chHandle
 
 void IfxQspi_SpiMaster_initChannelConfig(IfxQspi_SpiMaster_ChannelConfig *chConfig, IfxQspi_SpiMaster *handle)
 {
+	/* Initialize default values for the channel */
     chConfig->ch.baudrate             = 0;
     chConfig->ch.mode.enabled         = 1;
-    chConfig->ch.mode.autoCS          = 1; /* default 1, where no SLSO pin is set by software and SLSi is active by default */
+    chConfig->ch.mode.autoCS          = 1; /* Default 1, where no SLSO pin is set by software and SLSi is active by default */
     chConfig->ch.mode.loopback        = 0;
     chConfig->ch.mode.clockPolarity   = IfxQspi_ClockPolarity_idleLow;
     chConfig->ch.mode.shiftClock      = IfxQspi_ShiftClock_shiftTransmitDataOnLeadingEdge;
@@ -374,21 +384,28 @@ void IfxQspi_SpiMaster_initModule(IfxQspi_SpiMaster *handle, const IfxQspi_SpiMa
 
     Ifx_DMA  *dmaSFR  = &MODULE_DMA;
 
-    /* handle.base must be at offset 0 to be compatible with the standard interface SscIf */
+    /* Handle.base must be at offset 0 to be compatible with the standard interface SscIf */
     {
         uint16 password = IfxScuWdt_getCpuWatchdogPassword();
+        /* Clearing the endinit protection */
         IfxScuWdt_clearCpuEndinit(password);
+        /* Enable the QSPI module */
         IfxQspi_setEnableModuleRequest(qspiSFR);
+        /* Configure sleep mode based on the configuration */
         IfxQspi_setSleepMode(qspiSFR, (config->allowSleepMode != FALSE) ? IfxQspi_SleepMode_enable : IfxQspi_SleepMode_disable);
+        /* Setting the endinit protection back on */
         IfxScuWdt_setCpuEndinit(password);
     }
 
-    {                                                        /* Configure GLOBAL, Note: at the moment default values for GLOBAL */
+    /* Configure GLOBAL, Note: at the moment default values for GLOBAL */
+    {
         Ifx_QSPI_GLOBALCON globalcon;
         globalcon.U          = 0;
         globalcon.B.TQ       = IfxQspi_calculateTimeQuantumLength(qspiSFR, config->maximumBaudrate);
-        globalcon.B.EXPECT   = IfxQspi_ExpectTimeout_2097152;    /* 2^(EXPECT+6) : timeout for expect phase in Tqspi */
-        globalcon.B.MS       = IfxQspi_Mode_master;              /* select master mode */
+        /* 2^(EXPECT+6) : timeout for expect phase in Tqspi */
+        globalcon.B.EXPECT   = IfxQspi_ExpectTimeout_2097152;
+        /* Select master mode */
+        globalcon.B.MS       = IfxQspi_Mode_master;
         globalcon.B.AREN     = (config->pauseOnBaudrateSpikeErrors != FALSE) ? 1U : 0U;
         globalcon.B.RESETS   = 1;
         globalcon.B.CLKSEL   = 1;
@@ -408,38 +425,61 @@ void IfxQspi_SpiMaster_initModule(IfxQspi_SpiMaster *handle, const IfxQspi_SpiMa
         globalcon1.B.RXFIFOINT = config->rxFifoThreshold;
         globalcon1.B.TXFM      = config->txFifoMode;
         globalcon1.B.RXFM      = config->rxFifoMode;
+        globalcon1.B.PT1EN     = config->phaseTransition1Enable;
+        globalcon1.B.PT1       = config->phaseTransition1Event;
+        globalcon1.B.PT2EN     = config->phaseTransition2Enable;
+        globalcon1.B.PT2       = config->phaseTransition2Event;
 
         qspiSFR->GLOBALCON1.U  = globalcon1.U;
     }
 
     /* Configure I/O pins for master mode */
-    IfxQspi_SpiMaster_initPin(config->pins);
+    if (config->useLvds == FALSE)
+    {
+        IfxQspi_SpiMaster_initPin(config->pins);
+    }
+    else
+    {
+        if (config->pins != NULL_PTR)
+        {
+            IfxQspi_SpiMaster_initLvdsPin(config->pins);
+        }
 
-    handle->qspi                     = qspiSFR;
+        if (config->pinsN != NULL_PTR)
+        {
+            IfxQspi_SpiMaster_initLvdsPin(config->pinsN);
+        }
+    }
+
+    handle->qspi = qspiSFR;
 
     if (config->dma.useDma)
     {
         handle->dma.useDma = TRUE;
+        /* Initialize the DMA module and channels */
         IfxDma_Dma               dma;
         IfxDma_Dma_createModuleHandle(&dma, dmaSFR);
 
         IfxDma_Dma_ChannelConfig dmaCfg;
         IfxDma_Dma_initChannelConfig(&dmaCfg, &dma);
 
+        /* Configure the transmit DMA channel */
         {
             handle->dma.txDmaChannelId     = config->dma.txDmaChannelId;
             dmaCfg.channelId               = handle->dma.txDmaChannelId;
-            dmaCfg.hardwareRequestEnabled  = FALSE; // will be triggered from FFT service request
-            dmaCfg.channelInterruptEnabled = TRUE;  // trigger interrupt after transaction
+            /* Will be triggered from FFT service request */
+            dmaCfg.hardwareRequestEnabled  = FALSE;
+            /* Trigger interrupt after transaction */
+            dmaCfg.channelInterruptEnabled = TRUE;
 
-            // source address and transfer count will be configured during runtime
+            /* Source address and transfer count will be configured during runtime */
             dmaCfg.sourceAddress               = 0;
             dmaCfg.sourceAddressCircularRange  = IfxDma_ChannelIncrementCircular_none;
             dmaCfg.sourceCircularBufferEnabled = FALSE;
             dmaCfg.transferCount               = 0;
             dmaCfg.moveSize                    = IfxDma_ChannelMoveSize_8bit;
 
-            // destination address is fixed; use circular mode to stay at this address for each move
+            /* Destination address is fixed; use circular mode to stay at this address for each move */
             dmaCfg.destinationAddress               = (uint32)&qspiSFR->DATAENTRY[0].U;
             dmaCfg.destinationAddressCircularRange  = IfxDma_ChannelIncrementCircular_none;
             dmaCfg.destinationCircularBufferEnabled = TRUE;
@@ -448,7 +488,7 @@ void IfxQspi_SpiMaster_initModule(IfxQspi_SpiMaster *handle, const IfxQspi_SpiMa
             dmaCfg.operationMode                    = IfxDma_ChannelOperationMode_single;
             dmaCfg.blockMode                        = IfxDma_ChannelMove_1;
 
-            // initialize interrupt for tx
+            /* Initialize interrupt for tx */
             dmaCfg.channelInterruptTypeOfService = config->isrProvider;
             dmaCfg.channelInterruptPriority      = config->txPriority;
 
@@ -458,15 +498,17 @@ void IfxQspi_SpiMaster_initModule(IfxQspi_SpiMaster *handle, const IfxQspi_SpiMa
         {
             handle->dma.rxDmaChannelId     = config->dma.rxDmaChannelId;
             dmaCfg.channelId               = handle->dma.rxDmaChannelId;
-            dmaCfg.hardwareRequestEnabled  = FALSE; // will be triggered from qspi service request
-            dmaCfg.channelInterruptEnabled = TRUE;  // trigger interrupt after transaction
+            /* Will be triggered from qspi service request */
+            dmaCfg.hardwareRequestEnabled  = FALSE;
+            /* Trigger interrupt after transaction */
+            dmaCfg.channelInterruptEnabled = TRUE;
 
-            // source address is fixed; use circular mode to stay at this address for each move
+            /* Source address is fixed; use circular mode to stay at this address for each move */
             dmaCfg.sourceAddress               = (uint32)&qspiSFR->RXEXIT.U;
             dmaCfg.sourceAddressCircularRange  = IfxDma_ChannelIncrementCircular_none;
             dmaCfg.sourceCircularBufferEnabled = TRUE;
 
-            // destination address and transfer count will be configured during runtime
+            /* Destination address and transfer count will be configured during runtime */
             dmaCfg.destinationAddress               = 0;
             dmaCfg.destinationAddressCircularRange  = IfxDma_ChannelIncrementCircular_none;
             dmaCfg.destinationCircularBufferEnabled = FALSE;
@@ -477,7 +519,7 @@ void IfxQspi_SpiMaster_initModule(IfxQspi_SpiMaster *handle, const IfxQspi_SpiMa
             dmaCfg.moveSize                         = IfxDma_ChannelMoveSize_8bit;
             dmaCfg.blockMode                        = IfxDma_ChannelMove_1;
 
-            // initialize interrupt for rx
+            /* Initialize interrupt for rx */
             dmaCfg.channelInterruptTypeOfService = config->isrProvider;
             dmaCfg.channelInterruptPriority      = config->rxPriority;
 
@@ -551,13 +593,23 @@ IFX_EXTERN void IfxQspi_SpiMaster_initInterrupt(Ifx_QSPI *qspiSFR, const IfxQspi
             IfxSrc_init(src, config->isrProvider, config->rxPriority);
             IfxSrc_enable(src);
         }
+    }
+	
+	/* Configure the error interrupt if a priority is specified */
+    if (config->erPriority != 0)
+    {
+        volatile Ifx_SRC_SRCR *src = IfxQspi_getErrorSrc(qspiSFR);
+        IfxSrc_init(src, config->isrProvider, config->erPriority);
+        IfxSrc_enable(src);
+    }
 
-        if (config->erPriority != 0)
-        {
-            volatile Ifx_SRC_SRCR *src = IfxQspi_getErrorSrc(qspiSFR);
-            IfxSrc_init(src, config->isrProvider, config->erPriority);
-            IfxSrc_enable(src);
-        }
+    /* Configure the phase transition interrupt if a priority is specified */
+	if((config->ptPriority != 0) && \
+    		 ((config->phaseTransition1Enable == TRUE) || (config->phaseTransition2Enable == TRUE)))
+    {
+		volatile Ifx_SRC_SRCR *src = IfxQspi_getPhaseTransitionSrc(qspiSFR);
+    	IfxSrc_init(src, config->isrProvider, config->ptPriority);
+    	IfxSrc_enable(src);
     }
 }
 
@@ -579,11 +631,17 @@ void IfxQspi_SpiMaster_initModuleConfig(IfxQspi_SpiMaster_Config *config, Ifx_QS
     config->rxFifoThreshold            = IfxQspi_RxFifoInt_0;
     config->txFifoMode                 = IfxQspi_FifoMode_combinedMove;
     config->rxFifoMode                 = IfxQspi_FifoMode_combinedMove;
+    config->phaseTransition1Enable     = FALSE;
+    config->phaseTransition2Enable     = FALSE;
+    config->phaseTransition1Event      = IfxQspi_PhaseTransitionEvent_startOfFrame;
+    config->phaseTransition2Event      = IfxQspi_PhaseTransitionEvent_endOfFrame;
     config->pins                       = NULL_PTR;
+    config->pinsN                      = NULL_PTR;
     config->dma.rxDmaChannelId         = IfxDma_ChannelId_none;
     config->dma.txDmaChannelId         = IfxDma_ChannelId_none;
     config->dma.useDma                 = FALSE;
     config->maximumBaudrate            = 50000000;
+    config->useLvds                    = FALSE;
 }
 
 
@@ -610,6 +668,7 @@ void IfxQspi_SpiMaster_isrDmaReceive(IfxQspi_SpiMaster *qspiHandle)
 
 void IfxQspi_SpiMaster_isrDmaTransmit(IfxQspi_SpiMaster *qspiHandle)
 {
+	/* Get the active channel handle from the SPI master */
     IfxQspi_SpiMaster_Channel *chHandle       = IfxQspi_SpiMaster_getActiveChannel(qspiHandle);
     Ifx_DMA                   *dmaSFR         = &MODULE_DMA;
     IfxDma_ChannelId           txDmaChannelId = qspiHandle->dma.txDmaChannelId;
@@ -618,7 +677,7 @@ void IfxQspi_SpiMaster_isrDmaTransmit(IfxQspi_SpiMaster *qspiHandle)
 
     if (IfxDma_getAndClearChannelPatternDetectionInterrupt(dmaSFR, txDmaChannelId))
     {
-        // DMA_TC.031 workaround ..
+        /* DMA_TC.031 workaround .. */
         IfxDma_getAndClearChannelInterrupt(dmaSFR, txDmaChannelId);
     }
     else if ((chHandle->mode == IfxQspi_SpiMaster_Mode_long) ||
@@ -637,6 +696,7 @@ void IfxQspi_SpiMaster_isrDmaTransmit(IfxQspi_SpiMaster *qspiHandle)
         IfxDma_clearChannelInterrupt(dmaSFR, txDmaChannelId);
         IfxDma_disableChannelTransaction(dmaSFR, txDmaChannelId);
 
+        /* Check if the transmit job data is NULL */
         if (job->data == NULL_PTR)
         {
             IfxQspi_writeBasicConfigurationEndStream(qspiSFR, chHandle->bacon.U);
@@ -671,7 +731,7 @@ void IfxQspi_SpiMaster_isrError(IfxQspi_SpiMaster *handle)
     IfxQspi_SpiMaster_Channel *chHandle   = IfxQspi_SpiMaster_getActiveChannel(handle);
     Ifx_DMA                   *dmaSFR     = &MODULE_DMA;
 
-    /* store all the flags in the variable */
+    /* Store all the flags in the variable */
 
     if ((errorFlags & IfxQspi_Error_parity))
     {
@@ -713,17 +773,21 @@ void IfxQspi_SpiMaster_isrError(IfxQspi_SpiMaster *handle)
         chHandle->errorFlags.rxFifoUnderflowError = 1;
     }
 
+    /* If any error flags are set, handle the error */
     if (errorFlags)
     {
+    	/* Deactivate the SLSO pin if it is being used */
         if (chHandle->useSlso != FALSE)
         {
             IfxQspi_SpiMaster_activateSlso(chHandle);
         }
-
+        /* Mark the transfer as inactive */
         chHandle->flags.onTransfer = 0;
+        /* Unlock the SPI master for the next transfer */
         IfxQspi_SpiMaster_unlock(handle);
     }
 
+    /* If DMA is enabled, clear any pending DMA interrupts */
     if (handle->dma.useDma)
     {
         IfxDma_getAndClearChannelInterrupt(dmaSFR, handle->dma.rxDmaChannelId);
@@ -739,7 +803,7 @@ uint16 IfxQspi_SpiMaster_isrHighSpeedCapure(IfxQspi_SpiMaster *handle)
 
     if (qspiSFR->CAPCON.B.CAPF)
     {
-        captureValue           = qspiSFR->CAPCON.U & 0xFFFF; // includes overflow bit too
+        captureValue           = qspiSFR->CAPCON.U & 0xFFFF; /* Includes overflow bit too */
         qspiSFR->CAPCON.B.CAPC = 0;
     }
 
@@ -750,7 +814,7 @@ uint16 IfxQspi_SpiMaster_isrHighSpeedCapure(IfxQspi_SpiMaster *handle)
 IfxQspi_PhaseTransitionEvent IfxQspi_SpiMaster_isrPhaseTransition(IfxQspi_SpiMaster *handle)
 {
     Ifx_QSPI                    *qspiSFR = handle->qspi;
-    IfxQspi_PhaseTransitionEvent ptEvent = IfxQspi_PhaseTransitionEvent_endOfWait; /* default to 0 */
+    IfxQspi_PhaseTransitionEvent ptEvent = IfxQspi_PhaseTransitionEvent_endOfWait; /* Default to 0 */
 
     if (qspiSFR->STATUS.B.PT1F)
     {
@@ -784,12 +848,12 @@ void IfxQspi_SpiMaster_isrTransmit(IfxQspi_SpiMaster *handle)
 IfxQspi_PhaseTransitionEvent IfxQspi_SpiMaster_isrUserDefined(IfxQspi_SpiMaster *handle)
 {
     Ifx_QSPI                    *qspiSFR = handle->qspi;
-    IfxQspi_PhaseTransitionEvent ptEvent = IfxQspi_PhaseTransitionEvent_endOfWait; /* default to 0 */
+    IfxQspi_PhaseTransitionEvent ptEvent = IfxQspi_PhaseTransitionEvent_endOfWait; /* Default to 0 */
 
     if (qspiSFR->STATUS.B.USRF)
     {
         qspiSFR->FLAGSCLEAR.B.USRC = 1;
-        ptEvent                    = (IfxQspi_PhaseTransitionEvent)qspiSFR->GLOBALCON1.B.PT1; //
+        ptEvent                    = (IfxQspi_PhaseTransitionEvent)qspiSFR->GLOBALCON1.B.PT1;
     }
 
     return ptEvent;
@@ -823,6 +887,7 @@ void IfxQspi_SpiMaster_packLongModeBuffer(IfxQspi_SpiMaster_Channel *chHandle, v
 
     baconDL = 16;
 
+    /* Configure the BACON register based on the channel mode */
     if (chHandle->mode == IfxQspi_SpiMaster_Mode_longContinuous)
     {
         chHandle->bacon.B.BYTE = 1;
@@ -838,6 +903,7 @@ void IfxQspi_SpiMaster_packLongModeBuffer(IfxQspi_SpiMaster_Channel *chHandle, v
         IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, IFX_ASSERT_FEATURE_NOT_IMPLEMENTED);
     }
 
+    /* Wait until all data is packed into the FIFO buffer */
     while (dataLength > 0)
     {
         if (dataLength <= 16)
@@ -886,16 +952,20 @@ void IfxQspi_SpiMaster_packLongModeBuffer(IfxQspi_SpiMaster_Channel *chHandle, v
 
 IFX_STATIC void IfxQspi_SpiMaster_read(IfxQspi_SpiMaster_Channel *chHandle)
 {
+	/* Get the SPI master handle from the channel handle */
     IfxQspi_SpiMaster *spiMaster = (IfxQspi_SpiMaster *)chHandle->spiMaster;
+    /* Get the QSPI module pointer from the SPI master handle */
     Ifx_QSPI            *qspiSFR = spiMaster->qspi;
+    /* Get the receive job structure from the channel handle */
     IfxQspi_Job         *job     = &chHandle->rx;
 
     Ifx_SizeT          count   = (Ifx_SizeT)IfxQspi_getReceiveFifoLevel(qspiSFR);
     count = __min(job->remaining, count);
 
+    /* Check if the receive job data pointer is NULL */
     if (job->data == NULL_PTR)
     {
-        // no data should be buffered: do dummy reads
+        /* No data should be buffered: do dummy reads */
         int i;
 
         for (i = 0; i < count; ++i)
@@ -905,25 +975,34 @@ IFX_STATIC void IfxQspi_SpiMaster_read(IfxQspi_SpiMaster_Channel *chHandle)
     }
     else
     {
+    	/* Check the data width and read data accordingly */
         if (chHandle->dataWidth <= 8)
         {
+        	/* Read 16-bit data from the receive FIFO */
             IfxQspi_read8(qspiSFR, job->data, count);
+            /* Update the data pointer to the next position */
             job->data = &(((uint8 *)job->data)[count]);
         }
         else if (chHandle->dataWidth <= 16)
         {
+        	/* Read 16-bit data from the receive FIFO */
             IfxQspi_read16(qspiSFR, job->data, count);
+            /* Update the data pointer to the next position */
             job->data = &(((uint16 *)job->data)[count]);
         }
         else
         {
+        	/* Read 32-bit data from the receive FIFO */
             IfxQspi_read32(qspiSFR, job->data, count);
+            /* Update the data pointer to the next position */
             job->data = &(((uint32 *)job->data)[count]);
         }
     }
 
+    /* Update the remaining data count */
     job->remaining = job->remaining - count;
 
+    /* If all data has been received, mark the transfer as complete */
     if (job->remaining == 0)
     {
         if (chHandle->useSlso != FALSE)
@@ -931,7 +1010,9 @@ IFX_STATIC void IfxQspi_SpiMaster_read(IfxQspi_SpiMaster_Channel *chHandle)
             IfxQspi_SpiMaster_deactivateSlso(chHandle);
         }
 
+        /* Mark the transfer as inactive */
         chHandle->flags.onTransfer = 0;
+        /* Unlock the SPI master for the next transfer */
         IfxQspi_SpiMaster_unlock(chHandle->spiMaster);
     }
 }
@@ -939,7 +1020,9 @@ IFX_STATIC void IfxQspi_SpiMaster_read(IfxQspi_SpiMaster_Channel *chHandle)
 
 IfxQspi_Status IfxQspi_SpiMaster_setChannelBaudrate(IfxQspi_SpiMaster_Channel *chHandle, float32 baudrate)
 {
+	/* Get the SPI master handle from the channel handle */
     IfxQspi_SpiMaster *spiMaster = (IfxQspi_SpiMaster *)chHandle->spiMaster;
+    /* Get the QSPI module pointer from the SPI master handle */
     Ifx_QSPI          *qspiSFR   = spiMaster->qspi;
 
     IfxQspi_chConfig     chConfig;
@@ -964,6 +1047,7 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
     IfxQspi_Job       *job    = &chHandle->tx;
     IfxQspi_SpiMaster *spiMaster = (IfxQspi_SpiMaster *)chHandle->spiMaster;
 
+    /* Check if DMA is enabled for the SPI master */
     if (spiMaster->dma.useDma)
     {
         Ifx_DMA               *dmaSFR         = &MODULE_DMA;
@@ -971,6 +1055,7 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
         Ifx_QSPI              *qspiSFR        = spiMaster->qspi;
         volatile Ifx_SRC_SRCR *src            = IfxQspi_getTransmitSrc(qspiSFR);
 
+        /* Get the DMA channel IDs for transmit and receive */
         IfxDma_ChannelId       txDmaChannelId = spiMaster->dma.txDmaChannelId;
         IfxDma_ChannelId       rxDmaChannelId = spiMaster->dma.rxDmaChannelId;
 
@@ -993,13 +1078,14 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
                 IfxDma_setChannelMoveSize(dmaSFR, txDmaChannelId, IfxDma_ChannelMoveSize_32bit);
             }
 
+            /* Check if the transmit job data is NULL */
             if (job->data == NULL_PTR)
             {
                 IfxDma_setChannelSourceAddress(dmaSFR, txDmaChannelId, (void *)IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), &(chHandle->dummyTxValue)));
                 IfxDma_setChannelSourceIncrementStep(dmaSFR, txDmaChannelId, IfxDma_ChannelIncrementStep_1,
                     IfxDma_ChannelIncrementDirection_positive, IfxDma_ChannelIncrementCircular_4);
-                /* need to enable circular buffering to avoid increment higher than 4 bytes */
-                /* we must do this direct why we don't have function for this */
+                /* Need to enable circular buffering to avoid increment higher than 4 bytes */
+                /* We must do this direct why we don't have function for this */
                 dmaSFR->CH[txDmaChannelId].ADICR.B.SCBE = TRUE;
             }
             else
@@ -1007,8 +1093,8 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
                 IfxDma_setChannelSourceAddress(dmaSFR, txDmaChannelId, (void *)IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), job->data));
                 IfxDma_setChannelSourceIncrementStep(dmaSFR, txDmaChannelId, IfxDma_ChannelIncrementStep_1,
                     IfxDma_ChannelIncrementDirection_positive, IfxDma_ChannelIncrementCircular_none);
-                /* maybe circular buffering was enabled by other call, we disable the circular buffering */
-                /* we must do this direct why we don't have function for this */
+                /* Maybe circular buffering was enabled by other call, we disable the circular buffering */
+                /* We must do this direct why we don't have function for this */
                 dmaSFR->CH[txDmaChannelId].ADICR.B.SCBE = FALSE;
             }
 
@@ -1035,13 +1121,14 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
             IfxDma_setChannelMoveSize(dmaSFR, rxDmaChannelId, IfxDma_ChannelMoveSize_32bit);
         }
 
+        /* Check if the receive job data is NULL */
         if (chHandle->rx.data == NULL_PTR)
         {
             IfxDma_setChannelDestinationAddress(dmaSFR, rxDmaChannelId, (void *)IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), &(chHandle->dummyRxValue)));
             IfxDma_setChannelDestinationIncrementStep(dmaSFR, rxDmaChannelId, IfxDma_ChannelIncrementStep_1,
                 IfxDma_ChannelIncrementDirection_positive, IfxDma_ChannelIncrementCircular_4);
-            /* need to enable circular buffering to avoid increment higher than 4 bytes */
-            /* we must do this direct why we don't have function for this */
+            /* Need to enable circular buffering to avoid increment higher than 4 bytes */
+            /* We must do this direct why we don't have function for this */
             dmaSFR->CH[rxDmaChannelId].ADICR.B.DCBE = TRUE;
         }
         else
@@ -1049,8 +1136,8 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
             IfxDma_setChannelDestinationAddress(dmaSFR, rxDmaChannelId, (void *)IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), chHandle->rx.data));
             IfxDma_setChannelDestinationIncrementStep(dmaSFR, rxDmaChannelId, IfxDma_ChannelIncrementStep_1,
                 IfxDma_ChannelIncrementDirection_positive, IfxDma_ChannelIncrementCircular_none);
-            /* maybe circular buffering was enabled by other call, we disable the circular buffering */
-            /* we must do this direct why we don't have function for this */
+            /* Maybe circular buffering was enabled by other call, we disable the circular buffering */
+            /* We must do this direct why we don't have function for this */
             dmaSFR->CH[rxDmaChannelId].ADICR.B.DCBE = FALSE;
         }
 
@@ -1065,6 +1152,7 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
         IfxDma_clearChannelInterrupt(dmaSFR, rxDmaChannelId);
         IfxDma_enableChannelTransaction(dmaSFR, rxDmaChannelId);
 
+        /* Enable the transmit DMA channel transaction if there is more than one word to transmit */
         if (job->remaining > 1)
         {
             IfxDma_clearChannelInterrupt(dmaSFR, txDmaChannelId);
@@ -1105,6 +1193,7 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
             }
         }
 
+        /* Restore the interrupt state */
         IfxCpu_restoreInterrupts(interruptState);
     }
 
@@ -1119,13 +1208,13 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
 
             if (chHandle->firstWrite == TRUE)
             {
-                // -1, since BACON allocates one FIFO entry
+                /* -1, since BACON allocates one FIFO entry */
                 count--;
             }
 
             if (job->remaining == count)
             {
-                // Need to write BACON next time
+                /* Need to write BACON next time */
                 count--;
             }
 
@@ -1135,7 +1224,7 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
             {
                 job->remaining = job->remaining - count;
 
-                // we have to push another BACON into FIFO before the last data word
+                /* We have to push another BACON into FIFO before the last data word */
                 boolean lastWrite = (job->remaining == 0) ? TRUE : FALSE;
                 boolean interruptState;
 
@@ -1158,7 +1247,7 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
                     interruptState = IfxCpu_areInterruptsEnabled();
                 }
 
-                // push BACON into FIFO before first data word
+                /* Push BACON into FIFO before first data word */
                 if (chHandle->firstWrite == TRUE)
                 {
                     chHandle->firstWrite = FALSE;
@@ -1175,7 +1264,7 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
 
                 if (job->data == NULL_PTR)
                 {
-                    // no data should be sent (only received): send all-1
+                    /* No data should be sent (only received): send all-1 */
                     int    i;
                     uint32 writeVal = chHandle->dummyTxValue;
 
@@ -1256,6 +1345,7 @@ IFX_STATIC void IfxQspi_SpiMaster_write(IfxQspi_SpiMaster_Channel *chHandle)
                     }
                 }
 
+                /* Restore the interrupt state */
                 IfxCpu_restoreInterrupts(interruptState);
             }
         }
@@ -1268,13 +1358,16 @@ IFX_STATIC void IfxQspi_SpiMaster_writeLong(IfxQspi_SpiMaster_Channel *chHandle)
     IfxQspi_Job       *job       = &chHandle->tx;
     IfxQspi_SpiMaster *spiMaster = (IfxQspi_SpiMaster *)chHandle->spiMaster;
 
+    /* Calculate the FIFO size required for the remaining data */
     uint8              fifosize  = IFXQSPI_FIFO32BITSIZE(job->remaining);
 
+    /* Calculate the FIFO size for long mode if not in XXL mode */
     if (chHandle->mode != IfxQspi_SpiMaster_Mode_xxl)
     {
-        fifosize = fifosize + IFXQSPI_BACONSIZE(job->remaining) - 1;       // combining this line and above doesn't work
+        fifosize = fifosize + IFXQSPI_BACONSIZE(job->remaining) - 1;       /* Combining this line and above doesn't work */
     }
 
+    /* Check if DMA is enabled for the SPI master */
     if (spiMaster->dma.useDma)
     {
         Ifx_DMA               *dmaSFR         = &MODULE_DMA;
@@ -1282,6 +1375,7 @@ IFX_STATIC void IfxQspi_SpiMaster_writeLong(IfxQspi_SpiMaster_Channel *chHandle)
         Ifx_QSPI              *qspiSFR        = spiMaster->qspi;
         volatile Ifx_SRC_SRCR *src            = IfxQspi_getTransmitSrc(qspiSFR);
 
+        /* Get the DMA channel IDs for transmit and receive */
         IfxDma_ChannelId       txDmaChannelId = spiMaster->dma.txDmaChannelId;
         IfxDma_ChannelId       rxDmaChannelId = spiMaster->dma.rxDmaChannelId;
 
@@ -1296,8 +1390,8 @@ IFX_STATIC void IfxQspi_SpiMaster_writeLong(IfxQspi_SpiMaster_Channel *chHandle)
                 IfxDma_setChannelSourceAddress(dmaSFR, txDmaChannelId, (void *)IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), job->data));
                 IfxDma_setChannelSourceIncrementStep(dmaSFR, txDmaChannelId, IfxDma_ChannelIncrementStep_1,
                     IfxDma_ChannelIncrementDirection_positive, IfxDma_ChannelIncrementCircular_none);
-                /* maybe circular buffering was enabled by other call, we disable the circular buffering */
-                /* we must do this direct why we don't have function for this */
+                /* Maybe circular buffering was enabled by other call, we disable the circular buffering */
+                /* We must do this direct why we don't have function for this */
                 dmaSFR->CH[txDmaChannelId].ADICR.B.SCBE = FALSE;
 
                 if (chHandle->mode != IfxQspi_SpiMaster_Mode_xxl)
@@ -1320,8 +1414,8 @@ IFX_STATIC void IfxQspi_SpiMaster_writeLong(IfxQspi_SpiMaster_Channel *chHandle)
             IfxDma_setChannelDestinationAddress(dmaSFR, rxDmaChannelId, (void *)IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), &(chHandle->dummyRxValue)));
             IfxDma_setChannelDestinationIncrementStep(dmaSFR, rxDmaChannelId, IfxDma_ChannelIncrementStep_1,
                 IfxDma_ChannelIncrementDirection_positive, IfxDma_ChannelIncrementCircular_4);
-            /* need to enable circular buffering to avoid increment higher than 4 bytes */
-            /* we must do this direct why we don't have function for this */
+            /* Need to enable circular buffering to avoid increment higher than 4 bytes */
+            /* We must do this direct why we don't have function for this */
             dmaSFR->CH[rxDmaChannelId].ADICR.B.DCBE = TRUE;
         }
         else
@@ -1329,8 +1423,8 @@ IFX_STATIC void IfxQspi_SpiMaster_writeLong(IfxQspi_SpiMaster_Channel *chHandle)
             IfxDma_setChannelDestinationAddress(dmaSFR, rxDmaChannelId, (void *)IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), chHandle->rx.data));
             IfxDma_setChannelDestinationIncrementStep(dmaSFR, rxDmaChannelId, IfxDma_ChannelIncrementStep_1,
                 IfxDma_ChannelIncrementDirection_positive, IfxDma_ChannelIncrementCircular_none);
-            /* maybe circular buffering was enabled by other call, we disable the circular buffering */
-            /* we must do this direct why we don't have function for this */
+            /* Maybe circular buffering was enabled by other call, we disable the circular buffering */
+            /* We must do this direct why we don't have function for this */
             dmaSFR->CH[rxDmaChannelId].ADICR.B.DCBE = FALSE;
         }
 
@@ -1402,7 +1496,7 @@ void IfxQspi_SpiMaster_updateDelayParameters(IfxQspi_SpiMaster_Channel *chHandle
 {
     IfxQspi_SpiMaster *spiMaster = (IfxQspi_SpiMaster *)chHandle->spiMaster;
 	
-    /*Update Bacon value in Handle for Interface APIs*/
+    /* Update Bacon value in Handle for Interface APIs */
     Ifx_QSPI_BACON bacon;
     bacon.U           = chHandle->bacon.U;
 
@@ -1415,7 +1509,7 @@ void IfxQspi_SpiMaster_updateDelayParameters(IfxQspi_SpiMaster_Channel *chHandle
 
     chHandle->bacon.U = bacon.U;
 
-    /*Update SFR*/
+    /* Update SFR */
     Ifx_QSPI          *qspiSFR = spiMaster->qspi;
 
     qspiSFR->BACONENTRY.U = chHandle->bacon.U;
@@ -1445,10 +1539,14 @@ void IfxQspi_SpiMaster_setBaudRateChannelBitFields(IfxQspi_SpiMaster *handle, co
 
     if ((bitTimingParams->channelQ < 64) && (bitTimingParams->aSegment < 4) && (bitTimingParams->bSegment < 4) && (bitTimingParams->cSegment < 4) && (n >= 4))
     {
-        econ[cs].B.Q        = bitTimingParams->channelQ; /* Configure the time quanta for the channel */
-        econ[cs].B.A        = bitTimingParams->aSegment; /* Configure the A segment for the channel */
-        econ[cs].B.B        = bitTimingParams->bSegment; /* Configure the B segment for the channel */
-        econ[cs].B.C        = bitTimingParams->cSegment; /* Configure the C segment for the channel */
+    	/* Configure the time quanta for the channel */
+        econ[cs].B.Q        = bitTimingParams->channelQ;
+        /* Configure the A segment for the channel */
+        econ[cs].B.A        = bitTimingParams->aSegment;
+        /* Configure the B segment for the channel */
+        econ[cs].B.B        = bitTimingParams->bSegment;
+        /* Configure the C segment for the channel */
+        econ[cs].B.C        = bitTimingParams->cSegment;
         qspiSFR->ECON[cs].U = econ[cs].U;
     }
     else
@@ -1456,3 +1554,31 @@ void IfxQspi_SpiMaster_setBaudRateChannelBitFields(IfxQspi_SpiMaster *handle, co
         IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* Either Q, A, B or C is not in range */
     }
 }
+
+void IfxQspi_SpiMaster_initLvdsPin(const IfxQspi_SpiMaster_Pins *pins)
+{
+    if ((pins->lvdsProperties != NULL_PTR) && (pins != NULL_PTR))
+    {
+        const IfxQspi_Sclk_Out *sclkOut = pins->sclk;
+
+        if (sclkOut != NULL_PTR)
+        {
+            IfxQspi_initSclkOutLvdsPin(sclkOut, pins->sclkMode, pins->pinDriver, &pins->lvdsProperties->sclkOutLvdsCfg);
+        }
+
+        const IfxQspi_Mtsr_Out *mtsrOut = pins->mtsr;
+
+        if (mtsrOut != NULL_PTR)
+        {
+            IfxQspi_initMtsrOutLvdsPin(mtsrOut, pins->mtsrMode, pins->pinDriver, &pins->lvdsProperties->mtsrOutLvdsCfg);
+        }
+
+        const IfxQspi_Mrst_In *mrstIn = pins->mrst;
+
+        if (mrstIn != NULL_PTR)
+        {
+            IfxQspi_initMrstInLvdsPinWithPadLevel(mrstIn, pins->mrstMode, pins->pinDriver, &pins->lvdsProperties->mrstInLvdsCfg);
+        }
+    }
+}
+

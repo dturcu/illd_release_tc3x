@@ -2,7 +2,7 @@
  * \file IfxEvadc_Adc.c
  * \brief EVADC ADC details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -172,8 +172,8 @@ IFX_STATIC IFX_CONST IfxEvadc_Adc_SYNCTR_STSEL IfxEvadc_Adc_masterIndex[IFXEVADC
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},   /* Grp 5 */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},   /* Grp 6 */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},   /* Grp 7 */
-    {2, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},   /* Grp 8 */
-    {2, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},   /* Grp 9 */
+    {1, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0},   /* Grp 8 */
+    {1, 2, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0},   /* Grp 9 */
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},   /* Grp 10*/
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}    /* Grp 11*/	
 
@@ -621,6 +621,7 @@ void IfxEvadc_Adc_initFastCompareChannel(IfxEvadc_Adc_FastCompareChannel *fastCo
     tempFCCTRL.B.STCF     = config->additionalClockCycles; /* No additional clock cycles in sample phase to be added*/
     tempFCCTRL.B.XTWC     = 1;                             /* Enabling write permissions */
     tempFCCTRL.B.GTMODE   = config->gateOperatingMode;
+    tempFCCTRL.B.XTSEL    = config->externalTriggerInputSelection;
     tempFCCTRL.B.XTPOL    = config->externalTriggerPolarity;
     tempFCCTRL.B.XTMODE   = config->externalTriggerOperatingMode;
 
@@ -646,15 +647,23 @@ void IfxEvadc_Adc_initFastCompareChannel(IfxEvadc_Adc_FastCompareChannel *fastCo
 
     evadcFcSFR->FCM.U = tempFCM.U;
 
-    IfxEvadc_disableFastCompareBoundaryFlag(evadcFcSFR); /* Disabling the Boundary Flag to configure it*/
     IfxEvadc_setFastCompareReferenceValue(evadcFcSFR, config->referenceValue);
     IfxEvadc_selectFastCompareBoundaryFlagActivationMode(evadcFcSFR, config->boundaryFlagActivation);
     IfxEvadc_setFastCompareBoundaryFlagInversion(evadcFcSFR, config->boundaryFlagInversion);
     IfxEvadc_setFastCompareBoundaryFlagSwControl(evadcFcSFR, config->boundaryFlagAction);
     IfxEvadc_selectFastCompareBoundaryFlagNodePointer(evadcFcSFR, config->boundaryFlagNodePointer);
-    IfxEvadc_enableFastCompareBoundaryFlag(evadcFcSFR); /* Enabling the Boundary Flag after configuring it*/
+
+    Ifx_EVADC_FC_FCBFL tempFCBFL;
+
+    tempFCBFL.U         = evadcFcSFR->FCBFL.U;
+
+    tempFCBFL.B.BFM     = config->boundaryFlagModeControl;
+
+    /* Register update */
+    evadcFcSFR->FCBFL.U = tempFCBFL.U;
 }
 #endif /*#if !defined(DEVICE_TC33XED) && !defined(DEVICE_TC33X) && !defined (DEVICE_TC35X)*/
+
 
 #if !defined(DEVICE_TC33XED) && !defined(DEVICE_TC33X) && !defined (DEVICE_TC35X)
 void IfxEvadc_Adc_initFastCompareChannelConfig(IfxEvadc_Adc_FastCompareChannelConfig *config, IfxEvadc_Adc *evadc)
@@ -663,11 +672,13 @@ void IfxEvadc_Adc_initFastCompareChannelConfig(IfxEvadc_Adc_FastCompareChannelCo
     config->fastCompareChannelId            = IfxEvadc_GroupId_12; /*Fast compare channel 0 */
     config->boundaryFlagActivation          = IfxEvadc_BoundaryFlagActivationMode_0;
     config->boundaryFlagInversion           = IfxEvadc_BoundaryFlagInversionControl_direct;
+    config->boundaryFlagModeControl         = FALSE;
     config->boundaryFlagNodePointer         = IfxEvadc_BoundaryFlagNodePointer_commonBoundaryFlagOutput0;
     config->boundaryFlagAction              = IfxEvadc_BoundaryFlagSwControl_noAction;
     config->channelEventMode                = IfxEvadc_ChannelEventMode_aboveOrBelowCompareValue;
     config->clockDivider                    = IfxEvadc_ClockDividerFactor_maxFrequency;
     config->externalTriggerPolarity         = IfxEvadc_ExternalTriggerPolarity_direct;
+    config->externalTriggerInputSelection   = IfxEvadc_ExternalTriggerInputSelection_0;
     config->analogConverterControllerMode   = IfxEvadc_FastCompareAnalogConverterControl_normal;
     config->automaticUpdateMode             = IfxEvadc_FastCompareAutomaticUpdate_sw;
     config->runMode                         = IfxEvadc_FastCompareRunControl_stop;
@@ -684,8 +695,58 @@ void IfxEvadc_Adc_initFastCompareChannelConfig(IfxEvadc_Adc_FastCompareChannelCo
     config->triggerInterval                 = 0; /*Interval set as 16 clock cycles*/
     config->referenceValue                  = 512;
     config->boundaryFlagValue               = FALSE;
+    config->rampConfig.compareValueA        = 0;
+    config->rampConfig.compareValueB        = 0;
+    config->rampConfig.stepWidth            = 0;
+    config->hysteresisConfig.lowerDeltaValue = 0;
+    config->hysteresisConfig.lowerDeltaValue = 0; 
+}
+
+
+void IfxEvadc_Adc_configureFastCompareChannelRamp(Ifx_EVADC_FC *fcc, IfxEvadc_Adc_FastCompareRampConfig *rampConfig)
+{
+	Ifx_EVADC_FC *sfrPtr = fcc;
+
+	Ifx_EVADC_FC_FCRAMP0 tempFCRAMP0;
+	Ifx_EVADC_FC_FCRAMP1 tempFCRAMP1;
+
+	/* Configure FCRAMP0 */
+	tempFCRAMP0.U = sfrPtr->FCRAMP0.U;
+
+	tempFCRAMP0.B.FCRCOMPA = rampConfig->compareValueA;
+	/* Enabling write permissions for FCRSTEP */
+	tempFCRAMP0.B.FSWC   = 1;
+	tempFCRAMP0.B.FCRSTEP  = rampConfig->stepWidth;
+
+	/* Register update */
+	sfrPtr->FCRAMP0.U = tempFCRAMP0.U;
+
+	/* Configure FCRAMP1 */
+	tempFCRAMP1.U = sfrPtr->FCRAMP1.U;
+	tempFCRAMP1.B.FCRCOMPB = rampConfig->compareValueB;
+
+	/* Register update */
+	sfrPtr->FCRAMP1.U = tempFCRAMP1.U;
+}
+
+
+void IfxEvadc_Adc_configureFastCompareHysteresis(Ifx_EVADC_FC *fcc, IfxEvadc_Adc_FastCompareHysteresisConfig *hysteresisConfig)
+{
+	Ifx_EVADC_FC *sfrPtr = fcc;
+
+	Ifx_EVADC_FC_FCHYST tempFCHYST;
+
+	/* Configure FCHYST */
+	tempFCHYST.U  = sfrPtr->FCHYST.U;
+
+	tempFCHYST.B.DELTAMINUS = hysteresisConfig->lowerDeltaValue;
+	tempFCHYST.B.DELTAPLUS  = hysteresisConfig->upperDeltaValue;
+
+	/* Register update */
+	sfrPtr->FCHYST.U  = tempFCHYST.U;
 }
 #endif /*#if !defined(DEVICE_TC33XED) && !defined(DEVICE_TC33X) && !defined (DEVICE_TC35X)*/
+
 
 IfxEvadc_Status IfxEvadc_Adc_initGroup(IfxEvadc_Adc_Group *group, const IfxEvadc_Adc_GroupConfig *config)
 {

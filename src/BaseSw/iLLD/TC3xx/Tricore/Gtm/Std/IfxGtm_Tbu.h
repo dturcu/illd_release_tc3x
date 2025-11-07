@@ -3,7 +3,7 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -63,7 +63,8 @@
 
 /** \addtogroup IfxLld_Gtm_Std_Tbu_Enumerations
  * \{ */
-/** \brief GTM TOM TBU Time stamps
+/** \brief GTM TOM TBU Time stamps.
+ * Definition in Ifx_GTM_TOM_TGC_ACT_TB.B.TBU_SEL , Ifx_GTM_ATOM_AGC_ACT_TB.B.TBU_SEL
  */
 typedef enum
 {
@@ -73,7 +74,8 @@ typedef enum
     IfxGtm_Tbu_Ts_3
 } IfxGtm_Tbu_Ts;
 
-/** \brief GTM TOM TBU Clock Source
+/** \brief GTM TOM TBU Clock Source.
+ * Definition in Ifx_GTM_TBU_CH0_CTRL.B.CH_CLK_SRC, Ifx_GTM_TBU_CH1_CTRL.B.CH_CLK_SRC, Ifx_GTM_TBU_CH2_CTRL.B.CH_CLK_SRC
  */
 typedef enum
 {

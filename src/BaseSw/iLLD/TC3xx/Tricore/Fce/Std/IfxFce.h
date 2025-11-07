@@ -3,7 +3,7 @@
  * \brief FCE  basic functionality
  * \ingroup IfxLld_Fce
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -69,6 +69,7 @@
 /** \addtogroup IfxLld_Fce_Std_Enum
  * \{ */
 /** \brief Ifx_FCE_CHx(x= 0,1), Specifies the channel used for CRC
+ * Definition in Ifx_FCE.IN[x]; (x = 0 to 7)
  */
 typedef enum
 {
@@ -85,6 +86,7 @@ typedef enum
 /** \} */
 
 /** \brief Specify the CRC kernel used by the fce channel
+ * Definition in Ifx_FCE_IN_CFG.B.KERNEL
  */
 typedef enum
 {
@@ -101,15 +103,21 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disable the control of FCE module
- * \param fce Specifies pointer to FCE module registers
- * \return None
+/**
+ * \brief Disables the control of the FCE module.
+ *
+ * \param[inout] fce Pointer to the FCE module registers.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxFce_disableModule(Ifx_FCE *fce);
 
-/** \brief Enable the control of FCE module
- * \param fce Specifies pointer to FCE module registers
- * \return None
+/**
+ * \brief Enables the control of the FCE module.
+ *
+ * \param[inout] fce Pointer to the FCE module registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxFce_enableModule(Ifx_FCE *fce);
 
@@ -117,9 +125,12 @@ IFX_INLINE void IfxFce_enableModule(Ifx_FCE *fce);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reset the module by clearing the kernel
- * \param fce Specifies pointer to FCE module registers
- * \return None
+/**
+ * \brief Resets the FCE module by clearing the kernel.
+ *
+ * \param[inout] fce Pointer to the FCE module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxFce_resetModule(Ifx_FCE *fce);
 
@@ -132,10 +143,16 @@ IFX_EXTERN void IfxFce_resetModule(Ifx_FCE *fce);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reflects the CRC data and returns it
- * \param crcStartValue start value for reflection
- * \param crcLength length of reflected value
- * \return Reflected CRC data
+/**
+ * \brief Reflects the CRC data by reversing its bits and returns the result.
+ *
+ * \param[in] crcStartValue The initial CRC value to be reflected.
+ * 							Range: 0 to 0xFFFFFFFF
+ * \param[in] crcLength     The length of the CRC value to be reflected. Valid lengths are typically 8, 16, or 32 bits.
+ * 							Range: 0 to 0xFF
+ *
+ * \retval uint32 The reflected CRC data after the bit-wise reflection process.
+ * 				  Range: 0 to 0xFFFFFFFF
  */
 IFX_EXTERN uint32 IfxFce_reflectCrc32(uint32 crcStartValue, uint8 crcLength);
 
@@ -148,8 +165,12 @@ IFX_EXTERN uint32 IfxFce_reflectCrc32(uint32 crcStartValue, uint8 crcLength);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the SRC pointer for FCE
- * \param fce Specifies pointer to FCE module registers
+/**
+ * \brief Returns the SRC pointer for FCE
+ *
+ * \param[in] fce Pointer to the FCE module registers.
+ * 
+ * \retval Ifx_SRC_SRCR Pointer to the source control register (SRCR) of the FCE module.
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxFce_getSrcPointer(Ifx_FCE *fce);
 
@@ -159,41 +180,64 @@ IFX_INLINE volatile Ifx_SRC_SRCR *IfxFce_getSrcPointer(Ifx_FCE *fce);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Specifies pointer to FCE module registers
- * \param fce Specifies the pointer to FCE module handler
- * \param channel Specifies the Channel
- * \return None
+/**
+ * \brief Clears the CRC error flags for the specified channel in the FCE module.
+ *
+ * \param[inout] fce     Pointer to the FCE module registers.
+ * \param[in]    channel Specifies the CRC channel for which the error flags should be cleared.
+ *                       Range: \ref IfxFce_CrcChannel
+ *
+ * \retval None
  */
 IFX_INLINE void IfxFce_clearCrcErrorFlags(Ifx_FCE *fce, IfxFce_CrcChannel channel);
 
-/** \brief Gets the CRC interrupt status
- * \param fce Specifies pointer to FCE module registers
- * \param channel Specifies the Channel
- * \return Return Crc Interrupt Status
+/**
+ * \brief Gets the CRC interrupt status for a specified channel
+ *
+ * \param[in] fce     Pointer to the FCE module registers.
+ * \param[in] channel Specifies the CRC channel to query.
+ * 					  Range: \ref IfxFce_CrcChannel
+ *
+ * \retval Ifx_FCE_IN_STS The interrupt status of the specified CRC channel.
  */
 IFX_INLINE Ifx_FCE_IN_STS IfxFce_getCrcInterruptStatus(Ifx_FCE *fce, IfxFce_CrcChannel channel);
 
-/** \brief Set the length of over which CRC checksum is calculated.
- * \param fce Specifies pointer to FCE module registers
- * \param channel Specifies the channel
- * \param crcLength Specifies the Length of CRC
- * \return None
+/**
+ * \brief Set the length of over which CRC checksum is calculated.
+ *
+ * \param[inout] fce       Pointer to the FCE module registers.
+ * \param[in]    channel   Specifies the channel for which the CRC length is to be set.
+ *                         Range: \ref IfxFce_CrcChannel
+ * \param[in]    crcLength Specifies the length of the CRC checksum in bits.
+ *                         Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxFce_setChannelCrcLength(Ifx_FCE *fce, IfxFce_CrcChannel channel, uint32 crcLength);
 
-/** \brief Set the CRC start value
- * \param fce Specifies pointer to FCE module registers
- * \param channel Specifies the channel
- * \param crcStartValue Set the crc value
- * \return None
+/**
+ * \brief Sets the CRC start value for the specified channel in the FCE module.
+ *
+ * \param[inout] fce           Pointer to the FCE module registers.
+ * \param[in]    channel       Specifies the CRC channel to configure.
+ * 					           Range: \ref IfxFce_CrcChannel
+ * \param[in]    crcStartValue The initial CRC value to be set.
+ *                             Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxFce_setCrcstartValue(Ifx_FCE *fce, IfxFce_CrcChannel channel, uint32 crcStartValue);
 
-/** \brief Set expected crc value to be checked.
- * \param fce Specifies pointer to FCE module registers
- * \param channel Specifies the channel
- * \param expectedCrc Expected CRC value to be checked
- * \return None
+/**
+ * \brief Sets the expected CRC value to be checked for the specified channel.
+ *
+ * \param[inout] fce         Pointer to the FCE module registers.
+ * \param[in]    channel     Specifies the CRC channel to configure.
+ * 						     Range: \ref IfxFce_CrcChannel
+ * \param[in]    expectedCrc The expected CRC value to be checked.
+ * 						     Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxFce_setExpectedCrc(Ifx_FCE *fce, IfxFce_CrcChannel channel, uint32 expectedCrc);
 

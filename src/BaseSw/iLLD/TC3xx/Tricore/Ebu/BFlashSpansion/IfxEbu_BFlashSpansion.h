@@ -3,7 +3,7 @@
  * \brief EBU BFLASHSPANSION details
  * \ingroup IfxLld_Ebu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -111,48 +111,57 @@
 /******************************************************************************/
 /*-----------------------------Data Structures--------------------------------*/
 /******************************************************************************/
-
+/** \brief Bit Fields of BFlashSpansion burst configuration bits
+ */
 typedef struct
 {
-    uint16 burstLength : 3;
-    uint16 reserved_1 : 3;
-    uint16 clockConfiguration : 1;
-    uint16 burstSequence : 1;
-    uint16 waitConfiguration : 1;
-    uint16 dataOutputConfiguration : 1;
-    uint16 automaticSleepModeDisable : 4;
-    uint16 reserved : 1;
-    uint16 readMode : 1;
+    uint16 burstLength : 3;					/**< \brief Burst length */
+    uint16 reserved_1 : 3;					/**< \brief Reserved */
+    uint16 clockConfiguration : 1;			/**< \brief Clock Configuration */
+    uint16 burstSequence : 1;				/**< \brief Burst sequence */
+    uint16 waitConfiguration : 1;			/**< \brief Wait Configuration */
+    uint16 dataOutputConfiguration : 1;		/**< \brief Data Output Configuration */
+    uint16 automaticSleepModeDisable : 4;	/**< \brief Automatic Sleep Mode Disable */
+    uint16 reserved : 1;					/**< \brief Reserved */
+    uint16 readMode : 1;					/**< \brief Read mode */
 } IfxEbu_BFlashSpansion_BurstCfgBits;
 
+/** \brief BFlashSpansion burst configuration
+ */
 typedef union
 {
-    uint16                             U;
-    IfxEbu_BFlashSpansion_BurstCfgBits B;
+    uint16                             U;       /**< \brief Unsigned access */
+    IfxEbu_BFlashSpansion_BurstCfgBits B;       /**< \brief Bitfield access */
 } IfxEbu_BFlashSpansion_BurstCfg;
 
+/** \brief Structure containing the BFlashSpansion configuration
+ */
 typedef struct
 {
-    Ifx_EBU                       *ebu;
-    IfxEbu_ChipSelect              chipSelect;
-    uint32                         baseAddress;
-    IfxEbu_BFlashSpansion_BurstCfg burstCfg;
+    Ifx_EBU                       *ebu;           /**< \brief Pointer to the base of EBU registers */
+    IfxEbu_ChipSelect              chipSelect;    /**< \brief Chip Select Control */
+    uint32                         baseAddress;   /**< \brief EBU base address. Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+                                                                                       0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+                                                                                       0xF8400000 to 0xF840FFFF For sri slave interface */
+    IfxEbu_BFlashSpansion_BurstCfg burstCfg;	  /** \brief BFlashSpansion burst configuration */
 } IfxEbu_BFlashSpansion;
 
+/** \brief BFlashSpansion configuration
+ */
 typedef struct
 {
-    Ifx_EBU                       *module;
-    IfxEbu_ExternalClockRatio      externalClockRatio;
-    IfxEbu_ChipSelect              chipSelect;
-    IfxEbu_ReadConfig              syncReadConfig;
-    IfxEbu_WriteConfig             asyncWriteConfig;
-    IfxEbu_ReadAccessParameter     syncReadAccessParameter;
-    IfxEbu_WriteAccessParameter    asyncWriteAccessParameter;
-    IfxEbu_ModuleConfig            moduleConfig;
-    IfxEbu_MemoryRegionConfig      memoryRegionConfig;
-    IfxEbu_ReadConfig              asyncReadConfig;
-    IfxEbu_ReadAccessParameter     asyncReadAccessParameter;
-    IfxEbu_BFlashSpansion_BurstCfg burstCfg;
+    Ifx_EBU                       *module;                      /**< \brief Pointer to the base of EBU registers */
+    IfxEbu_ExternalClockRatio      externalClockRatio;			/**< \brief External clock ratio configuration */
+    IfxEbu_ChipSelect              chipSelect;					/**< \brief Chip select control configuration */
+    IfxEbu_ReadConfig              syncReadConfig;				/**< \brief Synchronous read configuration */
+    IfxEbu_WriteConfig             asyncWriteConfig;			/**< \brief Asynchronous write configuration */
+    IfxEbu_ReadAccessParameter     syncReadAccessParameter;		/**< \brief Synchronous read access parameter configuration */
+    IfxEbu_WriteAccessParameter    asyncWriteAccessParameter;	/**< \brief Asynchronous write access parameter configuration */
+    IfxEbu_ModuleConfig            moduleConfig;				/**< \brief Module configuration settings */
+    IfxEbu_MemoryRegionConfig      memoryRegionConfig;			/**< \brief Memory region configuration settings */
+    IfxEbu_ReadConfig              asyncReadConfig;				/**< \brief Asynchronous read configuration */
+    IfxEbu_ReadAccessParameter     asyncReadAccessParameter;    /**< \brief Asynchronous read access parameter configuration */
+    IfxEbu_BFlashSpansion_BurstCfg burstCfg;					/**< \brief BFlashSpansion burst configuration */
 } IfxEbu_BFlashSpansion_Config;
 
 /** \addtogroup IfxLld_Ebu_BFlashSpansion_Operations
@@ -163,22 +172,37 @@ typedef struct
 /******************************************************************************/
 
 /**
- * \param bflash burst flash handle
- * \param blockAddress the block address which should be erased
- * \return None
+ * \brief Erases a specified block in the Spansion flash memory.
+ *
+ * \param[in] bflash       Pointer to the burst flash handle.
+ * \param[in] blockAddress The block address which should be erased.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSpansion_eraseBlock(IfxEbu_BFlashSpansion *bflash, uint32 blockAddress);
 
 /**
- * \param bflash burst flash handle
- * \param address the address which should be programmed
- * \param data the data word which should be programmed
- * \return None
+ * \brief Programs a single 32-bit word into the Spansion burst flash memory at the specified address.
+ *
+ * \param[in] bflash  Pointer to the burst flash handle.
+ * \param[in] address The target address in the flash memory where the data will be programmed.
+ *                    Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+ *                           0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+ *                           0xF8400000 to 0xF840FFFF For sri slave interface
+ * \param[in] data    The 32-bit data word to be programmed at the specified address.
+ *                    Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSpansion_programWord(IfxEbu_BFlashSpansion *bflash, uint32 address, uint32 data);
 
 /**
- * \return TRUE if ready was notified, (planned, not implemented) FALSE on timeout: device not ready
+ * \brief Waits for the Spansion flash device to signal readiness.
+ *
+ * \param bflash [in] Pointer to the burst flash handle.
+ *
+ * \retval TRUE  The device signaled readiness.
+ *         FALSE Timeout occurred, the device is not ready.
  */
 IFX_EXTERN boolean IfxEbu_BFlashSpansion_waitForReady(IfxEbu_BFlashSpansion *bflash);
 
@@ -192,8 +216,11 @@ IFX_EXTERN boolean IfxEbu_BFlashSpansion_waitForReady(IfxEbu_BFlashSpansion *bfl
 /******************************************************************************/
 
 /**
- * \param bflash burst flash handle
- * \param burstCfg the burst configuration which will be passed to the Spansion device
+ * \brief Sets the burst configuration for a Spansion flash device.
+ *
+ * \param[in] bflash   Pointer to the burst flash handle.
+ * \param[in] burstCfg The burst configuration which will be passed to the Spansion device.
+ *
  * \return None
  */
 IFX_EXTERN void IfxEbu_BFlashSpansion_cmdSetBurstConfig(IfxEbu_BFlashSpansion *bflash, IfxEbu_BFlashSpansion_BurstCfg burstCfg);
@@ -205,16 +232,22 @@ IFX_EXTERN void IfxEbu_BFlashSpansion_cmdSetBurstConfig(IfxEbu_BFlashSpansion *b
 /******************************************************************************/
 
 /**
- * \param bflash burst flash handle
- * \param config Pointer to BFlashSpansion's config structure
- * \return None
+ * \brief Initializes the BFlashSpansion memory module with the provided configuration.
+ *
+ * \param[inout] bflash Pointer to the burst flash handle.
+ * \param[in]    config Pointer to BFlashSpansion's config structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSpansion_initMemory(IfxEbu_BFlashSpansion *bflash, const IfxEbu_BFlashSpansion_Config *config);
 
 /**
- * \param config Pointer to BFlashSpansion's config structure
- * \param ebu pointr to EBU Module
- * \return None
+ * \brief Initializes the memory configuration for the BFlashSpansion module.
+ *
+ * \param[inout] config Pointer to the BFlashSpansion configuration structure.
+ * \param[in]    ebu    Pointer to the EBU module.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSpansion_initMemoryConfig(IfxEbu_BFlashSpansion_Config *config, Ifx_EBU *ebu);
 

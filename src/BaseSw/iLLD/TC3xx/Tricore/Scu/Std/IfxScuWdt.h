@@ -3,7 +3,7 @@
  * \brief SCU  basic functionality
  * \ingroup IfxLld_Scu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -158,15 +158,17 @@
  */
 typedef struct
 {
-    uint16            password;                            /**< \brief password for access to WDTxCON0 reg */
-    uint16            reload;                              /**< \brief WDT reload value */
+    uint16            password;                            /**< \brief password for access to WDTxCON0 reg. Range: 0 to 0x3FFF */
+    uint16            reload;                              /**< \brief WDT reload value. Range: 0 to 0xFFFF */
     IfxScu_WDTCON1_IR inputFrequency;                      /**< \brief input frequency of the WDT */
-    boolean           disableWatchdog;                     /**< \brief Disable Request Control Bit */
-    boolean           enableSmuRestriction;                /**< \brief Unlock Restriction Request Control Bit */
-    boolean           enableAutomaticPasswordChange;       /**< \brief Password Auto-sequence Request Bit */
-    boolean           enableTimerCheck;                    /**< \brief Counter Check Request Bit */
-    boolean           enableTimerCheckTolerance;           /**< \brief Timer Check Tolerance Request */
-    boolean           clrInternalResetFlag;                /**< \brief Clear Internal Reset Flag */
+    boolean           disableWatchdog;                     /**< \brief Disable Request Control Bit. Range: TRUE - Request to disable the WDTx, FLASE -  Request to enable the WDTx. */
+    boolean           enableSmuRestriction;                /**< \brief Unlock Restriction Request Control Bit. Range: TRUE - Request to enable SMU restriction of WDTx unlock , FALSE - Request to disable SMU restriction of WDTx unlock. */
+    boolean           enableAutomaticPasswordChange;       /**< \brief Password Auto-sequence Request Bit.
+    													    * - Range: TRUE - Request automatic sequence of password after each Modify Access or Check Access, FALSE - Request no automatic change of password after each Modify Access or Check Access. */
+    boolean           enableTimerCheck;                    /**< \brief Counter Check Request Bit. Range: TRUE - Request to check that REL field is written with correct TIM Count (within tolerance of WDTxSR.TCT) during Modify Access or Check Access.
+    														* - FALSE - Request to check only that REL field is written with existing REL value during Modify Access or Check Access */
+    boolean           enableTimerCheckTolerance;           /**< \brief Timer Check Tolerance Request.  Range: TRUE - Request timer check tolerance, FALSE - Request no timer check tolerance. */
+    boolean           clrInternalResetFlag;                /**< \brief Clear Internal Reset Flag. Range: TRUE - Request to clear the internal previous SMU reset flag, FALSE - No action. */
     IfxScu_WDTCON1_IR globalEndInitInputFrequency;         /**< \brief input frequency of the global End init WDT */
 } IfxScuWdt_Config;
 

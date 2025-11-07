@@ -2,7 +2,7 @@
  * \file IfxGeth_Eth.c
  * \brief GETH ETH details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -136,7 +136,7 @@ void IfxGeth_Eth_initRxDmaChannel(IfxGeth_Eth *geth, uint32 rxChannelIndex, cons
 
 void IfxGeth_Eth_initTxDmaInterrupts(IfxGeth_Eth *geth, uint32 channelIndex, const IfxGeth_Eth_DmaInterruptConfig *dmaInterruptConfig)
 {
-    /* check if interrupt has a non-zero priority or Type-Of-Service (ToS) is configured */
+    /* Check if interrupt has a non-zero priority or Type-Of-Service (ToS) is configured */
     if ((dmaInterruptConfig->priority > 0) || (dmaInterruptConfig->provider == IfxSrc_Tos_dma))
     {      
         /* Prepare the interrupt enable flag for the current DMA channel */
@@ -144,7 +144,7 @@ void IfxGeth_Eth_initTxDmaInterrupts(IfxGeth_Eth *geth, uint32 channelIndex, con
         /* Write the DMA channel's Interrupt enable flag */
         geth->gethSFR->DMA_CH[dmaInterruptConfig->channelId].INTERRUPT_ENABLE.U |= value;
 
-        /* get the address of the ETH0's service register */
+        /* Get the address of the ETH0's service register */
         volatile Ifx_SRC_SRCR *srcSFR;
         /* Get the address of the SRC register corresponding to the DMA Channel */
         srcSFR = IfxGeth_getSrcPointer(geth->gethSFR, (IfxGeth_ServiceRequest)((uint32)IfxGeth_ServiceRequest_2 + (uint32)dmaInterruptConfig->channelId));
@@ -158,7 +158,7 @@ void IfxGeth_Eth_initTxDmaInterrupts(IfxGeth_Eth *geth, uint32 channelIndex, con
 
 void IfxGeth_Eth_initRxDmaInterrupts(IfxGeth_Eth *geth, uint32 channelIndex, const IfxGeth_Eth_DmaInterruptConfig *dmaInterruptConfig)
 {
-    /* check if interrupt has a non-zero priority [OR] Type-Of-Service (ToS) is configured */
+    /* Check if interrupt has a non-zero priority [OR] Type-Of-Service (ToS) is configured */
     if ((dmaInterruptConfig->priority > 0) || (dmaInterruptConfig->provider == IfxSrc_Tos_dma))
     {       
         /* Prepare the interrupt enable flag for the current DMA channel */
@@ -180,10 +180,10 @@ void IfxGeth_Eth_initRxDmaInterrupts(IfxGeth_Eth *geth, uint32 channelIndex, con
 void IfxGeth_Eth_configureMTL(IfxGeth_Eth *geth, IfxGeth_Eth_MtlConfig *mtlConfig)
 {
     uint32 txQueueIndex, rxQueueIndex, queueIndex;
-    /* compute the sum of tx and rx queues configured */
+    /* Compute the sum of tx and rx queues configured */
     uint32 numOfQueues = (mtlConfig->numOfTxQueues >= mtlConfig->numOfRxQueues) ? mtlConfig->numOfTxQueues : mtlConfig->numOfRxQueues;
 
-    /* clear all interrupt flags */
+    /* Clear all interrupt flags */
     for (queueIndex = 0; queueIndex < numOfQueues; queueIndex++)
     {
         IfxGeth_mtl_clearAllInterruptFlags(geth->gethSFR, (IfxGeth_MtlQueue)queueIndex);
@@ -391,11 +391,11 @@ void IfxGeth_Eth_configureMacCore(IfxGeth_Eth *geth, IfxGeth_Eth_MacConfig *macC
 
     IfxGeth_mac_setLoopbackMode(geth->gethSFR, macConfig->loopbackMode);
 
-    /* packet Filter Configuration */
+    /* Packet Filter Configuration */
     IfxGeth_mac_setPromiscuousMode(geth->gethSFR, FALSE);
     IfxGeth_mac_setAllMulticastPassing(geth->gethSFR, FALSE);
 
-    /* set MAC Address */
+    /* Set MAC Address */
     IfxGeth_mac_setMacAddress(geth->gethSFR, macConfig->macAddress);
 }
 
@@ -406,10 +406,10 @@ void IfxGeth_Eth_freeReceiveBuffer(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel chann
 
     IfxGeth_RxDescr3          rdes3;
     rdes3.U        = 0;
-    rdes3.R.BUF1V  = 1; /* buffer 1 valid */
-    rdes3.R.BUF2V  = 0; /* buffer 2 not valid */
-    rdes3.R.IOC    = 1; /* interrupt enabled */
-    rdes3.R.OWN    = 1; /* owned by DMA */
+    rdes3.R.BUF1V  = 1; /* Buffer 1 valid */
+    rdes3.R.BUF2V  = 0; /* Buffer 2 not valid */
+    rdes3.R.IOC    = 1; /* Interrupt enabled */
+    rdes3.R.OWN    = 1; /* Owned by DMA */
     descr->RDES3.U = rdes3.U;
     IfxGeth_Eth_shuffleRxDescriptor(geth, channelId);
 }
@@ -438,7 +438,7 @@ void *IfxGeth_Eth_getTransmitBuffer(IfxGeth_Eth *geth, IfxGeth_TxDmaChannel chan
     void                     *buffer = NULL_PTR;
     volatile IfxGeth_TxDescr *descr  = IfxGeth_Eth_getActualTxDescriptor(geth, channelId);
 
-    // check descriptor / buffer is free.
+    /* Check descriptor buffer is free */
     if (descr->TDES3.R.OWN == 0)
     {
         buffer = ((void *)descr->TDES0.U);
@@ -485,12 +485,12 @@ void IfxGeth_Eth_initModule(IfxGeth_Eth *geth, IfxGeth_Eth_Config *config)
     gethSFR->GPCTL.B.EPR = 0; /*GETH_TC.002*/
     gethSFR->SKEWCTL.U   = 0; /*GETH_TC.002*/
 
-    /* reset the Module */
+    /* Reset the Module */
     IfxGeth_resetModule(gethSFR);
 
     IfxStm_waitTicks(&MODULE_STM0, 35); /*GETH_TC.002. Wait min 35 fSPB cycles after reset for RGMII*/
 
-    /* select the Phy Interface Mode */
+    /* Select the Phy Interface Mode */
     IfxGeth_setPhyInterfaceMode(gethSFR, config->phyInterfaceMode);
 
     if (config->phyInterfaceMode == IfxGeth_PhyInterfaceMode_rgmii)
@@ -504,7 +504,7 @@ void IfxGeth_Eth_initModule(IfxGeth_Eth *geth, IfxGeth_Eth_Config *config)
 
     IfxStm_waitTicks(&MODULE_STM0, 4); /*GETH_TC.002. Wait min 4 fSPB cycles after s/w reset*/
 
-    /* wait until reset is finished or timeout. */
+    /* Wait until reset is finished or timeout. */
     {
         uint32 timeout = 0;
 
@@ -776,7 +776,7 @@ void IfxGeth_Eth_initModuleConfig(IfxGeth_Eth_Config *config, Ifx_GETH *gethSFR)
     /* Default Configuration */
     *config = defaultConfig;
 
-    /* take over module pointer */
+    /* Take over module pointer */
     config->gethSFR = gethSFR;
 }
 
@@ -800,20 +800,20 @@ void IfxGeth_Eth_initReceiveDescriptors(IfxGeth_Eth *geth, const IfxGeth_Eth_RxC
     for (i = 0; i < IFXGETH_MAX_RX_DESCRIPTORS; i++)
     {
         descr->RDES0.U       = (uint32)(config->rxBuffer1Size * i) + buffer1StartAddress;
-        descr->RDES2.U       = 0; /* buffer2 not used */
+        descr->RDES2.U       = 0; /* Buffer2 not used */
 
-        descr->RDES3.R.BUF1V = 1; /* buffer 1 valid */
-        descr->RDES3.R.BUF2V = 0; /* buffer 2 not valid */
-        descr->RDES3.R.IOC   = 1; /* interrupt enabled */
-        descr->RDES3.R.OWN   = 1; /* owned by DMA */
+        descr->RDES3.R.BUF1V = 1; /* Buffer 1 valid */
+        descr->RDES3.R.BUF2V = 0; /* Buffer 2 not valid */
+        descr->RDES3.R.IOC   = 1; /* Interrupt enabled */
+        descr->RDES3.R.OWN   = 1; /* Owned by DMA */
 
         descr                = &descr[1];
     }
 
-    /* rest the current pointer to base pointer in the handle */
+    /* Rest the current pointer to base pointer in the handle */
     geth->rxChannel[channelId].rxDescrPtr = IfxGeth_Eth_getBaseRxDescriptor(geth, channelId);
 
-    /* set the buffer size */
+    /* Set the buffer size */
     /* [RBSZ_13_Y:RBSZ_X_0] represents the size of the Rx buffer*/
     geth->gethSFR->DMA_CH[channelId].RX_CONTROL.B.RBSZ_13_Y = (uint32)(((config->rxBuffer1Size) >> 2) & IFX_GETH_DMA_CH_RX_CONTROL_RBSZ_13_Y_MSK);
 
@@ -843,20 +843,20 @@ void IfxGeth_Eth_initTransmitDescriptors(IfxGeth_Eth *geth, const IfxGeth_Eth_Tx
     for (i = 0; i < IFXGETH_MAX_TX_DESCRIPTORS; i++)
     {
         descr->TDES0.U           = (uint32)(config->txBuffer1Size * i) + buffer1StartAddress;
-        descr->TDES1.U           = 0; /* buffer2 not used */
+        descr->TDES1.U           = 0; /* Buffer2 not used */
 
         descr->TDES2.R.B1L       = config->txBuffer1Size;
-        descr->TDES2.R.VTIR      = 0; /* do not use VLAN tag */
-        descr->TDES2.R.B2L       = 0; /* buffer2 not used */
-        descr->TDES2.R.TTSE_TMWD = 0; /* timestamp not used */
-        descr->TDES2.R.IOC       = 0; /* interrupt disabled */
+        descr->TDES2.R.VTIR      = 0; /* Do not use VLAN tag */
+        descr->TDES2.R.B2L       = 0; /* Buffer2 not used */
+        descr->TDES2.R.TTSE_TMWD = 0; /* Timestamp not used */
+        descr->TDES2.R.IOC       = 0; /* Interrupt disabled */
 
         /* TDES3 will be configured while trasmitting each packet */
 
         descr = &descr[1];
     }
 
-    /* rest the current pointer to base pointer in the handle */
+    /* Rest the current pointer to base pointer in the handle */
     geth->txChannel[channelId].txDescrPtr = IfxGeth_Eth_getBaseTxDescriptor(geth, channelId);
 
     geth->gethSFR->DMA_CH[channelId].TXDESC_LIST_ADDRESS.U = (uint32)geth->txChannel[channelId].txDescrList->descr;
@@ -876,8 +876,8 @@ void IfxGeth_Eth_sendTransmitBuffer(IfxGeth_Eth *geth, uint32 packetLength, IfxG
     volatile IfxGeth_TxDescr *firstDescr       = IfxGeth_Eth_getActualTxDescriptor(geth, channelId);
     volatile IfxGeth_TxDescr *descr            = firstDescr;
     volatile IfxGeth_TxDescr *nextDescr        = &firstDescr[1];
-    uint32                    bufferLength     = geth->txChannel[channelId].txBuf1Size; /* get the configured buffer length */
-    /* calculate the number of descriptors needed for the frame based on buffer length */
+    uint32                    bufferLength     = geth->txChannel[channelId].txBuf1Size; /* Get the configured buffer length */
+    /* Calculate the number of descriptors needed for the frame based on buffer length */
     uint32                    numOfDescriptors = packetLength / bufferLength;
 
     if (packetLength % bufferLength)
@@ -885,20 +885,20 @@ void IfxGeth_Eth_sendTransmitBuffer(IfxGeth_Eth *geth, uint32 packetLength, IfxG
         numOfDescriptors += 1;
     }
 
-    /* configure the first descriptor */
-    firstDescr->TDES3.R.FL_TPL  = packetLength; /* total length of the packet */
+    /* Configure the first descriptor */
+    firstDescr->TDES3.R.FL_TPL  = packetLength; /* Total length of the packet */
     firstDescr->TDES3.R.TSE     = 0;            /* TCP Segmentation Disable */
     firstDescr->TDES3.R.CIC_TPL = 3;
     firstDescr->TDES3.R.SAIC    = 0;            /* Source Address insertion disabled */
     firstDescr->TDES3.R.CPC     = 0;            /* CRC and PAD insertion enabled */
 
-    /* configure every other descriptor including first descriptor for the frame transmission */
+    /* Configure every other descriptor including first descriptor for the frame transmission */
     for (i = 0; i < numOfDescriptors; i++)
     {
         if (i == (numOfDescriptors - 1))
         {
-            descr->TDES3.R.LD  = 1;                                              /* last descriptor of the frame */
-            descr->TDES2.R.IOC = 1;                                              /* last descriptor of the frame set IOC */
+            descr->TDES3.R.LD  = 1;                                              /* Last descriptor of the frame */
+            descr->TDES2.R.IOC = 1;                                              /* Last descriptor of the frame set IOC */
             descr->TDES3.R.FD  = 0;
             descr->TDES2.R.B1L = packetLength;
         }
@@ -912,17 +912,17 @@ void IfxGeth_Eth_sendTransmitBuffer(IfxGeth_Eth *geth, uint32 packetLength, IfxG
         }
 
         IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, descr->TDES3.R.OWN != 1U);           /* Assert if buffers are not available for transfer */
-        descr->TDES3.R.OWN = 1U;                                                 /* release to DMA */
+        descr->TDES3.R.OWN = 1U;                                                 /* Release to DMA */
         IfxGeth_Eth_shuffleTxDescriptor(geth, channelId);
-        descr              = IfxGeth_Eth_getActualTxDescriptor(geth, channelId); /* update the descr pointer */
+        descr              = IfxGeth_Eth_getActualTxDescriptor(geth, channelId); /* Update the descr pointer */
         nextDescr          = descr;
     }
 
-    firstDescr->TDES3.R.FD                = 1;          /* first descriptor of the frame */
-    geth->txChannel[channelId].txDescrPtr = firstDescr; /* point to first descriptor to initiate the transfer */
+    firstDescr->TDES3.R.FD                = 1;          /* First descriptor of the frame */
+    geth->txChannel[channelId].txDescrPtr = firstDescr; /* Point to first descriptor to initiate the transfer */
     IfxGeth_dma_setTxDescriptorTailPointer(geth->gethSFR, channelId, (uint32)nextDescr);
-    IfxGeth_Eth_wakeupTransmitter(geth, channelId);     /* initialte the transfer */
-    geth->txChannel[channelId].txDescrPtr = nextDescr;  /* update the handle pointer to next descriptor */
+    IfxGeth_Eth_wakeupTransmitter(geth, channelId);     /* Initialte the transfer */
+    geth->txChannel[channelId].txDescrPtr = nextDescr;  /* Update the handle pointer to next descriptor */
 
     geth->txChannel[channelId].txCount++;
 }
@@ -1228,12 +1228,12 @@ void IfxGeth_Eth_shuffleRxDescriptor(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel cha
 
     if (currentDescr == lastDescr)
     {
-        /* wrap around the descriptors */
+        /* Wrap around the descriptors */
         geth->rxChannel[channelId].rxDescrPtr = IfxGeth_Eth_getBaseRxDescriptor(geth, channelId);
     }
     else
     {
-        /* point to the next descriptor */
+        /* Point to the next descriptor */
         geth->rxChannel[channelId].rxDescrPtr = &geth->rxChannel[channelId].rxDescrPtr[1];
     }
 }
@@ -1246,12 +1246,12 @@ void IfxGeth_Eth_shuffleTxDescriptor(IfxGeth_Eth *geth, IfxGeth_TxDmaChannel cha
 
     if (currentDescr == lastDescr)
     {
-        /* wrap around the descriptors */
+        /* Wrap around the descriptors */
         geth->txChannel[channelId].txDescrPtr = IfxGeth_Eth_getBaseTxDescriptor(geth, channelId);
     }
     else
     {
-        /* point to the next descriptor */
+        /* Point to the next descriptor */
         geth->txChannel[channelId].txDescrPtr = &geth->txChannel[channelId].txDescrPtr[1];
     }
 }
@@ -1309,10 +1309,10 @@ void IfxGeth_Eth_stopTransmitters(IfxGeth_Eth *geth, uint32 numOfChannels)
 
 void IfxGeth_Eth_wakeupReceiver(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel channelId)
 {
-    /* check if receiver suspended */
+    /* Check if receiver suspended */
     if (IfxGeth_dma_isInterruptFlagSet(geth->gethSFR, (IfxGeth_DmaChannel)channelId, IfxGeth_DmaInterruptFlag_receiveStopped))
     {
-        /* check if receive buffer unavailable */
+        /* Check if receive buffer unavailable */
         if (IfxGeth_dma_isInterruptFlagSet(geth->gethSFR, (IfxGeth_DmaChannel)channelId, IfxGeth_DmaInterruptFlag_receiveBufferUnavailable))
         {
             IfxGeth_dma_clearInterruptFlag(geth->gethSFR, (IfxGeth_DmaChannel)channelId, IfxGeth_DmaInterruptFlag_receiveBufferUnavailable);
@@ -1325,16 +1325,16 @@ void IfxGeth_Eth_wakeupReceiver(IfxGeth_Eth *geth, IfxGeth_RxDmaChannel channelI
 
 void IfxGeth_Eth_wakeupTransmitter(IfxGeth_Eth *geth, IfxGeth_TxDmaChannel channelId)
 {
-    /* check if transmitter suspended */
+    /* Check if transmitter suspended */
     if (IfxGeth_dma_isInterruptFlagSet(geth->gethSFR, (IfxGeth_DmaChannel)channelId, IfxGeth_DmaInterruptFlag_transmitStopped))
     {
-        /* check if transmit buffer unavailable */
+        /* Check if transmit buffer unavailable */
         if (IfxGeth_dma_isInterruptFlagSet(geth->gethSFR, (IfxGeth_DmaChannel)channelId, IfxGeth_DmaInterruptFlag_transmitBufferUnavailable))
         {
             IfxGeth_dma_clearInterruptFlag(geth->gethSFR, (IfxGeth_DmaChannel)channelId, IfxGeth_DmaInterruptFlag_transmitBufferUnavailable);
         }
 
-        /* check MTL underflow flag */
+        /* Check MTL underflow flag */
         if (IfxGeth_mtl_isInterruptFlagSet(geth->gethSFR, (IfxGeth_MtlQueue)channelId, IfxGeth_MtlInterruptFlag_txQueueUnderflow))
         {
             IfxGeth_mtl_clearInterruptFlag(geth->gethSFR, (IfxGeth_MtlQueue)channelId, IfxGeth_MtlInterruptFlag_txQueueUnderflow);
@@ -1362,7 +1362,7 @@ void IfxGeth_Eth_writeHeader(IfxGeth_Eth *geth, uint8 *txBuffer, uint8 *destinat
         *txBuffer++ = *sourceAddress++;
     }
 
-    /* packet size */
+    /* Packet size */
     *txBuffer++ = (uint8)(payloadLength / 256);
     *txBuffer   = (uint8)(payloadLength % 256);
 }

@@ -3,7 +3,7 @@
  * \brief SCU  basic functionality
  * \ingroup IfxLld_Scu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -242,6 +242,8 @@
 /******************************************************************************/
 
 /** \brief Reset type
+ * Definition in Ifx_SCU_RSTCON.B.ESR0, Ifx_SCU_RSTCON.B.ESR1, Ifx_SCU_RSTCON.B.SMU, Ifx_SCU_RSTCON.B.SW, Ifx_SCU_RSTCON.B.STM0, Ifx_SCU_RSTCON.B.STM1, Ifx_SCU_RSTCON.B.STM2,
+ * Ifx_SCU_RSTCON.B.STM3, Ifx_SCU_RSTCON.B.STM4, Ifx_SCU_RSTCONB.STM5
  */
 typedef enum
 {
@@ -296,10 +298,10 @@ typedef enum
 
 typedef struct
 {
-    boolean             cpuSafeState;       /**< \brief CPU Safe state ( 1- Safe, 0 - Non-Safe) */
+    boolean             cpuSafeState;       /**< \brief CPU Safe state. Range: 1- Safe, 0 - Non-Safe */
     IfxScuRcu_ResetType resetType;          /**< \brief Reset Type */
     IfxScuRcu_Trigger   resetTrigger;       /**< \brief reset Trigger */
-    uint16              resetReason;        /**< \brief Reset Reason */
+    uint16              resetReason;        /**< \brief Reset Reason. Range: 0 to 0xFFFF */
 } IfxScuRcu_ResetCode;
 
 /******************************************************************************/

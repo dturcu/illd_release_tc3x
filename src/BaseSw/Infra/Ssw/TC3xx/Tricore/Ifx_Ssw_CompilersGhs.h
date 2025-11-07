@@ -2,7 +2,7 @@
  * \file Ifx_Ssw_CompilersGhs.h
  * \brief Startup Software for GHS compiler options
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *                                 IMPORTANT NOTICE

@@ -3,7 +3,7 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -87,30 +87,33 @@
 
 /** \addtogroup IfxLld_Gtm_Std_Atom_Enumerations
  * \{ */
-/** \brief Reset source for channel counter CN0
+/** \brief Reset source for channel counter CN0.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.TRIGOUT
  */
 typedef enum
 {
-    IfxGtm_Atom_Ch_OutputTrigger_forward  = 0, /**< \brief Forward the trigger from the previous channel */
-    IfxGtm_Atom_Ch_OutputTrigger_generate = 1  /**< \brief Generate the trigger from the current channel */
+    IfxGtm_Atom_Ch_OutputTrigger_forward  = 0,  /**< \brief Forward the trigger from the previous channel */
+    IfxGtm_Atom_Ch_OutputTrigger_generate = 1   /**< \brief Generate the trigger from the current channel */
 } IfxGtm_Atom_Ch_OutputTrigger;
 
-/** \brief Reset event for channel counter CN0
+/** \brief Reset event for channel counter CN0.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.RST_CCU0
  */
 typedef enum
 {
-    IfxGtm_Atom_Ch_ResetEvent_onCm0     = 0,
-    IfxGtm_Atom_Ch_ResetEvent_onTrigger = 1
+    IfxGtm_Atom_Ch_ResetEvent_onCm0     = 0,  /**< \brief Reset counter register CN0 to 0 on matching comparison with CM0 */
+    IfxGtm_Atom_Ch_ResetEvent_onTrigger = 1   /**< \brief Reset counter register CN0 to 0 on trigger TRIG_[x-1] or TIM _EXT_CAPTURE(x) */
 } IfxGtm_Atom_Ch_ResetEvent;
 
-/** \brief Enum for ATOM mode
+/** \brief Enum for ATOM mode.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.MODE
  */
 typedef enum
 {
-    IfxGtm_Atom_Mode_outputImmediate,
-    IfxGtm_Atom_Mode_outputCompare,
-    IfxGtm_Atom_Mode_outputPwm,
-    IfxGtm_Atom_Mode_outputSerial
+    IfxGtm_Atom_Mode_outputImmediate,  /**< \brief ATOM Signal Output Mode Immediate (SOMI) */
+    IfxGtm_Atom_Mode_outputCompare,    /**< \brief ATOM Signal Output Mode Compare (SOMC) */
+    IfxGtm_Atom_Mode_outputPwm,        /**< \brief ATOM Signal Output Mode PWM (SOMP) */
+    IfxGtm_Atom_Mode_outputSerial      /**< \brief ATOM Signal Output Mode Serial (SOMS) */
 } IfxGtm_Atom_Mode;
 
 /** \brief Enable/disable of Aru Input to ATOM channel
@@ -121,7 +124,8 @@ typedef enum
     IfxGtm_Atom_AruInput_enabled  = 1   /**< \brief ARU input enabled */
 } IfxGtm_Atom_AruInput;
 
-/** \brief Match Compare control modes
+/** \brief Match Compare control modes.
+ * Definition in Ifx_GTM_ATOM_CH_SOMC.B.ACB_4_3_2
  */
 typedef enum
 {
@@ -135,7 +139,8 @@ typedef enum
     IfxGtm_Atom_SomcControl_cancelCompare   = 7   /**< \brief Cancel pending compare events */
 } IfxGtm_Atom_SomcControl;
 
-/** \brief SOMC signal level Control
+/** \brief SOMC signal level Control.
+ * Definition in Ifx_GTM_ATOM_CH_SOMC.B.ACB_1_0
  */
 typedef enum
 {
@@ -145,7 +150,8 @@ typedef enum
     IfxGtm_Atom_SomcSignalLevelControl_toggle   = 3   /**< \brief toggle the output signal level */
 } IfxGtm_Atom_SomcSignalLevelControl;
 
-/** \brief SOMI ACB0 Control
+/** \brief SOMI ACB0 Control.
+ * Definition in Ifx_GTM_ATOM_CH_SOMI.B.ACB0
  */
 typedef enum
 {
@@ -153,7 +159,8 @@ typedef enum
 	IfxGtm_Atom_SomiAcb0Control_Sl  = 1,        /**< \brief Set output to SL bit */
 } IfxGtm_Atom_SomiAcb0Control;
 
-/** \brief SOMP ARU Data Select
+/** \brief SOMP ARU Data Select.
+ * Definition in Ifx_GTM_ATOM_CH_SOMP.B.ADL
  */
 typedef enum
 {
@@ -162,7 +169,8 @@ typedef enum
 	IfxGtm_Atom_SompAruDataSelect_highWord = 2,  /**< \brief Load ARU high word (Bits 47…24) into shadow register SR1 */
 } IfxGtm_Atom_SompAruDataSelect;
 
-/** \brief SOMS Shift Direction for CM1
+/** \brief SOMS Shift Direction for CM1.
+ * Definition in Ifx_GTM_ATOM_CH_SOMS.B.ACB0
  */
 typedef enum
 {
@@ -170,7 +178,8 @@ typedef enum
 	IfxGtm_Atom_SomsShiftDirection_left  = 1,  /**< \brief Left shift of data is started from bit 23 of CM1 */
 } IfxGtm_Atom_SomsShiftDirection;
 
-/** \brief SOMB signal level Control
+/** \brief SOMB signal level Control.
+ * Definition in Ifx_GTM_ATOM_CH_SOMB.B.ACB_1_0
  */
 typedef enum
 {
@@ -180,7 +189,8 @@ typedef enum
 	IfxGtm_Atom_SombSignalLevelControl_toggle   = 3   /**< \brief toggle the output signal level */
 } IfxGtm_Atom_SombSignalLevelControl;
 
-/** \brief SOMB Compare Strategy
+/** \brief SOMB Compare Strategy.
+ * Definition in Ifx_GTM_ATOM_CH_SOMB.B.ACB_4_3_2
  */
 typedef enum
 {
@@ -192,7 +202,8 @@ typedef enum
     IfxGtm_Atom_SombCompareStrategy_cancelCompare   = 7   /**< \brief Cancel pending compare events */
 } IfxGtm_Atom_SombCompareStrategy;
 
-/** \brief Trigger output pulse length
+/** \brief Trigger output pulse length.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.TRIG_PULSE
  */
 typedef enum
 {
@@ -200,7 +211,8 @@ typedef enum
 	IfxGtm_Atom_Ch_TriggerOutputPulseLength_sysClk = 1  /**< \brief Pulse Length is only one SYS_CLK period if CN0=SR0 */
 } IfxGtm_Atom_Ch_TriggerOutputPulseLength;
 
-/** \brief Up-down counter mode for ATOM channels
+/** \brief Up-down counter mode for ATOM channels.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.UDMODE
  */
 typedef enum
 {
@@ -210,7 +222,8 @@ typedef enum
 	IfxGtm_Atom_Ch_CounterMode_bothUpAndDown = 3  /**< \brief Up-down counter mode enabled: CN0 counts up and down, CM0,CM1 are updated if CN0 reaches 0 or CM0 (i.e. changes direction) */
 } IfxGtm_Atom_Ch_CounterMode;
 
-/** \brief Trigger source for trigger signals
+/** \brief Trigger source for trigger signals.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.EXT_TRIG and Ifx_GTM_ATOM_CH_CTRL.B.EXTTRIGOUT
  */
 typedef enum
 {
@@ -218,7 +231,8 @@ typedef enum
 	IfxGtm_Atom_Ch_TriggerSignal_external = 1  /**< \brief External trigger signal TIM_EXT_CAPTURE(x) of the assigned TIM channel[x]  */
 } IfxGtm_Atom_Ch_TriggerSignal;
 
-/** \brief Time base value TBU_TS1 or TBU_TS2
+/** \brief Time base value TBU_TS1 or TBU_TS2.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.TB12_SEL
  */
 typedef enum
 {
@@ -226,7 +240,8 @@ typedef enum
 	IfxGtm_Atom_Ch_TimeBaseValue_tbuTs2 = 1  /**< \brief TBU_TS2 selected for comparison */
 } IfxGtm_Atom_Ch_TimeBaseValue;
 
-/** \brief CCUx compare strategy
+/** \brief CCUx compare strategy.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.CMP_CTRL
  */
 typedef enum
 {
@@ -234,7 +249,8 @@ typedef enum
 	IfxGtm_Atom_Ch_CompareStrategy_lessEqual    = 1  /**< \brief Less-equal compare against TBU time base values (TBU_TSx less than or equal to CMx) */
 } IfxGtm_Atom_Ch_CompareStrategy;
 
-/** \brief Serve last ARU communication strategy
+/** \brief Serve last ARU communication strategy.
+ * Definition in Ifx_GTM_ATOM_CH_CTRL.B.SLA
  */
 typedef enum
 {
@@ -775,6 +791,17 @@ IFX_EXTERN void IfxGtm_Atom_Ch_setSignalLevel(Ifx_GTM_ATOM *atom, IfxGtm_Atom_Ch
  * \retval None
  */
 IFX_EXTERN void IfxGtm_Atom_Ch_setTriggerOutput(Ifx_GTM_ATOM *atom, IfxGtm_Atom_Ch channel, IfxGtm_Atom_Ch_OutputTrigger trigger);
+
+/**
+ * \brief Sets the ATOM mode control bits(ACB) for the specified ATOM channel.
+ *
+ * \param[inout] atom      Pointer to the ATOM object.
+ * \param[in]    channel   Channel index. Range: \ref IfxGtm_Atom_Ch
+ * \param[in]    acbConfig Atom Mode control bits config. Range: \ref 0 to 0x1F
+ *
+ * \retval None
+ */
+IFX_EXTERN void IfxGtm_Atom_Ch_setAcb(Ifx_GTM_ATOM *atom, IfxGtm_Atom_Ch channel, uint8 acbConfig);
 
 /**
  * \brief Retrieves the current counter value from a specific ATOM channel.

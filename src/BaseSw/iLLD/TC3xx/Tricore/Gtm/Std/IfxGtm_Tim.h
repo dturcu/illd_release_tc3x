@@ -3,7 +3,7 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -70,13 +70,17 @@
 
 /** \addtogroup IfxLld_Gtm_Std_Tim_Enumerations
  * \{ */
+/** \brief Enum for selection for CNTS register.
+ * Definition in Ifx_GTM_TIM_CH_CTRLB.CNTS_SEL
+ */
 typedef enum
 {
     IfxGtm_Tim_CntsSel_cntReg = 0,
     IfxGtm_Tim_CntsSel_tbuTs0
 } IfxGtm_Tim_CntsSel;
 
-/** \brief Enum for Filter counter
+/** \brief Enum for Filter counter.
+ * Definition in Ifx_GTM_TIM_CH_ECTRL.B.EFLT_CTR_RE and Ifx_GTM_TIM_CH_ECTRL.B.EFLT_CTR_FE
  */
 typedef enum
 {
@@ -84,7 +88,8 @@ typedef enum
     IfxGtm_Tim_FilterCounter_hold
 } IfxGtm_Tim_FilterCounter;
 
-/** \brief Enum for Filter counter Frequency Selection
+/** \brief Enum for Filter counter Frequency Selection.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.FLT_CNT_FRQ
  */
 typedef enum
 {
@@ -94,7 +99,8 @@ typedef enum
     IfxGtm_Tim_FilterCounterFreqSel_cmuClk7 = 3   /**< \brief FLT_CNT counts with CMU_CLK7 */
 } IfxGtm_Tim_FilterCounterFreqSel;
 
-/** \brief Enum for Filter mode
+/** \brief Enum for Filter mode.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.FLT_MODE_RE and Ifx_GTM_TIM_CH_CTRL.B.FLT_MODE_FE
  */
 typedef enum
 {
@@ -102,20 +108,28 @@ typedef enum
     IfxGtm_Tim_FilterMode_individualDeglitchTime         /**< \brief Individual deglitch mode */
 } IfxGtm_Tim_FilterMode;
 
+/** \brief Enum for GPR0/GPR1 register selection.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.GPR0_SEL and Ifx_GTM_TIM_CH_CTRL.B.GPR1_SEL
+ */
 typedef enum
 {
-    IfxGtm_Tim_GprSel_tbuTs0 = 0,
-    IfxGtm_Tim_GprSel_tbuTs1,
-    IfxGtm_Tim_GprSel_tbuTs2,
-    IfxGtm_Tim_GprSel_cnts
+    IfxGtm_Tim_GprSel_tbuTs0 = 0,  /**< \brief Use TBU_TS0 as input */
+    IfxGtm_Tim_GprSel_tbuTs1,      /**< \brief Use TBU_TS1 as input */
+    IfxGtm_Tim_GprSel_tbuTs2,      /**< \brief Use TBU_TS2 as input */
+    IfxGtm_Tim_GprSel_cnts         /**< \brief Use CNTS as input */
 } IfxGtm_Tim_GprSel;
 
+/** \brief Enum for Channel Input Control.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.CICTRL
+ */
 typedef enum
 {
-    IfxGtm_Tim_Input_currentChannel = 0,
-    IfxGtm_Tim_Input_adjacentChannel
+    IfxGtm_Tim_Input_currentChannel = 0,  /**< \brief Use signal TIM_IN(x) as input for channel x */
+    IfxGtm_Tim_Input_adjacentChannel      /**< \brief Use signal TIM_IN(x-1) as input for channel x (or TIM_IN(m-1) if x is 0) */
 } IfxGtm_Tim_Input;
 
+/** \brief Enum for Irq mode.
+ */
 typedef enum
 {
     IfxGtm_Tim_IrqMode_level = 0,        /**< \brief Level Mode */
@@ -125,6 +139,8 @@ typedef enum
     IfxGtm_Tim_IrqMode_none = -1         /**< \brief none */
 } IfxGtm_Tim_IrqMode;
 
+/** \brief Enum for Irq type.
+ */
 typedef enum
 {
     IfxGtm_Tim_IrqType_newVal        = 0,  /**< \brief New measurement value detected by SMU of channel */
@@ -135,6 +151,9 @@ typedef enum
     IfxGtm_Tim_IrqType_glitchDetect  = 5   /**< \brief A glitch was detected by the TIM filter of channel */
 } IfxGtm_Tim_IrqType;
 
+/** \brief Enum for TIM channel mode.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.TIM_MODE
+ */
 typedef enum
 {
     IfxGtm_Tim_Mode_pwmMeasurement   = 0,  /**< \brief TPWM */
@@ -146,7 +165,8 @@ typedef enum
     IfxGtm_Tim_Mode_serialShift      = 6   /**< \brief TSSM - Not Supported */
 } IfxGtm_Tim_Mode;
 
-/** \brief Enum for Timeout control
+/** \brief Enum for Timeout control.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.TOCTRL
  */
 typedef enum
 {
@@ -156,7 +176,8 @@ typedef enum
     IfxGtm_Tim_Timeout_bothEdge      /**< \brief Timeout feature enabled for both edges */
 } IfxGtm_Tim_Timeout;
 
-/** \brief Enum for Source selection for triggering EXT_CAPTURE functionality
+/** \brief Enum for Source selection for triggering EXT_CAPTURE functionality.
+ * Definition in Ifx_GTM_TIM_CH_ECTRL.B.EXT_CAP_SRC
  */
 typedef enum
 {
@@ -178,7 +199,8 @@ typedef enum
 	IfxGtm_Tim_ExtCaptureSource_tduFrameEvt  = 14   /**< \brief tdu_frame_evt of local TDU selected */
 } IfxGtm_Tim_ExtCaptureSource;
 
-/** \brief Enum for Filter input by lookup table
+/** \brief Enum for Filter input by lookup table.
+ * Definition in Ifx_GTM_TIM_CH_ECTRL.B.USE_LUT
  */
 typedef enum
 {
@@ -201,7 +223,7 @@ typedef enum
  */
 typedef struct
 {
-    boolean         enable;                                             /**< \brief TIM channel enable */
+    boolean         enable;                                             /**< \brief TIM channel enable/disable */
     IfxGtm_Tim_Mode mode;                                               /**< \brief TIM channel Mode */
     boolean         enableOneShotMode;                                  /**< \brief enable OneShot Mode (disable - continous operation mode) */
     boolean         enableAruRouting;                                   /**< \brief GPR0 and GPR1 register values routed to ARU.
@@ -246,12 +268,16 @@ typedef struct
 
 typedef struct
 {
-    uint8 mode;        /**< \brief Input source to Channel. multi-core encoding in use (MODE_x(1) defines the state of the signal)
+    uint8 mode;        /**< \brief Input source to Channel. Multi-core encoding in use (MODE_x(1) defines the state of the signal)
                         * 00- State is 0 (ignore write access)
                         * 01- Change state to 0
                         * 10- Change state to 1
                         * 11- State is 1 (ignore write access) */
-    uint8 value;
+    uint8 value;       /**< \brief Value to be fed to Channel. Multicore encoding in use (VAL_x(1) defines the state of the signal).
+						* 00- State is 0 (ignore write access)
+						* 01- Change state to 0
+						* 10- Change state to 1
+						* 11- State is 1 (ignore write access) */
 } IfxGtm_Tim_InputSourceSelect;
 
 /** \addtogroup IfxLld_Gtm_Std_Tim_Channel_Functions
@@ -914,10 +940,12 @@ IFX_INLINE void IfxGtm_Tim_Ch_setFallingEdgeFilterTime(Ifx_GTM_TIM_CH *channel, 
 
 IFX_INLINE void IfxGtm_Tim_Ch_setInputSourceSelection(Ifx_GTM_TIM *tim, IfxGtm_Tim_Ch channel, IfxGtm_Tim_InputSourceSelect inputSource)
 {
-    uint8 bitPos = 1U << ((uint8)channel);
+    uint8 bitPos = (uint8)channel * IFX_GTM_TIM_IN_SRC_VAL_1_OFF;
 
-    __imaskldmst((void *)&tim->IN_SRC.U, inputSource.mode, bitPos, 2);
-    __imaskldmst((void *)&tim->IN_SRC.U, inputSource.value, (bitPos + 2), 2);
+    uint32 mask = (uint32)(((IFX_GTM_TIM_IN_SRC_MODE_0_MSK << IFX_GTM_TIM_IN_SRC_MODE_0_OFF) | IFX_GTM_TIM_IN_SRC_VAL_0_MSK) << bitPos);  /* Combined mask for mode and value */
+	uint32 value = (uint32)(((inputSource.mode << IFX_GTM_TIM_IN_SRC_MODE_0_OFF) | inputSource.value) << bitPos);                         /* Combined value for mode and value */
+
+	__ldmst_c(&(tim->IN_SRC.U), mask, value);
 }
 
 

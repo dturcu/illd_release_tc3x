@@ -3,7 +3,7 @@
  * \brief SDMMC  basic functionality
  * \ingroup IfxLld_Sdmmc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -605,6 +605,7 @@
 /** \addtogroup IfxLld_Sdmmc_Std_Enumerations
  * \{ */
 /** \brief Length mode of ADMA2 descriptor
+ * Definition in Ifx_SDMMC.HOST_CTRL2.B.ADMA2_LEN_MODE
  */
 typedef enum
 {
@@ -623,6 +624,7 @@ typedef enum
 } IfxSdmmc_AdmaActionSymbol;
 
 /** \brief Auto CMD select mode for multiBlock Transfers
+ * Definition in Ifx_SDMMC.XFER_MODE.B.AUTO_CMD_ENABLE
  */
 typedef enum
 {
@@ -633,7 +635,7 @@ typedef enum
 } IfxSdmmc_AutoCmdSelect;
 
 /** \brief block boundary size\n
- * Definition in XFER_MODE.B.MULTI_BLK_SEL
+ * Definition in Ifx_SDMMC.XFER_MODE.B.MULTI_BLK_SEL
  */
 typedef enum
 {
@@ -979,6 +981,8 @@ typedef enum
     IfxSdmmc_SdIoInterruptPendingStatus_unknown   /**< \brief Interrupt Pending Status unknown */
 } IfxSdmmc_SdIoInterruptPendingStatus;
 
+/** \brief SDIO Function Interrupt Status
+ */
 typedef enum
 {
     IfxSdmmc_SdIoInterruptStatus_disabled,  /**< \brief Interrupt disabled */
@@ -997,6 +1001,7 @@ typedef enum
 } IfxSdmmc_SdIoTransferWidth;
 
 /** \brief SD modes supported by HOST
+ * Definition in IfxSdmmc_Sd_HostConfig.supportedModes
  */
 typedef enum
 {
@@ -1006,7 +1011,7 @@ typedef enum
 } IfxSdmmc_SdModes;
 
 /** \brief Speed Mode\n
- * Definition HOST_CTRL1.HIGH_SPEED_EN
+ * Definition in HOST_CTRL1.HIGH_SPEED_EN
  */
 typedef enum
 {
@@ -1056,12 +1061,12 @@ typedef enum
  */
 typedef struct
 {
-    uint32 ocr : 24;
-    uint32 s18a : 1;
+    uint32 ocr : 24;		/**< \brief Indicates supported voltage range. Range: 0 to 0xFFFFFF */
+    uint32 s18a : 1;		/**< \brief 1.8V Signaling Support Indicator. Note: voltage switch sequences using CMD11 are skipped as the controller does not support 1.8V operation. */
     uint32 stuff : 2;
-    uint32 mp : 1;
-    uint32 ioNum : 3;
-    uint32 c : 1;
+    uint32 mp : 1;			/**< Memory present indicator. Range: 1 -> if Memory present in card, 0 ->  if Memory is not present in card */
+    uint32 ioNum : 3;		/**< Specifies the Number of I/O functions supported by the card. Range: 0 -> if Number of functions supported = 0, 1 -> if Number of functions supported = 1, 2 -> if Number of functions supported = 2. */
+    uint32 c : 1;			/**< Card Ready bit indicating SDIO card initialization status. Range: \ref IfxSdmmc_SdIoInit_ready (1) SDIO card is Initialized, \ref IfxSdmmc_SdIoInit_notReady (0) SDIO card is Not Initialized. */
 } IfxSdmmc_SdIoResponseR4Bits;
 
 /** \} */
@@ -1074,61 +1079,61 @@ typedef struct
  */
 typedef struct
 {
-    uint32 sdSpec : 4;           /**< \brief SD_SPEC, [59:56] */
-    uint32 scrStructure : 4;     /**< \brief SCR Structure, [63:60] */
-    uint32 sdBusWidth : 4;       /**< \brief DAT Bus widths supported, [51:48] */
-    uint32 sdSecurity : 3;       /**< \brief CPRM Security Support, [54:52] */
-    uint32 eraseStat : 1;        /**< \brief data status after erases, [55:55] */
-    uint32 res40 : 2;            /**< \brief Reserved (2), [41:40] */
-    uint32 sdSpec4 : 1;          /**< \brief Spec. Version 4.00 or higher, [42:42] */
-    uint32 exSecurity : 4;       /**< \brief Extended Security Support, [46:43] */
-    uint32 sdSpec3 : 1;          /**< \brief Spec. Version 3.00 or higher, [47:47] */
-    uint32 cmdSupport : 4;       /**< \brief Command Support bits, [35:32] */
-    uint32 res36 : 4;            /**< \brief Reserved (4), [39:36] */
-    uint32 res0 : 32;            /**< \brief Reserved (32), [31:0] */
+    uint32 sdSpec : 4;           /**< \brief SD_SPEC, [59:56] Range: 0 to 0x15 */
+    uint32 scrStructure : 4;     /**< \brief SCR Structure, [63:60] Range: 0 to 0x15 */
+    uint32 sdBusWidth : 4;       /**< \brief DAT Bus widths supported, [51:48] Range: 0 to 0x15 */
+    uint32 sdSecurity : 3;       /**< \brief CPRM Security Support, [54:52] Range: 0 to 0x7 */
+    uint32 eraseStat : 1;        /**< \brief data status after erases, [55:55] Range: 0 or 0x1 */
+    uint32 res40 : 2;            /**< \brief Reserved (2), [41:40] Range: 0 to 0x3 */
+    uint32 sdSpec4 : 1;          /**< \brief Spec. Version 4.00 or higher, [42:42] Range: 0 or 0x1  */
+    uint32 exSecurity : 4;       /**< \brief Extended Security Support, [46:43] Range: 0 to 0x15 */
+    uint32 sdSpec3 : 1;          /**< \brief Spec. Version 3.00 or higher, [47:47] Range: 0 or 0x1 */
+    uint32 cmdSupport : 4;       /**< \brief Command Support bits, [35:32] Range: 0 to 0x15 */
+    uint32 res36 : 4;            /**< \brief Reserved (4), [39:36] Range: 0 to 0x15 */
+    uint32 res0 : 32;            /**< \brief Reserved (32), [31:0] Range: 0 to 0xFFFFFFFF */
 } IfxSdmmc_CardReg_SCRBits;
 
 /** \brief Card status recieved in response
  */
 typedef struct
 {
-    uint32 res0 : 3;                            /**< \brief Reserved */
-    uint32 authenticationSequenceError : 1;     /**< \brief AKE_SEQ_ERROR (SD Memory Card app. spec.), Error in the sequence of the authentication process */
-    uint32 res4 : 1;                            /**< \brief Reserved */
-    uint32 acmd : 1;                            /**< \brief APP_CMD, The card will expect ACMD, or an indication that the command has been interpreted as ACMD */
-    uint32 functionEvent : 1;                   /**< \brief FX_EVENT, Extension Functions may set this bit to get host to deal with events */
-    uint32 res7 : 1;                            /**< \brief Reserved */
-    uint32 readyForData : 1;                    /**< \brief READY_FOR_DATA, Corresponds to buffer empty signaling on the bus */
-    uint32 currentState : 4;                    /**< \brief CURRENT_STATE, The state of the card when receiving the command. */
-    uint32 eraseReset : 1;                      /**< \brief ERASE_RESET, An erase sequence was cleared before executing because an out of erase sequence command was received */
-    uint32 eccDisabled : 1;                     /**< \brief CARD_ECC_DISABLED, The command has been executed without using the internal ECC */
-    uint32 wpEraseSkip : 1;                     /**< \brief WP_ERASE_SKIP, Set when only partial address space was erased due to existing write protected blocks or the temporary or permanent write protected card was erased */
+    uint32 res0 : 3;                            /**< \brief Reserved: */
+    uint32 authenticationSequenceError : 1;     /**< \brief AKE_SEQ_ERROR (SD Memory Card app. spec.), Error in the sequence of the authentication process. Range: 0 or 0x1 */
+    uint32 res4 : 1;                            /**< \brief Reserved. */
+    uint32 acmd : 1;                            /**< \brief APP_CMD, The card will expect ACMD, or an indication that the command has been interpreted as ACMD. Range: 0 or 0x1*/
+    uint32 functionEvent : 1;                   /**< \brief FX_EVENT, Extension Functions may set this bit to get host to deal with events. Range: 0 or 0x1 */
+    uint32 res7 : 1;                            /**< \brief Reserved. */
+    uint32 readyForData : 1;                    /**< \brief READY_FOR_DATA, Corresponds to buffer empty signaling on the bus. Range: 0 or 0x1 */
+    uint32 currentState : 4;                    /**< \brief CURRENT_STATE, The state of the card when receiving the command. Range: 0 to 0xF */
+    uint32 eraseReset : 1;                      /**< \brief ERASE_RESET, An erase sequence was cleared before executing because an out of erase sequence command was received. Range: 0 or 0x1 */
+    uint32 eccDisabled : 1;                     /**< \brief CARD_ECC_DISABLED, The command has been executed without using the internal ECC. Range: 0 or 0x1 */
+    uint32 wpEraseSkip : 1;                     /**< \brief WP_ERASE_SKIP, Set when only partial address space was erased due to existing write protected blocks or the temporary or permanent write protected card was erased. Range: 0 or 0x1 */
     uint32 csdOverwrite : 1;                    /**< \brief CSD_OVERWRITE, Can be either one of the following errors:\n
                                                  * - The read only section of the CSD does not match the card content.\n
                                                  * - An attempt to reverse the copy (set as original) or permanent WP (unprotected) bits was made. */
-    uint32 res17 : 1;                           /**< \brief Reserved */
-    uint32 res18 : 1;                           /**< \brief Reserved */
-    uint32 error : 1;                           /**< \brief ERROR, A general or an unknown error occurred during the operation */
-    uint32 ccError : 1;                         /**< \brief CC_ERROR, Internal card controller error */
-    uint32 eccFailed : 1;                       /**< \brief CARD_ECC_FAILED, Card internal ECC was applied but failed to correct the data */
-    uint32 illegalCommand : 1;                  /**< \brief ILLEGAL_COMMAND, Command not legal for the card state */
-    uint32 commandCrcError : 1;                 /**< \brief COM_CRC_ERROR, The CRC check of the previous command failed. */
-    uint32 lockUnlockFailed : 1;                /**< \brief LOCK_UNLOCK_FAILED, Set when a sequence or password error has been detected in lock/unlock card command. */
-    uint32 locked : 1;                          /**< \brief CARD_IS_LOCKED, When set, signals that the card is locked by the host */
-    uint32 wpViolation : 1;                     /**< \brief WP_VIOLATION, Set when the host attempts to write to a protected block or to the temporary or permanent write protected card. */
-    uint32 eraseParam : 1;                      /**< \brief ERASE_PARAM, An invalid selection of write-blocks for erase occurred. */
-    uint32 eraseSeqError : 1;                   /**< \brief ERASE_SEQ_ERROR, An error in the sequence of erase commands occurred */
-    uint32 blockLengthError : 1;                /**< \brief BLOCK_LEN_ERROR, The transferred block length is not allowed for this card, or the number of transferred bytes does not match the block length. */
-    uint32 addressError : 1;                    /**< \brief ADDRESS_ERROR, A misaligned address which did not match the block length was used in the command. */
-    uint32 outOfRange : 1;                      /**< \brief OUT_OF_RANGE, The command's argument was out of the allowed range for this card */
+    uint32 res17 : 1;                           /**< \brief Reserved. */
+    uint32 res18 : 1;                           /**< \brief Reserved. */
+    uint32 error : 1;                           /**< \brief ERROR, A general or an unknown error occurred during the operation. Range: 0 or 0x1 */
+    uint32 ccError : 1;                         /**< \brief CC_ERROR, Internal card controller error. Range: 0 or 0x1 */
+    uint32 eccFailed : 1;                       /**< \brief CARD_ECC_FAILED, Card internal ECC was applied but failed to correct the data. Range: 0 or 0x1 */
+    uint32 illegalCommand : 1;                  /**< \brief ILLEGAL_COMMAND, Command not legal for the card state. Range: 0 or 0x1 */
+    uint32 commandCrcError : 1;                 /**< \brief COM_CRC_ERROR, The CRC check of the previous command failed. Range: 0 or 0x1 */
+    uint32 lockUnlockFailed : 1;                /**< \brief LOCK_UNLOCK_FAILED, Set when a sequence or password error has been detected in lock/unlock card command. Range: 0 or 0x1 */
+    uint32 locked : 1;                          /**< \brief CARD_IS_LOCKED, When set, signals that the card is locked by the host. Range: 0 or 0x1*/
+    uint32 wpViolation : 1;                     /**< \brief WP_VIOLATION, Set when the host attempts to write to a protected block or to the temporary or permanent write protected card. Range: 0 or 0x1 */
+    uint32 eraseParam : 1;                      /**< \brief ERASE_PARAM, An invalid selection of write-blocks for erase occurred. Range: 0 or 0x1 */
+    uint32 eraseSeqError : 1;                   /**< \brief ERASE_SEQ_ERROR, An error in the sequence of erase commands occurred. Range: 0 or 0x1 */
+    uint32 blockLengthError : 1;                /**< \brief BLOCK_LEN_ERROR, The transferred block length is not allowed for this card, or the number of transferred bytes does not match the block length. Range: 0 or 0x1 */
+    uint32 addressError : 1;                    /**< \brief ADDRESS_ERROR, A misaligned address which did not match the block length was used in the command. Range: 0 or 0x1 */
+    uint32 outOfRange : 1;                      /**< \brief OUT_OF_RANGE, The command's argument was out of the allowed range for this card. Range: 0 or 0x1 */
 } IfxSdmmc_CardStatusBits;
 
 /** \brief R4 response
  */
 typedef union
 {
-    IfxSdmmc_SdIoResponseR4Bits bits;
-    uint32                      r4;
+    IfxSdmmc_SdIoResponseR4Bits bits;		/**< Provides access to individual R4 response bitfields. */
+    uint32                      r4;			/**< Represents the card's operating conditions as specified in the response. Range: 0 to 0xFFFFFFFF */
 } IfxSdmmc_SdIoResponseR4;
 
 /** \} */
@@ -1139,47 +1144,47 @@ typedef union
  */
 typedef union
 {
-    uint32                   U[2];       /**< \brief Word access */
-    IfxSdmmc_CardReg_SCRBits B;          /**< \brief SCR card Register Bitfields */
+    uint32                   U[2];       /**< \brief Word access. */
+    IfxSdmmc_CardReg_SCRBits B;          /**< \brief SCR card Register Bitfields. */
 } IfxSdmmc_CardReg_SCR;
 
 /** \brief Card Status
  */
 typedef union
 {
-    IfxSdmmc_CardStatusBits B;       /**< \brief Card status in Bits format */
-    uint32                  U;       /**< \brief Card Status in word format */
+    IfxSdmmc_CardStatusBits B;       /**< \brief Card status in Bits format. */
+    uint32                  U;       /**< \brief Card Status in word format. */
 } IfxSdmmc_CardStatus;
 
 typedef struct
 {
-    uint32 data : 8;
-    uint32 stuff1 : 1;
-    uint32 regAddr : 17;
-    uint32 stuff2 : 1;
-    uint32 raw : 1;
-    uint32 func : 3;
-    uint32 rw : 1;
+    uint32 data : 8;               /**< \brief Data to be written or read. Range: 0 to 0xFF */
+    uint32 stuff1 : 1;          
+    uint32 regAddr : 17;           /**< \brief Register address for the operation. Range: 0 to 0x1FFFF */
+    uint32 stuff2 : 1;            
+    uint32 raw : 1;                /**< \brief Raw flag. Range: TRUE if the operation is raw, FALSE if it is not. */
+    uint32 func : 3;			   /**< \brief Specifies the I/O function number (0 to 7) to target for the operation. Range: \ref IfxSdmmc_SdIoFunction */
+    uint32 rw : 1;                 /**< \brief Indicates read or write operation. Range: TRUE Performs write operation, FALSE Performs read operation. */
 } IfxSdmmc_SdIoCmd52Bits;
 
 /** \brief CMD53 Command bitfield Structure
  */
 typedef struct
 {
-    uint32 Count : 9;
-    uint32 regAddr : 17;
-    uint32 opCode : 1;
-    uint32 blockMode : 1;
-    uint32 func : 3;
-    uint32 rw : 1;
+    uint32 Count : 9; 		/**< \brief Specifies the number of data blocks. Range: 0 to 0x1FF */
+    uint32 regAddr : 17;    /**< \brief Specifies register address. The starting address for the transfer. Range: 0 to 0x1FFFF */
+    uint32 opCode : 1;		/**< \brief Performs write/read to incrementing address. Range: 1 -> Write to incrementing address, 0 -> Read from incrementing address. */
+    uint32 blockMode : 1;	/**< \brief Specifies Data transfer mode. Range: 0 -> Byte mode (transfer by bytes), 1 -> Block mode (transfer by blocks). */
+    uint32 func : 3;		/**< \brief Specifies the I/O function number (0 to 7) to target for the operation. Range: \ref IfxSdmmc_SdIoFunction */
+    uint32 rw : 1;			/**< \brief Specifies Read/Write direction. Range: 0 -> Read from card to host, 1 -> Write from host to card. */
 } IfxSdmmc_SdIoCmd53Bits;
 
 /** \brief R5 response: bit field structure
  */
 typedef struct
 {
-    uint32 data : 8;
-    uint32 flags : 8;
+    uint32 data : 8;		/**< \brief Data byte returned by the card for read operations. Range: 0 to 0xFF */
+    uint32 flags : 8;		/**< \brief Status and error flags. Range: 0 to 0xFF */
     uint32 stuff : 16;
 } IfxSdmmc_SdIoResponseR5Bits;
 
@@ -1187,7 +1192,7 @@ typedef struct
  */
 typedef struct
 {
-    IfxSdmmc_SdIoResponseR4 ioInfo;
+    IfxSdmmc_SdIoResponseR4 ioInfo;		/**< \brief Bitfield structure for R4 response. */
 } IfxSdmmc_SdIo_CardInfo;
 
 /** \} */
@@ -1198,74 +1203,75 @@ typedef struct
  */
 typedef struct
 {
-    uint32 valid : 1;            /**< \brief Indicates validity of a descriptor line */
-    uint32 end : 1;              /**< \brief End of Descriptor */
-    uint32 intEn : 1;            /**< \brief Force to generate ADMA Interrupt */
-    uint32 act : 3;              /**< \brief Action Symbols combination */
-    uint32 lengthUpper : 10;     /**< \brief Upper value of the Length in 26 bit length mode */
-    uint32 length : 16;          /**< \brief data length (lower part of the length in 26 bit length mode) */
-    uint32 address : 32;         /**< \brief Address of the data location */
+    uint32 valid : 1;            /**< \brief Indicates validity of a descriptor line. */
+    uint32 end : 1;              /**< \brief End of Descriptor. Range: 1 -> Indicate this is the last descriptor, signaling the end of the data transfer, 0 -> Indicate this is not the last descriptor, continue to the next in the sequence. */
+    uint32 intEn : 1;            /**< \brief Force to generate ADMA Interrupt. 
+                                  * - Range: 1 -> Enables an interrupt when the last data transfer in the descriptor table is completed, 0 -> Do not trigger an interrupt after the completion of this descriptor's data transfer. */
+    uint32 act : 3;              /**< \brief Action Symbols combination. Range: \ref IfxSdmmc_AdmaActionSymbol */
+    uint32 lengthUpper : 10;     /**< \brief Upper value of the Length in 26 bit length mode. Range: 0 to 0x3FF */
+    uint32 length : 16;          /**< \brief data length (lower part of the length in 26 bit length mode). Range: 0 to 0x200 */
+    uint32 address : 32;         /**< \brief Address of the data location. Range: 0 to 0xFFFFFFFF */
 } IfxSdmmc_Adma2Descriptor;
 
 /** \brief Card information structure, contents of Card registers.
  */
 typedef struct
 {
-    uint32                 ocr;          /**< \brief OCR register contents */
-    uint32                 cid[4];       /**< \brief CID register contents */
-    uint32                 csd[4];       /**< \brief CSD register contents */
-    IfxSdmmc_CardReg_SCR   scr;          /**< \brief SCR register contents */
-    uint16                 rca;          /**< \brief RCA register contents */
-    uint16                 dsr;          /**< \brief DSR register contents */
-    IfxSdmmc_SdIo_CardInfo io;           /**< \brief SDIO card info */
+    uint32                 ocr;          /**< \brief OCR register contents. Range: 0 to 0xFFFFFFFF */
+    uint32                 cid[4];       /**< \brief CID register contents. Range: 0 to 0xFFFFFFFF */
+    uint32                 csd[4];       /**< \brief CSD register contents. Range: 0 to 0xFFFFFFFF */
+    IfxSdmmc_CardReg_SCR   scr;          /**< \brief SCR register contents. */
+    uint16                 rca;          /**< \brief RCA register contents. Range: 0 to 0xFFFF */
+    uint16                 dsr;          /**< \brief DSR register contents. Range: 0 to 0xFFFF */
+    IfxSdmmc_SdIo_CardInfo io;           /**< \brief SDIO card info. */
 } IfxSdmmc_CardInfo;
 
 /** \brief Configuration structure for Normal and Error interrupts
  */
 typedef struct
 {
-    boolean      commandCompleteInterruptEnable;        /**< \brief Command Complete Interrupt Enable/Disable selection */
-    boolean      transferCompleteInterruptEnable;       /**< \brief Transfer Complete Interrupt Enable/Disable selection */
-    boolean      dmaInterruptEnable;                    /**< \brief Transfer Complete Interrupt Enable/Disable selection */
-    boolean      commandTimeoutInterruptEnable;         /**< \brief Command Timeout Interrupt Enable/Disable selection */
-    boolean      dataTimeoutInterruptEnable;            /**< \brief Data Timeout Interrupt Enable/Disable selection */
-    Ifx_Priority priority;                              /**< \brief Interrupt service priority */
-    IfxSrc_Tos   provider;                              /**< \brief Interrupt service provider */
+    boolean      commandCompleteInterruptEnable;        /**< \brief Command Complete Interrupt Enable/Disable selection. Range: TRUE Command complete interrupt enabled, FALSE Command complete interrupt disable. */
+    boolean      transferCompleteInterruptEnable;       /**< \brief Transfer Complete Interrupt Enable/Disable selection. Range: TRUE transfer complete interrupt enabled, FALSE Transfer complete interrupt disable. */
+    boolean      dmaInterruptEnable;                    /**< \brief Transfer Complete Interrupt Enable/Disable selection Range: TRUE Dma interrupt enabled, FALSE Dma interrupt disable. */
+    boolean      commandTimeoutInterruptEnable;         /**< \brief Command Timeout Interrupt Enable/Disable selection Range: TRUE Command timeout interrupt enabled, FALSE Command timeout interrupt disable. */
+    boolean      dataTimeoutInterruptEnable;            /**< \brief Data Timeout Interrupt Enable/Disable selection Range: TRUE Data time out interrupt enabled, FALSE Data time out disable.  */
+    Ifx_Priority priority;                              /**< \brief Interrupt service priority. */
+    IfxSrc_Tos   provider;                              /**< \brief Interrupt service provider. */
 } IfxSdmmc_InterruptConfig;
 
 /** \brief Response Data
  */
 typedef struct
 {
-    IfxSdmmc_CardStatus cardStatus;       /**< \brief Card status recieved in response */
-    uint32              resp01;           /**< \brief Response Register 01 value */
-    uint32              resp23;           /**< \brief Response register 23 value */
-    uint32              resp45;           /**< \brief Response register 45 value */
-    uint32              resp67;           /**< \brief Response register 67 value */
+    IfxSdmmc_CardStatus cardStatus;       /**< \brief Card status recieved in response. */
+    uint32              resp01;           /**< \brief Response Register 01 value. Range: 0 to 0xFFFFFFFF */
+    uint32              resp23;           /**< \brief Response register 23 value. Range: 0 to 0xFFFFFFFF */
+    uint32              resp45;           /**< \brief Response register 45 value. Range: 0 to 0xFFFFFFFF */
+    uint32              resp67;           /**< \brief Response register 67 value. Range: 0 to 0xFFFFFFFF */
 } IfxSdmmc_Response;
 
 /** \brief CMD52 command
  */
 typedef union
 {
-    IfxSdmmc_SdIoCmd52Bits bits;
-    uint32                 arg;
+    IfxSdmmc_SdIoCmd52Bits bits;        /**< \brief Bitfield structure for CMD52. */
+    uint32                 arg;         /**< \brief Raw argument value. Range: 0 to 0xFFFFFFFF */
 } IfxSdmmc_SdIoCmd52;
 
 /** \brief CMD53 Command
  */
 typedef union
 {
-    IfxSdmmc_SdIoCmd53Bits bits;
-    uint32                 arg;
+    IfxSdmmc_SdIoCmd53Bits bits;        /**< \brief Bitfield structure for CMD53. */
+    uint32                 arg;         /**< \brief Raw argument value. Range: 0 to 0xFFFFFFFF */
 } IfxSdmmc_SdIoCmd53;
 
 /** \brief SDIO Response R5
  */
 typedef union
 {
-    uint32                      r5;
-    IfxSdmmc_SdIoResponseR5Bits bits;
+    uint32                      r5;		/**< \brief Response register r5 value. Range: 0 to 0xFFFFFFFF */
+    IfxSdmmc_SdIoResponseR5Bits bits;   /**< \brief Bitfield structure for R5 Response. */
 } IfxSdmmc_SdIoResponseR5;
 
 /** \} */
@@ -1277,353 +1283,560 @@ typedef union
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Applies the software reset of the module
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Applies the software reset of the SDMMC module
+ * 
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_applySoftwareReset(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Checks if there is any error in the response recieved
- * \param cardStatus Card Status
- * \return Status
+/**
+ * \brief Checks if there is any error in the response received from the card.
+ *
+ * \param[in] cardStatus The status received from the card.
+ * 					     Range: 0 to 0xFFFFFFFF
+ *
+ * \retval IfxSdmmc_Status The status indicating success or failure. A return value of 0 indicates success,
+ * 					       while any non-zero value indicates an error.
+ * 					       Range: \ref IfxSdmmc_Status
  */
 IFX_INLINE IfxSdmmc_Status IfxSdmmc_checkErrorInResponseR6(uint32 cardStatus);
 
-/** \brief Clears the status flag of the slected Error Interrupt
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interrupt Normal Interrupt
- * \return None
+/**
+ * \brief Clears the specified error interrupt status flag for the SDMMC module.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in]    interrupt Error interrupt status flag to clear.
+ * 						   Range: \ref IfxSdmmc_ErrorInterrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_clearErrorInterrupt(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_ErrorInterrupt interrupt);
 
-/** \brief Clears the status flag of the selected Normal Interrupt
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interrupt Normal Interrupt
- * \return None
+/**
+ * \brief Clears the specified normal interrupt status flag within the SDMMC module.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in]    interrupt The normal interrupt to clear.
+ * 				           Range: \ref IfxSdmmc_NormalInterrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_clearNormalInterrupt(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_NormalInterrupt interrupt);
 
-/** \brief Disables the Block count in transfer mode
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Disables the block count feature during data transfer operations.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_disableBlockCount(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Disables the clock for card
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Disables the SDMMC card clock to reduce power consumption when communication with the card is not needed.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *                        This pointer is used to access the SDMMC module's registers to control the card clock.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_disableCardClock(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Enables All the Error Interrupt for interrupt generation
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables all error interrupts for interrupt generation.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableAllErrorInterruptStatus(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Enables the Block count in transfer mode
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables the Block count in transfer mode
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableBlockCount(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Enables the clock for card
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables the clock for the SD card interface
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableCardClock(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Enables the DMA transfers in host controller
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables DMA transfers for the SDMMC host controller by configuring the necessary registers.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space. This parameter provides access
+ * 					      to the SDMMC controller's registers, which are used to enable DMA functionality.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableDmaTransfers(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Enables the slected Error Interrupt for interrupt generation
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interrupt Normal Interrupt
- * \return None
+/**
+ * \brief Enables the selected Error Interrupt for interrupt generation.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in]    interrupt The specific error interrupt to enable.
+ * 			               Range: \ref IfxSdmmc_ErrorInterrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableErrorInterrupt(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_ErrorInterrupt interrupt);
 
-/** \brief Enables the slected Error Interrupt for interrupt generation
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interrupt Normal Interrupt
- * \return None
+/**
+ * \brief Enables the selected Error Interrupt for interrupt generation.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in]    interrupt Error interrupt to be enabled.
+ * 						   Range: \ref IfxSdmmc_ErrorInterrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableErrorInterruptStatus(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_ErrorInterrupt interrupt);
 
-/** \brief Enables the host version 4
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables the SDMMC host controller version 4, configuring it for operation.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *                        This parameter must not be NULL and should point to a valid
+ *                        SDMMC peripheral register structure.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableHostControllerVersion4(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Enables the internal clock of host controller
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables the internal clock of the SDMMC host controller
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableInternalClock(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Enables the slected Normal Interrupt for interrupt generation
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interrupt Normal Interrupt
- * \return None
+/**
+ * \brief Enables the specified normal interrupt for interrupt generation.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in]    interrupt Normal interrupt to be enabled.
+ * 				           Range: \ref IfxSdmmc_NormalInterrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableNormalInterrupt(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_NormalInterrupt interrupt);
 
-/** \brief Enables the PLL of host controller
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables the Phase-Locked Loop (PLL) of the SDMMC host controller
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space,
+ *                        which contains the control and status registers for the SDMMC peripheral.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enablePll(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Enables the slected Normal Interrupt status for interrupt generation
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interrupt Normal Interrupt
- * \return None
+/**
+ * \brief Enables the selected Normal Interrupt status for interrupt generation.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in]    interrupt Normal Interrupt enumeration specifying which interrupt status to enable.
+ * 						   Range: \ref IfxSdmmc_NormalInterrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enableNormalInterruptStatus(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_NormalInterrupt interrupt);
 
-/** \brief Enables the preset values for clock generation
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables the preset values for clock generation.
+ *
+ * This function configures the SDMMC controller to use predefined clock generation settings.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_enablePresetValues(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the whole value of the Error Interrupt Status register
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Value of the Error Interrupt Status register
+/**
+ * \brief Retrieves the current state of the Error Interrupt Status register.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * 
+ * \retval uint16 The current value of the Error Interrupt Status register
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxSdmmc_getErrorInterruptStatus(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the whole value of the Normal Interrupt Status register
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Value of the Normal Interrupt Status register
+/**
+ * \brief Retrieves the current value of the Normal Interrupt Status register.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval uint16 The current value of the Normal Interrupt Status register.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxSdmmc_getNormalInterruptStatus(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the Src Pointer of the selected SDMMC service request node
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interruptType Interrupt type (service rerquest node number)
- * \return Src Pointer of the selected SDMMC service request node
+/**
+ * \brief Returns the Src Pointer of the selected SDMMC service request node
+ *
+ * \param[in] sdmmcSFR      Pointer to the base address of the SDMMC register space
+ * \param[in] interruptType Interrupt type specifying the service request node number.
+ * 							Range: \ref IfxSdmmc_InterruptType
+ *
+ * \retval Ifx_SRC_SRCR Pointer to the Src Pointer of the selected service request node.
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxSdmmc_getSrcPointer(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_InterruptType interruptType);
 
-/** \brief Returns the status whether the command line is busy to issue a command or not
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Status whether the command line is busy to issue a command or not\n
- * True: If busy, False: If not available
+/**
+ * \brief Checks if the command line is busy and unable to accept new commands.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval TRUE  if the command line is busy.
+ *         FALSE if the command line is not busy.
  */
 IFX_INLINE boolean IfxSdmmc_isCommandLineBusy(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the status whether the DAta line is busy to issue a command with Data or not
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Status whether the data line is busy to issue a command with Data or not\n
- * True: If busy, False: If not available
+/**
+ * \brief Checks if the data line is busy for issuing a command with data.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval TRUE  if data line is busy.
+ *         FALSE if data line is not busy.
  */
 IFX_INLINE boolean IfxSdmmc_isDataLineBusy(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the status whether the selected Error Interrupt flag is set or not
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interrupt Error Interrupt
- * \return status whether the selected Error Interrupt flag is set or not\n
- * True: If set, False: If not set
+/**
+ * \brief Checks if a specific error interrupt flag is set for the SDMMC module.
+ *
+ * \param[in] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in] interrupt The specific error interrupt to check.
+ * 						Range: \ref IfxSdmmc_ErrorInterrupt
+ *
+ * \retval TRUE  if the specified error interrupt flag is set.
+ *         FALSE if the specified error interrupt flag is not set.
  */
 IFX_INLINE boolean IfxSdmmc_isErrorInterruptOccured(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_ErrorInterrupt interrupt);
 
-/** \brief Returns the status of the version 4 support of host controller
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Version 4 Enable\n
- * TRUE: enable; FALSE: disable
+/**
+ * \brief Indicates whether the host controller supports version 4 functionality.
+ *
+ * This function checks if the host controller has version 4 support enabled.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval TRUE  if version 4 support is enabled.
+ *         FALSE if version 4 support is disabled.
  */
 IFX_INLINE boolean IfxSdmmc_isHostControllerVersion4Enable(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the status of the internal clock stability of host controller
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Internal Clock State\n
- * TRUE: stable; FALSE: unstable
+/**
+ * \brief Checks if the internal clock of the SDMMC host controller is stable.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval TRUE  if the internal clock is stable and ready for operation.
+ *     	   FALSE if the internal clock is not yet stable.
  */
 IFX_INLINE boolean IfxSdmmc_isInternalClockStable(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the status of whether clock for SDMMC module is enabled or diabled
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Status:\n
- * TRUE : if module is enabled\n
- * FALSE : if module is disabled
+/**
+ * \brief Checks if the SDMMC module's clock is enabled.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval TRUE  if the module's clock is enabled.
+ * 		   FALSE if the module's clock is disabled.
  */
 IFX_INLINE boolean IfxSdmmc_isModuleEnabled(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the status whether the selected Normal Interrupt flag is set or not
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param interrupt Normal Interrupt
- * \return status whether the selected Normal Interrupt flag is set or not\n
- * True: If set, False: If not set
+/**
+ * \brief Checks if the specified Normal Interrupt flag is set.
+ *
+ * \param[in] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in] interrupt Normal Interrupt flag to check.
+ * 			  		    Range: \ref IfxSdmmc_NormalInterrupt
+ *
+ * \retval TRUE  if the specified Normal Interrupt flag is set.
+ *         FALSE if the specified Normal Interrupt flag is not set.
  */
 IFX_INLINE boolean IfxSdmmc_isNormalInterruptOccured(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_NormalInterrupt interrupt);
 
-/** \brief Returns data from buffer data register
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Data
+/**
+ * \brief Reads data from the buffer data register of the SDMMC controller.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *                     This pointer provides access to the SDMMC controller's registers.
+ *
+ * \retval uint32 The data read from the buffer data register.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint32 IfxSdmmc_readBufferData(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the contents of Response register Resp01
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return value of Res01 register
+/**
+ * \brief Reads and returns the contents of the Response Register Resp01.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval uint32 Value of the Resp01 register.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint32 IfxSdmmc_readResponseReg01(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the contents of Response register Resp23
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return value of Res23 register
+/**
+ * \brief Reads and returns the contents of the Response Register 23 (Resp23) for the SDMMC module.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * 
+ * \retval uint32 Value of the Resp23 register.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint32 IfxSdmmc_readResponseReg23(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the contents of Response register Resp45
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return value of Res45 register
+/**
+ * \brief Reads and returns the contents of the Response Register 45 (Resp45) for SDMMC operations.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *                     This parameter provides access to the memory-mapped registers of the SDMMC controller.
+ *
+ * \retval uint32 Value of the Resp45 register.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint32 IfxSdmmc_readResponseReg45(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Returns the contents of Response register Resp67
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return value of Res67 register
+/**
+ * \brief Reads and returns the contents of the Response Register 67 (Resp67) from the SDMMC module.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval uint32 Value of the Resp67 register.
+ * 				  Range: 0 to 0xFFFF
  */
 IFX_INLINE uint32 IfxSdmmc_readResponseReg67(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Sets the value to Argument register
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param argument value to be written to argument register
- * \return None
+/**
+ * \brief Sets the value of the Argument register
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space
+ * \param[in]    argument Value to be written to the Argument register.
+ * 						  Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setArgument(Ifx_SDMMC *sdmmcSFR, uint32 argument);
 
-/** \brief Sets the block size
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param size blockSize
- * \return None
+/**
+ * \brief Sets the block size for SDMMC data transfers
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space
+ * \param[in]    size     Block size to be set.
+ * 					      Range: 0 to 0xFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setBlockSize(Ifx_SDMMC *sdmmcSFR, uint16 size);
 
-/** \brief Clears the Power Bus On request for card
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Clears the Power Bus On request for the card, effectively powering off the SDMMC bus.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setBusPowerOff(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Sets the Power Bus On request for card
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Sets the Power Bus On request for the SD/MMC card.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setBusPowerOn(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Sets SD Bus Voltage Select for VDD1 (3.3V)/eMMC Bus Voltage Select for VDD(3V).
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Sets the SD Bus Voltage Select for VDD1 (3.3V) or eMMC Bus Voltage Select for VDD (3V).
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setBusVoltage(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Sets the cardtype as EMMC
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Configures the SDMMC peripheral to recognize and interact with an eMMC card type.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setCardTypeEmmc(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Sets the value to command register
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param command value to be written to command register
- * \return None
+/**
+ * \brief Sets the value to the command register of the SDMMC interface.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    command  Value to be written to the command register.
+ * 						  Range: 0 to 0x3FFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setCommand(Ifx_SDMMC *sdmmcSFR, uint16 command);
 
-/** \brief Sets the interval by which DAT line timeouts are detected
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param value the interval by which DAT line timeouts are detected
- * \return None
+/**
+ * \brief Configures the timeout interval for DAT line detection.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    value    The timeout interval value to be set.
+ * 					      Range: \ref IfxSdmmc_DataLineTimeout
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setDataLineTimeoutValue(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_DataLineTimeout value);
 
-/** \brief Selects the type of DMA used for data transfers in host controller
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param dmaType type of DMA used for data transfers in host controller
- * \return None
+/**
+ * \brief Selects the type of DMA used for data transfers in host controller.
+ *
+ * \param[inout] sdmmcSFR Pointer to base address of SDMMC register space.
+ * \param[in]    dmaType  Type of DMA used for data transfers in host controller.
+ * 						  Range: \ref IfxSdmmc_DmaType
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setDmaType(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_DmaType dmaType);
 
-/** \brief Sets the data width of the eMMC transfers in host controller, (number of data lines)
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param width Data width of the eMMC transfers
- * \return None
+/**
+ * \brief Configures the data width of eMMC transfers in the host controller.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    width    Data width of the eMMC transfers.
+ * 					      Range: \ref IfxSdmmc_EmmcDataTransferWidth
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setEmmcDataTransferWidth(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_EmmcDataTransferWidth width);
 
-/** \brief Sets the speed mode of the eMMC transfers in host controller,
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param speed Speed Mode of the EMMC transfers
- * \return None
+/**
+ * \brief Sets the speed mode of the eMMC transfers in the host controller.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    speed    Speed mode of the eMMC transfers.
+ * 					      Range: \ref IfxSdmmc_EmmcSpeedMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setEmmcSpeedMode(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_EmmcSpeedMode speed);
 
-/** \brief Sets the multiblock block select , single block or multi block
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param select Multi block select
- * \return None
+/**
+ * \brief Configures the SDMMC controller to operate in either single-block or multi-block transfer mode.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    select   Boolean Flag to enable or disable multi-block mode:
+ *                        Range: TRUE  if multi-block mode enabled.
+ *                               FALSE if multi-block mode disabled. (use single-block mode).
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setMultiBlockSelect(Ifx_SDMMC *sdmmcSFR, boolean select);
 
-/** \brief Sets the data width of the SD transfers in host controller, (number of data lines)
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param width Data width of the SD transfers
- * \return None
+/**
+ * \brief Sets the data width of the SD transfers in the host controller, specifying the number of data lines.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    width    Data width of the SD transfers.
+ * 						  Range: \ref IfxSdmmc_SdDataTransferWidth
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setSdDataTransferWidth(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_SdDataTransferWidth width);
 
-/** \brief Sets the speed mode of the SD transfers in host controller,
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param speed Speed Mode of the SD transfers
- * \return None
+/**
+ * \brief Sets the speed mode of the SD transfers in host controller.
+ *
+ * \param[inout] sdmmcSFR Pointer to base address of SDMMC register space.
+ * \param[in]    speed    Speed Mode of the SD transfers.
+ * 						  Range: \ref IfxSdmmc_SdSpeedMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setSdSpeedMode(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_SdSpeedMode speed);
 
-/** \brief Sets the Sytem address for the DMA transfers.
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param address Sysytem Address for DMA transfers
- * \return None
+/**
+ * \brief Configures the system memory address for DMA transfers.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    address  System memory address for DMA transfers.
+ * 						  Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setSystemAddressForDma(Ifx_SDMMC *sdmmcSFR, uint32 address);
 
-/** \brief Sets the Data transfer direcyion , write/read
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param direction Data transfer Direction
- * \return None
+/**
+ * \brief Configures the data transfer direction for the SDMMC module.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in]    direction Data transfer direction.
+ * 				 		   Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setTransferDirection(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_TransferDirection direction);
 
-/** \brief Writes data to buffer data register
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param data Pointer to data buffer
- * \return None
+/**
+ * \brief Writes data to the buffer data register of the SDMMC.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    data     Pointer to the data buffer to be written.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_writeBufferData(Ifx_SDMMC *sdmmcSFR, uint32 *data);
 
-/** \brief Returns fail if error is present in R1 response
- * \param cardStatus R1 response data
- * \return error status
+/**
+ * \brief Checks for errors in the R1 response data from the SDMMC card.
+ *
+ * \param[in] cardStatus R1 response data from the SDMMC card.
+ * 						 Range: 0 to 0xFFFFFFFF
+ *
+ * \retval IfxSdmmc_Status Indicates the error status of the R1 response. A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_INLINE IfxSdmmc_Status IfxSdmmc_checkErrorInResponseR1(uint32 cardStatus);
 
-/** \brief Clears the status flag of the selected Error Interrupt bits in value param
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param value Value for Error Interrupt bits to clear
- * \return None
+/**
+ * \brief Clears the specified error interrupt status flags for the SDMMC module.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    value    Bitmask representing the error interrupt bits to clear. Each bit in
+ *                        this value corresponds to an error status flag that will be cleared.
+ *                        Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_clearErrorInterruptAll(Ifx_SDMMC *sdmmcSFR, uint16 value);
 
-/** \brief Clears the status flag of the selected Normal Interrupt bits in value param
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param value Value for Normal Interrupt bits to clear
- * \return None
+/**
+ * \brief Clears the specified Normal Interrupt bits in the SDMMC module.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in]    value    Bitmask representing the Normal Interrupt bits to clear.
+ * 						  Range: 0 to 0x40FF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_clearNormalInterruptAll(Ifx_SDMMC *sdmmcSFR, uint16 value);
 
@@ -1631,54 +1844,95 @@ IFX_INLINE void IfxSdmmc_clearNormalInterruptAll(Ifx_SDMMC *sdmmcSFR, uint16 val
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Configures the parameters for clock generation
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param frequency Frequency Select
- * \return None
+/**
+ * \brief Configures the clock generation parameters for the SDMMC module to operate at a specified frequency.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space. This is the starting address of the SDMMC peripheral's registers.
+ * \param[in]    frequency The desired clock frequency to be configured. The actual frequency may be rounded to the nearest supported value by the hardware.
+ *                         Range: 0 to 0x2FAF080 (0 Hz to 50 MHz)
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_configureClock(Ifx_SDMMC *sdmmcSFR, uint32 frequency);
 
-/** \brief Enables the module
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Enables the SDMMC module
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_enableModule(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Reads the response from response registers based on response type
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param command Command to send
- * \param responseType response type (R1, R1b, R2, R3, R6, R7)
- * \param response value of the response recieved, fo rthe commands which recieves response
- * \return Status
+/**
+ * \brief Reads the response from response registers based on the specified response type.
+ *
+ * \param[in]    sdmmcSFR     Pointer to the base address of the SDMMC register space.
+ * \param[in]    command      The command to send.
+ * 							  Range: \ref IfxSdmmc_Command
+ * \param[in]    responseType The type of response to read.
+ * 							  Range: \ref IfxSdmmc_ResponseType
+ * \param[inout] response     Pointer to the structure where the response data will be stored. The structure
+ *                            contains fields for card status and response register values (R01, R23, R45, R67).
+ *
+ * \retval IfxSdmmc_Status The status of the read Response operation, A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_readResponse(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Command command, IfxSdmmc_ResponseType responseType, IfxSdmmc_Response *response);
 
-/** \brief Applies the Kernel reset of the module
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Applies the Kernel reset of the module
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_resetModule(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Issues a application command APP_CMD to card
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param rca RCA of the card
- * \return Status
+/**
+ * \brief Sends an application command to the SD/MMC card.
+ *
+ * \param[in] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ * \param[in] rca      RCA of the target card.
+ * 					   Range: 0 to 0xFFFF
+ *
+ * \retval IfxSdmmc_Status The status of the send Application Command operation, A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_sendApplicationCommand(Ifx_SDMMC *sdmmcSFR, uint16 rca);
 
-/** \brief Issues a command to card
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param command Command to send
- * \param argument Argument of the command
- * \param responseType response type (R1, R1b, R2, R3, R6, R7)
- * \param response value of the response recieved, for the commands which recieves response
- * \return Status
+/**
+ * \brief Sends a command to the SD/MMC card and handles the response.
+ *
+ * This function issues a specified command to the SD/MMC card, passes the command argument,
+ * and retrieves the card's response based on the specified response type.
+ *
+ * \param[in]    sdmmcSFR     Pointer to the base address of the SDMMC register space.
+ * \param[in]    command      The command to be sent to the card.
+ * 						      Range: \ref IfxSdmmc_Command
+ * \param[in]    argument     Command argument (command-dependent).
+ * 						      Range: 0 to 0xFFFFFFFF
+ * \param[in]    responseType Type of response expected from the card.
+ * 						      Range: \ref IfxSdmmc_ResponseType
+ * \param[inout] response     Pointer to the response data structure that will contain the card's response.
+ *                            The structure includes card status and response register values.
+ *
+ * \retval IfxSdmmc_Status The status of the command execution. A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_sendCommand(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Command command, uint32 argument, IfxSdmmc_ResponseType responseType, IfxSdmmc_Response *response);
 
-/** \brief Sets up the Internal clock of host controller
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return Status
+/**
+ * \brief Configures and initializes the internal clock of the SDMMC host controller.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval IfxSdmmc_Status indicating the success or failure of the internal clock setup. A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_setUpInternalClock(Ifx_SDMMC *sdmmcSFR);
 
@@ -1688,37 +1942,54 @@ IFX_EXTERN IfxSdmmc_Status IfxSdmmc_setUpInternalClock(Ifx_SDMMC *sdmmcSFR);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief disable the PLL
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \return None
+/**
+ * \brief Disables the Phase-Locked Loop (PLL) for the SDMMC module.
+ *
+ * \param[inout] sdmmcSFR Pointer to the base address of the SDMMC register space.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_disablePll(Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Set the Block Count for multiblock Transfers
- * \param sdmmcSFR Pointer to SDMMC SFR
- * \param blockCount Block Count value
- * \return None
+/**
+ * \brief Sets the block count for multiblock transfers in the SD/MMC interface.
+ *
+ * \param[in] sdmmcSFR   Pointer to the SDMMC Special Function Register (SFR)
+ * \param[in] blockCount The number of blocks to be transferred
+ * 					     Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setBlockCount(Ifx_SDMMC *sdmmcSFR, uint32 blockCount);
 
-/** \brief set the ADMA2 length mode
- * \param sdmmcSFR Pointer to the SDMMC SFR set
- * \param mode ADMA2 length mode
- * \return None
+/**
+ * \brief Configures the ADMA2 descriptor length mode for the SDMMC interface.
+ *
+ * \param[inout] sdmmcSFR Pointer to the SDMMC Special Function Register (SFR) to be configured.
+ * \param[in]    mode     The ADMA2 length mode to be set.
+ * 						  Range: \ref IfxSdmmc_Adma2LengthMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setAdma2LengthMode(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Adma2LengthMode mode);
 
-/** \brief set the autoCMD type for multiBlock transfers
- * \param sdmmcSFR Pointer to the SDMMC SFR set
- * \param select AutoCMD type select
- * \return None
- */
+/**
+* \brief Enables the automatic command feature for multi-block data transfers.
+*
+* \param[inout] sdmmcSFR Pointer to base address of SDMMC register space
+* \param[in]    select   Auto cmd slection
+*						 Range: \ref IfxSdmmc_AutoCmdSelect
+* \retval None
+*/
 IFX_INLINE void IfxSdmmc_setAutoCmdEnable(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_AutoCmdSelect select);
 
 /** \brief Sets the block boundary size
- * \param sdmmcSFR pointer to base address of SDMMC register space
- * \param size blockBoundraySize
- * \return None
+ *
+ * \param[inout] sdmmcSFR pointer to base address of SDMMC register space
+ * \param[in]    size     Block Boundray Size
+ * 						  Range: \ref IfxSdmmc_BlockBoundarySize
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSdmmc_setBlockBoundarySize(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_BlockBoundarySize size);
 
@@ -1726,17 +1997,26 @@ IFX_INLINE void IfxSdmmc_setBlockBoundarySize(Ifx_SDMMC *sdmmcSFR, IfxSdmmc_Bloc
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Switches the clock frequency of communication during run.
- * Caution: Ensure compatibility in the speed mode before switching Clock Frequency.
- * \param sdmmcSFR pointer to the base address of SDMCC register space
- * \param frequency frequency of clock required
- * \return None
+/**
+ * \brief Switches the clock frequency of communication during runtime.
+ *
+ * \param[inout] sdmmcSFR  Pointer to the base address of the SDMMC register space.
+ * \param[in]    frequency The desired clock frequency to be set (in Hz).
+ *                         Range: 0 to 0x2FAF080 (0 Hz to 50 MHz)
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_switchClockFrequency(Ifx_SDMMC *sdmmcSFR, uint32 frequency);
 
-/** \brief Check any error in reponse type R5
- * \param resp01 response data
- * \return error status
+/**
+ * \brief Checks for any errors in the response type R5 of an SD/MMC command.
+ *
+ * \param[in] resp01 The 32-bit response data received from the SD/MMC card.
+ *                   Range: 0 to 0xFFFFFFFF
+ *
+ * \retval IfxSdmmc_Status The status of errors in R5, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_checkerrorInReponseR5(uint32 resp01);
 

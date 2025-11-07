@@ -2,7 +2,7 @@
  * \file IfxSmu_Smu.c
  * \brief SMU SMU details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -161,10 +161,10 @@ void IfxSmu_Smu_initModule(IfxSmu_Smu_Config *config)
     uint16         passwd          = IfxScuWdt_getSafetyWatchdogPassword();
     uint8          alarmGroupIndex = 0;
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
-    /*Write Config key to configure the SMU registers. */
+    /* Write Config key to configure the SMU registers */
     MODULE_SMU.KEYS.U = (uint32)0x000000bc;
 
     /* Configure SMU module register as per the requested configuration */
@@ -192,7 +192,7 @@ void IfxSmu_Smu_initModule(IfxSmu_Smu_Config *config)
     rtcSfr.B.RTD       = config->recoveryTimerConfig.recoveryTimerDuration;
     MODULE_SMU.RTC.U   = rtcSfr.U;
 
-    //  Recovery Timer 0 Alarm Configuration 0
+    /* Recovery Timer 0 Alarm Configuration 0 */
 
     rtacSfr0.U          = MODULE_SMU.RTAC00.U;
 
@@ -203,7 +203,7 @@ void IfxSmu_Smu_initModule(IfxSmu_Smu_Config *config)
 
     MODULE_SMU.RTAC00.U = rtacSfr0.U;
 
-    //  Recovery Timer 0 Alarm Configuration 1
+    /* Recovery Timer 0 Alarm Configuration 1 */
 
     rtacSfr1.U          = MODULE_SMU.RTAC01.U;
 
@@ -214,7 +214,7 @@ void IfxSmu_Smu_initModule(IfxSmu_Smu_Config *config)
 
     MODULE_SMU.RTAC01.U = rtacSfr1.U;
 
-    //  Recovery Timer 1 Alarm Configuration 0
+    /* Recovery Timer 1 Alarm Configuration 0 */
 
     rtacSfr0.U          = MODULE_SMU.RTAC10.U;
 
@@ -225,7 +225,7 @@ void IfxSmu_Smu_initModule(IfxSmu_Smu_Config *config)
 
     MODULE_SMU.RTAC10.U = rtacSfr0.U;
 
-    //  Recovery Timer 1 Alarm Configuration 1
+    /* Recovery Timer 1 Alarm Configuration 1 */
 
     rtacSfr1.U          = MODULE_SMU.RTAC11.U;
 
@@ -260,7 +260,7 @@ void IfxSmu_Smu_initModule(IfxSmu_Smu_Config *config)
         /* Write SMU_ASCE(0) in CMD register */
         MODULE_SMU.CMD.U = IfxSmu_Command_alarmStatusClear;
 
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
         /* Write 1 in AG bit to clear alarm */

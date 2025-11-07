@@ -2,7 +2,7 @@
  * \file IfxIom_Iom.c
  * \brief IOM IOM details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -63,40 +63,49 @@ void IfxIom_Iom_clearFpcEdges(IfxIom_Iom_FpcConfig *fpcConfig, IfxIom_Iom *iom)
     Ifx_IOM *iomSFR    = iom->iom;
     uint8    channelId = (IfxIom_FpcChannelId)fpcConfig->channelId;
 
-    if (fpcConfig->edgeType == IfxIom_EdgeClearType_rising) /* to clear rising edge */
+    /* To clear rising edge */
+    if (fpcConfig->edgeType == IfxIom_EdgeClearType_rising)
     {
         Ifx_IOM_FPCESR tempFPCESR;
+        /* Set the bit corresponding to the rising edge for the channel */
         tempFPCESR.U     = (1 << (channelId + 16U));
         iomSFR->FPCESR.U = tempFPCESR.U;
     }
-    else if (fpcConfig->edgeType == IfxIom_EdgeClearType_falling) /* to clear falling edge */
+    /* To clear falling edge */
+    else if (fpcConfig->edgeType == IfxIom_EdgeClearType_falling)
     {
         Ifx_IOM_FPCESR tempFPCESR;
+        /* Set the bit corresponding to the falling edge for the channel */
         tempFPCESR.U     = (1 << channelId);
         iomSFR->FPCESR.U = tempFPCESR.U;
     }
-    else if (fpcConfig->edgeType == IfxIom_EdgeClearType_risingFalling) /* to clear both edges */
+    /* To clear both edges */
+    else if (fpcConfig->edgeType == IfxIom_EdgeClearType_risingFalling)
     {
         Ifx_IOM_FPCESR tempFPCESR;
+        /* Set the bits for both rising and falling edges for the channel */
         tempFPCESR.U     = (1 << channelId);
         tempFPCESR.U    |= (1 << (channelId + 16U));
         iomSFR->FPCESR.U = tempFPCESR.U;
     }
     else
     {
-        /* do nothing */
+        /* Do nothing */
     }
 }
 
 
 void IfxIom_Iom_deInitModule(IfxIom_Iom *iom)
 {
+	/* Resets the IOM module */
     IfxIom_resetModule(iom->iom);
 }
 
 
 boolean IfxIom_Iom_initAnalyser(IfxIom_Iom *iom, const IfxIom_Iom_LamConfig *lamConfig)
 {
+	/* Initializes the Logic Analyser Module (LAM) for internal event generation */
+
     boolean  status = TRUE;
 
     Ifx_IOM *iomSFR = iom->iom;
@@ -128,6 +137,7 @@ boolean IfxIom_Iom_initAnalyser(IfxIom_Iom *iom, const IfxIom_Iom_LamConfig *lam
 
 void IfxIom_Iom_initAnalyserConfig(IfxIom_Iom_LamConfig *lamConfig)
 {
+	/* Initialize Lam with default values */
     lamConfig->lamId                    = IfxIom_LamId_0;
     lamConfig->lamMode                  = IfxIom_LamRunMode_freeRunning;
     lamConfig->lamMonitorInputChannel   = IfxIom_LamMonitorInputChannel_0;
@@ -144,6 +154,8 @@ void IfxIom_Iom_initAnalyserConfig(IfxIom_Iom_LamConfig *lamConfig)
 
 boolean IfxIom_Iom_initCombiner(IfxIom_Iom *iom, const IfxIom_Iom_EcmConfig *ecmConfig)
 {
+	/* Initializes the Event Combiner Module (ECM) configuration */
+
     boolean  status = TRUE;
     Ifx_IOM *iomSFR = iom->iom;
     {
@@ -169,7 +181,10 @@ boolean IfxIom_Iom_initCombiner(IfxIom_Iom *iom, const IfxIom_Iom_EcmConfig *ecm
 
 void IfxIom_Iom_initCombinerConfig(IfxIom_Iom_EcmConfig *ecmConfig)
 {
+	/* Initializes Event Combiner Module with default values */
+
     uint8 counterId;
+
     ecmConfig->globalEventSelection.U = 0;
 
     for (counterId = 0; counterId <= 3; counterId++)
@@ -188,7 +203,9 @@ boolean IfxIom_Iom_initFpcChannel(IfxIom_Iom *iom, const IfxIom_Iom_FpcConfig *f
     uint8    exorInput;
 
     {
+    	/* Get the FPC channel ID from the configuration */
         uint8          channelId = (IfxIom_FpcChannelId)fpcConfig->channelId;
+
         Ifx_IOM_FPCCTR tempFPCCTR;
         tempFPCCTR.U                = 0;
         tempFPCCTR.B.CMP            = fpcConfig->comparatorThreshold;
@@ -196,6 +213,7 @@ boolean IfxIom_Iom_initFpcChannel(IfxIom_Iom *iom, const IfxIom_Iom_FpcConfig *f
         tempFPCCTR.B.ISM            = fpcConfig->monitorSignal;
         tempFPCCTR.B.RTG            = fpcConfig->timerReset;
         tempFPCCTR.B.ISR            = fpcConfig->referenceSignal;
+
         iomSFR->FPCCTR[channelId].U = tempFPCCTR.U;
     }
 
@@ -224,12 +242,19 @@ boolean IfxIom_Iom_initFpcChannel(IfxIom_Iom *iom, const IfxIom_Iom_FpcConfig *f
 void IfxIom_Iom_initFpcChannelConfig(IfxIom_Iom_FpcConfig *fpcConfig)
 {
     uint8 exorInput;
+    /* Initialize the default value of Filter & Prescaler Cell channel */
     fpcConfig->channelId           = IfxIom_FpcChannelId_0;
+    /* Initialize the default value of Filter & Prescaler Cell mode */
     fpcConfig->filterMode          = IfxIom_FilterMode_delayedDebounce;
+    /* Initialize the default value of reference signal input for Filter & Prescaler cell */
     fpcConfig->referenceSignal     = IfxIom_ReferenceSignal_portLogic;
+    /* Initialize the default value of monitor signal input for Filter & Prescaler cell */
     fpcConfig->monitorSignal       = IfxIom_MonitorSignal_portLogic;
+    /* Initialize the default threshold value */
     fpcConfig->comparatorThreshold = 15;
+    /* Initialize the default value for timer reset bit */
     fpcConfig->timerReset          = TRUE;
+    /* Initialize the default edge type */
     fpcConfig->edgeType            = IfxIom_EdgeClearType_risingFalling;
 
     for (exorInput = 0; exorInput <= 7; exorInput++)
@@ -250,9 +275,12 @@ boolean IfxIom_Iom_initModule(IfxIom_Iom *iom)
         tempCLC.B.EDIS = 0;
         tempCLC.B.RMC  = 1;
         uint16      passwd = IfxScuWdt_getCpuWatchdogPassword();
+        /* Clearing the endinit protection */
         IfxScuWdt_clearCpuEndinit(passwd);
+        /* Enable the IOM module */
         iomSFR->CLC.U = tempCLC.U;
         IfxIom_enableModule(iomSFR, 1);
+        /* Setting the endinit protection back on */
         IfxScuWdt_setCpuEndinit(passwd);
     }
 

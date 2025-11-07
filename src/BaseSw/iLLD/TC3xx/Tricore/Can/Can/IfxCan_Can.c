@@ -2,7 +2,7 @@
  * \file IfxCan_Can.c
  * \brief CAN CAN details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -108,10 +108,10 @@ void IfxCan_Can_initModule(IfxCan_Can *can, const IfxCan_Can_Config *config)
 {
     can->can = config->can;
 
-    // if module is not enebled
+    /* If module is not enabled */
     if (IfxCan_isModuleEnabled(can->can) != TRUE)
     {
-        // Enable module, disregard Sleep Mode request
+        /* Enable module, disregard Sleep Mode request */
         IfxCan_enableModule(can->can);
     }
 }
@@ -126,7 +126,7 @@ void IfxCan_Can_initModuleConfig(IfxCan_Can_Config *config, Ifx_CAN *can)
     /* Default Configuration */
     *config = defaultConfig;
 
-    /* take over module pointer */
+    /* Take over module pointer */
     config->can = can;
 }
 
@@ -162,7 +162,7 @@ void IfxCan_Can_initNodeClk(IfxCan_Can_Node *node, Ifx_CAN *can, IfxCan_NodeId n
     Ifx_CAN_N *nodeSfr = IfxCan_getNodePointer(canSfr, nodeId);
     node->node       = nodeSfr;
 
-    /* initialize the clock for the selected node */
+    /* Initialize the clock for the selected node */
     IfxCan_ClockSelect clockSelect = (IfxCan_ClockSelect)nodeId;
     IfxCan_setClockSource(canSfr, clockSelect, clockSource);
 }
@@ -177,18 +177,18 @@ void IfxCan_Can_configureBaudrate(IfxCan_Can_Node *node, const IfxCan_Can_BaudRa
 {
 	Ifx_CAN_N *nodeSfr = node->node;
 
-	/* enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
+	/* Enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
 	IfxCan_Node_enableConfigurationChange(nodeSfr);
 
 	float32 moduleFreq = IfxCan_getModuleFrequency();
 
-	/* set baud rate */
+	/* Set baud rate */
 	if (calculateBitTimingValues)
 	{
 		IfxCan_Node_setBitTiming(nodeSfr, moduleFreq, baudRate->baudrate, baudRate->samplePoint, baudRate->syncJumpWidth);
 	}
 
-	/* for CAN FD frames, set fast baud rate */
+	/* For CAN FD frames, set fast baud rate */
 	if (frameMode != IfxCan_FrameMode_standard)
 	{
 		if (calculateBitTimingValues)
@@ -196,14 +196,14 @@ void IfxCan_Can_configureBaudrate(IfxCan_Can_Node *node, const IfxCan_Can_BaudRa
 			IfxCan_Node_setFastBitTiming(nodeSfr, moduleFreq, fastBaudRate->baudrate, fastBaudRate->samplePoint, fastBaudRate->syncJumpWidth);
 		}
 
-		/* set transceiver delay compensation offset */
+		/* Set transceiver delay compensation offset */
 		if (fastBaudRate->tranceiverDelayOffset != 0)
 		{
 			IfxCan_Node_setTransceiverDelayCompensationOffset(nodeSfr, fastBaudRate->tranceiverDelayOffset);
 		}
 	}
 
-	/* disable configuration change CCCR.CCE = 0 */
+	/* Disable configuration change CCCR.CCE = 0 */
 	IfxCan_Node_disableConfigurationChange(nodeSfr);
 }
 
@@ -219,41 +219,41 @@ void IfxCan_Can_configureTx(IfxCan_Can_Node *node, const IfxCan_Can_Frame *frame
     {
 		IfxCan_Node_enableConfigurationChange(nodeSfr);
 
-		uint32 id; /* used for enabling transmit interrupts for individual Tx buffers */
+		uint32 id; /* Used for enabling transmit interrupts for individual Tx buffers */
 
-		/* set Tx buffers start address in the Message RAM */
+		/* Set Tx buffers start address in the Message RAM */
 		nodeSfr->TX.BC.B.TBSA = node->messageRAM.txBuffersStartAddress >> 2;
-		/* set Tx element data field size */
+		/* Set Tx element data field size */
 		nodeSfr->TX.ESC.B.TBDS = txConfig->txBufferDataFieldSize;
 
 		if ((txConfig->txMode == IfxCan_TxMode_dedicatedBuffers) ||
 			(txConfig->txMode == IfxCan_TxMode_sharedFifo) ||
 			(txConfig->txMode == IfxCan_TxMode_sharedQueue))
 		{
-			/* dedicated TX buffers operation */
-			/* select number of Tx buffers */
+			/* Dedicated TX buffers operation */
+			/* Select number of Tx buffers */
 			nodeSfr->TX.BC.B.NDTB = txConfig->dedicatedTxBuffersNumber;
 
-			/* shared operation */
+			/* Shared operation */
 			if ((txConfig->txMode == IfxCan_TxMode_sharedFifo) || (txConfig->txMode == IfxCan_TxMode_sharedQueue))
 			{
 				if (txConfig->txMode == IfxCan_TxMode_sharedFifo)
 				{
-					/* set Tx FIFO mode */
+					/* Set Tx FIFO mode */
 					IfxCan_Node_setTransmitFifoQueueMode(nodeSfr, IfxCan_TxMode_fifo);
 				}
 
 				if (txConfig->txMode == IfxCan_TxMode_sharedQueue)
 				{
-					/* set Tx Queue mode */
+					/* Set Tx Queue mode */
 					IfxCan_Node_setTransmitFifoQueueMode(nodeSfr, IfxCan_TxMode_queue);
 				}
 
-				/* select number of Tx buffers(Tx Fifo Queue Size) to be used as Tx FIFO/Queue */
+				/* Select number of Tx buffers(Tx Fifo Queue Size) to be used as Tx FIFO/Queue */
 				nodeSfr->TX.BC.B.TFQS = txConfig->txFifoQueueSize;
 			}
 
-			/* enable transmission interrupt on selected buffers */
+			/* Enable transmission interrupt on selected buffers */
 			for (id = 0; id < (txConfig->dedicatedTxBuffersNumber + txConfig->txFifoQueueSize); ++id)
 			{
 				nodeSfr->TX.BTIE.U = nodeSfr->TX.BTIE.U | (1U << (IfxCan_TxBufferId)id);
@@ -263,36 +263,36 @@ void IfxCan_Can_configureTx(IfxCan_Can_Node *node, const IfxCan_Can_Frame *frame
 		/* TX FIFO/Queue operation */
 		else if ((txConfig->txMode == IfxCan_TxMode_fifo) || (txConfig->txMode == IfxCan_TxMode_queue))
 		{
-			/* set Tx FIFO/Queue mode */
+			/* Set Tx FIFO/Queue mode */
 			IfxCan_Node_setTransmitFifoQueueMode(nodeSfr, txConfig->txMode);
 
-			/* select number of Tx buffers to be used as Tx FIFO/Queue */
+			/* Select number of Tx buffers to be used as Tx FIFO/Queue */
 			nodeSfr->TX.BC.B.TFQS = txConfig->txFifoQueueSize;
 
-			/* enable transmission interrupt on selected buffers */
+			/* Enable transmission interrupt on selected buffers */
 			for (id = 0; id < txConfig->txFifoQueueSize; ++id)
 			{
 				nodeSfr->TX.BTIE.U = nodeSfr->TX.BTIE.U | (1U << (IfxCan_TxBufferId)id);
 			}
 		}
-		/* wrong selection */
+		/* Wrong selection */
 		else
 		{
 			IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, 0);
 		}
 
-		/* set the Tx event fifo size and start address if selected */
+		/* Set the Tx event fifo size and start address if selected */
 		if ((txConfig->txEventFifoSize > 0) && (txConfig->txEventFifoSize <= 32))
 		{
 			nodeSfr->TX.EFC.B.EFSA = node->messageRAM.txEventFifoStartAddress >> 2;
 			nodeSfr->TX.EFC.B.EFS = txConfig->txEventFifoSize;
 		}
-		else /* maximum number of configurable Tx Event FIFO elements is 32 */
+		else /* Maximum number of configurable Tx Event FIFO elements is 32 */
 		{
 			IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, txConfig->txEventFifoSize <= 32);
 		}
 
-		/* enable CAN frame mode of transmission Standard or CAN FD Long or FD Long and Fast frames*/
+		/* Enable CAN frame mode of transmission Standard or CAN FD Long or FD Long and Fast frames*/
 		IfxCan_Node_setFrameMode(nodeSfr, frame->mode);
 
 		IfxCan_Node_disableConfigurationChange(nodeSfr);
@@ -315,10 +315,10 @@ void IfxCan_Can_configureRx(IfxCan_Can_Node *node, const IfxCan_Can_Frame *frame
 			(rxConfig->rxMode == IfxCan_RxMode_sharedFifo1) ||
 			(rxConfig->rxMode == IfxCan_RxMode_sharedAll))
 		{
-			/* set Rx buffer data length */
+			/* Set Rx buffer data length */
 			nodeSfr->RX.ESC.B.RBDS = rxConfig->rxBufferDataFieldSize;
 
-			/* set Rx buffers start address in the Message RAM */
+			/* Set Rx buffers start address in the Message RAM */
 			nodeSfr->RX.BC.B.RBSA = node->messageRAM.rxBuffersStartAddress >> 2;
 		}
 
@@ -326,19 +326,19 @@ void IfxCan_Can_configureRx(IfxCan_Can_Node *node, const IfxCan_Can_Frame *frame
 			(rxConfig->rxMode == IfxCan_RxMode_sharedFifo0) ||
 			(rxConfig->rxMode == IfxCan_RxMode_sharedAll))
 		{
-			/* set Rx FIFO 0 data length */
+			/* Set Rx FIFO 0 data length */
 			nodeSfr->RX.ESC.B.F0DS = rxConfig->rxFifo0DataFieldSize;
 
-			/* set Rx FIFO 0 start address in the Message RAM */
+			/* Set Rx FIFO 0 start address in the Message RAM */
 			nodeSfr->RX.F0C.B.F0SA = node->messageRAM.rxFifo0StartAddress >> 2;
 
-			/* set Rx FIFO 0 size */
+			/* Set Rx FIFO 0 size */
 			nodeSfr->RX.F0C.B.F0S = rxConfig->rxFifo0Size;
 
-			/* set Rx FIFO 0 operating mode */
+			/* Set Rx FIFO 0 operating mode */
 			nodeSfr->RX.F0C.B.F0OM = rxConfig->rxFifo0OperatingMode;
 
-			/* set Rx FIFO 0 water mark level */
+			/* Set Rx FIFO 0 water mark level */
 			nodeSfr->RX.F0C.B.F0WM = rxConfig->rxFifo0WatermarkLevel;
 		}
 
@@ -346,23 +346,23 @@ void IfxCan_Can_configureRx(IfxCan_Can_Node *node, const IfxCan_Can_Frame *frame
 			(rxConfig->rxMode == IfxCan_RxMode_sharedFifo1) ||
 			(rxConfig->rxMode == IfxCan_RxMode_sharedAll))
 		{
-			/* set Rx FIFO 1 data length */
+			/* Set Rx FIFO 1 data length */
 			nodeSfr->RX.ESC.B.F1DS = rxConfig->rxFifo1DataFieldSize;
 
-			/* set Rx FIFO 1 start address in the Message RAM */
+			/* Set Rx FIFO 1 start address in the Message RAM */
 			nodeSfr->RX.F1C.B.F1SA = node->messageRAM.rxFifo1StartAddress >> 2;
 
-			/* set Rx FIFO 1 size */
+			/* Set Rx FIFO 1 size */
 			nodeSfr->RX.F1C.B.F1S = rxConfig->rxFifo1Size;
 
-			/* set Rx FIFO 1 operating mode */
+			/* Set Rx FIFO 1 operating mode */
 			nodeSfr->RX.F1C.B.F1OM = rxConfig->rxFifo1OperatingMode;
 
-			/* set Rx FIFO 1 watermark level */
+			/* Set Rx FIFO 1 watermark level */
 			nodeSfr->RX.F1C.B.F1WM = rxConfig->rxFifo1WatermarkLevel;
 		}
 
-		/* enable CAN frame mode of transmission */
+		/* Enable CAN frame mode of transmission */
 		IfxCan_Node_setFrameMode(nodeSfr, frame->mode);
 
 		IfxCan_Node_disableConfigurationChange(nodeSfr);
@@ -380,7 +380,7 @@ void IfxCan_Can_configureFilter(IfxCan_Can_Node *node, const IfxCan_Can_Frame *f
     {
 		IfxCan_Node_enableConfigurationChange(nodeSfr);
 
-		/* filter configuration */
+		/* Filter configuration */
 
 		if ((filterConfig->messageIdLength == IfxCan_MessageIdLength_standard) ||
 			(filterConfig->messageIdLength == IfxCan_MessageIdLength_both))
@@ -420,10 +420,10 @@ boolean IfxCan_Can_configurePins(IfxCan_Can_Node *node, const IfxCan_Can_Pins *p
 
 	boolean status = 0;
 
-	/* enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
+	/* Enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
 	IfxCan_Node_enableConfigurationChange(nodeSfr);
 
-	/* pins initialization */
+	/* Pins initialization */
 	if (pins != NULL_PTR)
 	{
 		if (pins->txPin != NULL_PTR)
@@ -436,7 +436,7 @@ boolean IfxCan_Can_configurePins(IfxCan_Can_Node *node, const IfxCan_Can_Pins *p
 			status |= (IfxCan_Node_initRxPin(nodeSfr, pins->rxPin, pins->rxPinMode, pins->padDriver));
 		}
 	}
-	/* disable configuration change CCCR.CCE = 0 */
+	/* Disable configuration change CCCR.CCE = 0 */
 	IfxCan_Node_disableConfigurationChange(nodeSfr);
 
 	return status;
@@ -447,16 +447,16 @@ void IfxCan_Can_configureLoopbackMode(IfxCan_Can_Node *node, boolean busLoopback
 {
 	Ifx_CAN_N *nodeSfr = node->node;
 
-	/* enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
+	/* Enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
 	IfxCan_Node_enableConfigurationChange(nodeSfr);
 
-	/* enable internal virtual CAN bus loopback mode if selected */
+	/* Enable internal virtual CAN bus loopback mode if selected */
     if (busLoopbackEnabled)
     {
         nodeSfr->NPCR.B.LBM = 1;
     }
 
-	/* disable configuration change CCCR.CCE = 0 */
+	/* Disable configuration change CCCR.CCE = 0 */
 	IfxCan_Node_disableConfigurationChange(nodeSfr);
 }
 
@@ -465,10 +465,10 @@ void IfxCan_Can_configureInterrupt(IfxCan_Can_Node *node, const IfxCan_Can_Inter
 {
 	Ifx_CAN_N *nodeSfr = node->node;
 
-	/* enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
+	/* Enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
 	IfxCan_Node_enableConfigurationChange(nodeSfr);
 
-    // interrupt groups configuration
+    /* Interrupt groups configuration */
     volatile Ifx_SRC_SRCR *srcPointer;
 
     if ((interruptConfig->tefifo.priority > 0) || (interruptConfig->tefifo.typeOfService == IfxSrc_Tos_dma))
@@ -599,7 +599,7 @@ void IfxCan_Can_configureInterrupt(IfxCan_Can_Node *node, const IfxCan_Can_Inter
         IfxSrc_enable(srcPointer);
     }
 
-    /* enable the selected interrupts */
+    /* Enable the selected interrupts */
     if (interruptConfig->rxFifo0NewMessageEnabled)
     {
         IfxCan_Node_enableInterrupt(nodeSfr, IfxCan_Interrupt_rxFifo0NewMessage);
@@ -735,7 +735,7 @@ void IfxCan_Can_configureInterrupt(IfxCan_Can_Node *node, const IfxCan_Can_Inter
         IfxCan_Node_enableInterrupt(nodeSfr, IfxCan_Interrupt_protocolErrorData);
     }
 
-    /* disable configuration change CCCR.CCE = 0 */
+    /* Disable configuration change CCCR.CCE = 0 */
 	IfxCan_Node_disableConfigurationChange(nodeSfr);
 }
 
@@ -923,7 +923,7 @@ void IfxCan_Can_initNodeConfig(IfxCan_Can_NodeConfig *config, IfxCan_Can *can)
     /* Default Configuration */
     *config = defaultConfig;
 
-    /* take over module pointer */
+    /* Take over module pointer */
     config->can = can->can;
 }
 
@@ -937,43 +937,43 @@ void IfxCan_Can_readMessage(IfxCan_Can_Node *node, IfxCan_Message *message, uint
     {
         if (message->readFromRxFifo0)
         {
-            /* get the Tx FIFO 0 ELement address */
+            /* Get the Tx FIFO 0 ELement address */
             bufferId        = IfxCan_Node_getRxFifo0GetIndex(node->node);
             rxBufferElement = IfxCan_Node_getRxFifo0ElementAddress(node->node, node->messageRAM.baseAddress, node->messageRAM.rxFifo0StartAddress, bufferId);
         }
         else
         {
-            /* get the Tx FIFO 1 ELement address */
+            /* Get the Tx FIFO 1 ELement address */
             bufferId        = IfxCan_Node_getRxFifo1GetIndex(node->node);
             rxBufferElement = IfxCan_Node_getRxFifo1ElementAddress(node->node, node->messageRAM.baseAddress, node->messageRAM.rxFifo1StartAddress, bufferId);
         }
     }
     else
     {
-        /* get the Rx Buffer ELement address */
+        /* Get the Rx Buffer ELement address */
         bufferId        = (IfxCan_RxBufferId)message->bufferNumber;
         rxBufferElement = IfxCan_Node_getRxBufferElementAddress(node->node, node->messageRAM.baseAddress, node->messageRAM.rxBuffersStartAddress, bufferId);
     }
 
-    /*get message ID */
+    /* Get message ID */
     message->messageId = IfxCan_Node_getMesssageId(rxBufferElement);
 
-    /* get message ID length */
+    /* Get message ID length */
     message->messageIdLength = (IfxCan_MessageIdLength)rxBufferElement->R0.B.XTD;
 
-    /* get data length code*/
+    /* Get data length code*/
     message->dataLengthCode = (IfxCan_DataLengthCode)rxBufferElement->R1.B.DLC;
 
-    /* get CAN frame mode of operation */
+    /* Get CAN frame mode of operation */
     message->frameMode = IfxCan_Node_getFrameMode(rxBufferElement);
 
-    /*get message bufferNumber*/
+    /* Get message bufferNumber*/
     message->bufferNumber = bufferId;
 
-    /* read data */
+    /* Read data */
     IfxCan_Node_readData(rxBufferElement, message->dataLengthCode, data);
 
-    /* write acknowledgement index incase of FIFO */
+    /* Write acknowledgment index incase of FIFO */
     if (message->readFromRxFifo0)
     {
         node->node->RX.F0A.B.F0AI = bufferId;
@@ -983,7 +983,7 @@ void IfxCan_Can_readMessage(IfxCan_Can_Node *node, IfxCan_Message *message, uint
         node->node->RX.F1A.B.F1AI = bufferId;
     }
 
-    /* clear newdata flag after reading */
+    /* Clear newdata flag after reading */
     IfxCan_Node_clearRxBufferNewDataFlag(node->node, bufferId);
 }
 
@@ -1004,44 +1004,44 @@ IfxCan_Status IfxCan_Can_sendMessage(IfxCan_Can_Node *node, IfxCan_Message *mess
     }
 
     if (IfxCan_Can_isTxBufferRequestPending(node, bufferId) == 1)
-    {                       /* previous message was not transferred, e.g. due to busy bus, BUS-OFF or others */
+    {                       /* Previous message was not transferred, e.g. due to busy bus, BUS-OFF or others */
         status = IfxCan_Status_notSentBusy;
     }
     else
     {
-        /* get the Tx Bufer ELement address */
+        /* Get the Tx Bufer ELement address */
         Ifx_CAN_TXMSG *txBufferElement = IfxCan_Node_getTxBufferElementAddress(node->node, node->messageRAM.baseAddress, node->messageRAM.txBuffersStartAddress, bufferId);
 
-        /*set message Id (ID and XTD) */
+        /* Set message Id (ID and XTD) */
         IfxCan_Node_setMsgId(txBufferElement, message->messageId, message->messageIdLength);
 
-        /* set TX FIFO Event control (EFC) and Message Marker (MM) if Tx Event Fifo is chosen */
+        /* Set TX FIFO Event control (EFC) and Message Marker (MM) if Tx Event Fifo is chosen */
         if (message->txEventFifoControl == TRUE)
         {
         	txBufferElement->T1.B.EFC = message->txEventFifoControl;
             txBufferElement->T1.B.MM = bufferId;
         }
 
-        /* set Remote Transmit request if selected (RTR)*/
+        /* Set Remote Transmit request if selected (RTR)*/
         txBufferElement->T0.B.RTR = message->remoteTransmitRequest;
 
-        /* set Error State Indicator if selected (ESI)*/
+        /* Set Error State Indicator if selected (ESI)*/
         if ((message->frameMode == IfxCan_FrameMode_fdLong) || (message->frameMode == IfxCan_FrameMode_fdLongAndFast))
         {
             txBufferElement->T0.B.ESI = message->errorStateIndicator;
         }
 
-        /* set data length code (DLC) */
+        /* Set data length code (DLC) */
         txBufferElement->T1.B.DLC = message->dataLengthCode;
 
-        /* write data (DBx) */
+        /* Write data (DBx) */
         IfxCan_Node_writeTxBufData(txBufferElement, message->dataLengthCode, data);
 
-        /* set CAN frame mode request (FDF and BRS) */
+        /* Set CAN frame mode request (FDF and BRS) */
         IfxCan_Node_setFrameModeReq(txBufferElement, message->frameMode);
 
         if (message->bypassSwTransmitRequest == FALSE)
-        {   /*set transmit request */
+        {   /* Set transmit request */
         	node->node->TX.BAR.U = (node->node->TX.BAR.U) | (1U << bufferId);
         }
     }
@@ -1052,10 +1052,10 @@ IfxCan_Status IfxCan_Can_sendMessage(IfxCan_Can_Node *node, IfxCan_Message *mess
 
 void IfxCan_Can_setExtendedFilter(IfxCan_Can_Node *node, IfxCan_Filter *filter)
 {
-    /* get the Extended filter element address */
+    /* Get the Extended filter element address */
     Ifx_CAN_EXTMSG *extendedFilterElement = IfxCan_Node_getExtendedFilterElementAddress(node->messageRAM.baseAddress, node->messageRAM.extendedFilterListStartAddress, filter->number);
 
-    /* enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
+    /* Enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
     IfxCan_Node_enableConfigurationChange(node->node);
 
     /* Set Extended Filter ID2 */
@@ -1072,17 +1072,17 @@ void IfxCan_Can_setExtendedFilter(IfxCan_Can_Node *node, IfxCan_Filter *filter)
     extendedFilterElement->F0.B.EFEC = filter->elementConfiguration;	/* Set Extended Filter Configuration */
     extendedFilterElement->F1.B.EFT = filter->type;						/* Set Extended Filter Type */
 
-    /* disable configuration change CCCR.CCE = 0, CCCR.INIT = 0 */
+    /* Disable configuration change CCCR.CCE = 0, CCCR.INIT = 0 */
     IfxCan_Node_disableConfigurationChange(node->node);
 }
 
 
 void IfxCan_Can_setStandardFilter(IfxCan_Can_Node *node, IfxCan_Filter *filter)
 {
-    /* get the standard filter element address */
+    /* Get the standard filter element address */
     Ifx_CAN_STDMSG *standardFilterElement = IfxCan_Node_getStandardFilterElementAddress(node->messageRAM.baseAddress, node->messageRAM.standardFilterListStartAddress, filter->number);
 
-    /* enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
+    /* Enable configuration change CCCR.CCE = 1, CCCR.INIT = 1 */
     IfxCan_Node_enableConfigurationChange(node->node);
 
 	/* Set Standard Filter ID2 */
@@ -1099,6 +1099,6 @@ void IfxCan_Can_setStandardFilter(IfxCan_Can_Node *node, IfxCan_Filter *filter)
     standardFilterElement->S0.B.SFEC = filter->elementConfiguration;	/* Set Standard Filter Configuration */
     standardFilterElement->S0.B.SFT = filter->type;						/* Set Standard Filter Type */
 
-    /* disable configuration change CCCR.CCE = 0, CCCR.INIT = 0 */
+    /* Disable configuration change CCCR.CCE = 0, CCCR.INIT = 0 */
     IfxCan_Node_disableConfigurationChange(node->node);
 }

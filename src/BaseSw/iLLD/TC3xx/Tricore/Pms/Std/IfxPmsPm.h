@@ -3,7 +3,7 @@
  * \brief PMS  basic functionality
  * \ingroup IfxLld_Pms
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -39,8 +39,126 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *
+ * \defgroup IfxLld_Pms_Std_Pm How to use the PMS PM driver?
+ * \ingroup IfxLld_Pms_Std
  *
+ * The PMS Power Management driver provides APIs to configure, control, and monitor the device's power modes, including sleep and standby.
+ * It enables flexible management of system and CPU power states, wakeup sources, voltage droop and load jump handling, and supply monitoring for robust low-power operation.
+ * The driver supports initialization of power mode configurations, entry and exit sequences for sleep/standby, and fine-grained control over wakeup and voltage supervision features.
  *
+ * In the following sections it will be described, how to integrate the driver into the application framework.
+ *
+ * \section IfxLld_Pms_Std_Pm_Preparation Preparation
+ * \subsection IfxLld_Pms_Std_Pm_Include Include Files
+ *
+ * Include following header file into your C code:
+ *
+ * \code
+ * #include <Pms/Std/IfxPmsPm.h>
+ * \endcode
+ *
+ * Pms Sleep Mode Example:
+ *
+ * \subsection IfxLld_Pms_Std_Pm_ISR Interrupt Service Routine
+ *
+ * // Macro to define the Interrupt Service Routine
+ * \code
+ * IFX_INTERRUPT(stmIsr, 0, ISR_PRIORITY_STM);
+ * \endcode
+ *
+ * // STM ISR to switch between run mode and sleep mode every two seconds
+ * // Clear the timer event
+ * \code
+ * IfxStm_Timer_acknowledgeTimerIrq(&stmTimer);
+ * \endcode
+ *
+ * \subsection IfxLld_Pms_Std_Pm_Application API Usage Examples
+ *
+ * // Initialise PMS sleep configuration
+ * \code
+ * {
+ * 	   // Initialize the Sleep Configuration
+ *     IfxPmsPm_SleepConfig sleepConfig;
+ *	   IfxPmsPm_initSleepConfig(&sleepConfig);
+ *	   sleepConfig.masterCpu = IfxCpu_Index_0;  				// Set CPU0 as master
+ *	   sleepConfig.stmEnabled = TRUE;           				// Enable System Timer (STM)
+ *
+ *	   // STM configuration for Sleep wake-up
+ *     IfxStm_Timer_Config timerConfig;                         // Timer configuration structure
+ *     IfxStm_Timer_initConfig(&timerConfig, &MODULE_STM0);		// Initialize it with default values
+ *     timerConfig.base.frequency = 10.0f;                		// Interrupt every 0.1 seconds
+ *     timerConfig.base.isrPriority = ISR_PRIORITY_STM;         // Interrupt priority
+ *     timerConfig.base.isrProvider = IfxSrc_Tos_cpu0;          // CPU0 to trigger the interrupt
+ *     timerConfig.comparator = IfxStm_Comparator_0;            // Comparator 0 register is used
+ *
+ *     IfxStm_Timer stmTimer;       				            // STM driver handle
+ *     IfxStm_Timer_init(&stmTimer, &timerConfig);              // Use timerConfig to initialize the STM
+ *     IfxStm_Timer_run(&stmTimer);                             // Run the STM and set the compare Value
+ *
+ *     boolean interruptState = IfxCpu_disableInterrupts();
+ *     IfxCpu_Irq_installInterruptHandler(&stmIsr, ISR_PRIORITY_STM);
+ *     // enable interrupts again
+ *     IfxCpu_restoreInterrupts(interruptState);
+ *
+ *     // Clear safety EndInit protection
+ *     // Clear Cpu EndInit protection
+ *
+ *     STM0_CLC.B.EDIS 	= BLOCK_SLEEP_MODE;         			// Prohibit STM to go into sleep mode
+ *     ASCLIN0_CLC.B.EDIS 	= BLOCK_SLEEP_MODE;					// Prohibit ASCLIN0 to go into sleep mode
+ *     SCU_PMSWCR1.B.CPUSEL = PMSWCR1_CPUSEL;      			    // Set the CPU0 as CPU master to trigger a power down mode
+ *
+ *     // Set safety EndInit protection
+ *     // Set EndInit protection
+ *
+ * 	   // Sleep entry mode
+ *     IfxPmsPm_WakeupConfig wakeupConfig;					    // Instance to the Wake-up configure structure
+ *     wakeupConfig.wakeup 		  = IfxPmsPm_WakeupOn_timer;
+ *     wakeupConfig.filter 		  = IfxPmsPm_DigitalFilter_used;
+ *     wakeupConfig.trigger 	  = IfxPmsPm_EdgeDetectionControl_always;
+ *     wakeupConfig.standbyRam 	  = IfxPmsPm_StandbyRamSupply_cpu0Block0;
+ *     wakeupConfig.mode		  = IfxPmsPm_WakeupTimerMode_autoReload;
+ *     wakeupConfig.reloadCounter = 0x200E68;
+ *
+ *     IfxPmsPm_setStandbyMode(&MODULE_PMS, &wakeupConfig, IfxPmsPm_RequestPowerMode_sleep); // Request Sleep Mode
+ *
+ *     // The system will now enter Sleep Mode and wake up on STM Timer interrupt.
+ *
+ *     IfxStm_Timer_stop(&stmTimer);
+ * }
+ * \endcode
+ *
+ * Pms Standby Mode Example:
+ *
+ * \code
+ * {
+ *     // Initialise the Standby Configuration
+ *     IfxPmsPm_initStandbyConfig(&standbyConfig);
+ *     standbyConfig.trigger 			         = IfxPmsPm_StandbyTriggerMode_software;		// Software Entry
+ *     standbyConfig.pinBTriggerEvent 			 = IfxPmsPm_PinEdgeTriggerEvent_fallingEdge;    // As the SWITCH Input Port mode is configured as PullUp.
+ *     standbyConfig.wutReloadValue   			 = 0x200E68;								    // Wake-up timer reload value.
+ *     standbyConfig.masterCpu 					 = IfxCpu_ResourceCpu_0;
+ *     standbyConfig.enableStandbyOnVextRampDown = TRUE;
+ *     standbyConfig.enableStandbyOnVddRampDown  = TRUE;
+ *     standbyConfig.enableWakeupOnTimer   		 = TRUE;
+ *
+ *     IfxPmsPm_startStandbySequenceInFlash(&standbyConfig, &IfxScuCcu_defaultClockConfig);
+ *
+ *     IfxScuRcu_clearColdResetStatus();	 										            // Clear Cold Reset status
+ *
+ *     // Enter Standby Mode
+ *     IfxPmsPm_WakeupConfig wakeupConfig; 												        // Instance to the Wake-up configure structure
+ *     wakeupConfig.wakeup 		  = IfxPmsPm_WakeupOn_timer;
+ *     wakeupConfig.filter 		  = IfxPmsPm_DigitalFilter_used;
+ *     wakeupConfig.trigger 	  = IfxPmsPm_EdgeDetectionControl_always;
+ *     wakeupConfig.standbyRam 	  = IfxPmsPm_StandbyRamSupply_cpu0Block0;
+ *     wakeupConfig.mode		  = IfxPmsPm_WakeupTimerMode_autoReload;
+ *     wakeupConfig.reloadCounter = 0x200E68;
+ *
+ *     IfxPmsPm_setStandbyMode(&MODULE_PMS, &wakeupConfig, IfxPmsPm_RequestPowerMode_standby);  // Request Standby Mode
+ *
+ *     // The system will now enter Standby Mode for a few seconds and then bring back to normal run mode with the help of Wake-up timer.
+ * }
+ * \endcode
  *
  * \defgroup IfxLld_Pms_Std_Pm PM
  * \ingroup IfxLld_Pms_Std
@@ -79,7 +197,7 @@
 
 /** \addtogroup IfxLld_Pms_Std_Pm_Enumerations
  * \{ */
-/** \brief Exposes the optons for minimum duration between standby entry and Wakeup.If any wakeup request comes up before this time is elapsed after standby entry, then it's ignored.Configured in PMS_PMSWCR.B.BLNKFIL
+/** \brief Exposes the options for minimum duration between standby entry and Wakeup.If any wakeup request comes up before this time is elapsed after standby entry, then it's ignored.Configured in PMS_PMSWCR.B.BLNKFIL
  */
 typedef enum
 {
@@ -145,6 +263,9 @@ typedef enum
     IfxPmsPm_PadStateRequest_tristate            = 1   /**< \brief Set pads to tristate */
 } IfxPmsPm_PadStateRequest;
 
+/** \brief Defines which signal edge(s) will generate a pin trigger event.
+ * Definition in Ifx_PMS_PMSWCR0.B.ESR0EDCON, Ifx_PMS_PMSWCR0.B.ESR1EDCON, Ifx_PMS_PMSWCR0.B.PINAEDCON and Ifx_PMS_PMSWCR0.B.PINBEDCON
+ */
 typedef enum
 {
     IfxPmsPm_PinEdgeTriggerEvent_none                     = 0, /**< \brief None of the edges will trigger anything */
@@ -246,6 +367,7 @@ typedef enum
 } IfxPmsPm_VoltageDroopStatus;
 
 /** \brief Lists out volatge droop steps
+ * Definition in SCU_PMTRCSR0.B.SDSTEP
  */
 typedef enum
 {
@@ -267,7 +389,7 @@ typedef enum
     IfxPmsPm_VoltageDroopStep_75mV = 15U   /**< \brief Voltage  Droop request of 75 mV */
 } IfxPmsPm_VoltageDroopStep;
 
-/** \brief Different voltage sources extrnally supplied to/inside AURIX2G
+/** \brief Different voltage sources externally supplied to/inside AURIX2G
  */
 typedef enum
 {
@@ -294,7 +416,7 @@ typedef enum
     IfxPmsPm_WakeupOn_scr   = 7   /**< \brief SCR Wake-up enable from Standby */
 } IfxPmsPm_WakeupOn;
 
-/** \brief Select wakup timer operation mode
+/** \brief Select wakeup timer operation mode
  * As defined in Ifx_PMS.PMSW.CR3.B.WUTMODE
  */
 typedef enum
@@ -323,33 +445,44 @@ typedef enum
  */
 typedef struct
 {
-    boolean enableLoadJumpTimer;                        /**< \brief Enable or disable Load Jump Timer */
-    boolean enableLoadJumpTimerOverflowFlag;            /**< \brief Enable or disable update of Load Jump Timer Overflow Flag */
-    boolean enableLoadJumpTimerOverflowInterrupt;       /**< \brief Enable or disable Load Jump Timer Overflow Interrupt */
+    boolean enableLoadJumpTimer;                        /**< \brief Enable or disable Load Jump Timer, Range: TRUE  Load Jump Timer active, FALSE Load Jump Timer inactive. */
+    boolean enableLoadJumpTimerOverflowFlag;            /**< \brief Enable or disable update of Load Jump Timer Overflow Flag.
+    													 * Range: TRUE LJTOV bit is updated on a Load Jump Timer overflow, FALSE LJTOV bit is not updated on a Load Jump Timer overflow. */
+    boolean enableLoadJumpTimerOverflowInterrupt;       /**< \brief Enable or disable Load Jump Timer Overflow Interrupt.
+    													 * Range: TRUE LJTOV interrupt is activated on a Load Jump Timer overflow, FALSE LJTOV interrupt is inactive. */
 } IfxPmsPm_LoadJumpConfig;
 
 /** \brief Configurable options for sleep mode
  */
 typedef struct
 {
-    boolean           mcanEnabled;              /**< \brief Whether MCAN will be enabled ir disabled during Sleep mode. */
+    boolean           mcanEnabled;              /**< \brief Whether MCAN will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE Mcan will be enabled during sleep mode, FALSE Mcan will be disabled during sleep mode. */
     IfxScuCcu_Fsource mcanClockSource;          /**< \brief Clock Source for MCAN
                                                  * IfxScuCcu_Fsource_1 is f_source1 from K2 divider of Peripheral PLL
                                                  * IfxScuCcu_Fsource_2 is Oscillator clock bypassing the Peripheral PLL */
-    boolean           asclinEnabled;            /**< \brief Whether ASCLIN will be enabled ir disabled during Sleep mode. */
-    IfxScuCcu_Fsource asclinClockSource;        /**< \brief Clock Source for ASCLIN
+    boolean           asclinEnabled;            /**< \brief Whether ASCLIN will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE Asclin will be enabled during sleep mode, FALSE Asclin will be disabled during sleep mode. */
+    IfxScuCcu_Fsource asclinClockSource;        /**< \brief Clock Source for ASCLIN.
                                                  * IfxScuCcu_Fsource_1 is f_source1 from K2 divider of Peripheral PLL
                                                  * IfxScuCcu_Fsource_2 is Oscillator clock bypassing the Peripheral PLL */
-    boolean           gpt12Enabled;             /**< \brief Whether GPT12 will be enabled ir disabled during Sleep mode. */
-    boolean           ccu6Enabled;              /**< \brief Whether CCU6 will be enabled ir disabled during Sleep mode. */
-    boolean           qspiEnabled;              /**< \brief Whether QSPI will be enabled ir disabled during Sleep mode. */
-    IfxScuCcu_Fsource qspiClockSource;          /**< \brief Clock Source for MCAN
+    boolean           gpt12Enabled;             /**< \brief Whether GPT12 will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE Gpt12 will be enabled during sleep mode, FALSE Gpt12 will be disabled during sleep mode. */
+    boolean           ccu6Enabled;              /**< \brief Whether CCU6 will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE Ccu6 will be enabled during sleep mode, FALSE Ccu6 will be disabled during sleep mode. */
+    boolean           qspiEnabled;              /**< \brief Whether QSPI will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE Qspi will be enabled during sleep mode, FALSE Qspi will be disabled during sleep mode. */
+    IfxScuCcu_Fsource qspiClockSource;          /**< \brief Clock Source for MCAN.
                                                  * IfxScuCcu_Fsource_1 is f_source1 from K2 divider of Peripheral PLL
                                                  * IfxScuCcu_Fsource_2 is f_source2 from K3 divider of Peripheral PLL */
-    boolean            gethEnabled;             /**< \brief Whether QSPI will be enabled ir disabled during Sleep mode. */
-    boolean            i2cEnabled;              /**< \brief Whether I2C will be enabled ir disabled during Sleep mode. */
-    boolean            gtmEnabled;              /**< \brief Whether GTM will be enabled ir disabled during Sleep mode. */
-    boolean            stmEnabled;              /**< \brief Whether STM will be enabled ir disabled during Sleep mode. */
+    boolean            gethEnabled;             /**< \brief Whether GETH will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE Geth will be enabled during sleep mode, FALSE Geth will be disabled during sleep mode. */
+    boolean            i2cEnabled;              /**< \brief Whether I2C will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE I2c will be enabled during sleep mode, FALSE I2c will be disabled during sleep mode. */
+    boolean            gtmEnabled;              /**< \brief Whether GTM will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE Gtm will be enabled during sleep mode, FALSE Gtm will be disabled during sleep mode. */
+    boolean            stmEnabled;              /**< \brief Whether STM will be enabled or disabled during sleep mode.
+     	 	 	 	 	 	 	 	 	 	 	 * Range: TRUE Stm will be enabled during sleep mode, FALSE Stm will be disabled during sleep mode. */
     IfxCpu_ResourceCpu masterCpu;               /**< \brief Core index of the master CPU */
 } IfxPmsPm_SleepConfig;
 
@@ -357,46 +490,46 @@ typedef struct
  */
 typedef struct
 {
-    IfxPmsPm_StandbyTriggerMode  trigger;                              /**< \brief Events which'll trigger Standby mode */
+    IfxPmsPm_StandbyTriggerMode  trigger;                              /**< \brief Events which'll trigger Standby mode. */
     IfxPmsPm_StandbyRamSupply    standbyRamBlock;                      /**< \brief Options for which part of the DLMU can be provided supply during standby. */
     boolean                      enableScr;                            /**< \brief Whether to enable SCR or not. */
-    IfxPmsPm_ScrClocking         scrClockSupply;                       /**< \brief Options for SCR clock supply */
+    IfxPmsPm_ScrClocking         scrClockSupply;                       /**< \brief Options for SCR clock supply. */
     IfxPmsPm_BlankingFilterDelay minDelayBeforeWakeUp;                 /**< \brief Selecting the duration, starting from Standby entry, after which wake-up triggers are effective. */
     IfxPmsPm_PadStateRequest     padStateRequest;                      /**< \brief Request to remain in input with weak pull-up or get into tristate. */
     IfxPmsPm_Esr0PinStateRequest esr0PinStateRequest;                  /**< \brief Request to remain in input with weak pull-up or get into tristate. */
-    boolean                      enableStandbyOnVextRampDown;          /**< \brief Enable Standby On VEXT Ramp Down */
-    boolean                      enableStandbyOnVddRampDown;           /**< \brief Enable Standby On VDD Ramp Down */
-    float32                      vextUnderVoltageThresholdLevel;       /**< \brief Undervoltage threshold for VEXT */
-    float32                      vddUnderVoltageThresholdLevel;        /**< \brief Undervoltage threshold for VDD */
-    boolean                      enableWakeupOnEsr0;                   /**< \brief Enable wake-up on ESR0 */
-    boolean                      enableWakeupOnEsr1;                   /**< \brief Enable wake-up on ESR1 */
-    boolean                      enableWakeupOnPinA;                   /**< \brief Enable wake-up on PINA */
-    boolean                      enableWakeupOnPinB;                   /**< \brief Enable wake-up on PINB */
-    boolean                      enableWakeupOnTimer;                  /**< \brief Enable wake-up on Wake Up Timer(WUT) */
-    boolean                      enableWakeupOnPorst;                  /**< \brief Enable wake-up on PORST pin assertion */
-    boolean                      enableWakeupOnScr;                    /**< \brief Enable wake-up on request from SCR */
-    uint8                        enableWakeupOnPower;                  /**< \brief Enable wake-up on VEXT ramp up. */
-    boolean                      useWutStandbyAutoStopMode;            /**< \brief Use the Auto Stop mode in WUT */
-    uint32                       wutReloadValue;                       /**< \brief The value from which the WUT will start downward count upon entering Standby */
-    IfxPmsPm_WutClock            wutClock;                             /**< \brief Clock select for WUT */
-    IfxPmsPm_DigitalFilter       esr0DigitalFilterUsage;               /**< \brief Whether to use didital filer withe interpreting the pulse on ESR0 pin */
-    IfxPmsPm_DigitalFilter       pinADigitalFilterUsage;               /**< \brief Whether to use didital filer withe interpreting the pulse on PINA pin */
-    IfxPmsPm_DigitalFilter       esr1DigitalFilterUsage;               /**< \brief Whether to use didital filer withe interpreting the pulse on ESR1 pin */
-    IfxPmsPm_DigitalFilter       pinBDigitalFilterUsage;               /**< \brief Whether to use didital filer withe interpreting the pulse on PINB pin */
+    boolean                      enableStandbyOnVextRampDown;          /**< \brief Enable Standby On VEXT Ramp Down. Range: TRUE Standby Entry triggered on a VEXT Supply under voltage event (SWDUV). Blanking filter active on Standby mode entry, FALSE Standby Entry on VEXT supply ramp-down is disabled. */
+    boolean                      enableStandbyOnVddRampDown;           /**< \brief Enable Standby On VDD Ramp Down. Range: TRUE Standby Entry triggered on a VDD Supply under voltage event (VDDUV). Blanking filter active on Standby mode entry, FALSE Standby Entry on VDD supply ramp-down is disabled. */
+    float32                      vextUnderVoltageThresholdLevel;       /**< \brief Under voltage threshold for VEXT. */
+    float32                      vddUnderVoltageThresholdLevel;        /**< \brief Under voltage threshold for VDD. */
+    boolean                      enableWakeupOnEsr0;                   /**< \brief Enable wake-up on ESR0. Range: TRUE System wake-up is enabled via ESR0 pin, FALSE System wake-up via ESR0 pin is disabled. */
+    boolean                      enableWakeupOnEsr1;                   /**< \brief Enable wake-up on ESR1. Range: TRUE System wake-up is enabled via ESR1 pin, FALSE System wake-up via ESR1 pin is disabled.*/
+    boolean                      enableWakeupOnPinA;                   /**< \brief Enable wake-up on PINA. Range: TRUE System wake-up is enabled via Pin A, FALSE System wake-up via Pin A is disabled. */
+    boolean                      enableWakeupOnPinB;                   /**< \brief Enable wake-up on PINB. Range: TRUE System wake-up is enabled via Pin B, FALSE System wake-up via Pin B is disabled. */
+    boolean                      enableWakeupOnTimer;                  /**< \brief Enable wake-up on Wake Up Timer(WUT). Range: TRUE System wake-up is enabled via Wake-up Timer, FALSE System wake-up via Wake-up Timer is disabled. */
+    boolean                      enableWakeupOnPorst;                  /**< \brief Enable wake-up on PORST pin assertion. Range: TRUE System wake-up via PORST pin is enabled,  FALSE System wake-up via PORST pin is disabled. */
+    boolean                      enableWakeupOnScr;                    /**< \brief Enable wake-up on request from SCR. Range: TRUE System wake-up is enabled via 8 bit Standby Controller, FALSE System wake-up via 8 bit Standby Controller is disabled. */
+    uint8                        enableWakeupOnPower;                  /**< \brief Enable wake-up on VEXT ramp up. Range: TRUE Wake-up from standby on VEXT supply ramp-up is enabled after blanking filter time expiry, FALSE Wake-up on VEXT supply ramp-down is disabled. Blanking filter configuration has no effect. */
+    boolean                      useWutStandbyAutoStopMode;            /**< \brief Use the Auto Stop mode in WUT. Range: TRUE Use the auto stop mode in WUT, FALSE Auto stop mode is not used in WUT. */
+    uint32                       wutReloadValue;                       /**< \brief The value from which the WUT will start downward count upon entering Standby. Range: 0 to 0xFFFFFF */
+    IfxPmsPm_WutClock            wutClock;                             /**< \brief Clock select for WUT. */
+    IfxPmsPm_DigitalFilter       esr0DigitalFilterUsage;               /**< \brief Whether to use digital filer with interpreting the pulse on ESR0 pin. */
+    IfxPmsPm_DigitalFilter       pinADigitalFilterUsage;               /**< \brief Whether to use digital filer with interpreting the pulse on PINA pin. */
+    IfxPmsPm_DigitalFilter       esr1DigitalFilterUsage;               /**< \brief Whether to use digital filer with interpreting the pulse on ESR1 pin. */
+    IfxPmsPm_DigitalFilter       pinBDigitalFilterUsage;               /**< \brief Whether to use digital filer with interpreting the pulse on PINB pin. */
     IfxPmsPm_PinEdgeTriggerEvent esr0TriggerEvent;                     /**< \brief Trigger will be generated on which pulse edge of a pulse on ESR0 pin. */
     IfxPmsPm_PinEdgeTriggerEvent esr1TriggerEvent;                     /**< \brief Trigger will be generated on which pulse edge of a pulse on ESR1 pin. */
     IfxPmsPm_PinEdgeTriggerEvent pinATriggerEvent;                     /**< \brief Trigger will be generated on which pulse edge of a pulse on PINA pin. */
     IfxPmsPm_PinEdgeTriggerEvent pinBTriggerEvent;                     /**< \brief Trigger will be generated on which pulse edge of a pulse on PINB pin. */
-    IfxCpu_ResourceCpu           masterCpu;                            /**< \brief CPU which can call powerdown modes.In IfxPmsPm_startStandbySequenceInFlash(),this value is being filled to reflect the core in which standby sequence is running as we're explicitly making it as the master CPU. */
+    IfxCpu_ResourceCpu           masterCpu;                            /**< \brief CPU which can call power down modes.In IfxPmsPm_startStandbySequenceInFlash(),this value is being filled to reflect the core in which standby sequence is running as we're explicitly making it as the master CPU. */
 } IfxPmsPm_StandbyConfig;
 
 /** \brief Volatge Droop Configuration
  */
 typedef struct
 {
-    boolean                      enableVoltageDroopTimer;                        /**< \brief Enable or disable usage of Voltage Droop Timer */
-    boolean                      enableVoltageDroopTimerOverflowFlag;            /**< \brief Enable or disable usage of Voltage Droop Timer Overflow Flag */
-    boolean                      enableVoltageDroopTimerOverflowInterrupt;       /**< \brief Enable or disable usage of Voltage Droop Interrupt */
+    boolean                      enableVoltageDroopTimer;                        /**< \brief Enable or disable usage of Voltage Droop Timer. Range: TRUE Voltage Droop Timer active, FALSE Voltage Droop Timer inactive. */
+    boolean                      enableVoltageDroopTimerOverflowFlag;            /**< \brief Enable or disable usage of Voltage Droop Timer Overflow Flag. Range: TRUE VDTOV bit is updated on a Voltage Droop Timer overflow, FALSE VDTOV bit is not updated on a Voltage Droop Timer overflow. */
+    boolean                      enableVoltageDroopTimerOverflowInterrupt;       /**< \brief Enable or disable usage of Voltage Droop Interrupt. Range: TRUE VDTOV interrupt is activated on a Voltage Droop Timer overflow, FALSE VDTOV interrupt is inactive. */
     IfxPmsPm_VoltageDroopRequest droopRequestType;                               /**< \brief Type of Voltage Droop Request */
     IfxPmsPm_VoltageDroopStep    droopStep;                                      /**< \brief Value by which voltage change must happen */
 } IfxPmsPm_VoltageDroopConfig;
@@ -410,7 +543,7 @@ typedef struct
     IfxPmsPm_EdgeDetectionControl trigger;             /**< \brief Enable Wake-up on rising or falling edge */
     IfxPmsPm_StandbyRamSupply     standbyRam;          /**< \brief RAM being supply during standby mode */
     IfxPmsPm_WakeupTimerMode      mode;                /**< \brief wake-up timer mode */
-    uint32                        reloadCounter;       /**< \brief reload count from where value starts counting down used in case of WUT configuration */
+    uint32                        reloadCounter;       /**< \brief reload count from where value starts counting down used in case of WUT configuration. Range: 0 to 0xFFFFFFFF */
 } IfxPmsPm_WakeupConfig;
 
 /** \} */
@@ -422,12 +555,17 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief set system into sleep mode
- * \param powerMode Select System power mode
- * \return None
+/**
+ * \brief Sets the system into a specified sleep mode.
  *
+ * \param[in] powerMode The requested power mode to set the system into.
+ * 						Range: \ref IfxPmsPm_RequestPowerMode
+ *
+ * \retval None
+ *
+ * \code
  * IfxPmsPm_setSleepMode(IfxPmsPm_RequestPowerMode_idle);
- *
+ * \endcode
  */
 IFX_INLINE void IfxPmsPm_setSleepMode(IfxPmsPm_RequestPowerMode powerMode);
 
@@ -435,64 +573,86 @@ IFX_INLINE void IfxPmsPm_setSleepMode(IfxPmsPm_RequestPowerMode powerMode);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief set system into stand by mode
- * Note: In this API Alarm has been disabled.Enable of SMU alarm has to be taken care
- * seprately at application level
- * \param pms Pointer to Module Space
- * \param config Pointer to Wakeup configuration Structure
- * \param powerMode Selects System standby mode
- * \return None
- *
+/**
+ * \brief Configures the system to enter standby mode.
+ * 
+ * \note In this API Alarm has been disabled. Enable of SMU alarm has to be taken care separately at application level
+ * 
+ * \param[inout] pms       Pointer to the base address of PMS registers.
+ * \param[in]    config    Pointer to the wakeup configuration instance.
+ * \param[in]    powerMode The requested power mode to set the system into.
+ * 						   Range: \ref IfxPmsPm_RequestPowerMode
+ * 
+ * \retval None
+ * 
+ * \code
  * IfxPmsPm_WakeupConfig config;
- * config.wakeup =IfxPmsPm_WakeupOn_esr1;           //Wakeup using ESR1
- * config.filter      = IfxPmsPm_DigitalFilter_used;     //Digital Filter is used
+ * config.wakeup =IfxPmsPm_WakeupOn_esr1;                           //Wakeup using ESR1
+ * config.filter      = IfxPmsPm_DigitalFilter_used;                //Digital Filter is used
  * config.trigger     = IfxPmsPm_EdgeDetectionControl_onRisingEdge; //Trigger is generated upon rising edge
- * config.standbyRam  = IfxPmsPm_StandbyRamSupply_cpu0Block0; // Standby RAM (CPU0 dLMU RAM Block 0) is supplied
+ * config.standbyRam  = IfxPmsPm_StandbyRamSupply_cpu0Block0;       //Standby RAM (CPU0 dLMU RAM Block 0) is supplied
  * IfxPmsPm_setStandbyMode(&MODULE_PMS,&config, IfxPmsPm_RequestPowerMode_standby);
- *
+ * \endcode
  */
 IFX_EXTERN void IfxPmsPm_setStandbyMode(Ifx_PMS *pms, IfxPmsPm_WakeupConfig *config, IfxPmsPm_RequestPowerMode powerMode);
 
-/** \brief This function will initialize the configuration structure with default values.
- * NOTE:
+/**
+ * \brief This function initializes the standby configuration structure with default values.
  *
- * 1. Default values of vextUnderVoltageThresholdLevel and vddUnderVoltageThresholdLevel in the StandbyConfig structure are set to 0.
- * Set it to appropriate levels(depending on application) before calling IfxPmsPm_startStandbySequenceInFlash().
- * \param standbyConfig Configurable options for Standby Mode
- * \return None
+ * \note 1. Default values of vextUnderVoltageThresholdLevel and vddUnderVoltageThresholdLevel in the StandbyConfig structure are set to 0.
+ *          Set it to appropriate levels(depending on application) before calling IfxPmsPm_startStandbySequenceInFlash().
+ *
+ * \param[inout] standbyConfig Pointer to the standby configuration structure to be initialized.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_initStandbyConfig(IfxPmsPm_StandbyConfig *standbyConfig);
 
 /**
- * \param standbyConfig Configuration structure with initialized Standby configuration options
- * \param clockConfig Clock Configuration, with frequency ramp-up/down sequence
- * \return None
+ * \brief Starts the standby sequence in flash memory with the specified configurations.
+ *
+ * \param[inout] standbyConfig Pointer to the standby configuration structure.
+ * \param[in]    clockConfig   Pointer to the clock configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_startStandbySequenceInFlash(IfxPmsPm_StandbyConfig *standbyConfig, const IfxScuCcu_Config *clockConfig);
 
 /**
- * \param standbyConfig Configuration structure with initialized Standby configuration options
- * \param clockConfig Clock Configuration, with frequency ramp-up/down sequence
- * \return None
+ * \brief Continues the standby sequence in RAM, configuring the system according to the provided standby and clock settings.
+ *
+ * \param[in] standbyConfig Pointer to the standby configuration structure.
+ * \param[in] clockConfig   Pointer to the clock configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_continueStandbySequenceInRAM(IfxPmsPm_StandbyConfig *standbyConfig, const IfxScuCcu_Config *clockConfig);
 
 /**
- * \param sleepConfig Configurable options for sleep mode
- * \return None
+ * \brief Initializes the sleep configuration structure with default values.
+ *
+ * \param[inout] sleepConfig Pointer to the sleep configuration structure that will be initialized.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_initSleepConfig(IfxPmsPm_SleepConfig *sleepConfig);
 
 /**
- * \param sleepConfig Configurable options for sleep mode
- * \param clockConfig
- * \return None
+ * \brief Starts a sleep sequence in Flash memory, configuring the system to enter a low-power state.
+ *
+ * \param[inout] sleepConfig Pointer to the sleep configuration structure.
+ * \param[in]    clockConfig Pointer to the clock configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_startSleepSequenceinFlash(IfxPmsPm_SleepConfig *sleepConfig, IfxScuCcu_Config *clockConfig);
 
-/** \brief This is to be placed in PSPR of the Master CPU
- * \param sleepConfig Configurable options for sleep mode
- * \return None
+/**
+ * \brief Continues the sleep sequence in RAM for the master CPU, configuring peripherals according to the provided sleep configuration.
+ *
+ * \param[in] sleepConfig Pointer to the sleep configuration structure that specifies the enabled peripherals and their clock sources during sleep mode.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_continueSleepSequenceInRAM(IfxPmsPm_SleepConfig *sleepConfig);
 
@@ -505,13 +665,21 @@ IFX_EXTERN void IfxPmsPm_continueSleepSequenceInRAM(IfxPmsPm_SleepConfig *sleepC
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Set a given CPU as a Master CPU i.e. ability to trigger power down modes
- * \param cpuIndex Index to identify different CPU cores
- * \return None
+/**
+ * \brief Sets a specified CPU as the Master CPU, enabling it to control and trigger power down modes.
+ *
+ * \param[in] cpuIndex Index identifying the CPU core to be set as Master CPU.
+ *                     Range: \ref IfxCpu_ResourceCpu
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_setMasterCpu(IfxCpu_ResourceCpu cpuIndex);
 
-/** \brief Gets the index of Master CPU
+/**
+ * \brief Retrieves the resource identifier of the master CPU.
+ *
+ * \retval IfxCpu_ResourceCpu The resource identifier of the master CPU.
+ * 							  Range: \ref IfxCpu_ResourceCpu
  */
 IFX_INLINE IfxCpu_ResourceCpu IfxPmsPm_getMasterCpu(void);
 
@@ -519,14 +687,19 @@ IFX_INLINE IfxCpu_ResourceCpu IfxPmsPm_getMasterCpu(void);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Set core mode(Idle/Run)
- * \param cpuIndex specifies cpu index
- * \param mode Select mode to be set to put CPU into IDLE/RUN State
- * \return TRUE: If activity successfully performed
- * FALSE: If Activity is not performed successfully
+/**
+ * \brief Sets the core mode of the specified CPU.
  *
- * IfxCpu_setCoreMode(&MODULE_CPU0, IfxCpu_CoreMode_idle);
+ * \param[in] cpuIndex The index of the CPU to be configured.
+ * \param[in] mode     Select mode to be set to put CPU into other state.
+ * 					   Range: \ref IfxCpu_CoreMode
+ * 
+ * \retval Boolean TRUE  The CPU core mode was successfully set.
+ * 				   FALSE The CPU core mode setting failed.
  *
+ * \code
+ * IfxPmsPm_setCoreMode(MODULE_CPU0, IfxCpu_CoreMode_idle);
+ * \endcode
  */
 IFX_EXTERN boolean IfxPmsPm_setCoreMode(IfxCpu_ResourceCpu cpuIndex, IfxCpu_CoreMode mode);
 
@@ -539,21 +712,31 @@ IFX_EXTERN boolean IfxPmsPm_setCoreMode(IfxCpu_ResourceCpu cpuIndex, IfxCpu_Core
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enable Wakeup using PORST/ESR1/PINA/PINB/WUT/SCR/Power
- * \param pms Pointer to PMS Module space
- * \param wakeup Pointer to  wakeup configuration strucutre
- * \return None
+/**
+ * \brief Enables the wakeup functionality from standby mode using the specified configuration.
+ *
+ * \param[inout] pms    Pointer to the base address of PMS registers.
+ * \param[in]    wakeup Pointer to the wakeup configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_enableWakeup(Ifx_PMS *pms, IfxPmsPm_WakeupConfig *wakeup);
 
 /**
- * \param standbyConfig Pointer to Standby Configuration Structure
- * \return None
+ * \brief Configures the wake-up settings for the power management standby mode based on the provided configuration.
+ *
+ * \param[in] standbyConfig Pointer to the standby configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_configureWakeup(IfxPmsPm_StandbyConfig *standbyConfig);
 
 /**
- * \return None
+ * \brief Initiates the wakeup process for power management using the provided clock configuration.
+ *
+ * \param[in] clockConfig Pointer to the configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_initiateWakeup(IfxScuCcu_Config *clockConfig);
 
@@ -563,176 +746,259 @@ IFX_EXTERN void IfxPmsPm_initiateWakeup(IfxScuCcu_Config *clockConfig);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enables the usage of load jump timer
- * \return None
+/**
+ * \brief Enables the usage of the load jump timer for power management.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_enableLoadJumpTimer(void);
 
-/** \brief Disables the usage of load jump timer
- * \return None
+/**
+ * \brief Disables the usage of the load jump timer in the power management system.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_disableLoadJumpTimer(void);
 
-/** \brief Enables the update of SCU_PMTRCSR2.B.LJTOV status bit on timer overflow or timeout.
- * \return None
+/**
+ * \brief Enables the update of SCU_PMTRCSR2.B.LJTOV status bit on timer overflow or timeout.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_enableLoadJumpTimerOverflowFlag(void);
 
-/** \brief Disables the update of SCU_PMTRCSR2.B.LJTOV status bit on timer overflow or timeout.
- * \return None
+/**
+ * \brief Disables the update of SCU_PMTRCSR2.B.LJTOV status bit on timer overflow or timeout.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_disableLoadJumpTimerOverflowFlag(void);
 
-/** \brief Enables the activation of interrupt on timer overflow or timeout.
- * \return None
+/**
+ * \brief Enables the activation of interrupt on timer overflow or timeout events.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_enableLoadJumpTimerOverflowInterrupt(void);
 
-/** \brief Disables the activation of interrupt on timer overflow or timeout.
- * \return None
+/**
+ * \brief Disables the activation of interrupt on timer overflow or timeout events.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_disableLoadJumpTimerOverflowInterrupt(void);
 
-/** \brief Starts Load jump timer. The SCU_PMTRCSR0.B.LJTSTRT bitfield remains set on a write and is cleared when SCU_PMTRCSR2.B.LJTOV bit is set if SCU_PMTRCSR0.B.LJTOVEN bit is enabled(Update of Load Jump Timer Overflow Flag SCU_PMTRCSR2.B.LJTOV is enabled ).
- * \return None
+/**
+ * \brief Starts Load jump timer. The SCU_PMTRCSR0.B.LJTSTRT bitfield remains set on a write and is cleared when SCU_PMTRCSR2.B.LJTOV bit is set
+ * 		  if SCU_PMTRCSR0.B.LJTOVEN bit is enabled(Update of Load Jump Timer Overflow Flag SCU_PMTRCSR2.B.LJTOV is enabled ).
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_startLoadJumpTimer(void);
 
-/** \brief This stops the Load jump timer. The Load Jump Timer stops counter at the current value and timer
- * re-starts from that value when LJTSTP is cleared and LJTSTRT is set.
- * \return None
+/**
+ * \brief This stops the Load jump timer. The Load Jump Timer stops counter at the current value and timer
+ * 		  re-starts from that value when LJTSTP is cleared and LJTSTRT is set.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_stopLoadJumpTimer(void);
 
-/** \brief Clears the Load Jump timer count
- * \return None
+/**
+ * \brief Clears the Load Jump timer count
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_clearLoadJumpTimer(void);
 
-/** \brief Clears Load Jump Timer Overflow Flag (SCU_PMTRCSR2.B.LJTOV) and sets PMTRCSR3.B.VDROOPREQ and PMTRCSR2.B.LDJMPREQ to
- * 0 if Load Jump Timer Overflow Flag bit is enabled
- * \return None
+/**
+ * \brief Clears the Load Jump Timer Overflow Flag (SCU_PMTRCSR2.B.LJTOV) and sets PMTRCSR3.B.VDROOPREQ and PMTRCSR2.B.LDJMPREQ
+ * 		  to 0 if the Load Jump Timer Overflow Flag bit is enabled.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_clearLoadJumpTimerOverflowFlag(void);
 
-/** \brief Returns status of Load Jump Timer Overflow condition
- * \return Status of Load Jump Timer Overflow condition
+/**
+ * \brief Checks if the Load Jump Timer has overflowed
+ * 
+ * \retval boolean TRUE  If the Load Jump Timer compare overflow has happened.
+ * 		   		   FALSE If the Load Jump Timer compare overflow has not happened.
  */
 IFX_INLINE boolean IfxPmsPm_hasLoadJumpTimerOverflowOccured(void);
 
-/** \brief Loads the compare value for Load Jump Timer in SCU_PMTRCSR1.B.LJTCV
- * When the Timer count reaches this value, overflow condition occurs and the respective flag and interrupt occurs, if enabled
- * \param compareValue Compare value for Load Jump Timer
- * \return None
+/**
+ * \brief Sets the compare value for the Load Jump Timer in SCU_PMTRCSR1.B.LJTCV
+ * 
+ * When the Timer count reaches this value, an overflow condition occurs, triggering
+ * the respective flag and interrupt (if enabled).
+ *
+ * \param[in] compareValue The compare value for the Load Jump Timer. 
+ *                         Range: 0 to FFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_setLoadJumpTimerCompareValue(uint16 compareValue);
 
-/** \brief Reads the Load Jump Timer Compare value
- * \return Load Jump Timer compare value
+/**
+ * \brief Retrieves the current Load Jump Timer compare value from the hardware module.
+ *
+ * \retval uint16 The current compare value of the Load Jump Timer.
+ * 				  Range: 0 to FFFF
  */
 IFX_INLINE uint16 IfxPmsPm_getLoadJumpTimerCompareValue(void);
 
-/** \brief Returns the Load Jump Timer count value
- * \return Load Jump Timer count value
+/**
+ * \brief Returns the current count value of the Load Jump Timer.
+ *
+ * \retval uint16 The current count value of the Load Jump Timer.
+ * 				  Range: 0 to FFFF
  */
 IFX_INLINE uint16 IfxPmsPm_getLoadJumpTimerCountValue(void);
 
-/** \brief Issues a Load Jump request
- * \return None
+/**
+ * \brief Issues a Load Jump request to transition the system to a different power mode.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_requestLoadJump(void);
 
-/** \brief Returns the status of Load Jump request
- * \return Load Jump request status
+/**
+ * \brief Returns the current status of the Load Jump request.
+ *
+ * \retval IfxPmsPm_LoadJumpStatus The status of the Load Jump request.
+ * 								   Range: \ref IfxPmsPm_LoadJumpStatus
  */
 IFX_INLINE IfxPmsPm_LoadJumpStatus IfxPmsPm_getLoadJumpStatus(void);
 
-/** \brief Enables the usage of Voltage Droop Timer
- * \return None
+/**
+ * \brief Enables the usage of Voltage Droop Timer
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_enableVoltageDroopTimer(void);
 
-/** \brief Enables the update of Voltage Droop Timer Overflow Flag on timer overflow or timeout.
- * \return None
+/**
+ * \brief Enables the update of the Voltage Droop Timer Overflow Flag when a timer overflow or timeout occurs.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_enableVoltageDroopTimerOverflowFlag(void);
 
-/** \brief Enables the activation of interrupt on timer overflow or timeout.
- * \return None
+/**
+ * \brief Enables the activation of interrupt on timer overflow or timeout.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_enableVoltageDroopTimerOverflowInterrupt(void);
 
-/** \brief Disables the usage of Voltage Droop Timer
- * \return None
+/**
+ * \brief Disables the usage of the Voltage Droop Timer in the PMU.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_disableVoltageDroopTimer(void);
 
-/** \brief Disables the update of Voltage Droop Timer Overflow Flag on timer overflow or timeout.
- * \return None
+/**
+ * \brief Disables the Voltage Droop Timer Overflow Flag when a timer overflow or timeout occurs.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_disableVoltageDroopTimerOverflowFlag(void);
 
-/** \brief Disables the activation of interrupt on timer overflow or timeout.
- * \return None
+/**
+ * \brief Disables the interrupt activation on timer overflow or timeout events.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_disableVoltageDroopTimerOverflowInterrupt(void);
 
-/** \brief Starts Voltage Droop timer
- * \return None
+/**
+ * \brief Starts the voltage droop timer to monitor and manage voltage levels.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_startVoltageDroopTimer(void);
 
-/** \brief Stops Voltage Droop timer and SCU cancels the droop request.
- * \return None
+/**
+ * \brief Stops the Voltage Droop timer and cancels the associated SCU droop request.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_stopVoltageDroopTimer(void);
 
-/** \brief Clear Voltage Droop timer count. Resets the Voltage Droop Timer and clears VDTRUN if usage of Voltage Droop Timer is enabled.
- * \return None
+/**
+ * \brief Clear Voltage Droop timer count. Resets the Voltage Droop Timer and clears VDTRUN if usage of Voltage Droop Timer is enabled.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_clearVoltageDroopTimer(void);
 
-/** \brief Clears Voltage Droop Timer Overflow Flag if Overflow Flag is enabled
- * \return None
+/**
+ * \brief Clears the Voltage Droop Timer Overflow Flag if the Overflow Flag is enabled.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_clearVoltageDroopTimerOverflowFlag(void);
 
-/** \brief Returns Status of Voltage Droop Time overflow condition
- * \return Status of Voltage Droop Time overflow
+/**
+ * \brief Checks if a voltage droop timer overflow has occurred.
+ *
+ * \retval boolean TRUE  Voltage Droop Timer compare overflow has not happened.
+ * 				   FALSE Voltage Droop Timer compare overflow has happened.
  */
 IFX_INLINE boolean IfxPmsPm_hasVoltageDroopTimerOverflowOccured(void);
 
-/** \brief Loads the compare value for Voltage Droop Timer in SCU_PMTRCSR1.B.VDTCV
- * When the Timer count reaches this value, overflow condition occurs and the respective flag and interrupt occurs, if enabled
- * \param compareValue Voltage Droop Timer Compare Value
- * \return None
+/**
+ * \brief Sets the compare value for the Voltage Droop Timer in the SCU_PMTRCSR1.B.VDTCV register.
+ *
+ * When the Timer count reaches this value, an overflow condition occurs, triggering the respective flag and interrupt (if enabled).
+ *
+ * \param[in] compareValue Voltage Droop Timer Compare Value to be loaded into the register.
+ * 						   Range: 0 to 0x3FF
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_setVoltageDroopTimerCompareValue(uint16 compareValue);
 
-/** \brief Reads the Voltage Droop Timer Compare Value
- * \return Voltage Droop Timer Compare Value
+/**
+ * \brief Reads and returns the Voltage Droop Timer Compare Value.
+ *
+ * \retval uint16 The current Voltage Droop Timer Compare Value.
  */
 IFX_INLINE uint16 IfxPmsPm_getVoltageDroopTimerCompareValue(void);
 
-/** \brief Gives Voltage Droop Timer count value
- * \return Voltage Droop Timer Count Value
+/**
+ * \brief Reads the current count value of the Voltage Droop Timer.
+ *
+ * \retval uint16 The current count value of the Voltage Droop Timer.
  */
 IFX_INLINE uint16 IfxPmsPm_readVoltageDroopTimerCountValue(void);
 
-/** \brief Issue a voltage droop request
- * \param droopRequest Type of Voltage Droop Request
- * \return None
+/**
+ * \brief Issues a voltage droop request with a specified direction.
+ *
+ * \param[in] droopRequest The type of voltage droop request.
+ * 						   Range: \ref IfxPmsPm_VoltageDroopRequest
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_requestVoltageDroop(IfxPmsPm_VoltageDroopRequest droopRequest);
 
-/** \brief Returns the status of Load Jump request
- * \return Voltage Droop request status
+/**
+ * \brief Retrieves the current status of the voltage droop request.
+ *
+ * \retval IfxPmsPm_VoltageDroopStatus The voltage droop status
+ * 									   Range: \ref IfxPmsPm_VoltageDroopStatus
  */
 IFX_INLINE IfxPmsPm_VoltageDroopStatus IfxPmsPm_getVoltageDroopStatus(void);
 
-/** \brief Loads the amount by which voltage will be requested to change
- * \param droopStep The amount why by voltage change is requested
- * \return None
+/**
+ * \brief Sets the voltage droop step for power management.
+ *
+ * \param [in] droopStep The voltage droop step to be set.
+ *                       Range: \ref IfxPmsPm_VoltageDroopStep
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsPm_setVoltageDroopStep(IfxPmsPm_VoltageDroopStep droopStep);
 
@@ -741,41 +1007,64 @@ IFX_INLINE void IfxPmsPm_setVoltageDroopStep(IfxPmsPm_VoltageDroopStep droopStep
 /******************************************************************************/
 
 /**
- * \param pms Pointer to PMS SFRs
- * \param source Voltage source to be monitored
- * \param event Type of event to be monitored.
- * \param mode Ramping directions on which event needs to be detected.
- * \return None
+ * \brief Configures supply monitoring for a specified voltage source with event and ramping mode settings.
+ *
+ * \param[inout] pms    Pointer to the base address of PMS registers.
+ * \param[in]    source Voltage source to be monitored.
+ * 						Range: \ref IfxPmsPm_VoltageSource
+ * \param[in]    event  Type of event to monitor.
+ * 						Range: \ref IfxPmsPm_ThresholdEvent
+ * \param[in]    mode   Ramping direction for event detection.
+ * 						Range: \ref IfxPmsPm_RampingMode
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_configureSupplyMonitoring(Ifx_PMS *pms, IfxPmsPm_VoltageSource source, IfxPmsPm_ThresholdEvent event, IfxPmsPm_RampingMode mode);
 
 /**
- * \param loadJumpConfig Initialize the Load Jump configuration
- * \return None
+ * \brief Initializes the Load Jump configuration structure with default values.
+ * 
+ * \param[inout] loadJumpConfig Pointer to the Load Jump configuration structure to be initialized.
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_initLoadJumpConfig(IfxPmsPm_LoadJumpConfig *loadJumpConfig);
 
 /**
- * \return None
+ * \brief Initializes the Load Jump feature and requests a load jump based on the provided configuration.
+ *
+ * \param[in] loadJumpConfig Pointer to the IfxPmsPm_LoadJumpConfig structure containing options for enabling the load jump timer, its overflow flag, and interrupt.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_initAndRequestLoadJump(IfxPmsPm_LoadJumpConfig *loadJumpConfig);
 
 /**
- * \return None
+ * \brief Initializes the voltage droop configuration structure with default values.
+ *
+ * \param[inout] voltageDroopConfig A pointer to the voltage droop configuration structure to be initialized.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_initVoltageDroopConfig(IfxPmsPm_VoltageDroopConfig *voltageDroopConfig);
 
 /**
- * \param voltageDroopConfig Voltage Droop Configuration Structure
- * \return None
+ * \brief Initializes the voltage droop feature and requests a voltage change based on the provided configuration.
+ *
+ * \param[in] voltageDroopConfig A pointer to the voltage droop configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_initAndRequestVoltageDroop(IfxPmsPm_VoltageDroopConfig *voltageDroopConfig);
 
-/** \brief Copies dataSize bytes of data to standby RAM starting at dataPointer and appends the CRC over the copied data to it.
- * \param dataPointer Pointer to beginning of the region containing addresses of the data to be saved.
- * This is in standby RAM
- * \param dataSize Total size(in units of 32 bit word) of the data to be copied
- * \return None
+/**
+ * \brief Copies dataSize bytes of data to standby RAM starting at dataPointer and appends the CRC over the copied data to it.
+ *
+ * \param[in] dataPointer Pointer to the beginning of the region containing the data to be copied. This is located in standby RAM.
+ * \param[in] dataSize    Total size of the data to be copied.
+ * 					      Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsPm_handleStandbyRam(uint32 *dataPointer, uint8 dataSize);
 

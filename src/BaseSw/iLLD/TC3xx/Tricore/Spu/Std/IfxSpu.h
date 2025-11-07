@@ -3,7 +3,7 @@
  * \brief SPU  basic functionality
  * \ingroup IfxLld_Spu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -464,10 +464,10 @@ typedef enum
  */
 typedef struct
 {
-    boolean                 enabled;                                   /**< \brief Enable / Disable window function */
+    boolean                 enabled;                                   /**< \brief Enable / Disable window function. Range: TRUE Enable window function, FALSE Disable window function */
     IfxSpu_WindowDataFormat dataFormat;                                /**< \brief Format of the Window Function Data stored in the configuration memeory */
-    uint16                  baseAddress;                               /**< \brief Window coefficient base address */
-    uint16                  antennaOffsets[IFXSPU_MAX_ANTENNAE];       /**< \brief Offset Addresses for each antenna */
+    uint16                  baseAddress;                               /**< \brief Window coefficient base address. Range: 0 to 0xFFFF */
+    uint16                  antennaOffsets[IFXSPU_MAX_ANTENNAE];       /**< \brief Offset Addresses for each antenna. Range: 0 to 0xFFFF */
 } IfxSpu_WindowingConfig;
 
 /** \} */
@@ -479,10 +479,10 @@ typedef struct
 typedef struct
 {
     IfxSpu_CFAR_CA_Algorithm algorithm;                   /**< \brief CA-CFAR algorithm selection */
-    uint8                    guardCells;                  /**< \brief Number of guard cells in CA-CFAR leading and lagging the cell under test */
-    uint8                    windowCellsExponent;         /**< \brief Number of active cells in leading/lagging windows to be averaged in CA-CFAR */
-    uint8                    cashSubWindowExponent;       /**< \brief Number of sub window cells CASH-CFAR */
-    uint16                   beta;                        /**< \brief Additive constant scaling the CA-CFAR theshold */
+    uint8                    guardCells;                  /**< \brief Number of guard cells in CA-CFAR leading and lagging the cell under test. Range: 0 to 0x3F */
+    uint8                    windowCellsExponent;         /**< \brief Number of active cells in leading/lagging windows to be averaged in CA-CFAR. Range: 0 to 0x7 */
+    uint8                    cashSubWindowExponent;       /**< \brief Number of sub window cells CASH-CFAR. Range: 0 to 0x7 */
+    uint16                   beta;                        /**< \brief Additive constant scaling the CA-CFAR theshold. Range: 0 to 0xFFFF */
 } IfxSpu_CfarCAConfig;
 
 /** \brief Configuration structure for CFAR module control
@@ -490,11 +490,11 @@ typedef struct
 typedef struct
 {
     IfxSpu_CFAR_Mode              mode;                        /**< \brief CFAR mode */
-    uint32                        baseAddress;                 /**< \brief Base address to be used when writing data to Radar Memory */
+    uint32                        baseAddress;                 /**< \brief Base address to be used when writing data to Radar Memory. Range: 0 to 0x7FFFF */
     IfxSpu_CFAR_SpectrumExtension spectrumExtension;           /**< \brief Spectrum extension for CFAR or threshold units */
-    uint8                         spectrumExtensionSize;       /**< \brief Window size to be used for spectrum extension */
-    boolean                       caCfarEnabled;
-    boolean                       gosCfarEnabled;
+    uint8                         spectrumExtensionSize;       /**< \brief Window size to be used for spectrum extension. Range: 0 to 0x3F */
+    boolean                       caCfarEnabled;               /**< \brief CFAR CA Engine Enable. Range: TRUE CA Engine On, FALSE CA Engine Off */
+    boolean                       gosCfarEnabled;              /**< \brief CFAR GOS Engine Enable. Range: TRUE GOS Engine On, FALSE GOS Engine Off */
 } IfxSpu_CfarConfig;
 
 /** \brief Configuration structure for GOS-CFAR algorithm
@@ -502,24 +502,24 @@ typedef struct
 typedef struct
 {
     IfxSpu_CFAR_GOS_Algorithm algorithm;           /**< \brief GOS-CFAR algorithm selection */
-    uint8                     guardCells;          /**< \brief Number of guard cells in GOS-CFAR leading and lagging the cell under test */
-    uint8                     indexLead;           /**< \brief Index of sorted statistic in leading window in GOS-CFAR */
-    uint8                     indexLag;            /**< \brief Index of sorted statistic in lagging window in GOS-CFAR */
-    uint8                     windowCells;         /**< \brief Number of active cells in leading/lagging windows to be averaged in GOS-CFAR */
-    uint16                    beta;                /**< \brief Additive constant scaling the CA-CFAR theshold */
-    uint16                    addressOffset;       /**< \brief Channel 5 Address Offset in bytes */
+    uint8                     guardCells;          /**< \brief Number of guard cells in GOS-CFAR leading and lagging the cell under test. Range: 0 to 0x3F */
+    uint8                     indexLead;           /**< \brief Index of sorted statistic in leading window in GOS-CFAR. Range: 0 to 0x1F */
+    uint8                     indexLag;            /**< \brief Index of sorted statistic in lagging window in GOS-CFAR. Range: 0 to 0x1F */
+    uint8                     windowCells;         /**< \brief Number of active cells in leading/lagging windows to be averaged in GOS-CFAR. Range: 0 to 0x3F */
+    uint16                    beta;                /**< \brief Additive constant scaling the CA-CFAR theshold. Range: 0 to 0xFFFF */
+    uint16                    addressOffset;       /**< \brief Channel 5 Address Offset in bytes. Range: 0 to 0xFFFF */
 } IfxSpu_CfarGOSConfig;
 
 /** \brief Configuration structure for Streaming FFT
  */
 typedef struct
 {
-    boolean              enabled;           /**< \brief Enable / Disable FFT processing */
-    boolean              inversed;          /**< \brief Enable / Disable inverse FFT */
-    IfxSpu_FftSize       size;              /**< \brief Number of FFT points */
+    boolean              enabled;           /**< \brief Enable / Disable FFT processing. Range: TRUE Enable FFT processing, FALSE Disable FFT processing */
+    boolean              inversed;          /**< \brief Enable / Disable inverse FFT. Range: TRUE Enable inverse FFT, FALSE Disable inverse FFT */
+    IfxSpu_FftSize       size;              /**< \brief Number of FFT points. Range: 0 to 0x8 */
     IfxSpu_FftDataFormat dataFormat;        /**< \brief Format of the data to be written to the buffer memory */
-    boolean              forceToReal;       /**< \brief Force the output to Real enable / disable choice */
-    uint8                exponent;          /**< \brief Alignment correction to be applied when reformatting to 16 bit */
+    boolean              forceToReal;       /**< \brief Force the output to Real enable / disable choice. Range: TRUE Enable Force the output to Real, FALSE Disable Force the output to Real */
+    uint8                exponent;          /**< \brief Alignment correction to be applied when reformatting to 16 bit. Range: 0 to 0x1F */
 } IfxSpu_FftConfig;
 
 /** \brief Configuration structure for FFT output
@@ -527,33 +527,33 @@ typedef struct
 typedef struct
 {
     boolean           enabled;           /**< \brief Major Operating Mode for the ODP, ON / OFF */
-    uint32            baseAddress;       /**< \brief The base address to be used when writing data to Radar Memory */
+    uint32            baseAddress;       /**< \brief The base address to be used when writing data to Radar Memory. Range: 0 to 0x7FFFF */
     IfxSpu_ODP_Format format;            /**< \brief Output Data Processor  scaling factor */
-    uint16            exponent;          /**< \brief The number of LSBs to be removed when writing 16 bit precision data to the Radar Memory */
-    boolean           inPlace;           /**< \brief In Place Fft enable / disable choice */
+    uint16            exponent;          /**< \brief The number of LSBs to be removed when writing 16 bit precision data to the Radar Memory. Range: 0 to 0x1F */
+    boolean           inPlace;           /**< \brief In Place Fft enable / disable choice. Range: TRUE Enable In Place Fft, FALSE Disable In Place Fft */
 } IfxSpu_FftOutputConfig;
 
 /** \brief Configuration structure for Histogram
  */
 typedef struct
 {
-    boolean               enabled;                    /**< \brief Enable / Disable choice for Histogram */
+    boolean               enabled;                    /**< \brief Enable / Disable choice for Histogram. Range: TRUE Histogram is generated, FALSE No histogram is generated */
     IfxSpu_Histogram_Bins numClasses;                 /**< \brief Number of power values per histogram bin */
-    uint32                baseAddress;                /**< \brief Base address to be used Histogram */
-    uint16                startDelay;                 /**< \brief Delay from Start of Measurement Cycle before the accumulation of histogram is started. */
-    uint16                endDelay;                   /**< \brief Delay from Start of Measurement Cycle before the accumulation of histogram is ended. */
-    boolean               antennaFilterEnabled;       /**< \brief Enable / Disable choice for Antenna Filter */
-    uint8                 antennaFilterMask;          /**< \brief Antenna Filter mask */
+    uint32                baseAddress;                /**< \brief Base address to be used Histogram. Range: 0 to 0xFFFF */
+    uint16                startDelay;                 /**< \brief Delay from Start of Measurement Cycle before the accumulation of histogram is started. Range: 0 to 0xFFFF */
+    uint16                endDelay;                   /**< \brief Delay from Start of Measurement Cycle before the accumulation of histogram is ended. Range: 0 to 0xFFFF */
+    boolean               antennaFilterEnabled;       /**< \brief Enable / Disable choice for Antenna Filter. Range: TRUE Antenna filtering is enabled, FALSE ON, Antenna filtering is disabled */
+    uint8                 antennaFilterMask;          /**< \brief Antenna Filter mask. Range: 0 to 0x7 */
 } IfxSpu_HistogramConfig;
 
 /** \brief Configuration structure for Math1 unit
  */
 typedef struct
 {
-    uint8                  loaderExponent;            /**< \brief Alignment correction to be applied when reformatting to 32 bit */
-    uint8                  numDropLastSamples;        /**< \brief Number of last samples of the input data to be ignored */
-    uint8                  numDropFirstSamples;       /**< \brief Number of first samples of the input data to be ignored */
-    uint16                 numPadFrontSamples;        /**< \brief Number of  samples to be padded at front */
+    uint8                  loaderExponent;            /**< \brief Alignment correction to be applied when reformatting to 32 bit. Range: 0 to 0x3F */
+    uint8                  numDropLastSamples;        /**< \brief Number of last samples of the input data to be ignored. Range: 0 to 0xFF */
+    uint8                  numDropFirstSamples;       /**< \brief Number of first samples of the input data to be ignored. Range: 0 to 0xFF */
+    uint16                 numPadFrontSamples;        /**< \brief Number of  samples to be padded at front. Range: 0 to 0x1FFF */
     IfxSpu_WindowingConfig window;                    /**< \brief Windowing configuration */
     IfxSpu_PhaseShift      phaseShift;                /**< \brief Fast phase shift */
 } IfxSpu_Math1Config;
@@ -563,7 +563,7 @@ typedef struct
 typedef struct
 {
     boolean                  enabled;             /**< \brief Enable / Disable choice for Non-Coherent Integration */
-    uint32                   baseAddress;         /**< \brief Base address to be used when writing data to Radar Memory */
+    uint32                   baseAddress;         /**< \brief Base address to be used when writing data to Radar Memory. Range: 0 to 0x7FFFF */
     IfxSpu_NCI_OutputFormat  outputFormat;        /**< \brief Precision of the output data written to the Radar Memory from Non-coherent intergration */
     IfxSpu_NCI_ScalingFactor scalingFactor;       /**< \brief Scaling factor applied to the results from Non-coherent intergration */
 } IfxSpu_NciConfig;
@@ -573,7 +573,7 @@ typedef struct
 typedef struct
 {
     boolean enabled;           /**< \brief Enable / Disable choice for Power Information Channel */
-    uint32  baseAddress;       /**< \brief Base address to be used when writing data to Radar Memory */
+    uint32  baseAddress;       /**< \brief Base address to be used when writing data to Radar Memory. Range: 0 to 0x7FFFF */
 } IfxSpu_PowerOutputConfig;
 
 /** \brief Configuration structure for RIF input data
@@ -582,21 +582,21 @@ typedef struct
 {
     IfxSpu_InputDataFormat dataFormat;                           /**< \brief Input data format (real or complex) */
     IfxSpu_InputDataType   dataType;                             /**< \brief Input data type (signed or unsigned) */
-    uint16                 numRamps;                             /**< \brief ramps per messurement cycle */
+    uint16                 numRamps;                             /**< \brief ramps per messurement cycle. Range: 0 to 0x7FF */
     IfxSpu_Num_Antennae    numAntennae;                          /**< \brief Number of Antennae connected to each RIF instance */
-    uint16                 sampleCount;                          /**< \brief Number of samples per ramp */
+    uint16                 sampleCount;                          /**< \brief Number of samples per ramp. Range: 0 to 0x7FF */
     boolean                preAcquisitionCounterEnabled;         /**< \brief Enable / Disable Preacquisition counter */
-    uint8                  preAcquisitionCounterLimit;           /**< \brief Preacquisition counter limit */
+    uint16                 preAcquisitionCounterLimit;           /**< \brief Preacquisition counter limit. Range: 0 to 0x7FF */ 
     boolean                bypassModeEnabled;                    /**< \brief Enable / Disable Bypass mode */
-    uint32                 bypassAddress;                        /**< \brief Bypass address */
+    uint32                 bypassAddress;                        /**< \brief Bypass address. Range: 0 to 0xFFFF */
     boolean                bypassReloadEnabled;                  /**< \brief Enable / Disable Bypass reload */
     boolean                triggerOnLimit;                       /**< \brief If set to TRUE, then the SPU will start acquiring data when the counter reaches the value in the LIMIT field(configured by data member preAcquisitionCounterLimit of this struct).
                                                                   *
                                                                   * NOTE : This is considered as an internal trigger event and the CTRL.MODE bitfield should be set for internal trigger. */
-    boolean preAcquisitionCounterReset;                          /**< \brief Preacquisition counter reset */
-    boolean preAcquisitionCounterTrigger;                        /**< \brief Preacquisition counter trigger */
-    boolean preAcquisitionCounterError;                          /**< \brief Preacquisition counter error on limit */
-    boolean preAcquisitionCounterAttention;                      /**< \brief Preacquisition counter attention on limit */
+    boolean preAcquisitionCounterReset;                          /**< \brief Preacquisition counter reset. Range: TRUE Enable counter reset, FALSE Disable counter reset */
+    boolean preAcquisitionCounterTrigger;                        /**< \brief Preacquisition counter trigger. Range: TRUE SPU will start acquiring data FALSE SPU will stop acquiring data */
+    boolean preAcquisitionCounterError;                          /**< \brief Preacquisition counter error on limit. Range: TRUE Error interrupt will be triggered, FALSE Error interrupt will not be triggered */
+    boolean preAcquisitionCounterAttention;                      /**< \brief Preacquisition counter attention on limit. Range: TRUE Attention request interrupt will be triggered, FALSE Attention request interrupt will not be triggered */
 } IfxSpu_RifConfig;
 
 /** \brief Configuration structure for Radar Memory input data
@@ -604,16 +604,16 @@ typedef struct
 typedef struct
 {
     IfxSpu_RM_InputDataFormat dataFormat;            /**< \brief Radar memeory input data format */
-    uint32                    baseAddress;           /**< \brief Radar memeory base address */
-    uint32                    innerLoopOffset;       /**< \brief Inner loop offset address */
-    uint32                    outerLoopOffset;       /**< \brief Outer loop offset address */
-    uint32                    binLoopOffset;         /**< \brief Bin loop offset address */
-    uint16                    innerLoopRepeat;       /**< \brief Inner loop repeat value */
-    uint16                    outerLoopRepeat;       /**< \brief Outer loop repeat value */
-    uint16                    binLoopRepeat;         /**< \brief Bin loop repeat value */
+    uint32                    baseAddress;           /**< \brief Radar memeory base address. Range: 0 to 0x7FFFF */
+    uint32                    innerLoopOffset;       /**< \brief Inner loop offset address. Range: 0 to 0xFFFFFF */
+    uint32                    outerLoopOffset;       /**< \brief Outer loop offset address. Range: 0 to 0xFFFFFF */
+    uint32                    binLoopOffset;         /**< \brief Bin loop offset address. Range: 0 to 0xFFFFFF */
+    uint16                    innerLoopRepeat;       /**< \brief Inner loop repeat value. Range: 0 to 0x1FFF */
+    uint16                    outerLoopRepeat;       /**< \brief Outer loop repeat value. Range: 0 to 0x1FFF */
+    uint16                    binLoopRepeat;         /**< \brief Bin loop repeat value. Range: 0 to 0x1FFF */
     IfxSpu_RM_AddressingMode  addressingMode;        /**< \brief Operating mode of the Input DMA */
     IfxSpu_RM_ProcessingMode  processingMode;        /**< \brief Processing mode of the Input DMA */
-    uint8                     numBlocks;             /**< \brief Number of data blocks that will fit into the buffer memory */
+    uint8                     numBlocks;             /**< \brief Number of data blocks that will fit into the buffer memory. Range: 0 to 0x7 */
     IfxSpu_RM_AntennaMapping  antennaMapping;        /**< \brief Mapping of FFT datasets to antenna */
 } IfxSpu_RmConfig;
 
@@ -622,17 +622,17 @@ typedef struct
 typedef struct
 {
     boolean enabled;           /**< \brief Enable / Disable choice for Sideband Statistics */
-    uint32  baseAddress;       /**< \brief Base address to be used when writing data to Radar Memory */
+    uint32  baseAddress;       /**< \brief Base address to be used when writing data to Radar Memory. Range: 0 to 0x7FFFF */
 } IfxSpu_SidebandStatisticsConfig;
 
 /** \brief Configuration structure for Summation unit control
  */
 typedef struct
 {
-    uint32                      baseAddress;         /**< \brief Base address to be used when writing data to Radar Memory */
+    uint32                      baseAddress;         /**< \brief Base address to be used when writing data to Radar Memory. Rnage: 0 to 0x7FFFF */
     IfxSpu_Summation_Mode       mode;                /**< \brief Operating mode of the Summation Unit on complex or magnitude data */
     IfxSpu_Summation_DataFormat dataFormat;          /**< \brief Calculations Using Complex Data to use the real component only or the complex component also */
-    uint8                       antennaeToUse;       /**< \brief Selection of which antennae to use */
+    uint8                       antennaeToUse;       /**< \brief Selection of which antennae to use. Range: 0 to 0xFF */
     IfxSpu_Summation_Scale      shift;               /**< \brief Normalize CSUM result by dividing the result */
     IfxSpu_Summation_Precision  precision;           /**< \brief Output precision format */
 } IfxSpu_SummationConfig;
@@ -646,10 +646,12 @@ typedef struct
 typedef struct
 {
     IfxSpu_BinRejection_Mode mode;                   /**< \brief Bin rejection mode */
-    boolean                  thresholdEnabled;       /**< \brief Enable / Disable choice for Zero with Threshold */
-    uint32                   thresholdValue;         /**< \brief Magnitude value to be used for comparison */
-    uint16                   numAllowedBins;         /**< \brief Number of passed bins (i.e. non-rejected), starting from the first */
-    boolean                  leftJustify;            /**< \brief Define whether the threshold value will be left justified to 24-bit */
+    boolean                  thresholdEnabled;       /**< \brief Enable / Disable choice for Zero with Threshold. Range: TRUE ZETH Zero with Threshold, FALSE OFF Unit Disabled
+     */
+    uint32                   thresholdValue;         /**< \brief Magnitude value to be used for comparison. Range: 0 to 0xFFFFFF */
+    uint16                   numAllowedBins;         /**< \brief Number of passed bins (i.e. non-rejected), starting from the first. Range: 0 to 0x7F */
+    boolean                  leftJustify;            /**< \brief Define whether the threshold value will be left justified to 24-bit. Range: TRUE LEFT Left Justify Pad with 8 LSBs to create a 32 bit comparison value,\n
+                                                                 FALSE RIGHT Right Justify Pad with 8 MSBs to create a 32 bit comparison value*/
     IfxSpu_CFAR_Engine       inlineCfarSelect;       /**< \brief Inline CFAR engine selection */
 } IfxSpu_BinRejectionConfig;
 
@@ -688,16 +690,17 @@ typedef struct
     IfxSpu_LocalMax_Mode          localMaxMode;         /**< \brief Local Max mode */
     IfxSpu_LocalMax_ThresholdMode thresholdMode;        /**< \brief Threshold mode */
     IfxSpu_LocalMax_CombinedMode  combinedMode;         /**< \brief Combine operation between result of localMaxMode and thresholdMode */
-    uint32                        thresholdValue;       /**< \brief Threshold Value to be Used for Bin Magnitude Comparison */
-    boolean                       leftJustify;          /**< \brief Selects if comparison to be made against the 24 MSBs or 24 LSBs */
+    uint32                        thresholdValue;       /**< \brief Threshold Value to be Used for Bin Magnitude Comparison. Range: 0 to 0xFFFFFF */
+    boolean                       leftJustify;          /**< \brief Selects if comparison to be made against the 24 MSBs or 24 LSBs. Range: TRUE LEFT Left Justify Pad with 8 LSBs to create a 32 bit comparison,/n
+                                                                    FALSE  RIGHT Right Justify Pad with 8 MSBs to create a 32 bit comparison value */
 } IfxSpu_LocalMaxConfig;
 
 /** \brief Configuration structure for Magnitude approximation
  */
 typedef struct
 {
-    uint16 alpha;       /**< \brief Alpha */
-    uint16 beta;        /**< \brief Beta */
+    uint16 alpha;       /**< \brief Alpha. Range: 0 to 0xFFFF */
+    uint16 beta;        /**< \brief Beta. Range: 0 to 0xFFFF */
 } IfxSpu_MagnitudeConfig;
 
 /** \brief Configuration Structure for Pass mode registers
@@ -761,7 +764,7 @@ typedef struct
     IfxSpu_CfarGOSConfig      cfarGOS;                               /**< \brief Configuration structure for GOS-CFAR algorithm */
     IfxSpu_LocalMaxConfig     localMax;                              /**< \brief Configuration structure for Local Maximum unit */
     IfxSpu_BinRejectionConfig binrej;                                /**< \brief Configuration structure for Bin Rejection unit */
-    uint16                    nciWeights[IFXSPU_MAX_ANTENNAE];       /**< \brief Antennae scaling factors */
+    uint16                    nciWeights[IFXSPU_MAX_ANTENNAE];       /**< \brief Antennae scaling factors. Range: 0 to 0xFFFF */
     IfxSpu_MagnitudeConfig    magnitude;                             /**< \brief Configuration structure for Magnitude approximation */
     IfxSpu_PassConfig         pass[2];                               /**< \brief Configuration Structure for Pass mode registers */
 } IfxSpu_SlotConfig;
@@ -770,13 +773,13 @@ typedef struct
  */
 typedef struct
 {
-    uint32 minPwr;          /**< \brief Minimum power */
-    uint32 maxPwr;          /**< \brief Maximum power */
-    uint32 meanPwr;         /**< \brief Mean power */
-    uint32 variance;        /**< \brief Variance */
-    uint16 minIdx;          /**< \brief Minimum Index */
-    uint16 maxIdx;          /**< \brief Maximum Index */
-    uint32 filler[3];       /**< \brief Filler to align into EMEM bus width */
+    uint32 minPwr;          /**< \brief Minimum power. Range: 0 to 0xFFFFFFFF */
+    uint32 maxPwr;          /**< \brief Maximum power. Range: 0 to 0xFFFFFFFF */
+    uint32 meanPwr;         /**< \brief Mean power. Range: 0 to 0xFFFFFFFF */
+    uint32 variance;        /**< \brief Variance. Range: 0 to 0xFFFFFFFF */
+    uint16 minIdx;          /**< \brief Minimum Index. Range: 0 to 0xFFFFFFFF */
+    uint16 maxIdx;          /**< \brief Maximum Index. Range: 0 to 0xFFFFFFFF */
+    uint32 filler[3];       /**< \brief Filler to align into EMEM bus width. Range: 0 to 0xFFFFFFFF */
 } IfxSpu_StatisticalOutput;
 
 /** \} */
@@ -795,140 +798,256 @@ typedef struct
 typedef struct
 {
     boolean enabled;           /**< \brief Enable / Disable choice for the power summation */
-    uint32  baseAddress;       /**< \brief Base address to be used when writing data to Radar Memory */
+    uint32  baseAddress;       /**< \brief Base address to be used when writing data to Radar Memory. Range: 0 to 0x7FFFF */
 } IfxSpu_Log2PowerSummationConfig;
 
 /******************************************************************************/
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Retruns the Fft size code from length
- * \param length Fft length
- * \return Size code
+/**
+ * \brief Returns the FFT size code corresponding to the specified length.
+ *
+ * \param[in] length  The FFT length to be converted to a size code.
+ *                    Range: Must be a valid power of two.
+ *
+ * \retval IfxSpu_FftSize, The size code corresponding to the specified length.
  */
 IFX_INLINE IfxSpu_FftSize IfxSpu_getSizeCode(uint32 length);
 
-/** \brief Returns the status of SPU busy
- * \param spu Pointer to register base
- * \return True, if SPU is busy\n
- * False, if SPU is not busy
+/**
+ * \brief Checks if the SPU is currently busy.
+ *
+ * \param[in] spu  Pointer to the SPU register base.
+ *
+ * \retval TRUE  If the SPU is busy.
+ *         FALSE If the SPU is not busy.
  */
 IFX_INLINE boolean IfxSpu_isBusy(Ifx_SPU *spu);
 
-/** \brief Is CFAR Mode
- * \param mode CFAR Mode
- * \return True if the mode is CFAR, False otherwise
+/**
+ * \brief Checks if the given CFAR mode is active.
+ *
+ * \param[in] mode  The CFAR mode to check.
+ *                  Range: \ref IfxSpu_CFAR_Mode
+ *
+ * \retval TRUE  The mode is a valid CFAR mode.
+ *         FALSE The mode is not a valid CFAR mode.
  */
 IFX_INLINE boolean IfxSpu_isCfarMode(IfxSpu_CFAR_Mode mode);
 
-/** \brief Is Local Max Mode
- * \param mode CFAR Mode
- * \return True if the mode is Local Max, False otherwise
+/**
+ * \brief Checks if the CFAR mode is a Local Max mode.
+ *
+ * \param[in] mode  The CFAR mode to check.
+ *                  Range: \ref IfxSpu_CFAR_Mode
+ *
+ * \retval TRUE  The mode is a Local Max mode.
+ *         FALSE The mode is not a Local Max mode.
  */
 IFX_INLINE boolean IfxSpu_isLocalMaxMode(IfxSpu_CFAR_Mode mode);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param spu Pointer to SPU module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the SPU module is currently suspended.
+ *
+ * \param[in] spu  Pointer to the SPU register base.
+ *
+ * \retval TRUE  Module is suspended.
+ *         FALSE Module is not suspended.
  */
 IFX_INLINE boolean IfxSpu_isModuleSuspended(Ifx_SPU *spu);
 
-/** \brief Rejects the selected bin
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param binNumber Number of the bin that needs to be removed
- * \return None
+/**
+ * \brief Rejects the specified bin number in the SPU configuration.
+ *
+ * \param[inout] slot       Pointer to a configuration slot.
+ * \param[in]    binNumber  The bin number to be rejected.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSpu_rejectBin(IfxSpu_ConfigSlot *slot, uint16 binNumber);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param spu Pointer to SPU module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Configure the SPU module to operate in the specified suspend mode.
+ *
+ * \note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
+ *
+ * \param[inout] spu   Pointer to the SPU module registers.
+ * \param[in]    mode  Suspend mode to be configured.
+ *                     Range: \ref IfxSpu_SuspendMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSpu_setSuspendMode(Ifx_SPU *spu, IfxSpu_SuspendMode mode);
 
-/** \brief Setup the Scalar addition
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param operand Additive scaling factor for FFT output data
- * \return None
+/**
+ * \brief Configures the scalar addition operation for the SPU.
+ *
+ * \param[inout] slot     Pointer to a configuration slot.
+ * \param[in]    operand  Additive scaling factor to be used for the scalar addition operation.
+ *                        Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSpu_setupScalarAddition(IfxSpu_ConfigSlot *slot, uint32 operand);
 
-/** \brief Setup the Scalar multiplication
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param operand Multiplicative scaling factor to be applied to the FFT output data
- * \return None
+/**
+ * \brief Configures the scalar multiplication operation for the SPU.
+ *
+ * \param[inout] slot     Pointer to a configuration slot.
+ * \param[in]    operand  Multiplicative scaling factor to be applied to the FFT output data.
+ *                        Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSpu_setupScalarMultiplication(IfxSpu_ConfigSlot *slot, uint32 operand);
 
-/** \brief Returns base pointer of configuration RAM
- * \param spu Pointer to SPU Base register
+/**
+ * \brief Returns the base pointer of the configuration RAM.
+ *
+ * \param[in] spu  Pointer to the SPU module registers.
+ *
+ * \retval None
  */
 IFX_INLINE void *IfxSpu_getConfigRamPtr(Ifx_SPU *spu);
 
-/** \brief Check whether a slot as input from RIF
- * \param slot SPU config slot
+/**
+ * \brief Checks if the specified SPU configuration slot is receiving input from the RIF module.
+ *
+ * \param[in] slot  Pointer to a configuration slot.
+ *
+ * \retval TRUE  If the slot is configured to receive input from the RIF module.
+ *         FALSE If the slot is not configured to receive input from the RIF module.
  */
 IFX_INLINE boolean IfxSpu_isRifInput(IfxSpu_ConfigSlot *slot);
 
-/** \brief Check whether a slot as complex input format
- * \param slot SPU config slot
+/**
+ * \brief Checks if the SPU configuration slot has a complex input format.
+ *
+ * \param[in] slot  Pointer to a configuration slot.
+ *
+ * \retval TRUE  The slot has a complex input format.
+ *         FALSE The slot does not have a complex input format.
  */
 IFX_INLINE boolean IfxSpu_isComplexInput(IfxSpu_ConfigSlot *slot);
 
-/** \brief Size in bytes which is aligned to EMEM bus size
+/**
+ * \brief Aligns the given dataset size to the next multiple of the EMEM bus size.
+ *
+ * \param[in] datasetSize  The size of the dataset in bytes that needs to be aligned.
+ *                         Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval uint32 The aligned size in bytes, which is the next multiple of the EMEM bus size greater than or equal to the input datasetSize.
+ *         Range: 0 to 0xFFFF FFFF.
  */
 IFX_INLINE uint32 IfxSpu_alignToBusSize(uint32 datasetSize);
 
-/** \brief RM input sample size in bytes
+/**
+ * \brief Gets the input sample size in bytes for the specified radar memory input data format.
+ *
+ * \param[in] format  The input data format specification.
+ *                    Range: \ref IfxSpu_RM_InputDataFormat.
+ *
+ * \retval uint32 The size of the input sample in bytes.
+ *         Range: 0 to 7.
  */
 IFX_INLINE uint32 IfxSpu_getInputSampleSize(IfxSpu_RM_InputDataFormat format);
 
-/** \brief ODP sample size in bytes
+/**
+ * \brief Retrieves the ODP sample size in bytes based on the specified format.
+ *
+ * \param[in] format  The format of the ODP sample.
+ *                     Range: \ref IfxSpu_ODP_Format.
+ *
+ * \retval uint32 The size of the FFT sample in bytes.
+ *         Range: 0 to 7.
  */
 IFX_INLINE uint32 IfxSpu_getFftSampleSize(IfxSpu_ODP_Format format);
 
-/** \brief ODP dataset size in bytes
- * \param nBins Number of bins
+/**
+ * \brief Calculates the size of the FFT dataset in bytes based on the number of bins and the specified ODP format.
+ *
+ * \param[in] nBins  The number of bins in the FFT dataset.
+ *                   Range: 0 to 0xFFFF FFFF.
+ * \param[in] format The ODP format specifying the data type and scaling factor.
+ *                   Range: \ref IfxSpu_ODP_Format.
+ *
+ * \retval uint32 The size of the FFT dataset in bytes.
+ *         Range: 0 to 0xFFFF FFFF.
  */
 IFX_INLINE uint32 IfxSpu_getFftDatasetSize(uint32 nBins, IfxSpu_ODP_Format format);
 
-/** \brief NCI dataset size in bytes
- * \param nBins Number of bins
+/**
+ * \brief Calculates the size of the NCI dataset in bytes based on the number of bins and output format.
+ *
+ * \param[in] nBins  The number of bins.
+ *                   Range: 0 to 0xFFFF FFFF.
+ * \param[in] format The output format, determining the precision of the data.
+ *                   Range: \ref IfxSpu_NCI_OutputFormat.
+ *
+ * \retval uint32 The size of the NCI dataset in bytes.
+ *         Range: 0 to 0xFFFF FFFF.
  */
 IFX_INLINE uint32 IfxSpu_getNciDatasetSize(uint32 nBins, IfxSpu_NCI_OutputFormat format);
 
-/** \brief Summation dataset size in bytes
- * \param nBins Number of bins
+/**
+ * \brief Calculates the size of the summation dataset in bytes based on the number of bins, data format, and precision.
+ *
+ * \param[in] nBins      Number of bins.
+ *                       Range: 0 to 0xFFFF FFFF.
+ * \param[in] format     Data format specifying whether to use real or complex components.
+ *                       Range: \ref IfxSpu_Summation_DataFormat.
+ * \param[in] precision  Precision of the summation data.
+ *                       Range: \ref IfxSpu_Summation_Precision.
+ *
+ * \retval uint32 The size of the summation dataset in bytes.
+ *         Range: 0 to 0xFFFF FFFF.
  */
 IFX_INLINE uint32 IfxSpu_getSummationDatasetSize(uint32 nBins, IfxSpu_Summation_DataFormat format, IfxSpu_Summation_Precision precision);
 
-/** \brief Thresholding (CFAR or LocalMax) dataset size in bytes
- * \param Nf Number of bins
+/**
+ * \brief Calculates the size of the thresholding dataset in bytes.
+ *
+ * \param[in] Nf  Number of bins used in the thresholding operation.
+ *
+ * \retval uint16 The size of the thresholding dataset in bytes.
+ *         Range: 0 to 16.
  */
 IFX_INLINE uint16 IfxSpu_getThresholdingOutputSize(uint16 Nf);
 
-/** \brief Resets the PACTR counter
- * \param slot
- * \return None
+/**
+ * \brief Resets the Pre-Acquisition Counter (PACTR) to its initial state.
+ *
+ * \param[inout] slot  Pointer to a configuration slot.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSpu_resetPactr(IfxSpu_ConfigSlot *slot);
 
 /**
- * \return None
+ * \brief Calculates and writes the CRC for the given SPU configuration slot.
+ *
+ * \param[inout] slot  Pointer to a configuration slot.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSpu_calculateAndWriteRegisterCrc(IfxSpu_ConfigSlot *slot);
 
 /**
- * \return None
+ * \brief Clears and resets the Math1 configuration structure to its default values.
+ *
+ * \param[in] config  Pointer to the Math1 configuration structure to be cleared.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSpu_clearMath1Config(IfxSpu_Math1Config *config);
 
 /**
- * \return None
+ * \brief Clears the FFT input configuration.
+ *
+ * \param[in] config  Pointer to the FFT input configuration structure.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxSpu_clearInputConfig(IfxSpu_FftInputConfig *config);
 
@@ -936,244 +1055,369 @@ IFX_INLINE void IfxSpu_clearInputConfig(IfxSpu_FftInputConfig *config);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Check the config slot
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param caller caller
- * \param line line
- * \return None
+/**
+ * \brief Checks the configuration slot for validity and consistency.
+ *
+ * \param[in] slot    Pointer to a configuration slot.
+ * \param[in] caller  The name of the function or module that called this function,
+ *                    used for debugging or logging purposes.
+ * \param[in] line    The line number in the caller's source file where this function
+ *                    was called, used for debugging or logging purposes.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_checkConfigSlot(IfxSpu_ConfigSlot *slot, const char *caller, uint32 line);
 
-/** \brief Disables the SPU module
- * \param spu Pointer to register base
- * \return None
+/**
+ * \brief Disables the SPU module, shutting down its operation and preparing it for a low-power state.
+ *
+ * \param[inout] spu Pointer to the SPU module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_disableModule(Ifx_SPU *spu);
 
-/** \brief Returns the module index of the selected SPU module
- * \param spu Pointer to SPU module registers
- * \return SPU module register address
+/**
+ * \brief Returns the memory address of the selected SPU module's registers.
+ *
+ * \param[in] spu  SPU module index to retrieve the address for.
+ *
+ * \retval Ifx_SPU* Base address of the selected SPU module's registers.
  */
 IFX_EXTERN Ifx_SPU *IfxSpu_getAddress(IfxSpu_Index spu);
 
-/** \brief Get the configuration slot of an SPU module
- * \param spu Pointer to register base
- * \param slotNr If 0 will return pointer to ID_CONF register of the spu, Else pointer to slotNr in the Configuration RAM. Maximum value of slotNr is \ref IFXSPU_CONFIG_SLOT_MAX.
- * \return Pointer to a configuration slot.
+/**
+ * \brief Retrieves a configuration slot for the specified SPU module.
+ *
+ * \param[in] spu     Pointer to the SPU module registers.
+ * \param[in] slotNr  If 0 will return pointer to ID_CONF register of the spu, Else pointer to slotNr in the Configuration RAM. Maximum value of slotNr is \ref IFXSPU_CONFIG_SLOT_MAX.
+ *                    Range: 1 to \ref IFXSPU_CONFIG_SLOT_MAX.
+ *
+ * \retval IfxSpu_ConfigSlot* Pointer to the requested configuration slot.
  */
 IFX_EXTERN IfxSpu_ConfigSlot *IfxSpu_getConfigSlot(Ifx_SPU *spu, uint32 slotNr);
 
-/** \brief Get the data source of a configuration slot
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \return Processing data source
+/**
+ * \brief Retrieves the data source associated with a given configuration slot.
+ *
+ * \param[in] slot  Pointer to a configuration slot.
+ *
+ * \return IfxSpu_DataSource The data source associated with the configuration slot.
+ *         Range: \ref IfxSpu_DataSource.
  */
 IFX_EXTERN IfxSpu_DataSource IfxSpu_getDataSource(IfxSpu_ConfigSlot *slot);
 
-/** \brief Returns the module index of the selected SPU module
- * \param spu Specifies the pointer to the base of SPU registers
- * \return Module index
+/**
+ * \brief Returns the module index of the selected SPU module.
+ *
+ * \param[in] spu Pointer to the SPU module registers.
+ *
+ * \retval IfxSpu_Index The module index of the selected SPU module.
+ *         Range: \ref IfxSpu_Index.
  */
 IFX_EXTERN IfxSpu_Index IfxSpu_getIndex(Ifx_SPU *spu);
 
-/** \brief Get number of connected antennae when the input is from RIF, not from EMEM.
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \return Number of connected antennae when the input is from RIF\n
- * Zero when the input is from EMEM
+/**
+ * \brief Retrieves the number of connected antennae based on the input source configuration.
+ *
+ * \param[in] slot  Pointer to a configuration slot.
+ *
+ * \retval uint16 Number of connected antennae when input is from RIF.
+ *                Zero when input is from EMEM.
  */
 IFX_EXTERN uint16 IfxSpu_getNumConnectedAntennae(IfxSpu_ConfigSlot *slot);
 
-/** \brief Get number of input samples per vector.
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \return Number of input samples per vector.
+/**
+ * \brief Retrieves the number of input samples per vector for the specified SPU configuration slot.
+ *
+ * \param[in] slot  Pointer to a configuration slot.
+ *
+ * \retval uint16 The number of input samples per vector, represented as an unsigned 16-bit integer.
+ *         Range: 0 to 0x1FFFF.
  */
 IFX_EXTERN uint16 IfxSpu_getNumInputSamples(IfxSpu_ConfigSlot *slot);
 
-/** \brief Get number of input ramps, when the input is from RIF, not from EMEM
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \return Number of ramps when the input is from RIF\n
- * Zero when the input is from EMEM
+/**
+ * \brief Gets the number of input ramps when the input is sourced from RIF (not from EMEM).
+ *
+ * \param[in] slot  Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ *
+ * \retval uint16 Number of ramps when input is from RIF; zero if input is from EMEM.
  */
 IFX_EXTERN uint16 IfxSpu_getNumRamps(IfxSpu_ConfigSlot *slot);
 
-/** \brief Initialises the SPU module
- * \param spu Pointer to register base
- * \param config Configuration structure for module
- * \return None
+/**
+ * \brief Initialises the SPU module with the specified configuration.
+ *
+ * \param[inout] spu    Pointer to the SPU module registers.
+ * \param[in]    config Configuration structure containing settings for clock division and interrupt handling.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_initModule(Ifx_SPU *spu, const IfxSpu_ModuleConfig *config);
 
-/** \brief Initialises the module config structure
- * \param config Configuration structure for module
- * \return None
+/**
+ * \brief Initializes the specified SPU module configuration structure with default values.
+ *
+ * \param[inout] config The configuration structure to be initialized.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_initModuleConfig(IfxSpu_ModuleConfig *config);
 
-/** \brief Load values into configuration RAM
- * \param spu Pointer to register base
- * \param dataPtr Pointer to the location of source data to load
- * \param offset32 Offset in the configuration RAM (in 32-bit words)
- * \param count32 Size of data in the source to load into the configuration RAM (in 32-bit words)
- * \return None
+/**
+ * \brief Loads configuration data into the specified SPU's configuration RAM.
+ *
+ * \param[in] spu      Pointer to the SPU module registers.
+ * \param[in] dataPtr  Pointer to the location of source data to load.
+ * \param[in] offset32 Offset in the configuration RAM where the data will be loaded (in 32-bit words).
+ *                     Range: 0 to 0xFFFF FFFF.
+ * \param[in] count32  Number of 32-bit words to transfer from the source data to the configuration RAM.
+ *                     Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_loadConfigRAM(Ifx_SPU *spu, const void *dataPtr, uint32 offset32, uint32 count32);
 
-/** \brief Reloads the configuration
- * \param spu Pointer to register base
- * \param slotNr Configuration slot number. Value should be non-zero. Maximum is \ref IFXSPU_CONFIG_SLOT_MAX.
- * \return None
+/**
+ * \brief Reloads the configuration for the specified SPU slot.
+ *
+ * \param[inout] spu     Pointer to the SPU module registers.
+ * \param[in]    slotNr  Configuration slot number to reload.
+ *                       Range: 1 to \ref IFXSPU_CONFIG_SLOT_MAX.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_reloadConfig(Ifx_SPU *spu, uint32 slotNr);
 
-/** \brief Reset the Non - Coherent Integration Antennae scaling factors
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \return None
+/**
+ * \brief Resets the Non-Coherent Integration (NCI) Antennae scaling factors to their default values.
+ *
+ * \param[inout] slot Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_resetNciWeights(IfxSpu_ConfigSlot *slot);
 
-/** \brief Sets the pass mode of input DMA engine
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passMode Double pass configuration mode
- * \return None
+/**
+ * \brief Configures the pass mode for the specified DMA engine configuration slot.
+ *
+ * \param[inout] slot     Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passMode The pass mode to be configured.
+ *                        Range: \ref IfxSpu_PassMode.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setPassMode(IfxSpu_ConfigSlot *slot, IfxSpu_PassMode passMode);
 
-/** \brief Setup the Bin Rejection unit
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param config Configuration structure for Bin Rejection uint
- * \return None
+/**
+ * \brief Configures the Bin Rejection unit with the specified settings.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    config Configuration structure for Bin Rejection unit.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupBinRejection(IfxSpu_ConfigSlot *slot, const IfxSpu_BinRejectionConfig *config);
 
-/** \brief Setup the CFAR module
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for CFAR
- * \return None
+/**
+ * \brief Configures the CFAR module for the SPU.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId Processing instance number to select the register instance for the base engine (BEx).
+ * \param[in]    config Pointer to a configuration structure for CFAR module control.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupCfar(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_CfarConfig *config);
 
-/** \brief Setup the CFAR CA algorithm
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param config Configuration structure for CA-CFAR algorithm
- * \return None
+/**
+ * \brief Configures the CFAR CA (Constant False Alarm Rate - Cell Averaging) algorithm for the specified slot.
+ * 
+ * \param[inout] slot    Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    config  Pointer to the configuration structure CA-CFAR algorithm.
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupCfarCA(IfxSpu_ConfigSlot *slot, const IfxSpu_CfarCAConfig *config);
 
-/** \brief Setup the CFAR GOS algorithm
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param config Configuration structure for GOS-CFAR algorithm
- * \return None
+/**
+ * \brief Configures the CFAR GOS algorithm for a given configuration slot.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    config Pointer to the configuration structure containing GOS-CFAR algorithm parameters.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupCfarGOS(IfxSpu_ConfigSlot *slot, const IfxSpu_CfarGOSConfig *config);
 
-/** \brief Setup the config sequence
- * \param spu Pointer to register base
- * \param slotNr slot Nr to configure.
- * \param nextSlotNr Next slot number. If zero, slot pointed by slotNr will be the last.
- * \param ctrlConfig CTRL Configuration structure
- * \return None
+/**
+ * \brief Configures the specified slot in the SPU with the provided control configuration and links it to the next slot if specified.
+ *
+ * \param[in] spu        Pointer to the SPU module registers.
+ * \param[in] slotNr     Configuration slot number to reload.
+ *                       Range: 1 to \ref IFXSPU_CONFIG_SLOT_MAX.
+ * \param[in] nextSlotNr Next slot number to link to. If set to zero, the current slot will be the last in the sequence.
+ *                       Range: 1 to \ref IFXSPU_CONFIG_SLOT_MAX.
+ * \param[in] ctrlConfig Pointer to the control configuration structure containing parameters for the slot configuration.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupConfigSequence(Ifx_SPU *spu, uint32 slotNr, uint32 nextSlotNr, IfxSpu_CtrlConfig *ctrlConfig);
 
-/** \brief Setup the FFT streaming processor, Initialises the input and output parameters for FFT engine
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for FFT engine
- * \return None
+/**
+ * \brief Setup the FFT streaming processor, initializing input and output parameters for the FFT engine.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId Processing instance number to choose the register instance for the base engine (BEx).
+ *                      Range: \ref IfxSpu_PassId.
+ * \param[in]    config Pointer to a configuration structure for the FFT engine.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupFft(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_FftConfig *config);
 
-/** \brief Setup the FFT output , Initialises the parameters for Output Data Processor
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for FFT output
- * \return None
+/**
+ * \brief Setup the FFT output by initializing parameters for the Output Data Processor (ODP).
+ *
+ * \param[inout] slot    Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId  Processing instance number to select the register instance for the base engine (BEx).
+ *                       Range: \ref IfxSpu_PassId.
+ * \param[in]    config  Pointer to a configuration structure containing FFT output settings.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupFftOutput(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_FftOutputConfig *config);
 
-/** \brief Setup the Histogram
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for Histogram
- * \return None
+/**
+ * \brief Configures the histogram setup for the SPU.
+ *
+ * \param[inout] slot  Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in] passId   Processing instance number to select the register instance for the base engine (BEx).
+ *                     Range: \ref IfxSpu_PassId.
+ * \param[in] config   Pointer to the histogram configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupHistogram(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_HistogramConfig *config);
 
-/** \brief Setup the input for FFT, Initialises the parameters for input DMA engine
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param config Configuration structure for FFT input
- * \return None
- */
+/**
+* \brief Configures the input parameters for the FFT processing and initializes the input DMA engine.
+*
+* \param[inout] slot    Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+* \param[in]    config  Pointer to the configuration structure containing FFT input settings.
+*
+* \retval None
+*/
 IFX_EXTERN void IfxSpu_setupInput(IfxSpu_ConfigSlot *slot, const IfxSpu_FftInputConfig *config);
 
-/** \brief Setup the Local Max unit
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param config Configuration structure for Local Maximum uint
- * \return None
+/**
+ * \brief Configures the Local Maximum unit with specified parameters.
+ *
+ * \param[inout] slot    Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    config  Pointer to a Local Max configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupLocalMax(IfxSpu_ConfigSlot *slot, const IfxSpu_LocalMaxConfig *config);
 
-/** \brief Setup the Magnitude
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param config Configuration structure for Magnitude approximation
- * \return None
+/**
+ * \brief Configures the magnitude approximation settings for the SPU.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    config Pointer to the magnitude configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupMagnitude(IfxSpu_ConfigSlot *slot, IfxSpu_MagnitudeConfig *config);
 
-/** \brief Setup the Math1 uint, Initialises the parameters for Math1 uint of the streaming processor1
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for Math1 uint
- * \return None
+/**
+ * \brief Setup the Math1 unit, initializing parameters for the Math1 unit of the streaming processor.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId Processing instance number to select the register instance for the base engine (BEx).
+ *                      Range: \ref IfxSpu_PassId.
+ * \param[in]    config Pointer to a configuration structure for the Math1 unit.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupMath1(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_Math1Config *config);
 
-/** \brief Setup the Non - Coherent Integration unit
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for Non-Coherent intergration
- * \return None
+/**
+ * \brief Configures the Non-Coherent Integration (NCI) unit for the SPU.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId Processing instance number to select the register instance for the base engine (BEx).
+ *                      Range: \ref IfxSpu_PassId.
+ * \param[in]    config Pointer to the Non-Coherent intergration configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupNci(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_NciConfig *config);
 
-/** \brief Setup the Non - Coherent Integration Antennae scaling factor
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param weights Antennae scaling factors
- * \return None
+/**
+ * \brief Configures the Non-Coherent Integration (NCI) Antennae scaling factors for the SPU.
+ *
+ * \param[inout] slot    Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    weights Array of scaling factors for the antennae.
+ *                       Range: 0 to 7.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupNciWeights(IfxSpu_ConfigSlot * slot, uint16 weights[IFXSPU_MAX_ANTENNAE]);
 
-/** \brief Setup the Power Information Channel
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for Power Information Channel
- * \return None
+/**
+ * \brief Setup the Power Information Channel.
+ *
+ * \param[inout] slot    Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId  Processing instance number to select the register instance for the base engine (BEx).
+ *                       Range: \ref IfxSpu_PassId.
+ * \param[in]    config  Pointer to Configuration structure for the Power Information Channel.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupPowerChannel(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_PowerOutputConfig *config);
 
-/** \brief Setup the Sideband statistics
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for Sideband Statistics
- * \return None
+/**
+ * \brief Configures the Sideband statistics setup for the SPU.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId Processing instance number to select the register instance for the base engine (BEx).
+ *                      Range: \ref IfxSpu_PassId.
+ * \param[in]    config Pointer to the Sideband Statistics configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupSidebandStatistics(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_SidebandStatisticsConfig *config);
 
-/** \brief Setup the Summation unit
- * \param slot Pointer to a configuration slot (see \ref IfxSpu_getConfigSlot())
- * \param passId Processing instance number to choose the register instance for base engine (BEx)
- * \param config Configuration structure for Summation unit
- * \return None
+/**
+ * \brief Configures the Summation unit with the specified parameters.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId Processing instance number to select the register instance for the base engine (BEx).
+ *                      Range: \ref IfxSpu_PassId.
+ * \param[in]    config Pointer to a Configuration structure for Summation unit.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupSummation(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_SummationConfig *config);
 
-/** \brief Trigger the SPU operation by software
- * \param spu Pointer to register base
- * \return None
+/**
+ * \brief Trigger the SPU operation by software.
+ *
+ * \param[inout] spu Pointer to the SPU module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_swTrigger(Ifx_SPU *spu);
 
-/** \brief Function to compute the value for SPU_REGCRC
+/**
+ * \brief Computes the CRC value for the SPU_REGCRC register based on the provided configuration slot.
+ *
+ * \param[in] slot Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ *
+ * \retval uint32 The computed 32-bit CRC value for the specified configuration slot.
+ *
  * Example usage:
  * uint32 configSlotNr = 0; // 0 = SFR slot, 1 = slot in Configuration RAM.
  * uint32 regcrc = IfxSpu_calculateRegisterCrc(&MODULE_SPU0, configSlotNr);
@@ -1181,36 +1425,67 @@ IFX_EXTERN void IfxSpu_swTrigger(Ifx_SPU *spu);
  */
 IFX_EXTERN uint32 IfxSpu_calculateRegisterCrc(IfxSpu_ConfigSlot *slot);
 
-/** \brief Write a configuration slot with slotValues
- * \return None
+/**
+ * \brief Writes a set of configuration values to a specified slot in the SPU.
+ *
+ * \param[in] spu        Pointer to the SPU module registers.
+ * \param[in] slotNr     Configuration slot number to reload.
+ *                       Range: 1 to \ref IFXSPU_CONFIG_SLOT_MAX.
+ * \param[in] slotValues Pointer to an array of uint32 values containing the configuration data to write.
+ *                       Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_writeConfigSlot(Ifx_SPU *spu, uint32 slotNr, const uint32 *slotValues);
 
 /**
- * \return None
+ * \brief Configures the Log2 power summation unit based on the provided configuration.
+ *
+ * \param[inout] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in]    passId Processing instance number to select the register instance for the base engine (BEx).
+ *                      Range: \ref IfxSpu_PassId.
+ * \param[in]    config Pointer to the configuration structure for Log2 power summation unit.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_setupLog2PowerSummation(IfxSpu_ConfigSlot *slot, IfxSpu_PassId passId, const IfxSpu_Log2PowerSummationConfig *config);
 
-/** \brief Enables the module(by allowing clock to the module)
- * \param spu SPU SFR's base address
- * \return None
+/**
+ * \brief Enables the module by allowing clock to the module.
+ *
+ * \param[inout] spu Pointer to the SPU module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_enableModule(Ifx_SPU *spu);
 
-/** \brief Performs Kernel Reset
- * \param spu SPU SFR's base address
- * \return None
+/**
+ * \brief Resets the specified SPU module to its initial state.
+ *
+ * \param[inout] spu  Pointer to the SPU module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_resetModule(Ifx_SPU *spu);
 
-/** \brief Wait for reload
- * \param spu SPU SFR's base address
- * \return None
+/**
+ * \brief Waits until the reload operation for the specified SPU module has completed.
+ *
+ * \param[in] spu Pointer to the SPU module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSpu_waitReload(Ifx_SPU *spu);
 
 /**
- * \param slot SPU config slot
+ * \brief Retrieves the FFT output format based on the provided SPU configuration slot and pass number.
+ *
+ * \param[in] slot   Pointer to a configuration slot. (see \ref IfxSpu_getConfigSlot())
+ * \param[in] passNr Pass number for which the FFT output format is to be retrieved.
+ *                   Range: 0 to 1.
+ *
+ * \retval IfxSpu_ODP_Format The output data format of the FFT operation.
+ *         Range: \ref IfxSpu_ODP_Format.
  */
 IFX_EXTERN IfxSpu_ODP_Format IfxSpu_getFftOutputFormat(IfxSpu_ConfigSlot *slot, uint8 passNr);
 

@@ -3,7 +3,7 @@
  * \brief QSPI  basic functionality
  * \ingroup IfxLld_Qspi
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -242,7 +242,7 @@ typedef enum
     IfxQspi_Phase_trailStrobe = 8  /**< \brief Frame trailstrobe phase */
 } IfxQspi_Phase;
 
-/** \brief Phase Transition Event
+/** \brief Phase Transition Event (GLOBALCON1.B.PT1 and GLOBALCON1.B.PT2)
  */
 typedef enum
 {
@@ -266,7 +266,7 @@ typedef enum
     IfxQspi_Reset_kernel              = 3   /**< \brief Kernel / Module Reset */
 } IfxQspi_Reset;
 
-/** \brief Receive Fifo Interrupt Threshold
+/** \brief Receive Fifo Interrupt Threshold (GLOBALCON1.B.RXFIFOINT)
  */
 typedef enum
 {
@@ -323,7 +323,7 @@ typedef enum
     IfxQspi_StrobeDelay_32     /**< \brief SLSO delay 32 cycle(s)  */
 } IfxQspi_StrobeDelay;
 
-/** \brief Transmit Fifo Interrupt Threshold
+/** \brief Transmit Fifo Interrupt Threshold (GLOBALCON1.B.TXFIFOINT)
  */
 typedef enum
 {
@@ -335,7 +335,7 @@ typedef enum
 
 /** \} */
 
-/** \brief Transmit FIFO mode.
+/** \brief Transmit FIFO mode (GLOBALCON1.B.TXFM)
  */
 typedef enum
 {
@@ -374,28 +374,28 @@ typedef enum
     IfxQspi_SlsoTiming_7                  /**< 7 half-clock delay */
 } IfxQspi_SlsoTiming;
 
-/** \brief Heading */
+/** \brief Heading (BACON.B.MSB) */
 typedef enum
 {
     IfxQspi_DataHeading_lsbFirst = 0,     /**< LSB first */
     IfxQspi_DataHeading_msbFirst          /**< MSB first */
 } IfxQspi_DataHeading;
 
-/** \brief Clock phase */
+/** \brief Clock phase (ECON.B.CPH) */
 typedef enum
 {
     IfxQspi_ShiftClock_shiftTransmitDataOnLeadingEdge = 0,    /**< Shift Tx data on leading edge */
     IfxQspi_ShiftClock_shiftTransmitDataOnTrailingEdge        /**< Shift Tx data on training edge */
 } IfxQspi_ShiftClock;
 
-/** \brief Clock polarity */
+/** \brief Clock polarity (ECON.B.CPOL) */
 typedef enum
 {
     IfxQspi_ClockPolarity_idleLow = 0,    /**< Idle clock line is low */
     IfxQspi_ClockPolarity_idleHigh        /**< Idle clock line is high */
 } IfxQspi_ClockPolarity;
 
-/** \brief Parity Mode\n */
+/** \brief Parity Mode\n (ECON.B.PAREN)*/
 typedef enum
 {
 	IfxQspi_ParityMode_even = 0,  /**< \brief Even Parity */
@@ -411,8 +411,8 @@ typedef enum
  */
 typedef struct
 {
-    uint8 pre;         /**< \brief specifies the prescalar value */
-    uint8 delay;       /**< \brief delay multiplier */
+    uint8 pre;         /**< \brief specifies the prescalar value. Range: 0 to 7. */
+    uint8 delay;       /**< \brief delay multiplier. Range: 0 to 7. */
 } IfxQspi_DelayConst;
 
 /** \brief Delay Parameters for Idle, Leading and Trailing Delays
@@ -439,7 +439,7 @@ typedef uint32 IfxQspi_SlsoTiming_HalfTsclk;
  */
 typedef volatile struct
 {
-    boolean onTransfer;              /**< \brief Channel status: On transfer */
+    boolean onTransfer;              /**< \brief Channel status: On transfer. Range: TRUE transfer as active, FALSE transfer as inactive. */
     boolean byteAccess;              /**< \brief Channel status: 8bit / 16 bit access */
 } IfxQspi_Flags;
 
@@ -494,191 +494,315 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clear ALL service requests
- * \param qspi Pointer to QSPI module registers
- * \return None
+/**
+ * \brief Clears all event flags for the QSPI module.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_clearAllEventFlags(Ifx_QSPI *qspi);
 
-/** \brief clear the interrupt after last flag
- * \param qspi Module register handler
- * \param clearInterrupt clear the interrupt flag
- * \return None
+/**
+ * \brief Clears the move counter interrupt after the last flag has been set.
+ *
+ * \param[inout] qspi           Pointer to the QSPI module registers.
+ * \param[in]    clearInterrupt Boolean flag indicating whether to clear the interrupt.
+ *                              TRUE if Clears the interrupt flag, FALSE if Does not clear the interrupt flag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_clearMoveCounterInterruptAfterLastFlag(Ifx_QSPI *qspi, boolean clearInterrupt);
 
-/** \brief Clear the Interrupt before last flag
- * \param qspi handle to Module register
- * \param clearInterrupt clear the interrupt
- * \return None
+/**
+ * \brief Clears the interrupt before last flag for the QSPI module.
+ * 
+ * \param[inout] qspi           Pointer to the QSPI module registers.
+ * \param[in]    clearInterrupt Boolean flag indicating whether to clear the interrupt.
+ *                              TRUE if Clears the interrupt flag, FALSE if Does not clear the interrupt flag.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_clearMoveCounterInterruptBeforeLastFlag(Ifx_QSPI *qspi, boolean clearInterrupt);
 
-/** \brief Clear RX service requests
- * \param qspi Pointer to QSPI module registers
- * \return None
+/**
+ * \brief Clears the receive (RX) service request for the QSPI module.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_clearRxReq(Ifx_QSPI *qspi);
 
-/** \brief Clear TX service requests
- * \param qspi Pointer to QSPI module registers
- * \return None
+/**
+ * \brief Clears the transmit (TX) service requests for the QSPI module.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_clearTxReq(Ifx_QSPI *qspi);
 
-/** \brief Configure PT1 event (also USR event depending if USREN=1 )
- * \param qspi Pointer to QSPI module registers
- * \param pt1Config Phase Transition1 Event Config
- * \return None
+/**
+ * \brief Configures the PT1 event (also serves as the USR event if USREN=1) for the QSPI module.
+ *
+ * \param[inout] qspi      Pointer to the QSPI module registers.
+ * \param[in]    pt1Config Specifies the Phase Transition Event configuration. Range: \ref IfxQspi_PhaseTransitionEvent.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_configPT1Event(Ifx_QSPI *qspi, IfxQspi_PhaseTransitionEvent pt1Config);
 
-/** \brief Configure PT2 event
- * \param qspi Pointer to QSPI module registers
- * \param pt2Config Phase Transition2 Event Config
- * \return None
+/**
+ * \brief Configures the Phase Transition 2 (PT2) event for the QSPI module.
+ *
+ * \param[inout] qspi      Pointer to the QSPI module registers.
+ * \param[in]    pt2Config The configuration for the Phase Transition 2 event. Range: \ref IfxQspi_PhaseTransitionEvent.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_configPT2Event(Ifx_QSPI *qspi, IfxQspi_PhaseTransitionEvent pt2Config);
 
 #if defined(DEVICE_TC33XED) || defined(DEVICE_TC33X) || defined(DEVICE_TC35X) || defined(DEVICE_TC39XB)
-/** \brief configure Capcon register (Edge Configuration, input selection and capture interrupt select bit)
- * \param qspi Pointer to QSPI module registers
- * \param inputSel Input port Selection
- * \param edgeConfiguration edge configuration / capture mode
- * \return None
+
+/** \brief Configure Capcon register (Edge Configuration, input selection and capture interrupt select bit).
+ *
+ * \param[inout] qspi              Pointer to the QSPI module registers.
+ * \param[in]    inputSel          Input port Selection. Range: \ref IfxQspi_CaptureControlInputSelection.
+ * \param[in]    edgeConfiguration Edge configuration / capture mode. Range: \ref IfxQspi_CaptureControlEdgeConfiguration.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_configureCapcon(Ifx_QSPI *qspi, IfxQspi_CaptureControlInputSelection inputSel, IfxQspi_CaptureControlEdgeConfiguration edgeConfiguration);
 #endif
 
-/** \brief Enable/Disable Loopback mode.
- * \param qspi Pointer to QSPI module registers
- * \param enable Enable / Disable loopback
- * \return None
+/**
+ * \brief Enables or disables the loopback mode for the QSPI module.
+ * 
+ * \param[inout] qspi   Pointer to the QSPI module registers.
+ * \param[in]    enable Boolean flag to enable (TRUE) or disable (FALSE) the loopback mode.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_enableLoopbackMode(Ifx_QSPI *qspi, boolean enable);
 
-/** \brief enable Phase Transition1 Event
- * \param qspi Pointer to QSPI module registers
- * \param enable Enable (1) / Disable (0)
- * \return None
+/**
+ * \brief Enables or disables the Phase Transition 1 (PT1) event for the QSPI module.
+ *
+ * \param[inout] qspi   Pointer to the QSPI module registers.
+ * \param[in]    enable Boolean value indicating whether to enable (1) or disable (0)
+ *                      the PT1 event.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_enablePT1Event(Ifx_QSPI *qspi, boolean enable);
 
-/** \brief enable Phase Transition2 Event
- * \param qspi Pointer to QSPI module registers
- * \param enable Enable (1) / Disable (0)
- * \return None
+/**
+ * \brief Enables or disables the Phase Transition 2 (PT2) event for the QSPI module.
+ * 
+ * \param[inout] qspi   Pointer to the QSPI module registers.
+ * \param[in]    enable Boolean flag to enable (1) or disable (0) the PT2 event.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_enablePT2Event(Ifx_QSPI *qspi, boolean enable);
 
-/** \brief enable User Event (Event selected by PT1)
- * \param qspi Pointer to QSPI module registers
- * \param enable Enable (1) / Disable (0)
- * \return None
+/**
+ * \brief Enables or disables the user event triggered by PT1.
+ *
+ * \param[inout] qspi   Pointer to the QSPI module registers.
+ * \param[in]    enable Boolean flag to enable (true) or disable (false) the user event.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_enableUsrEvent(Ifx_QSPI *qspi, boolean enable);
 
 /**
- * \param qspi Pointer to QSPI module registers
- * \return Error Flags
+ * \brief Retrieves the current error flags for the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval uint16 A 16-bit value representing the current error flags.
+ *                Range:
+ *                - 0x001 Parity Error,
+ *                - 0x002 Unexpected Configuration Error,
+ *                - 0x004 Baud Rate Error (slave mode),
+ *                - 0x008 TXFIFO overflow (software error),
+ *                - 0x010 TXFIFO underflow (slave mode),
+ *                - 0x020 RXFIFO overflow,
+ *                - 0x040 RXFIFO underflow (software error),
+ *                - 0x080 EXPECT time out error,
+ *                - 0x100 SLSI misplaced inactivation (slave mode).
+ *
  */
 IFX_INLINE uint16 IfxQspi_getErrorFlags(Ifx_QSPI *qspi);
 
-/** \brief Request for Module in Pause state
+/**
+ * \brief Requests the QSPI module to enter a paused state.
  * no interrupts
  * no communication
- * \param qspi Pointer to QSPI module registers
- * \return None
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_pause(Ifx_QSPI *qspi);
 
-/** \brief Read the oldest data from RXFIFO
- * \param qspi Pointer to QSPI module registers
+/**
+ * \brief Reads the oldest data from the Receive FIFO (RXFIFO) of the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval uint32 The data read from the RXFIFO. Range: 0 to 0xFFFF FFFF.
+ *
  */
 IFX_INLINE uint32 IfxQspi_readReceiveFifo(Ifx_QSPI *qspi);
 
-/** \brief Request reset (State Machine & FIFO / Register / Module)
- * \param qspi Pointer to QSPI module registers
- * \param reset reset type (GLOBALCON.RESETS)
- * \return None
+/**
+ * \brief Requests a reset of specific QSPI module components.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ * \param[in]    reset Type of reset to perform. Range: \ref IfxQspi_Reset.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_requestReset(Ifx_QSPI *qspi, IfxQspi_Reset reset);
 
-/** \brief Request for QSPI in Run state
- * \param qspi Pointer to QSPI module registers
- * \return None
+/**
+ * \brief Requests the QSPI module to transition into the Run state.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_run(Ifx_QSPI *qspi);
 
-/** \brief Enable/Disable the Interrupt After last Byte
- * \param qspi Module register handler
- * \param interruptEnabled Enable/Disable the interrupt after last byte
- * \return None
+/**
+ * \brief Enable or disable the interrupt after the last byte has been transferred.
+ *
+ * \param[inout] qspi             Pointer to the QSPI module registers.
+ * \param[in]    interruptEnabled Boolean flag to enable (true) or disable (false) the interrupt after the last byte.
+ *
+* \retval None
+*
  */
 IFX_INLINE void IfxQspi_setMoveCounterInterruptAfterLastEnabled(Ifx_QSPI *qspi, boolean interruptEnabled);
 
-/** \brief Set the Interrupt after last flag
- * \param qspi Module register handler
- * \param setInterrupt set the interrupt Flag
- * \return None
+/**
+ * \brief Configures the QSPI module to generate an interrupt after the last flag is set.
+ *
+ * \param[inout] qspi         Pointer to the QSPI module registers.
+ * \param[in]    setInterrupt Boolean flag to enable or disable the interrupt after the last flag.
+ *                            true if Enable interrupt after last flag, false if Disable interrupt after last flag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_setMoveCounterInterruptAfterLastFlag(Ifx_QSPI *qspi, boolean setInterrupt);
 
-/** \brief Enable the interrupt before last byte
- * \param qspi Pointer to Qspi Module Register
- * \param interruptEnabled Specifies Interrupt is enable or disable
- * \return None
+/**
+ * \brief Enables or disables the interrupt before the last byte is transferred.
+ *
+ * \param[inout] qspi             Pointer to the QSPI module registers.
+ * \param[in]    interruptEnabled Boolean flag to enable (true) or disable (false) the interrupt before the last byte.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_setMoveCounterInterruptBeforeLastEnabled(Ifx_QSPI *qspi, boolean interruptEnabled);
 
-/** \brief set the interrupt before last flag
- * \param qspi Module register handler
- * \param setInterrupt set the interrupt before last flag
- * \return None
+/**
+ * \brief Configures whether an interrupt is generated before the last data element is transferred.
+ *
+ * \param[inout] qspi         Pointer to the QSPI module registers.
+ * \param[in]    setInterrupt Boolean flag to enable or disable the interrupt before the last data element transfer.
+ *                            true if Enable interrupt before last data element, false if Disable interrupt before last data element.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_setMoveCounterInterruptBeforeLastFlag(Ifx_QSPI *qspi, boolean setInterrupt);
 
-/** \brief Set the Trailing delay
- * \param qspi handle of Module
- * \param baudrate Baud rate
- * \return None
+/**
+ * \brief Sets the trailing delay for the move counter prescaler to achieve the specified baud rate.
+ *
+ * \param[inout] qspi     Handle to the QSPI module registers.
+ * \param[in]    baudrate The desired baud rate for the QSPI interface. Must be greater than 0.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_setMoveCounterPrescalerTrailingDelay(Ifx_QSPI *qspi, const float baudrate);
 
-/** \brief Set the threshold of RXFIFO for service request generation
- * \param qspi Pointer to QSPI module registers
- * \param rxFifoInt RxFIFO Interrupt threshold to set
- * \return None
+/**
+ * \brief Configures the RX FIFO interrupt threshold for the QSPI module to generate service requests when the specified threshold is reached.
+ *
+ * \param[inout] qspi      Pointer to the QSPI module registers.
+ * \param[in]    rxFifoInt RxFIFO Interrupt threshold to set. Range: \ref IfxQspi_RxFifoInt.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setReceiveFifoInterrruptThreshold(Ifx_QSPI *qspi, IfxQspi_RxFifoInt rxFifoInt);
 
-/** \brief specifies whether to inject the trail2 from bacon configuration or mccon configuration registers
- * \param qspi Module Register Handler
- * \param trail2Enabled Enable/Disable Trail2 from MCCON register
- * \return None
+/**
+ * \brief Enables or disables the injection of Trail2 from the MCCON configuration register.
+ *
+ * \param[inout] qspi          Pointer to the QSPI module registers.
+ * \param[in]    trail2Enabled Boolean flag to enable or disable Trail2 injection.
+ *                             TRUE if Enable Trail2 injection from MCCON register, FALSE if Disable Trail2 injection and use bacon configuration.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_trail2InjectionEnabled(Ifx_QSPI *qspi, boolean trail2Enabled);
 
-/** \brief Write Data into DATAENTRY register
- * \param qspi Pointer to QSPI module registers
- * \param data Data to be entered into TxFIFO
- * \return None
+/**
+ * \brief Writes a 32-bit data value into the QSPI transmit FIFO.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ * \param[in]    data The 32-bit data value to be written into the TxFIFO. Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_writeTransmitFifo(Ifx_QSPI *qspi, uint32 data);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param qspi Pointer to QSPI module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the QSPI module is in a suspended state.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval TRUE If Module is suspended.
+ *         FALSE If Module is not suspended.
+ *
  */
 IFX_INLINE boolean IfxQspi_isModuleSuspended(Ifx_QSPI *qspi);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
+/**
+ * \brief Configures the QSPI module's suspend mode to either hard, soft, or none.
  * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param qspi Pointer to QSPI module registers
- * \param mode Module suspend mode
- * \return None
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ * \param[in]    mode The suspend mode to be set. Range: \ref IfxQspi_SuspendMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_setSuspendMode(Ifx_QSPI *qspi, IfxQspi_SuspendMode mode);
 
@@ -686,60 +810,90 @@ IFX_INLINE void IfxQspi_setSuspendMode(Ifx_QSPI *qspi, IfxQspi_SuspendMode mode)
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reads 16bit data from the Rx FIFO
- * \param qspi Pointer to QSPI module registers
- * \param data Received data will be copied into this array
- * \param count Number of items to be received
- * \return None
+/**
+ * \brief Reads 16-bit data from the Rx FIFO of the QSPI module.
+ *
+ * \param[in]    qspi  Pointer to the QSPI module registers.
+ * \param[inout] data  Array to store the received 16-bit data items. Range: 0 to 0xFFFF.
+ * \param[in]    count Number of 16-bit data items to read from the FIFO.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_read16(Ifx_QSPI *qspi, uint16 *data, Ifx_SizeT count);
 
-/** \brief Reads 32bit data from the Rx FIFO
- * \param qspi Pointer to QSPI module registers
- * \param data Received data will be copied into this array
- * \param count Number of items to be received
- * \return None
+/**
+ * \brief Reads 32-bit data from the Rx FIFO
+ *
+ * \param[in]    qspi  Pointer to the QSPI module registers.
+ * \param[inout] data  Array to store the received 32-bit data. Range: 0 to 0xFFFF FFFF.
+ * \param[in]    count Number of 32-bit words to read from the FIFO.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxQspi_read32(Ifx_QSPI *qspi, uint32 *data, Ifx_SizeT count);
 
-/** \brief Reads 8bit data from the Rx FIFO
- * \param qspi Pointer to QSPI module registers
- * \param data Received data will be copied into this array
- * \param count Number of items to be received
- * \return None
+/**
+ * \brief Reads 8-bit data from the QSPI receive FIFO into the provided data buffer.
+ *
+ * \param[in]    qspi  Pointer to the QSPI module registers.
+ * \param[inout] data  Pointer to the array where the received data will be stored.
+ *                     The array must be large enough to hold "count" bytes. Range: 0 to 0xFF.
+ * \param[in]    count Number of 8-bit data items to read from the FIFO.
+ *                     This value should be at least 1 and not exceed the FIFO size.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxQspi_read8(Ifx_QSPI *qspi, uint8 *data, Ifx_SizeT count);
 
-/** \brief resets QSPI kernel
- * \param qspi pointer to QSPI registers
- * \return None
+/**
+ * \brief Resets the QSPI module to its initial state.
+ *
+ * \param[inout] qspi Pointer to the QSPI registers.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_resetModule(Ifx_QSPI *qspi);
 
-/** \brief Writes 16bit data into the Tx FIFO
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param data Array of data to be sent
- * \param count Number of items to be sent
- * \return None
+/**
+ * \brief Writes 16-bit data into the Tx FIFO
+ *
+ * \param[in] qspi      Pointer to QSPI module registers.
+ * \param[in] channelId Channel number to which eCON belongs. Range: \ref IfxQspi_ChannelId.
+ * \param[in] data      Array of 16-bit data to be sent. Must not be NULL. Range: 0 to 0xFFFF.
+ * \param[in] count     Number of 16-bit data items to be sent. Must be a non-negative value.
+ * 
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_write16(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint16 *data, Ifx_SizeT count);
 
-/** \brief Writes 32bit data into the Tx FIFO
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param data Array of data to be sent
- * \param count Number of items to be sent
- * \return None
+/**
+ * \brief Writes 32-bit data into the Tx FIFO for a specified QSPI channel.
+ *
+ * \param[in] qspi      Pointer to the QSPI module registers.
+ * \param[in] channelId Channel number to which the write operation belongs. Range: \ref IfxQspi_ChannelId.
+ * \param[in] data      Pointer to the array of 32-bit data to be sent. Range: 0 to 0xFFFF FFFF.
+ * \param[in] count     Number of 32-bit items to be sent. Must be greater than or equal to 0.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_write32(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint32 *data, Ifx_SizeT count);
 
-/** \brief Writes 8bit data into the Tx FIFO
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param data Array of data to be sent
- * \param count Number of items to be sent
- * \return None
+/**
+ * \brief Writes 8-bit data into the Tx FIFO.
+ *
+ * \param[in] qspi      Pointer to the QSPI module registers.
+ * \param[in] channelId The channel number to which the data should be written. Range: \ref IfxQspi_ChannelId.
+ * \param[in] data      Pointer to the array of uint8 data to be sent. Range: 0 to 0xFF.
+ * \param[in] count     Number of uint8 items to be written to the FIFO.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_write8(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint8 *data, Ifx_SizeT count);
 
@@ -752,107 +906,173 @@ IFX_EXTERN void IfxQspi_write8(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Gets the current mode of QSPI
- * \param qspi Pointer to QSPI module registers
- * \return The current mode
+/**
+ * \brief Retrieves the current operational mode of the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval The current mode of the QSPI module. Range: \ref IfxQspi_Mode.
+ * 
  */
 IFX_INLINE IfxQspi_Mode IfxQspi_getMode(Ifx_QSPI *qspi);
 
-/** \brief Specifies function to get module frequency
- * \param qspi Pointer to QSPI module registers
- * \return Module frequency in Float value
+/**
+ * \brief Retrieves the current frequency of the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval float The module frequency in Hz.
+ * 
  */
 IFX_INLINE float IfxQspi_getModuleFrequency(Ifx_QSPI *qspi);
 
-/** \brief Gets actual transmission phase
- * \param qspi Pointer to QSPI module registers
- * \return Actual transmission phase
+/**
+ * \brief Gets the actual transmission phase of the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval IfxQspi_Phase The current transmission phase. Range: \ref IfxQspi_Phase.
+ * 
  */
 IFX_INLINE IfxQspi_Phase IfxQspi_getPhase(Ifx_QSPI *qspi);
 
-/** \brief Gets the filling level of RXFIFO
- * \param qspi Pointer to QSPI module registers
- * \return RxFIFO level
+/**
+ * \brief Retrieves the current filling level of the Receive FIFO (RXFIFO).
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval uint8 The current fill level of the RXFIFO. Range: 0 to 4.
+ *
  */
 IFX_INLINE uint8 IfxQspi_getReceiveFifoLevel(Ifx_QSPI *qspi);
 
-/** \brief Gets Time Quanta frequency
- * \param qspi Pointer to QSPI module registers
- * \return TQ frequency in float
+/**
+ * \brief Gets the Time Quanta (TQ) frequency for the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval float The Time Quanta frequency in Hz.
+ *
  */
 IFX_INLINE float IfxQspi_getTimeQuantaFrequency(Ifx_QSPI *qspi);
 
-/** \brief Gets the filling level of TXFIFO
- * \param qspi Pointer to QSPI module registers
- * \return TxFIFO level
+/**
+ * \brief Gets the current filling level of the Transmit FIFO (TXFIFO).
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ * 
+ * \retval uint8 The current filling level of the TXFIFO. Range: 0 to 4.
+ * 
  */
 IFX_INLINE uint8 IfxQspi_getTransmitFifoLevel(Ifx_QSPI *qspi);
 
-/** \brief Specifies the Module enable or disable status
- * \param qspi Pointer to QSPI module registers
- * \return TRUE if module is enabled otherwise FALSE
+/**
+ * \brief Checks if the QSPI module is enabled or disabled.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval TRUE If the module is enabled.
+ *         FALSE If the module is disabled.
+ *
  */
 IFX_INLINE boolean IfxQspi_isModuleEnabled(Ifx_QSPI *qspi);
 
-/** \brief Sets the disable module request
- * \param qspi Pointer to QSPI module registers
- * \return None
+/**
+ * \brief Sets the disable module request for the QSPI module.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setDisableModuleRequest(Ifx_QSPI *qspi);
 
-/** \brief Sets the enable module request
- * \param qspi Pointer to QSPI module registers
- * \return None
+/**
+ * \brief Enables the module request for the specified QSPI instance.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_setEnableModuleRequest(Ifx_QSPI *qspi);
 
-/** \brief Sets the disable module request
- * \param qspi Pointer to QSPI module registers
- * \param mode Sleep mode selection
- * \return None
+/**
+ * \brief Sets the sensitivity of the QSPI module to the sleep signal.
+ * 
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ * \param[in]    mode Sleep mode selection. Range: \ref IfxQspi_SleepMode.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setSleepMode(Ifx_QSPI *qspi, IfxQspi_SleepMode mode);
 
-/** \brief Set the threshold of TXFIFO for service request generation
- * \param qspi Pointer to QSPI module registers
- * \param txFifoInt TxFifo Interrupt threshold to set
- * \return None
+/**
+ * \brief Configures the threshold level for the Transmit FIFO that triggers an interrupt when the FIFO reaches this level.
+ *
+ * \param[inout] qspi      Pointer to the QSPI module registers.
+ * \param[in]    txFifoInt TxFifo Interrupt threshold to set. This parameter specifies the threshold level for the Transmit FIFO.
+ *                         The threshold determines when an interrupt is generated based on the FIFO fill level. Range: \ref IfxQspi_TxFifoInt.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setTransmitFifoInterrruptThreshold(Ifx_QSPI *qspi, IfxQspi_TxFifoInt txFifoInt);
 
-/** \brief Write configuration into BACON register
- * \param qspi Pointer to QSPI module registers
- * \param baconVal baconVal Value to be entered in  BACON register
- * \return None
+/**
+ * \brief Writes a configuration value into the BACON register of the QSPI module.
+ *
+ * \param[inout] qspi     Pointer to the QSPI module registers.
+ * \param[in]    baconVal The 32-bit value to be written into the BACON register. Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_writeBasicConfiguration(Ifx_QSPI *qspi, uint32 baconVal);
 
-/** \brief Write configuration into BACON register with .LAST flag set to 0
- * \param qspi Pointer to QSPI module registers
- * \param baconVal baconVal Value to be entered in  BACON register
- * \return None
+/**
+ * \brief Writes the basic configuration into the BACON register with the .LAST flag set to 0.
+ *
+ * \param[inout] qspi     Pointer to the QSPI module registers.
+ * \param[in]    baconVal Value to be written into the BACON register. Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_writeBasicConfigurationBeginStream(Ifx_QSPI *qspi, uint32 baconVal);
 
-/** \brief Write configuration into BACON register with .LAST flag set to 1
- * \param qspi Pointer to QSPI module registers
- * \param baconVal baconVal Value to be entered in  BACON register
- * \return None
+/**
+ * \brief Writes the provided baconVal into the BACON register with the .LAST flag set to 1.
+ *
+ * \param[inout] qspi     Pointer to the QSPI module registers.
+ * \param[in]    baconVal The value to be written into the BACON register. Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_writeBasicConfigurationEndStream(Ifx_QSPI *qspi, uint32 baconVal);
 
-/** \brief Writes channel timing configuration into ECON register
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param econVal Extended configuration value
- * \return None
+/**
+ * \brief Writes the extended configuration value to the specified QSPI channel's ECON register.
+ *
+ * \param[inout] qspi      Pointer to the QSPI module registers.
+ * \param[in]    channelId QSPI channel number to configure. Range: \ref IfxQspi_ChannelId.
+ * \param[in]    econVal   Extended configuration value to write. Range: 0 to 0xC000 7FFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_writeExtendedConfiguration(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint32 econVal);
 
-/** \brief Writes Data and Configuration into MIXEDENTRY register
- * \param qspi Pointer to QSPI module registers
- * \param mixEntryVal Data and configuration in mixed
- * \return None
+/**
+ * \brief Writes data and configuration into the MIXEDENTRY register of the QSPI module.
+ *
+ * \param[inout] qspi        Pointer to the QSPI module registers.
+ * \param[in]    mixEntryVal Data and configuration combined in a single mixed entry value. Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_writeMixedDataTransmitFifo(Ifx_QSPI *qspi, uint32 mixEntryVal);
 
@@ -860,80 +1080,123 @@ IFX_INLINE void IfxQspi_writeMixedDataTransmitFifo(Ifx_QSPI *qspi, uint32 mixEnt
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to calculate baudrate of specified channel
- * \param qspi Pointer to QSPI module registers
- * \param channelId QSPI channel number
- * \return Actual baudrate in float
+/**
+ * \brief Calculates the actual baudrate for the specified QSPI channel.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ * \param[in] channelId Identifier of the QSPI channel. Range: \ref IfxQspi_ChannelId.
+ *
+ * \retval float The actual baudrate in float.
+ *
  */
 IFX_EXTERN float IfxQspi_calcRealBaudrate(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId);
 
-/** \brief Function to calculate BACON register values
- * \param qspi Pointer to QSPI module registers
- * \param channelId QSPI Channel Number
- * \param chMode Frame configuration
- * \param baudrate The desired baudrate
- * \return Calculated BACON value
+/**
+ * \brief Function to calculate BACON register values
+ *
+ * \param[in] qspi Pointer to QSPI module registers.
+ * \param[in] channelId QSPI Channel Number. Range: \ref IfxQspi_ChannelId.
+ * \param[in] chMode Pointer to the channel mode configuration structure defining the operating mode of the QSPI channel.
+ * \param[in] baudrate Desired baudrate for the QSPI communication.
+ *
+ * \retval uint32 Calculated BACON value. Range: 0 to 0xFFFF FFFF.
+ *
  */
 IFX_EXTERN uint32 IfxQspi_calculateBasicConfigurationValue(Ifx_QSPI *qspi, const IfxQspi_ChannelId channelId, const IfxQspi_chMode *chMode, const float baudrate);
 
-/** \brief Function to calculate ECON register values
- * \param qspi Pointer to QSPI module registers
- * \param cs QSPI channel Number : 8->0,9->1,.......
- * \param chConfig SPI Channel Configuration
- * \return Calculated ECON[CS] value
+/**
+ * \brief Calculates the extended configuration value for the QSPI channel's ECON register.
+ *
+ * \param[in] qspi     Pointer to the QSPI module registers.
+ * \param[in] cs       QSPI channel Number : 8->0,9->1,....... Range: 0 to 0xFF.
+ * \param[in] chConfig Pointer to the SPI channel configuration structure containing baudrate, mode, error checks, and channel ID.
+ *
+ * \retval uint32 The calculated ECON[CS] value for the specified channel. Range: 0 to 0xC000 7FFF.
+ *
  */
 IFX_EXTERN uint32 IfxQspi_calculateExtendedConfigurationValue(Ifx_QSPI *qspi, const uint8 cs, const IfxQspi_chConfig *chConfig);
 
-/** \brief Function to calculate prescaler
- * \param qspi Pointer to QSPI module registers
- * \param baudrate Maximum baudrate in Float
- * \return Prescaler in integer
+/**
+ * \brief Calculates the prescaler value for the QSPI module based on the specified baudrate.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ * \param[in] baudrate Maximum baudrate in Hz.
+ *
+ * \retval uint32 Prescaler value. Range: 0 to 7.
+ * 
  */
 IFX_EXTERN uint32 IfxQspi_calculatePrescaler(Ifx_QSPI *qspi, float baudrate);
 
-/** \brief Specifies the function to calculate Time quantum length
- * \param qspi Pointer to QSPI module registers
- * \param maxBaudrate Maximum baudrate in Float
- * \return Time quantum length in integer
+/**
+ * \brief Calculates the time quantum length for the QSPI module based on the maximum baudrate.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ * \param[in] maxBaudrate The maximum baudrate value in Hz (float) that the QSPI module is configured to operate at.
+ *
+ * \retval uint32 The calculated time quantum length in clock cycles. Range: 0 to 0xFFFF FFFF.
+ * 
  */
 IFX_EXTERN uint32 IfxQspi_calculateTimeQuantumLength(Ifx_QSPI *qspi, float maxBaudrate);
 
-/** \brief
- * \param qspi Pointer to QSPI module registers
- * \return QSPI module register address
+/**
+ * \brief Retrieves the base address of the QSPI module registers.
+ *
+ * \param[in] qspi The index of the QSPI module. Range: \ref IfxQspi_Index.
+ *
+ * \retval Ifx_QSPI* Pointer to the base address of the QSPI module registers.
+ * 
  */
 IFX_EXTERN Ifx_QSPI *IfxQspi_getAddress(IfxQspi_Index qspi);
 
-/** \brief Specifies the function to get Index
- * \param qspi Pointer to QSPI module registers
- * \return Index in Integer
+/**
+ * \brief Retrieves the current index of the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval IfxQspi_Index The current index value of the QSPI module. Range: \ref IfxQspi_Index.
+ *
  */
 IFX_EXTERN IfxQspi_Index IfxQspi_getIndex(Ifx_QSPI *qspi);
 
-/** \brief Re-calculated BACON from the oldBACON
- * \param oldBACON Old BACON value
- * \param numOfData numOfData in LONG or CONTINUOUS mode
- * \param shortData Specifies SHORT mode (TRUE) or other modes (FALSE)
- * \param lastData Specifies last data in LONG or CONTINUOUS
- * \return Re-calculated BACON
+/** \brief Re-calculated BACON from the oldBACON.
+ *
+ * \param[in] oldBACON  Old BACON value.Range: 0 to 0xFFFF FFFF.
+ * \param[in] numOfData numOfData in LONG or CONTINUOUS mode.
+ * \param[in] shortData Specifies SHORT mode (TRUE) or other modes (FALSE).
+ * \param[in] lastData  Specifies last data in LONG or CONTINUOUS.
+ *
+ * \retval uint32 Re-calculated BACON value. Range: 0 to 0xFFFF FFFF.
+ *
  */
 IFX_EXTERN uint32 IfxQspi_recalcBasicConfiguration(uint32 oldBACON, Ifx_SizeT numOfData, boolean shortData, boolean lastData);
 
-/** \brief Configures a Slave Select Output
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param outputEnable chip select output will be enabled during transaction
- * \param activeLevel TRUE: active-high, FALSE: active-low
- * \return None
+/**
+ * \brief Configures the Slave Select Output control for a specified QSPI channel.
+ * 
+ * \param[inout] qspi         Pointer to the QSPI module registers.
+ * \param[in]    channelId    QSPI channel identifier. Range: \ref IfxQspi_ChannelId.
+ * \param[in]    outputEnable Boolean flag to enable the chip select output during transactions.
+ * \param[in]    activeLevel  Boolean flag to set the active level of the Slave Select signal.
+ *                            - TRUE: Active-high (Slave Select is asserted high).
+ *                            - FALSE: Active-low (Slave Select is asserted low).
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_setSlaveSelectOutputControl(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, boolean outputEnable, boolean activeLevel);
 
-/** \brief Calculates the Delay constants (pre and delay) from the user specified CS delays.
- * \param qspi pointer to QSPI SFR
- * \param channelId Channel ID no.
- * \param chMode Pointer to Channel Mode
- * \param delayConst Pointer to the Delay Consant Array
- * \return None
+/**
+ * \brief Calculates the delay constants (pre and delay) from the user-specified CS delays.
+ *
+ * \param[in]    qspi       Pointer to the QSPI module registers.
+ * \param[in]    channelId  QSPI channel identifier. Range: \ref IfxQspi_ChannelId.
+ * \param[in]    chMode     Pointer to the channel mode configuration structure, containing
+ *                          settings like CS delays, enable status, and other channel-specific configurations.
+ * \param[inout] delayConst Pointer to the structure where the calculated delay constants
+ *                          (pre and delay values) will be stored.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxQspi_calculateDelayConstants(const Ifx_QSPI *qspi, const IfxQspi_ChannelId channelId, const IfxQspi_chMode *chMode, IfxQspi_DelayConst *delayConst);
 
@@ -946,31 +1209,55 @@ IFX_EXTERN void IfxQspi_calculateDelayConstants(const Ifx_QSPI *qspi, const IfxQ
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 #if defined(DEVICE_TC33XED) || defined(DEVICE_TC33X) || defined(DEVICE_TC35X) || defined(DEVICE_TC39XB)
-/** \brief Api to enable/disable CAPCON interrupt
- * \param qspi Pointer to QSPI module registers
- * \param enable Enable Interrupt
- * \return None
+
+/** \brief Api to enable/disable CAPCON interrupt.
+ *
+ * \param[inout] qspi   Pointer to the QSPI module registers.
+ * \param[in]    enable Enable Interrupt.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_enableCapconInterrupt(Ifx_QSPI *qspi, boolean enable);
 #endif
 
-/** \brief Gets the Error request value
- * \param qspi Pointer to QSPI module registers
- * \return Error request value
+/**
+ * \brief Retrieves the error source register for the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval  Ifx_SRC_SRCR* Pointer to the error source register containing error flags.
+ * 
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxQspi_getErrorSrc(Ifx_QSPI *qspi);
 
-/** \brief Gets the RXFIFO service request
- * \param qspi Pointer to QSPI module registers
- * \return Receive service request value
+/**
+ * \brief Retrieves the service request configuration register for the receive FIFO of the QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ * 
+ * \retval Ifx_SRC_SRCR* pointer to the SRCR register of the receive FIFO.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxQspi_getReceiveSrc(Ifx_QSPI *qspi);
 
-/** \brief Gets the TXFIFO service request
- * \param qspi Pointer to QSPI module registers
- * \return Transmission service request value
+/**
+ * \brief Retrieves the transmission service request configuration for the TXFIFO.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval  Ifx_SRC_SRCR* Pointer to the transmission service request configuration register.
+ * 
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxQspi_getTransmitSrc(Ifx_QSPI *qspi);
+
+/** \brief Gets the Phase Transition service request
+ *
+ * \param[in] qspi Pointer to QSPI module registers
+ *
+ * \retval Phase Transition service request value
+ */
+IFX_INLINE volatile Ifx_SRC_SRCR *IfxQspi_getPhaseTransitionSrc(Ifx_QSPI *qspi);
 
 /** \} */
 
@@ -981,64 +1268,99 @@ IFX_INLINE volatile Ifx_SRC_SRCR *IfxQspi_getTransmitSrc(Ifx_QSPI *qspi);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initializes a MRST input
- * \param mrstIn the MRST Pin which should be configured
- * \param mrstInMode the pin input mode which should be configured
- * \return None
+/**
+ * \brief Initializes a MRST input pin for QSPI communication.
+ *
+ * \param[in] mrstIn     Pointer to the MRST input pin configuration structure.
+ * \param[in] mrstInMode Input mode to be configured for the MRST pin (e.g., pull-up, pull-down, etc.). Range: \ref IfxPort_InputMode.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_initMrstInPin(const IfxQspi_Mrst_In *mrstIn, IfxPort_InputMode mrstInMode);
 
-/** \brief Initializes a MRST output
- * \param mrstOut the MRST Pin which should be configured
- * \param mrstOutMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a MRST output pin configuration.
+ *
+ * \param[in] mrstOut     Pointer to the MRST output pin configuration structure to be initialized.
+ * \param[in] mrstOutMode The output mode to be configured for the MRST pin (e.g., push-pull, open-drain). Range: \ref IfxPort_OutputMode.
+ * \param[in] padDriver   The pad driver mode to be configured for the MRST pin (e.g., normal, high-speed). Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_initMrstOutPin(const IfxQspi_Mrst_Out *mrstOut, IfxPort_OutputMode mrstOutMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a MTSR input
- * \param mtsrIn the MTSR Pin which should be configured
- * \param mtsrInMode the pin input mode which should be configured
- * \return None
+/**
+ * \brief Initializes a MTSR input pin with a specified input mode.
+ *
+ * \param[in] mtsrIn     The MTSR input pin to be configured. This is a pointer to a constant
+ *                       IfxQspi_Mtsr_In struct that contains the pin configuration details.
+ * \param[in] mtsrInMode The input mode to be set for the MTSR pin. Range: \ref IfxPort_InputMode.
+ *
+ * \retval None 
+ *
  */
 IFX_INLINE void IfxQspi_initMtsrInPin(const IfxQspi_Mtsr_In *mtsrIn, IfxPort_InputMode mtsrInMode);
 
-/** \brief Initializes a MTSR output
- * \param mtsrOut the MTSR Pin which should be configured
- * \param mtsrOutMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a MTSR output pin with the specified output mode and pad driver settings.
+ *
+ * \param[in] mtsrOut     Pointer to the MTSR pin configuration to be initialized.
+ * \param[in] mtsrOutMode The output mode to be configured for the MTSR pin. This is typically an enumeration
+ *                        of predefined output modes (e.g., push-pull, open-drain, etc.). Range: \ref IfxPort_OutputMode.
+ * \param[in] padDriver   The pad driver mode to be configured for the MTSR pin. This is typically an enumeration
+ *                        of predefined pad driver settings (e.g., normal, high-speed, etc.). Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_initMtsrOutPin(const IfxQspi_Mtsr_Out *mtsrOut, IfxPort_OutputMode mtsrOutMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a SCLK input
- * \param sclkIn the SCLK Pin which should be configured
- * \param sclkInMode the pin input mode which should be configured
- * \return None
+/**
+ * \brief Initializes a SCLK input pin with the specified input mode.
+ *
+ * \param[in] sclkIn     The SCLK input pin to be configured. Must be a valid pointer to an IfxQspi_Sclk_In structure.
+ * \param[in] sclkInMode The input mode to be set for the SCLK pin. Must be of type IfxPort_InputMode. Range: \ref IfxPort_InputMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_initSclkInPin(const IfxQspi_Sclk_In *sclkIn, IfxPort_InputMode sclkInMode);
 
-/** \brief Initializes a SCLK output
- * \param sclkOut the SCLK Pin which should be configured
- * \param sclkOutMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a SCLK output pin with the specified configuration.
+ *
+ * \param[in] sclkOut     Pointer to the SCLK pin configuration structure to be initialized.
+ * \param[in] sclkOutMode The output mode to be configured for the SCLK pin (e.g., push-pull, open-drain). Range: \ref IfxPort_OutputMode.
+ * \param[in] padDriver   The pad driver mode to be configured for the SCLK pin (e.g., normal, high-speed). Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_initSclkOutPin(const IfxQspi_Sclk_Out *sclkOut, IfxPort_OutputMode sclkOutMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a SLSI input
- * \param slsi the SLSI Pin which should be configured
- * \param slsiMode the pin input mode which should be configured
- * \return None
+/**
+ * \brief Initializes a SLSI input pin configuration.
+ *
+ * \param[in] slsi     Pointer to the SLSI pin configuration structure to be initialized.
+ * \param[in] slsiMode The input mode to be configured for the SLSI pin. Range: \ref IfxPort_InputMode.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_initSlsi(const IfxQspi_Slsi_In *slsi, IfxPort_InputMode slsiMode);
 
-/** \brief Initializes a SLSO output
- * \param slso the SLSO Pin which should be configured
- * \param slsoMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \param outIndex Pin Pad driver index
- * \return None
+/**
+ * \brief Initializes a SLSO (Slow Speed Output) pin configuration for QSPI operations.
+ *
+ * \param[in] slso      A pointer to the SLSO pin configuration structure to be initialized.
+ * \param[in] slsoMode  The output mode to be configured for the SLSO pin. This is typically an enumeration defining the pin's output behavior. Range: \ref IfxPort_OutputMode.
+ * \param[in] padDriver The pad driver mode to be configured for the SLSO pin. This is typically an enumeration specifying the pin's driving strength or slew rate. Range: \ref IfxPort_PadDriver.
+ * \param[in] outIndex  The index of the pad driver configuration. Range: \ref IfxPort_OutputIdx.
+ *
+ * \retval None 
+ *
  */
 IFX_INLINE void IfxQspi_initSlso(const IfxQspi_Slso_Out *slso, IfxPort_OutputMode slsoMode, IfxPort_PadDriver padDriver, IfxPort_OutputIdx outIndex);
 
@@ -1048,110 +1370,225 @@ IFX_INLINE void IfxQspi_initSlso(const IfxQspi_Slso_Out *slso, IfxPort_OutputMod
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Get the Receive FIFO mode
- * \param qspi Pointer to QSPI module registers
- * \return Receive FIFO mode
+/**
+ * \brief Retrieves the current operating mode of the Receive FIFO for the specified QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval The current Receive FIFO mode.
+ *
  */
 IFX_INLINE IfxQspi_FifoMode IfxQspi_getRxFifoMode(Ifx_QSPI *qspi);
 
-/** \brief Get the Transfer FIFO mode
- * \param qspi Pointer to QSPI module registers
- * \return Transfer FIFO mode
+/**
+ * \brief Retrieves the current mode of the Transfer FIFO for the specified QSPI module.
+ *
+ * \param[in] qspi Pointer to the QSPI module registers.
+ *
+ * \retval The current mode of the Transfer FIFO. Range: \ref IfxQspi_FifoMode.
+ *
  */
 IFX_INLINE IfxQspi_FifoMode IfxQspi_getTxFifoMode(Ifx_QSPI *qspi);
 
-/** \brief Permutate bytes to / from Big Endian
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param bigEndian specifies to Permutate bytes to / from Big Endian
- * \return None
+/**
+ * \brief Permutates bytes to or from Big Endian format for the specified QSPI channel.
+ *
+ * \param[inout] qspi      Pointer to QSPI module registers.
+ * \param[in]    channelId QSPI channel number to configure. Range: \ref IfxQspi_ChannelId.
+ * \param[in]    bigEndian Specifies the byte order. A value of 0 configures for Little Endian,
+ *                         while any non-zero value configures for Big Endian. Range: 0 to 3.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_permutateBigEndian(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint8 bigEndian);
 
-/** \brief Set the value of bit segment1 (A).
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param bitSegment1 Length expressed in time quantums of ECONz.Q.
- * \return None
+/**
+ * \brief Sets the value of bit segment1 (A) for the specified QSPI channel.
+ *
+ * \param[inout] qspi     Pointer to QSPI module registers.
+ * \param[in] channelId   QSPI channel number (BACON.CS). Range: \ref IfxQspi_ChannelId.
+ * \param[in] bitSegment1 Length expressed in time quantums of ECONz.Q. Range: 0 to 3.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_setBitsegment1(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint8 bitSegment1);
 
-/** \brief Set the value of bit segment2 (B).
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param bitSegment2 Length expressed in time quantums of ECONz.Q.
- * \return None
+/**
+ * \brief Sets the value of bit segment2 (B) for the specified QSPI channel.
+ * 
+ * \param[inout] qspi        Pointer to the QSPI module registers.
+ * \param[in]    channelId   QSPI channel number. Range: \ref IfxQspi_ChannelId.
+ * \param[in]    bitSegment2 Length of bit segment2 in time quanta. Range: 0 to 3.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setBitsegment2(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint8 bitSegment2);
 
-/** \brief Set the value of bit segment3 (C).
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param bitSegment3 Length expressed in time quantums of ECONz.Q.
- * \return None
+/**
+ * \brief Sets the value of bit segment3 (C) for the specified QSPI channel.
+ * 
+ * \param[inout] qspi        Pointer to QSPI module registers.
+ * \param[in]    channelId   Channel number to which the ECON value belongs. Range: \ref IfxQspi_ChannelId.
+ * \param[in]    bitSegment3 Length expressed in time quantums of ECONz.Q. Range: 0 to 3.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setBitsegment3(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint8 bitSegment3);
 
 /**
- * \param qspi Pointer to QSPI module registers
- * \param mode select the transfer fifo mode
- * \return None
+ * \brief Configures the receive FIFO mode for the specified QSPI module.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ * \param[in]    mode The desired FIFO mode for the receive operation. Range: \ref IfxQspi_FifoMode.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setRxFifoMode(Ifx_QSPI *qspi, IfxQspi_FifoMode mode);
 
-/** \brief Set the value of Time Quantum.
- * \param qspi Pointer to QSPI module registers
- * \param channelId Channel number to which econ val belongs
- * \param timeQuantum specifies the value of Time Quantum.
- * \return None
+/**
+ * \brief Sets the Time Quantum value for a specified QSPI channel.
+ *
+ * \param[inout] qspi        Pointer to the QSPI module registers.
+ * \param[in]    channelId   Channel number to which econ val belongs. Range: \ref IfxQspi_ChannelId.
+ * \param[in]    timeQuantum Specifies the Time Quantum value. Range: 0 to 63.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setTimeQuantum(Ifx_QSPI *qspi, IfxQspi_ChannelId channelId, uint32 timeQuantum);
 
-/** \brief Set the transfer FIFO mode
- * \param qspi Pointer to QSPI module registers
- * \param mode select the transfer fifo mode
- * \return None
+/**
+ * \brief Configures the transmit FIFO mode for the QSPI module.
+ *
+ * \param[inout] qspi Pointer to the QSPI module registers.
+ * \param[in]    mode Selects the transmit FIFO mode to be configured.  Range: \ref IfxQspi_FifoMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_setTxFifoMode(Ifx_QSPI *qspi, IfxQspi_FifoMode mode);
 
-/** \brief Provides functionality for both setting of MRSTIN pin direction as input and configuring pad driver
- * \param mrstIn the MRST Pin which should be configured
- * \param mrstInMode the pin input mode which should be configured
- * \param padDriver Pad Driver
- * \return None
+/**
+ * \brief Provides functionality for both setting of MRSTIN pin direction as input and configuring pad driver
+ *
+ * \param[in] mrstIn     Pointer to the MRSTIN pin configuration to be initialized.
+ * \param[in] mrstInMode The input mode to be configured for the MRSTIN pin. Range: \ref IfxPort_InputMode.
+ * \param[in] padDriver  The pad driver strength to be configured. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_initMrstInPinWithPadLevel(const IfxQspi_Mrst_In *mrstIn, IfxPort_InputMode mrstInMode, IfxPort_PadDriver padDriver);
 
-/** \brief Provides functionality for both setting of MTSRIN pin direction as input and configuring pad driver
- * \param mtsrIn the MTSR Pin which should be configured
- * \param mtsrInMode the pin input mode which should be configured
- * \param padDriver Pad Driver
- * \return None
+/**
+ * \brief Initializes the MTSRIN pin as an input and configures the pad driver for QSPI communication.
+ *
+ * \param[in] mtsrIn     Pointer to the MTSRIN pin configuration structure.
+ * \param[in] mtsrInMode The input mode to be set for the MTSRIN pin. Range: \ref IfxPort_InputMode.
+ * \param[in] padDriver  The pad driver configuration. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_initMtsrInPinWithPadLevel(const IfxQspi_Mtsr_In *mtsrIn, IfxPort_InputMode mtsrInMode, IfxPort_PadDriver padDriver);
 
-/** \brief Provides functionality for both setting of SCLKIN pin direction as input and configuring pad driver
- * \param sclkIn the SCLK Pin which should be configured
- * \param sclkInMode the pin input mode which should be configured
- * \param padDriver Pad Driver
- * \return None
+/**
+ * \brief Initializes the SCLKIN pin as an input with the specified pad driver configuration.
+ *
+ * \param[in] sclkIn     Pointer to the SCLKIN pin to be configured.
+ * \param[in] sclkInMode The input mode to be set for the SCLKIN pin. Range: \ref IfxPort_InputMode.
+ * \param[in] padDriver  The pad driver configuration to be applied. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_initSclkInPinWithPadLevel(const IfxQspi_Sclk_In *sclkIn, IfxPort_InputMode sclkInMode, IfxPort_PadDriver padDriver);
 
-/** \brief Provides functionality for both setting of SLSI pin direction as input and configuring pad driver
- * \param slsi the SLSI Pin which should be configured
- * \param slsiMode the pin input mode which should be configured
- * \param padDriver Pad Driver
- * \return None
+/**
+ * \brief Initializes the SLSI pin as an input with the specified mode and pad driver configuration.
+ *
+ * \param[in] slsi      The SLSI pin to be configured. This is a pointer to a constant IfxQspi_Slsi_In struct.
+ * \param[in] slsiMode  The input mode to be configured for the SLSI pin. Range: \ref IfxPort_InputMode.
+ * \param[in] padDriver The pad driver configuration to be applied.  Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_initSlsiWithPadLevel(const IfxQspi_Slsi_In *slsi, IfxPort_InputMode slsiMode, IfxPort_PadDriver padDriver);
 
-/** \brief Write delay parameters into BACON register. Recommended to use the interface API IfxQspi_SpiMaster_updateDelayParameters, which will update both handle and sfr.
- * \param qspi Pointer to QSPI module registers
- * \param config delay values to be entered into BACON register
- * \return None
+
+/**
+ * \brief Writes delay parameters into the BACON register for QSPI module configuration.
+ * 
+ * \param[inout] qspi   Pointer to QSPI module registers.
+ * \param[in]    config Structure containing delay parameters:
+ *                      - Idle, leading, and trailing delay configurations
+ *                      - Each delay type includes a prescalar and length value
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxQspi_setBaconDelayParameters(Ifx_QSPI *qspi, IfxQspi_DelayParameters *config);
+
+/** \brief Provides functionality for both setting of MRST_OUT pin direction as Output and configuring LVDS pad driver
+ * \param[in] mrstOut pointer to MRST output pin configuration
+ * \param[in] mrstOutMode MRST mode
+ * \param[in] padDriver PAD driver
+ * \param[inout] mrstOutLvdsCfg Pointer to MRST LVDS configuration
+ * \retval None
+ */
+IFX_INLINE void IfxQspi_initMrstOutLvdsPin(const IfxQspi_Mrst_Out *mrstOut, IfxPort_OutputMode mrstOutMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *mrstOutLvdsCfg);
+
+/** \brief Provides functionality for both setting of MTSR_OUT pin direction as Output and configuring LVDS pad driver
+ * \param[in] mtsrOut pointer to MTSR output pin configuration
+ * \param[in] mtsrOutMode MTSR mode
+ * \param[in] padDriver PAD driver
+ * \param[inout] mtsrOutLvdsCfg Pointer to MTSR LVDS configuration
+ * \retval None
+ */
+IFX_INLINE void IfxQspi_initMtsrOutLvdsPin(const IfxQspi_Mtsr_Out *mtsrOut, IfxPort_OutputMode mtsrOutMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *mtsrOutLvdsCfg);
+
+/** \brief Provides functionality for both setting of SCLK_OUT pin direction as Output and configuring LVDS pad driver
+ * \param[in] sclkOut pointer to SCLK output pin configuration
+ * \param[in] sclkOutMode SCLK Mode
+ * \param[in] padDriver Pad driver
+ * \param[inout] sclkOutLvdsCfg Pointer to SCLK output LVDS configuration
+ * \retval None
+ */
+IFX_INLINE void IfxQspi_initSclkOutLvdsPin(const IfxQspi_Sclk_Out *sclkOut, IfxPort_OutputMode sclkOutMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *sclkOutLvdsCfg);
+
+/** \brief Provides functionality for both setting of MRST_IN pin direction as Output and configuring LVDS pad driver
+ * \param[in] mrstIn pointer to MRST input pin configuration
+ * \param[in] mrstInMode MRST pin input mode selection
+ * \param[in] padDriver MRTS input pin pad driver selection
+ * \param[inout] mrstInLvdsCfg Pointer to MRST input LVDS configuration
+ * \retval None
+ */
+IFX_INLINE void IfxQspi_initMrstInLvdsPinWithPadLevel(const IfxQspi_Mrst_In *mrstIn, IfxPort_InputMode mrstInMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *mrstInLvdsCfg);
+
+
+/** \brief Provides functionality for both setting of MTSR_OUT pin direction as Output and configuring LVDS pad driver
+ * \param[in] mtsrIn pointer to MTSR input pin configuration
+ * \param[in] mtsrInMode MTSR pin input mode selection
+ * \param[in] padDriver MTSR input pin pad driver selection
+ * \param[inout] mtsrInLvdsCfg Pointer to MTSR input LVDS configuration
+ * \retval None
+ */
+IFX_INLINE void IfxQspi_initMtsrInLvdsPinWithPadLevel(const IfxQspi_Mtsr_In *mtsrIn, IfxPort_InputMode mtsrInMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *mtsrInLvdsCfg);
+
+/** \brief Provides functionality for both setting of MTSR_OUT pin direction as Output and configuring LVDS pad driver
+ * \param[in] sclkIn pointer to SCLK input pin configuration
+ * \param[in] sclkInMode SCLK pin input mode selection
+ * \param[in] padDriver SCLK input pin pad driver selection
+ * \param[inout] sclkInLvdsCfg Pointer to SCLK input LVDS configuration
+ * \retval None
+ */
+IFX_INLINE void IfxQspi_initSclkInLvdsPinWithPadLevel(const IfxQspi_Sclk_In *sclkIn, IfxPort_InputMode sclkInMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *sclkInLvdsCfg);
 
 /******************************************************************************/
 /*---------------------Inline Function Implementations------------------------*/
@@ -1203,7 +1640,7 @@ IFX_INLINE void IfxQspi_configureCapcon(Ifx_QSPI *qspi, IfxQspi_CaptureControlIn
 {
     qspi->CAPCON.B.INS     = inputSel;
     qspi->CAPCON.B.EDGECON = edgeConfiguration;
-    qspi->CAPCON.B.CAPSEL  = 1;     // capture-irq on HC-irq
+    qspi->CAPCON.B.CAPSEL  = 1;     /* Capture-irq on HC-irq */
     qspi->CAPCON.B.CAPC    = 0;
 }
 
@@ -1314,6 +1751,12 @@ IFX_INLINE volatile Ifx_SRC_SRCR *IfxQspi_getTransmitSrc(Ifx_QSPI *qspi)
 IFX_INLINE IfxQspi_FifoMode IfxQspi_getTxFifoMode(Ifx_QSPI *qspi)
 {
     return (IfxQspi_FifoMode)qspi->GLOBALCON1.B.TXFM;
+}
+
+IFX_INLINE volatile Ifx_SRC_SRCR *IfxQspi_getPhaseTransitionSrc(Ifx_QSPI *qspi)
+{
+	uint32 index = IfxQspi_getIndex(qspi);
+	return &MODULE_SRC.QSPI.QSPI[index].PT;
 }
 
 
@@ -1569,10 +2012,10 @@ IFX_INLINE boolean IfxQspi_isModuleSuspended(Ifx_QSPI *qspi)
 {
     Ifx_QSPI_OCS ocs;
 
-    // read the status
+    /* Read the status */
     ocs.U = qspi->OCS.U;
 
-    // return the status
+    /* Return the status */
     return ocs.B.SUSSTA;
 }
 
@@ -1581,7 +2024,7 @@ IFX_INLINE void IfxQspi_setSuspendMode(Ifx_QSPI *qspi, IfxQspi_SuspendMode mode)
 {
     Ifx_QSPI_OCS ocs;
 
-    // remove protection and configure the suspend mode.
+    /* Remove protection and configure the suspend mode. */
     ocs.B.SUS_P = 1;
     ocs.B.SUS   = mode;
     qspi->OCS.U = ocs.U;
@@ -1635,5 +2078,54 @@ IFX_INLINE void IfxQspi_setBaconDelayParameters(Ifx_QSPI *qspi, IfxQspi_DelayPar
     qspi->BACONENTRY.U = bacon.U;
 }
 
+IFX_INLINE void IfxQspi_initMrstOutLvdsPin(const IfxQspi_Mrst_Out *mrstOut, IfxPort_OutputMode mrstOutMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *mrstOutLvdsCfg)
+{
+    IfxPort_setPinModeOutput(mrstOut->pin.port, mrstOut->pin.pinIndex, mrstOutMode, mrstOut->select);
+    IfxPort_setPinPadDriver(mrstOut->pin.port, mrstOut->pin.pinIndex, padDriver);
+    IfxPort_setPinModeLVDS(mrstOut->pin.port, mrstOut->pin.pinIndex, (IfxPort_Mode)(mrstOut->select | mrstOutMode), mrstOutLvdsCfg);
+}
+
+
+IFX_INLINE void IfxQspi_initMtsrOutLvdsPin(const IfxQspi_Mtsr_Out *mtsrOut, IfxPort_OutputMode mtsrOutMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *mtsrOutLvdsCfg)
+{
+    IfxPort_setPinModeOutput(mtsrOut->pin.port, mtsrOut->pin.pinIndex, mtsrOutMode, mtsrOut->select);
+    IfxPort_setPinPadDriver(mtsrOut->pin.port, mtsrOut->pin.pinIndex, padDriver);
+    IfxPort_setPinModeLVDS(mtsrOut->pin.port, mtsrOut->pin.pinIndex, IfxPort_Mode_inputNoPullDevice, mtsrOutLvdsCfg);
+}
+
+
+IFX_INLINE void IfxQspi_initSclkOutLvdsPin(const IfxQspi_Sclk_Out *sclkOut, IfxPort_OutputMode sclkOutMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *sclkOutLvdsCfg)
+{
+    IfxPort_setPinModeOutput(sclkOut->pin.port, sclkOut->pin.pinIndex, sclkOutMode, sclkOut->select);
+    IfxPort_setPinPadDriver(sclkOut->pin.port, sclkOut->pin.pinIndex, padDriver);
+    IfxPort_setPinModeLVDS(sclkOut->pin.port, sclkOut->pin.pinIndex, (IfxPort_Mode)(sclkOut->select | sclkOutMode), sclkOutLvdsCfg);
+}
+
+
+IFX_INLINE void IfxQspi_initMrstInLvdsPinWithPadLevel(const IfxQspi_Mrst_In *mrstIn, IfxPort_InputMode mrstInMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *mrstInLvdsCfg)
+{
+    IfxPort_setPinModeInput(mrstIn->pin.port, mrstIn->pin.pinIndex, mrstInMode);
+    IfxPort_setPinPadDriver(mrstIn->pin.port, mrstIn->pin.pinIndex, padDriver);
+    IfxPort_setPinModeLVDS(mrstIn->pin.port, mrstIn->pin.pinIndex, (IfxPort_Mode)(mrstIn->select | mrstInMode), mrstInLvdsCfg);
+    mrstIn->module->PISEL.B.MRIS = mrstIn->select;
+}
+
+
+IFX_INLINE void IfxQspi_initMtsrInLvdsPinWithPadLevel(const IfxQspi_Mtsr_In *mtsrIn, IfxPort_InputMode mtsrInMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *mtsrInLvdsCfg)
+{
+    IfxPort_setPinModeInput(mtsrIn->pin.port, mtsrIn->pin.pinIndex, mtsrInMode);
+    IfxPort_setPinPadDriver(mtsrIn->pin.port, mtsrIn->pin.pinIndex, padDriver);
+    IfxPort_setPinModeLVDS(mtsrIn->pin.port, mtsrIn->pin.pinIndex, IfxPort_Mode_inputNoPullDevice, mtsrInLvdsCfg);
+    mtsrIn->module->PISEL.B.SRIS = mtsrIn->select;
+}
+
+
+IFX_INLINE void IfxQspi_initSclkInLvdsPinWithPadLevel(const IfxQspi_Sclk_In *sclkIn, IfxPort_InputMode sclkInMode, IfxPort_PadDriver padDriver, IfxPort_LvdsConfig *sclkInLvdsCfg)
+{
+    IfxPort_setPinModeInput(sclkIn->pin.port, sclkIn->pin.pinIndex, sclkInMode);
+    IfxPort_setPinPadDriver(sclkIn->pin.port, sclkIn->pin.pinIndex, padDriver);
+    IfxPort_setPinModeLVDS(sclkIn->pin.port, sclkIn->pin.pinIndex, IfxPort_Mode_inputNoPullDevice, sclkInLvdsCfg);
+    sclkIn->module->PISEL.B.SCIS = sclkIn->select;
+}
 
 #endif /* IFXQSPI_H */

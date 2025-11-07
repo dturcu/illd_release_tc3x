@@ -2,7 +2,7 @@
  * \file IfxEray_Eray.c
  * \brief ERAY ERAY details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -93,10 +93,10 @@ IFX_STATIC void IfxEray_Eray_Node_initMessageRAM(IfxEray_Eray *eray, const IfxEr
 void IfxEray_Eray_Node_init(IfxEray_Eray *eray, const IfxEray_Eray_NodeConfig *config)
 {
     Ifx_ERAY *eraySFR = eray->eray;
-    // clear all the flags
+    /* Clear all the flags */
     IfxEray_clearAllFlags(eraySFR);
 
-    // set Communication Controller to config state
+    /* Set Communication Controller to config state */
     if (IfxEray_getPocState(eraySFR) != IfxEray_PocState_config)
     {
         IfxEray_changePocState(eraySFR, IfxEray_PocCommand_freeze);
@@ -107,14 +107,14 @@ void IfxEray_Eray_Node_init(IfxEray_Eray *eray, const IfxEray_Eray_NodeConfig *c
         IfxEray_waitForPocState(eraySFR, IfxEray_PocState_config);
     }
 
-    // enable interrupt lines
+    /* Enable interrupt lines */
     IfxEray_enableInterruptLines(eraySFR);
     IfxEray_setAutoDelayBuffers(eraySFR);
-    //configure message RAM ( slots and slot buffers )
+    /* Configure message RAM ( slots and slot buffers ) */
     IfxEray_Eray_Node_initMessageRAM(eray, &config->messageRAMConfig);
-    //configure communication controller for clock corrections
+    /* Configure communication controller for clock corrections */
     IfxEray_Eray_Node_initCommunicationController(eray, &config->controllerConfig);
-    // initialise the Node pins.
+    /* Initialise the Node pins */
     const IfxEray_Eray_Pins *pins = config->pins;
 
     if (pins != NULL_PTR)
@@ -174,7 +174,7 @@ void IfxEray_Eray_Node_init(IfxEray_Eray *eray, const IfxEray_Eray_NodeConfig *c
 
     if (config->loopbackMode == FALSE)
     {
-        // set the Communication Controller to ready state
+        /* Set the Communication Controller to ready state */
         IfxEray_setPocReady(eraySFR);
     }
 }
@@ -215,8 +215,9 @@ IFX_STATIC void IfxEray_Eray_Node_initCommunicationController(IfxEray_Eray *eray
 
 void IfxEray_Eray_Node_initConfig(IfxEray_Eray_NodeConfig *config)
 {
-    // Default node configurations buffer
+    /* Default node configurations buffer */
     const IfxEray_Eray_NodeConfig nodeConfig = {
+    	 /* Initialize message RAM configuration with default values */
         .messageRAMConfig                           = {
             .firstDynamicBuffer     = 0,
             .numberOfMessageBuffers = 0,
@@ -232,11 +233,13 @@ void IfxEray_Eray_Node_initConfig(IfxEray_Eray_NodeConfig *config)
             .fifoConfigured         = FALSE
         },
 
+		/* Initialize controller configuration with default values */
         .controllerConfig                           = {
             .networkVectorLength     = 0x2,
             .staticFramepayload      = 0x4,
             .latestTransmissionStart = 0x3F,
 
+			/* Initialize PRTC1 control settings with default values */
             .prtc1Control            = {
                 .transmissionStartTime      = 0xA,
                 .collisionAvoidanceDuration = 0x61,
@@ -246,6 +249,7 @@ void IfxEray_Eray_Node_initConfig(IfxEray_Eray_NodeConfig *config)
                 .transmitWakeupRepetitions  = 0x2
             },
 
+			/* Initialize PRTC2 control settings with default values */
             .prtc2Control                           = {
                 .receiveWakeupIdleTime  = 0x2D,
                 .receiveWakeupLowTime   = 0x12,
@@ -253,6 +257,7 @@ void IfxEray_Eray_Node_initConfig(IfxEray_Eray_NodeConfig *config)
                 .transmitWakeupLowTime  = 0x12
             },
 
+			/* Initialize SUCC1 configuration with default values */
             .succ1Config                            = {
                 .channelAConnectedNode       = TRUE,
                 .channelBConnectedNode       = TRUE,
@@ -267,16 +272,19 @@ void IfxEray_Eray_Node_initConfig(IfxEray_Eray_NodeConfig *config)
                 .startupFrameTransmitted     = TRUE
             },
 
+			/* Initialize SUCC2 configurationwith default values */
             .succ2Config                            = {
                 .listenTimeOut      = 0x13972,
                 .listenTimeOutNoise = IfxEray_ListenTimeOutNoise_16
             },
 
+			/* Initialize SUCC3 configuration with default values */
             .succ3Config                            = {
                 .clockCorrectionCyclesPassive = 0x1,
                 .clockCorrectionCyclesHalt    = 0x1
             },
 
+			/* Initialize GTU configuration with default values */
             .gtuConfig                              = {
                 .gtu01Config.microticksPerCycle = 0x9C40,
 
@@ -374,7 +382,7 @@ IFX_STATIC void IfxEray_Eray_Node_initMessageRAM(IfxEray_Eray *eray, const IfxEr
 {
     Ifx_ERAY *eraySFR = eray->eray;
     uint32    bufferCount;
-    //group of Message Buffers exclusively for the static segment configured
+    /* Group of Message Buffers exclusively for the static segment configured */
     IfxEray_setFirstDynamicBuffer(eraySFR, config->firstDynamicBuffer);
     /*  Last Configured Buffer
      *  01H..7FH: Number of Message Buffers is LCB + 1
@@ -382,7 +390,7 @@ IFX_STATIC void IfxEray_Eray_Node_initMessageRAM(IfxEray_Eray *eray, const IfxEr
      */
     IfxEray_setMessageBufferCount(eraySFR, config->numberOfMessageBuffers);
 
-    // receive FIFO buffers configuration
+    /* Receive FIFO buffers configuration */
     if (config->fifoConfigured == TRUE)
     {
         IfxEray_setFifoBufferStartIndex(eraySFR, (uint8)config->fifoBufferStartIndex);
@@ -391,18 +399,18 @@ IFX_STATIC void IfxEray_Eray_Node_initMessageRAM(IfxEray_Eray *eray, const IfxEr
     }
     else
     {
-        // FIFO is not supported. No message buffers assigned to the FIFO, if FFB >= 128
+        /* FIFO is not supported. No message buffers assigned to the FIFO, if FFB >= 128 */
         IfxEray_setFifoBufferStartIndex(eraySFR, (uint8)config->fifoBufferStartIndex);
     }
 
     if (config->bufferReconfigEnabled == TRUE)
     {
-        //buffers reconfigured
+        /* Buffers reconfigured */
         IfxEray_setBufferReconfigSecure(eraySFR, 0);
     }
     else
     {
-        //buffer reconfiguration locked
+        /* Buffer reconfiguration locked */
         IfxEray_setBufferReconfigSecure(eraySFR, 2);
     }
 
@@ -417,14 +425,14 @@ void IfxEray_Eray_initModule(IfxEray_Eray *eray, const IfxEray_Eray_Config *conf
 {
     eray->eray = config->module;
     Ifx_ERAY *eraySFR = config->module;
-    // Enable MTU clock
+    /* Enable MTU clock */
     {
         uint16 password = IfxScuWdt_getCpuWatchdogPassword();
         IfxScuWdt_clearCpuEndinit(password);
         IfxMtu_enableModule();
         IfxScuWdt_setCpuEndinit(password);
     }
-    // clear RAMS
+    /* Clear RAMS */
     {
         uint16 password = IfxScuWdt_getSafetyWatchdogPassword();
         IfxScuWdt_clearSafetyEndinit(password);
@@ -564,12 +572,12 @@ void IfxEray_Eray_receiveFifoFrame(IfxEray_Eray *eray, IfxEray_Eray_ReceiveContr
 
     Ifx_ERAY_FSR fifoStatus = IfxEray_getFifoStatus(eraySFR);
 
-    // Check if FIFO is not empty
+    /* Check if FIFO is not empty */
     if (fifoStatus.B.RFNE == 1)
     {
         if (fifoStatus.B.RFO == 1)
         {
-            //FIX ME: FIFO overrun error
+            /* FIX ME: FIFO overrun error */
         }
         else
         {
@@ -578,7 +586,7 @@ void IfxEray_Eray_receiveFifoFrame(IfxEray_Eray *eray, IfxEray_Eray_ReceiveContr
 
             IfxEray_receiveHeader(eraySFR, config->headerReceived);
             IfxEray_receiveData(eraySFR, config->dataReceived);
-            //Transfer the first message buffer ID of FIFO
+            /* Transfer the first message buffer ID of FIFO */
             IfxEray_setRxBufferNumber(eraySFR, IfxEray_getFifoIndex(eraySFR));
             IfxEray_setReceiveRequest(eraySFR, config->receiveRequested);
 

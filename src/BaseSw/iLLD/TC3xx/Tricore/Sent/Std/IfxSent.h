@@ -3,7 +3,7 @@
  * \brief SENT  basic functionality
  * \ingroup IfxLld_Sent
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -227,7 +227,7 @@ typedef enum
     IfxSent_SpcMode_bidirectional = 2  /**< \brief Specifies bidirectional transmit SPC mode */
 } IfxSent_SpcMode;
 
-/** \brief OCDS Suspend Control (OCDS.SUS)
+/** \brief Ifx_SENT.OCS.B.SUS, Specifies OCDS Suspend Control
  */
 typedef enum
 {
@@ -256,7 +256,7 @@ typedef enum
 
 /** \} */
 
-/** \brief Sent Interrupt Source
+/** \brief SENT.CH[channelId].INTCLR, Specifies Sent Interrupt Source
  */
 typedef enum
 {
@@ -283,18 +283,26 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Sets the operation mode of SENT kernel
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \param alternateInput alternate input/output pin for SENT operation
- * \return None
+/**
+ * \brief Sets the alternate input for the specified SENT channel.
+ *
+ * \param[inout] sent           Pointer to the base address of the SENT register space.
+ * \param[in]    channelId      SENT channel number. Range: \ref IfxSent_ChannelId.
+ * \param[in]    alternateInput Alternate input pin selection for the channel. Range: \ref IfxSent_AlternateInput.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_setAltiInput(Ifx_SENT *sent, IfxSent_ChannelId channelId, IfxSent_AlternateInput alternateInput);
 
-/** \brief Set the module time stamp pre-divider
- * \param sent base address of the SENT register space
- * \param timeStampPreDivider time stamp pre-divider value
- * \return None
+/**
+ * \brief Configures the time stamp pre-divider value for the SENT module.
+ *
+ * \param[inout] sent                Pointer to the base address of the SENT register space.
+ * \param[in]    timeStampPreDivider Time stamp pre-divider value to be set. Range: 0 to 0xFFFFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_setTimeStampPredivider(Ifx_SENT *sent, uint32 timeStampPreDivider);
 
@@ -307,25 +315,36 @@ IFX_INLINE void IfxSent_setTimeStampPredivider(Ifx_SENT *sent, uint32 timeStampP
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Copies the current interrupt flags into the Ifx_SENT_CH_INTSTAT structure, and clears the flags in hardware.
+/**
+ * \brief Copies the current interrupt flags into the Ifx_SENT_CH_INTSTAT structure and clears the flags in hardware.
+ * This function is designed to be used within an Interrupt Service Routine (ISR) to retrieve the events that triggered the interrupt.
  *
- * This function should be used in an ISR to retrieve the events which triggered the interrupt.
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return Interrupt flags which have been cleared.
+ * \param[inout] sent       Pointer to the base address of the SENT register space.
+ * \param[in]    channelId  SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval Ifx_SENT_CH_INTSTAT  Interrupt flags that have been cleared.
+ * 
  */
 IFX_INLINE Ifx_SENT_CH_INTSTAT IfxSent_getAndClearInterruptStatus(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Gets the current channel status
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return current channel interrupt status
+/**
+ * \brief Retrieves the current interrupt status of a specified SENT channel.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval Ifx_SENT_CH_INTSTAT The current interrupt status of the specified channel.
+ *
  */
 IFX_INLINE Ifx_SENT_CH_INTSTAT IfxSent_getChannelInterruptStatus(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief gets the source for channel interrupt handler
- * \param channelId SENT channel number
- * \return interrupt source
+/**
+ * \brief Retrieves the interrupt source register for the specified SENT channel.
+ *
+ * \param[in] channelId The SENT channel identifier. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval  Ifx_SRC_SRCR* A pointer to the interrupt source register for the specified channel.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxSent_getChannelSrc(IfxSent_ChannelId channelId);
 
@@ -338,52 +357,80 @@ IFX_INLINE volatile Ifx_SRC_SRCR *IfxSent_getChannelSrc(IfxSent_ChannelId channe
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disable the channel with the channel number
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return None
+/**
+ * \brief Disables the specified SENT channel, stopping further transmission on it.
+ *
+ * \param[inout] sent      Pointer to the base address of the SENT register space.
+ * \param[in]    channelId The ID of the SENT channel to disable. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSent_disableChannel(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Disable the SENT module
- * \param sent base address of the SENT register space
- * \return None
+/**
+ * \brief Disables the operation of the SENT module.
+ *
+ * \param[inout] Pointer to the base address of the SENT register space.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSent_disableModule(Ifx_SENT *sent);
 
-/** \brief Enable the channel with the channel number
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return None
+/**
+ * \brief Enables the specified SENT channel for operation.
+ *
+ * \param[inout] sent      Pointer to the base address of the SENT register space.
+ * \param[in]    channelId The ID of the SENT channel to be enabled. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSent_enableChannel(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Enable the SENT module
- * \param sent base address of the SENT register space
- * \return None
+/**
+ * \brief Enables the SENT module.
+ *
+ * \param[inout] sent Pointer to the base address of the SENT register space.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSent_enableModule(Ifx_SENT *sent);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param sent Pointer to SENT module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the SENT module is in a suspended state.
+ *
+ * \param[in] sent Pointer to the base address of the SENT register space.
+ *
+ * \retval  TRUE If Module is suspended.
+ *          FALSE If Module is not suspended.
+ *
  */
 IFX_INLINE boolean IfxSent_isModuleSuspended(Ifx_SENT *sent);
 
-/** \brief Sets the sensitivity of the module to sleep signal
- * \param sent pointer to SENT registers
- * \param mode mode selection (enable / disable)
- * \return None
+/**
+ * \brief Sets the sensitivity of the module to sleep signal.
+ *
+ * \param[inout] sent Pointer to the base address of the SENT register space.
+ * \param[in]    mode Mode selection for sleep signal sensitivity. Range: \ref IfxSent_SleepMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_setSleepMode(Ifx_SENT *sent, IfxSent_SleepMode mode);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param sent Pointer to SENT module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Configures the SENT module's suspend mode to either Hard, Soft, or None.
+ *
+ * \param[inout] sent Pointer to the base address of the SENT register space.
+ * \param[in]    mode Module suspend mode to be configured. Range: \ref IfxSent_SuspendMode.
+ *
+ * \note The API works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled, the OCS suspend control is ineffective.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_setSuspendMode(Ifx_SENT *sent, IfxSent_SuspendMode mode);
 
@@ -391,9 +438,13 @@ IFX_INLINE void IfxSent_setSuspendMode(Ifx_SENT *sent, IfxSent_SuspendMode mode)
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Resets the SENT module
- * \param sent base address of the SENT register space
- * \return None
+/**
+ * \brief Resets the SENT module to its initial state.
+ *
+ * \param[inout] sent Pointer to the base address of the SENT register space.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxSent_resetModule(Ifx_SENT *sent);
 
@@ -406,19 +457,27 @@ IFX_EXTERN void IfxSent_resetModule(Ifx_SENT *sent);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Sets the channel fractional baudrate divider
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \param divider channel baudrate fractional divider
- * \return None
+/**
+ * \brief Sets the channel fractional baudrate divider for the specified SENT channel.
+ * 
+ * \param[inout] sent      Pointer to the base address of the SENT register space.
+ * \param[in]    channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ * \param[in]    divider   Channel baudrate fractional divider value. Range: 2200 to 49100.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_setChannelFractionalDivider(Ifx_SENT *sent, IfxSent_ChannelId channelId, uint16 divider);
 
-/** \brief Sets the channel baudrate pre-divider
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \param preDivider channel baudrate pre-divider
- * \return None
+/**
+ * \brief Configures the baudrate pre-divider for the specified SENT channel.
+ *
+ * \param[inout] sent       Pointer to the base address of the SENT register space.
+ * \param[in]    channelId  SENT channel number. Range: \ref IfxSent_ChannelId.
+ * \param[in]    preDivider Baudrate pre-divider value to be set. Range: 0 to 0x0FFF.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSent_setChannelPreDivider(Ifx_SENT *sent, IfxSent_ChannelId channelId, uint16 preDivider);
 
@@ -426,25 +485,37 @@ IFX_INLINE void IfxSent_setChannelPreDivider(Ifx_SENT *sent, IfxSent_ChannelId c
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the current module frequency in Hertz.
- * \param sent base address of the SENT register space
- * \return The current module frequency in Hertz
+/**
+ * \brief Retrieves the module clock frequency for the specified SENT module.
+ *
+ * \param[in] sent Pointer to the base address of the SENT register space.
+ *
+ * \retval float32 The current module frequency in Hertz.
+ *
  */
 IFX_EXTERN float32 IfxSent_getModuleClock(Ifx_SENT *sent);
 
-/** \brief Initializes the desired unit time (f_tick) for the external SENT device connected to the given channel
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \param tUnit desired unit time (f_tick), e.g. 3E-6 for 3 uS
- * \return None
+/**
+ * \brief Initializes the desired unit time (f_tick) for the external SENT device connected to the given channel
+ *
+ * \param[inout] sent      Pointer to the base address of the SENT register space.
+ * \param[in]    channelId SENT channel number.  Range: \ref IfxSent_ChannelId.
+ * \param[in]    tUnit     Desired unit time (f_tick), e.g. 3E-6 for 3 uS.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSent_initializeChannelUnitTime(Ifx_SENT *sent, IfxSent_ChannelId channelId, float32 tUnit);
 
-/** \brief Initialize and get the clock for SENT kernel
- * \param sent base address of the SENT register space
- * \param dividerMode Divider mode for clock output
- * \param stepValue clock frequency for for module fractional divider
- * \return None
+/**
+ * \brief Initializes the SENT module clock with the specified divider mode and step value.
+ *
+ * \param[inout] sent        Pointer to the base address of the SENT register space.
+ * \param[in]    dividerMode Divider mode for clock output. Range: \ref IfxSent_ClockDividerMode.
+ * \param[in]    stepValue   Clock frequency for for module fractional divider. Range: 0 to 1023.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSent_initializeModuleClock(Ifx_SENT *sent, IfxSent_ClockDividerMode dividerMode, uint16 stepValue);
 
@@ -457,19 +528,27 @@ IFX_EXTERN void IfxSent_initializeModuleClock(Ifx_SENT *sent, IfxSent_ClockDivid
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initializes a SENT input
- * \param sentIn the SENT Pin which should be configured
- * \param inputMode the pin input mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a SENT input pin with the specified input mode and pad driver.
+ *
+ * \param[in] sentIn    Pointer to the SENT Pin which should be configured.
+ * \param[in] inputMode The pin input mode which should be configured. Range: \ref IfxPort_InputMode.
+ * \param[in] padDriver The pad driver mode which should be configured. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_initSentPin(const IfxSent_Sent_In *sentIn, IfxPort_InputMode inputMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a SPC output
- * \param spcOut the SPC Pin which should be configured
- * \param spcOutMode Port Output Mode
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes the SENT SPC output pin with the specified output mode and pad driver.
+ *
+ * \param[in] spcOut     Pointer to the SPC Pin which should be configured.
+ * \param[in] spcOutMode Port Output Mode. Range: \ref IfxPort_OutputMode.
+ * \param[in] padDriver  The pad driver mode which should be configured. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_initSpcPin(const IfxSent_Spc_Out *spcOut, IfxPort_OutputMode spcOutMode, IfxPort_PadDriver padDriver);
 
@@ -479,95 +558,150 @@ IFX_INLINE void IfxSent_initSpcPin(const IfxSent_Spc_Out *spcOut, IfxPort_Output
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the Frame length with pause pulse
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
+/**
+ * \brief Retrieves the total frame length including the pause pulse for a specified SENT channel.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint16 Returns the Frame length with pause pulse. Range: 0 to 65535.
+ *
  */
 IFX_INLINE uint16 IfxSent_getFrameLengthWithPausePulse(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Set the watch dog timer limit value for sent channel.
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \param watchDogTimerLimit Specifies the watch dog timer limit value.
- * \return None
+/**
+ * \brief Set the watch dog timer limit value for a specified sent channel.
+ *
+ * \param[inout] sent               Pointer to the base address of the SENT register space.
+ * \param[in]    channelId          SENT channel number. Range: \ref IfxSent_ChannelId.
+ * \param[in]    watchDogTimerLimit Specifies the watch dog timer limit value. Range: 0 to 65535.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_setWatchDogTimerLimit(Ifx_SENT *sent, IfxSent_ChannelId channelId, uint16 watchDogTimerLimit);
 
-/** \brief Return TRUE if SENT module is enabled
- * \param sent base address of the SENT register space
- * \return The status of whether clock for sent is enabled or disabled
+/**
+ * \brief Checks if the specified SENT module is enabled.
+ *
+ * \param[in] sent Pointer to the base address of the SENT register space.
+ *
+ * \retval TRUE If the module is enabled.
+ *         FALSE If the module is disabled.
+ *
  */
 IFX_INLINE boolean IfxSent_isModuleEnabled(Ifx_SENT *sent);
 
-/** \brief Return the Interrupt Status of the SENT channel
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \param source enable the interrupt source of any interrupt of SENT Channel
- * \return The Interrupt Status of SENT channel
+/**
+ * \brief Retrieves the interrupt status for a specific SENT channel and interrupt source.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ * \param[in] source    SENT interrupt source. Range: \ref IfxSent_InterruptSource.
+ *
+ * \retval TRUE If the specified interrupt is active.
+ *         FALSE If the specified interrupt is inactive.
+ *
  */
 IFX_INLINE boolean IfxSent_getInterruptStatus(Ifx_SENT *sent, IfxSent_ChannelId channelId, IfxSent_InterruptSource source);
 
 /**
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \param source enable the interrupt source of any interrupt of SENT Channel
- * \return None
+ * \brief Clear the Interrupt Status for a SENT channel.
+ *
+ * \param[inout] sent      Pointer to the base address of the SENT register space.
+ * \param[in]    channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ * \param[in]    source    SENT interrupt source. Range: \ref IfxSent_InterruptSource.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSent_clearInterruptStatus(Ifx_SENT *sent, IfxSent_ChannelId channelId, IfxSent_InterruptSource source);
 
 /**
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return The Data content of a recieved Data Frame
+ * \brief Reads the received data from the specified SENT channel.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number.  Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint32 The Data content of a recieved Data Frame. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxSent_readReceivedData(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Reads and returns value in RSR (Received Status Register).
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return Returns 32 bit RSR
+/**
+ * \brief Reads and returns value in RSR (Received Status Register).
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint32 Returns 32 bit Receive status register(RSR). Range: 0 to 0xFFFF0F3F.
+ *
  */
 IFX_INLINE uint32 IfxSent_readReceivedStatus(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Returns 4 bit CRC value in Receive Status Register
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return 4 bit CRC
+/**
+ * \brief Read and returns 4 bit CRC value in Receive Status Register.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint8 4 bit CRC. Range: 0 to 15.
+ *
  */
 IFX_INLINE uint8 IfxSent_readReceivedCrc(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Returns 2 bit CST value in Receive Status Register
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return 2 bit CST
+/**
+ * \brief Read and returns 2 bit CST value in Receive Status Register.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint8 2 bit Channel status(CST). Range: 0 to 3.
+ *
  */
 IFX_INLINE uint8 IfxSent_readReceivedChannelStatus(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Returns 4 bit SCN value in Receive Status Register
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return 4 bit SCN
+/**
+ * \brief Read and returns 4 bit SCN value in Receive Status Register.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint8 4 bit Status and communication nibble(SCN). Range: 0 to 15.
+ *
  */
 IFX_INLINE uint8 IfxSent_readReceivedStatusAndCommunicationNibble(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Returns 32 bit Received Time Stamp Value
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return 32 bit Time Stamp
+/**
+ * \brief Read and returns 32 bit Received Time Stamp Value.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint32 32 bit Time Stamp. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxSent_readReceivedTimeStamp(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Returns 6 bit PLEN value in SCR Register
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return 6 bit PLEN
+/**
+ * \brief Read and returns 6 bit PLEN value in SCR Register.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint8 6 bit Pulse length(PLEN). Range: 0 to 63.
+ *
  */
 IFX_INLINE uint8 IfxSent_readSpcPulseLength(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
-/** \brief Returns 6 bit Delay length value in SCR Register
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return 6 bit DEL
+/**
+ * \brief Read and returns 6 bit Delay length value in SCR Register.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval uint8 6 bit Delay length(DEL). Range: 0 to 63.
+ *
  */
 IFX_INLINE uint8 IfxSent_readSpcDelayLength(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
@@ -575,10 +709,14 @@ IFX_INLINE uint8 IfxSent_readSpcDelayLength(Ifx_SENT *sent, IfxSent_ChannelId ch
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the current unit time (f_tick) of the given channel
- * \param sent base address of the SENT register space
- * \param channelId SENT channel number
- * \return The current unit time in seconds
+/**
+ * \brief Read and returns the current unit time (f_tick) of the given channel.
+ *
+ * \param[in] sent      Pointer to the base address of the SENT register space.
+ * \param[in] channelId SENT channel number. Range: \ref IfxSent_ChannelId.
+ *
+ * \retval float32 The current unit time in seconds.
+ *
  */
 IFX_EXTERN float32 IfxSent_getChannelUnitTime(Ifx_SENT *sent, IfxSent_ChannelId channelId);
 
@@ -677,10 +815,10 @@ IFX_INLINE boolean IfxSent_isModuleSuspended(Ifx_SENT *sent)
 {
     Ifx_SENT_OCS ocs;
 
-    // read the status
+    /* Read the status */
     ocs.U = sent->OCS.U;
 
-    // return the status
+    /* Return the status */
     return ocs.B.SUSSTA;
 }
 
@@ -716,7 +854,7 @@ IFX_INLINE void IfxSent_setSuspendMode(Ifx_SENT *sent, IfxSent_SuspendMode mode)
 {
     Ifx_SENT_OCS ocs;
 
-    // remove protection and configure the suspend mode.
+    /* Remove protection and configure the suspend mode. */
     ocs.B.SUS_P = 1;
     ocs.B.SUS   = mode;
     sent->OCS.U = ocs.U;

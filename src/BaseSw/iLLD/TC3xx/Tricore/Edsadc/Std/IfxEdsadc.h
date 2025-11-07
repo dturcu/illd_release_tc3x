@@ -3,7 +3,7 @@
  * \brief EDSADC  basic functionality
  * \ingroup IfxLld_Edsadc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -175,7 +175,8 @@ typedef enum
     IfxEdsadc_FilterStrength_maximum = 3   /**< \brief maximum filter effect */
 } IfxEdsadc_FilterStrength;
 
-/** \brief Enumeration describing selection of supervisor signal from channels
+/** \brief Enumeration describing selection of supervisor signal from channels.
+ * Defined in Ifx_EDSADC_GLOBCFG.B.SVSIG
  */
 typedef enum
 {
@@ -184,7 +185,8 @@ typedef enum
     IfxEdsadc_SvSigSel_internalRegulator3_3V = 2,  /**< \brief Internal Regulator 3.3V */
 } IfxEdsadc_SvSigSel;
 
-/** \brief Fractional Reference Voltage Enable
+/** \brief Fractional Reference Voltage Enable.
+ * Defined in Ifx_EDSADC_CH_VCM.B.VXON
  */
 typedef enum
 {
@@ -192,7 +194,8 @@ typedef enum
     IfxEdsadc_FractionalRefVoltage_enable  = 1   /**< \brief VREFX is connected, value according to VREFXSEL */
 } IfxEdsadc_FractionalRefVoltage;
 
-/** \brief Fraction reference voltage selection
+/** \brief Fraction reference voltage selection.
+ * Defined in Ifx_EDSADC_CH_VCM.B.VREFXSEL
  */
 typedef enum
 {
@@ -259,7 +262,8 @@ typedef enum
 } IfxEdsadc_InputPin;
 
 /** \brief Controls the data shifter after the integrator that selects the portion of the
- * integrator data for the result register
+ * integrator data for the result register.
+ * Defined in Ifx_EDSADC_CH_IWCTR.B.ISC
  */
 typedef enum
 {
@@ -384,7 +388,8 @@ typedef enum
 	IfxEdsadc_SignSourceChannel_13 = 13   /**< \brief Sign result from channel 13 */
 } IfxEdsadc_SignSourceChannel;
 
-/** \brief Restart the filter chain when an integration window starts
+/** \brief Restart the filter chain when an integration window starts.
+ * Defined in Ifx_EDSADC_CH_IWCTR.B.FRC
  */
 typedef enum
 {
@@ -444,7 +449,8 @@ typedef enum
     IfxEdsadc_SleepMode_disable = 1  /**< \brief disables sleep mode */
 } IfxEdsadc_SleepMode;
 
-/** \brief Defines when the slew rate filter is activated
+/** \brief Defines when the slew rate filter is activated.
+ * Defined in Ifx_EDSADC_CH_OVSCFG.B.SDM
  */
 typedef enum
 {
@@ -452,8 +458,8 @@ typedef enum
     IfxEdsadc_StepDetectionMode_secondlastInput = 1  /**< \brief Compare threshold to difference of current and second-last input */
 } IfxEdsadc_StepDetectionMode;
 
-/** \brief Adjusts the analog circuitry to the supply voltage used in the application
- * system.Defined In defined in MODULE_EDSADC.GLOBCFG.B.SUPLEV
+/** \brief Adjusts the analog circuitry to the supply voltage used in the application system
+ * Defined in MODULE_EDSADC.GLOBCFG.B.SUPLEV
  */
 typedef enum
 {
@@ -463,6 +469,7 @@ typedef enum
 } IfxEdsadc_SupplyVoltageLevel;
 
 /** \brief OCDS Suspend Control (OCDS.SUS)
+ * Defined in Ifx_EDSADC_OCS.B.SUS
  */
 typedef enum
 {
@@ -471,7 +478,8 @@ typedef enum
     IfxEdsadc_SuspendMode_soft = 2   /**< \brief Soft Suspend */
 } IfxEdsadc_SuspendMode;
 
-/** \brief Time Stamp Counter Clock Selection
+/** \brief Time Stamp Counter Clock Selection.
+ * Defined in Ifx_EDSADC_CH_TSCNT.B.TSCLK
  */
 typedef enum
 {
@@ -546,7 +554,8 @@ typedef enum
     IfxEdsadc_AnalogMux_copyAmx      = 1   /**< \brief Copy AMX to bits TIMESTAMP[15:14], timestamp uses lower 14 bits */
 } IfxEdsadc_AnalogMux;
 
-/** \brief Timestamp Counter Run Control
+/** \brief Timestamp Counter Run Control.
+ * Defined in Ifx_EDSADC_CH_TSCNT.B.TSCRUN
  */
 typedef enum
 {
@@ -576,7 +585,8 @@ typedef enum
 	IfxEdsadc_SlewrateFilterRuntime_inputCycles16  = 3  /**< \brief 16 input cycles */
 } IfxEdsadc_SlewrateFilterRuntime;
 
-/** \brief Auxiliary Filter Decimation Factor Selection
+/** \brief Auxiliary Filter Decimation Factor Selection.
+ * Defined in Ifx_EDSADC_CH_FCFGA.B.CFADF
  */
 typedef enum
 {
@@ -592,15 +602,15 @@ typedef enum
  */
 typedef struct
 {
-    float32                        modulatorClockPeriod;         /**< \brief Modulator clock period */
+    float32                        modulatorClockPeriod;         /**< \brief Modulator clock period. Range: 0 to 0x7 */
     IfxEdsadc_InputGain            inputGain;                    /**< \brief Modulator gain select of analog input path */
     IfxEdsadc_AnalogClockSyncDelay analogClockSyncDelay;         /**< \brief Define the delay in clock cycle after sync signal */
     IfxEdsadc_InputConfig          positiveInput;                /**< \brief Modulator configuration of positive input line */
     IfxEdsadc_InputConfig          negativeInput;                /**< \brief Modulator configuration of negative input line */
     IfxEdsadc_InputPin             inputPin;                     /**< \brief Modulator input pin selection */
     IfxEdsadc_dithering            ditheringEnabled;             /**< \brief Control the Dithering Function for each modulator */
-    boolean                        integratorResetEnabled;       /**< \brief Control the modulator overload handling */
-    boolean                        inputMuxActionControl;        /**< \brief Defines the mechanism by which the input multiplexer is controlled */
+    boolean                        integratorResetEnabled;       /**< \brief Control the modulator overload handling. Range: TRUE: Integrators are reset in case of an overdrive, FALSE: No integrator reset */
+    boolean                        inputMuxActionControl;        /**< \brief Defines the mechanism by which the input multiplexer is controlled. Range: TRUE: Single-step mode, FALSE: Preset mode */
     IfxEdsadc_InputMuxControlMode  triggerEvent;                 /**< \brief Defines the condition for a trigger event to control the input multiplexer */
 } IfxEdsadc_ModulatorConfig;
 

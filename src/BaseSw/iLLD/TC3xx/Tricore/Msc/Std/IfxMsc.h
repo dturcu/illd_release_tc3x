@@ -3,7 +3,7 @@
  * \brief MSC  basic functionality
  * \ingroup IfxLld_Msc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -522,6 +522,7 @@ typedef enum
 } IfxMsc_ExternalSignalInjection;
 
 /** \brief Enum for enable and disable Fast Mode
+ * Definition in Ifx_MSC.DSTE.B.FM
  */
 typedef enum
 {
@@ -548,6 +549,7 @@ typedef enum
 } IfxMsc_FclLinePolarity;
 
 /** \brief Enable hardware clock control
+ * Definition in Ifx_MSC_FDR.B.B.ENHW
  */
 typedef enum
 {
@@ -792,6 +794,7 @@ typedef enum
 } IfxMsc_StreamMode;
 
 /** \brief OCDS Suspend Control (OCDS.SUS)
+ * Definition in Ifx_MSC_OCS.B.SUS
  */
 typedef enum
 {
@@ -801,6 +804,7 @@ typedef enum
 } IfxMsc_SuspendMode;
 
 /** \brief Msc Targets - use as chip enable selection for ENH, ENL and ENC
+ * Definition in Ifx_MSC.OCR.B.CSC
  */
 typedef enum
 {
@@ -961,8 +965,8 @@ typedef enum
  */
 typedef struct
 {
-    uint32 dce;       /**< \brief Command to be wrtten to DCE register */
-    uint32 dc;        /**< \brief Command to be wrtten to DC register */
+    uint32 dce;       /**< \brief Command to be wrtten to DCE register. Range: 0 to 0xFFFFFFFF */
+    uint32 dc;        /**< \brief Command to be wrtten to DC register. Range: 0 to 0xFFFFFFFF */
 } IfxMsc_CxModeCommand;
 
 /** \addtogroup IfxLld_Msc_Std_Config_Flags
@@ -972,35 +976,55 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clear ABRA overflow flag
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Clears the ABRA overflow flag in the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_clearAbraOverflowFlag(Ifx_MSC *msc);
 
-/** \brief Clear ABRA underflow flag
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Clears the ABRA underflow flag in the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_clearAbraUnderflowFlag(Ifx_MSC *msc);
 
-/** \brief Clear Upstream timeout
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Clears the upstream timeout for the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_clearUpstreamTimeout(Ifx_MSC *msc);
 
-/** \brief Clear the valid flag
- * \param msc pointer to the base of MSC registers
- * \param upstreamIdx data register ID
- * \return None
+/**
+ * \brief Clears the valid flag for a specified upstream data register.
+ *
+ * \param[inout] msc         Pointer to the base address of MSC registers.
+ * \param[in]    upstreamIdx The index of the upstream data register for which the
+ *                           valid flag should be cleared.
+ *                           Range: 0 to 0x3
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_clearUpstreamValidFlag(Ifx_MSC *msc, uint8 upstreamIdx);
 
-/** \brief Get the status of the valid flag
- * \param msc pointer to the base of MSC registers
- * \param upstreamIdx data register ID
- * \return Status TRUE or FALSE
+/**
+ * \brief Retrieves the status of the valid flag for a specified upstream data register.
+ *
+ * \param[in] msc         Pointer to the base address of MSC registers.
+ * \param[in] upstreamIdx The index of the upstream data register ID for which the valid
+ * 						  flag status is to be retrieved.
+ * 						  Range: 0 to 0x3
+ *
+ * \retval boolean TRUE  If the valid flag is set for the specified upstream data register.
+ *         		   FALSE If the valid flag is not set for the specified upstream data register.
  */
 IFX_INLINE boolean IfxMsc_getUpstreamValidFlag(Ifx_MSC *msc, uint8 upstreamIdx);
 
@@ -1013,10 +1037,14 @@ IFX_INLINE boolean IfxMsc_getUpstreamValidFlag(Ifx_MSC *msc, uint8 upstreamIdx);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Select the target for command phase
- * \param msc pointer to the base of MSC registers
- * \param enX Target to be selected
- * \return None
+/**
+ * \brief Selects the target for the command phase.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ * \param[in]    enX Target to be selected for the command phase.
+ * 				     Range: \ref IfxMsc_Target
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setCommandTarget(Ifx_MSC *msc, IfxMsc_Target enX);
 
@@ -1029,17 +1057,25 @@ IFX_INLINE void IfxMsc_setCommandTarget(Ifx_MSC *msc, IfxMsc_Target enX);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Select the target for data high phase
- * \param msc pointer to the base of MSC registers
- * \param enX Target to be selected
- * \return None
+/**
+ * \brief Selects the target for the data high phase.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ * \param[in]    enX The target to be selected.
+ * 				     Range: \ref IfxMsc_Target
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setDataHighTarget(Ifx_MSC *msc, IfxMsc_Target enX);
 
-/** \brief Select the target for data low phase
- * \param msc pointer to the base of MSC registers
- * \param enX Target to be selected
- * \return None
+/**
+ * \brief Selects the target for the data low phase of the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ * \param[in]    enX The target to be selected for the data low phase.
+ * 					 Rang: \ref IfxMsc_Target
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setDataLowTarget(Ifx_MSC *msc, IfxMsc_Target enX);
 
@@ -1052,22 +1088,36 @@ IFX_INLINE void IfxMsc_setDataLowTarget(Ifx_MSC *msc, IfxMsc_Target enX);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Get the upstream data from upstream data register
- * \param msc pointer to the base of MSC registers
- * \param upstreamIdx Upstream data register ID
- * \return Recevived data
+/**
+ * \brief Retrieves the upstream data from the specified upstream data register.
+ *
+ * \param[in] msc         Pointer to the base address of MSC registers.
+ * \param[in] upstreamIdx The index of the upstream data register ID for which the
+ * 						  data is to be retrieved.
+ * 						  Range: 0 to 0x3
+ *
+ * \retval uint16 Received data from the upstream data register.
+ * 				  Range: 0 to 0xFF
  */
 IFX_INLINE uint16 IfxMsc_getData(Ifx_MSC *msc, uint8 upstreamIdx);
 
-/** \brief Get the selected target during high phase
- * \param msc pointer to the base of MSC registers
- * \return Selected target
+/**
+ * \brief Retrieves the target selected during the high phase of the MSC operation.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ * 
+ * \retval IfxMsc_Target The selected target during the high phase.
+ * 						 Range: \ref IfxMsc_Target
  */
 IFX_INLINE IfxMsc_Target IfxMsc_getDataHighTarget(Ifx_MSC *msc);
 
-/** \brief Get the selected target during low phase
- * \param msc pointer to the base of MSC registers
- * \return Selected target
+/**
+ * \brief Retrieves the target selected during the low phase of the MSC module operation.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ * 
+ * \retval IfxMsc_Target The currently selected target for the low phase.
+ * 						 Range: \ref IfxMsc_Target
  */
 IFX_INLINE IfxMsc_Target IfxMsc_getDataLowTarget(Ifx_MSC *msc);
 
@@ -1080,15 +1130,21 @@ IFX_INLINE IfxMsc_Target IfxMsc_getDataLowTarget(Ifx_MSC *msc);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disable MSC kernel
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Disables the MSC kernel, stopping its operation and preparing it for a low-power state.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_disableModule(Ifx_MSC *msc);
 
-/** \brief Enable MSC kernel
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Enables the MSC kernel.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_enableModule(Ifx_MSC *msc);
 
@@ -1101,15 +1157,21 @@ IFX_EXTERN void IfxMsc_enableModule(Ifx_MSC *msc);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clear reset bit of MSC kernel
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Clears the reset bit of the MSC kernel.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_clearReset(Ifx_MSC *msc);
 
-/** \brief Reset MSC kernel
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Resets the MSC kernel to its initial state.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_resetModule(Ifx_MSC *msc);
 
@@ -1122,23 +1184,40 @@ IFX_EXTERN void IfxMsc_resetModule(Ifx_MSC *msc);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Get the NDD value for the supplied baud rate when when ABRA block is enabled
- * \param baud Required baud rate
- * \return NDD value
+/**
+ * \brief Calculates the NDD (N Divider Downstream) value for the given baud rate when the ABRA block is enabled.
+ *
+ * \param[in] baud The desired baud rate for which the NDD value is to be calculated.
+ * 				   Range: 0x5F5E1 (0.39 Mbaud) to 0x17D7840 (25 Mbaud)
+ * 
+ * \retval uint32 The calculated NDD value for the specified baud rate.
+ * 				  Range: 0x1 (for 0.39 Mbaud) to 0x7F (for 25 Mbaud)
  */
 IFX_EXTERN uint32 IfxMsc_downstreamAbraBaudCalculator(uint32 baud);
 
-/** \brief Get the step value for the supplied baud rate when divider mode is fractional
- * \param msc pointer to the base of MSC registers
- * \param baud Required baud rate
- * \return Step value
+/**
+ * \brief Calculates the step value for the supplied baud rate when using fractional divider mode.
+ *
+ * \param[in] msc  Pointer to the base address of MSC registers.
+ * \param[in] baud Required baud rate.
+ * 				   Range: 0x5F5E1 (0.39 Mbaud) to 0x17D7840 (25 Mbaud)
+ *
+ * \retval uint64 The calculated step value for the fractional baud rate configuration.
+ * 				  Range: 0 to 0x400   (for 25 Mbaud, URR 0 to 7)
+ * 				  		 0 to 0x10000 (for 0.39 Mbaud, URR 0 to 7)
  */
 IFX_EXTERN uint64 IfxMsc_upstreamFractionalBaudCalculator(Ifx_MSC *msc, uint32 baud);
 
-/** \brief Get the step value for the supplied baud rate when divider mode is normal
- * \param msc pointer to the base of MSC registers
- * \param baud Required baud rate
- * \return Step value
+/**
+ * \brief Calculates the step value for the specified baud rate in normal divider mode.
+ *
+ * \param[in] msc  Pointer to the base address of MSC registers.
+ * \param[in] baud Required baud rate.
+ * 				   Range: 0x5F5E1 (0.39 Mbaud) to 0x17D7840 (25 Mbaud)
+ *
+ * \retval uint32 Step value for the specified baud rate.
+ * 				  Range: 0x3C0 to 0x3FF (for 0.39 Mbaud, URR 1 to 7)
+ * 				  		 0x3FF to 0x400 (for 25	Mbaud, URR 1 to 7)
  */
 IFX_EXTERN uint32 IfxMsc_upstreamNormalBaudCalculator(Ifx_MSC *msc, uint32 baud);
 
@@ -1151,59 +1230,95 @@ IFX_EXTERN uint32 IfxMsc_upstreamNormalBaudCalculator(Ifx_MSC *msc, uint32 baud)
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initializes a EN output
- * \param en the EN Pin which should be configured
- * \param pinMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a EN output pin with the specified mode and pad driver settings.
+ *
+ * \param[in] en        Pointer to the EN pin configuration structure to be initialized.
+ * \param[in] pinMode   The output mode to be configured for the pin.
+ * 						Range: \ref IfxPort_OutputMode
+ * \param[in] padDriver The pad driver mode to be configured.
+ * 						Range: \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_initEnPin(const IfxMsc_En_Out *en, IfxPort_OutputMode pinMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a FCLN output
- * \param fcln the FCLN Pin which should be configured
- * \param pinMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a FCLN output pin with the specified mode and driver settings.
+ *
+ * \param[in] fcln      Pointer to the FCLN pin configuration structure to be initialized.
+ * \param[in] pinMode   The output mode to be configured for the pin.
+ * 						Range: \ref IfxPort_OutputMode
+ * \param[in] padDriver The pad driver mode to be configured.
+ * 						Range: \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_initFclnPin(const IfxMsc_Fcln_Out *fcln, IfxPort_OutputMode pinMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a FCLP output
- * \param fclp the FCLP Pin which should be configured
- * \param pinMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a FCLP output pin with the specified mode and driver configuration.
+ *
+ * \param[in] fclp      Pointer to the FCLP pin configuration structure to be initialized.
+ * \param[in] pinMode   The output mode to be configured for the pin.
+ * 						Range: \ref IfxPort_OutputMode
+ * \param[in] padDriver The pad driver mode to be configured.
+ * 						Range: \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_initFclpPin(const IfxMsc_Fclp_Out *fclp, IfxPort_OutputMode pinMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a INJ input
- * \param inj the INJ Pin which should be configured
- * \param pinMode the pin input mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a INJ input pin with the specified input mode and pad driver settings.
+ *
+ * \param[in] inj       Pointer to the INJ pin configuration structure that should be initialized.
+ *                      This structure contains the necessary information for the INJ pin setup.
+ * \param[in] pinMode   The input mode to be configured for the INJ pin.
+ * 						Range: \ref IfxPort_InputMode
+ * \param[in] padDriver The pad driver mode to be configured for the INJ pin.
+ * 						Range: \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_initInjPin(const IfxMsc_Inj_In *inj, IfxPort_InputMode pinMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a SDI input
- * \param sdi the SDI Pin which should be configured
- * \param pinMode the pin input mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a SDI input pin with the specified configuration.
+ *
+ * \param[in] sdi       Pointer to the SDI pin configuration structure to be initialized.
+ * \param[in] pinMode   The input mode to be configured for the SDI pin.
+ * 						Range: \ref IfxPort_InputMode
+ * \param[in] padDriver The pad driver mode to be configured for the SDI pin.
+ * 						Range: \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_initSdiPin(const IfxMsc_Sdi_In *sdi, IfxPort_InputMode pinMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a SON output
- * \param son the SON Pin which should be configured
- * \param pinMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a SON output pin with the specified mode and pad driver configuration.
+ *
+ * \param[in] son       The SON pin to be configured. This is a pointer to the SON pin structure.
+ * \param[in] pinMode   The output mode to be set for the pin.
+ * 						Range: \ref IfxPort_OutputMode
+ * \param[in] padDriver The pad driver mode to be configured.
+ * 						Range: \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_initSonPin(const IfxMsc_Son_Out *son, IfxPort_OutputMode pinMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a SOP output
- * \param sop the SOP Pin which should be configured
- * \param pinMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a SOP output pin with the specified output mode and pad driver settings.
+ *
+ * \param[in] sop       Pointer to the SOP pin configuration structure that should be used for initialization.
+ * \param[in] pinMode   The output mode to be configured for the SOP pin.
+ * 						Range: \ref IfxPort_OutputMode
+ * \param[in] padDriver The pad driver mode to be configured for the SOP pin.
+ * 						Range: \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_initSopPin(const IfxMsc_Sop_Out *sop, IfxPort_OutputMode pinMode, IfxPort_PadDriver padDriver);
 
@@ -1217,14 +1332,22 @@ IFX_INLINE void IfxMsc_initSopPin(const IfxMsc_Sop_Out *sop, IfxPort_OutputMode 
 /******************************************************************************/
 
 /**
- * \param msc Resource index of the MSC
- * \return MSC module register address
+ * \brief Retrieves the register address of the MSC module corresponding to the given index.
+ *
+ * \param[in] msc Resource index of the MSC module.
+ * 				  Range: \ref IfxMsc_Index
+ *
+ * \retval Ifx_MSC* Base address of the MSC module's registers.
  */
 IFX_EXTERN Ifx_MSC *IfxMsc_getAddress(IfxMsc_Index msc);
 
-/** \brief API to get the resource index of the MSC specified.
- * \param msc Pointer to the MSC HW module (register memory map)
- * \return Resource index of the ERAY
+/**
+ * \brief Retrieves the resource index of the specified MSC module.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval IfxMsc_Index The resource index of the MSC module.
+ * 						Range: \ref IfxMsc_Index
  */
 IFX_EXTERN IfxMsc_Index IfxMsc_getIndex(Ifx_MSC *msc);
 
@@ -1234,212 +1357,337 @@ IFX_EXTERN IfxMsc_Index IfxMsc_getIndex(Ifx_MSC *msc);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears The Recieve Data Interrupt Flag
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Clears the receive data interrupt flag of the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_clearRecieveDataInterruptFlag(Ifx_MSC *msc);
 
-/** \brief Clears the Valid bit
- * \param msc pointer to the base of MSC registers
- * \param upstreamIdx upstream index
- * \return None
+/**
+ * \brief Clears the Valid bit of the specified upstream channel, indicating that the channel is not currently valid.
+ *
+ * \param[inout] msc         Pointer to the base address of MSC registers.
+ * \param[in]    upstreamIdx Index of the upstream channel to clear the Valid bit for.
+ * 						     Range: 0 to 0x3
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_clearValidbit(Ifx_MSC *msc, uint8 upstreamIdx);
 
-/** \brief Disables the Upstream Timeout Interrupt
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Disables the Upstream Timeout Interrupt.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_disableUpstreamTimeoutInterrupt(Ifx_MSC *msc);
 
-/** \brief Enables the Upstream Timeout Interrupt
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Enables the Upstream Timeout Interrupt for the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_enableUpstreamTimeoutInterrupt(Ifx_MSC *msc);
 
-/** \brief Returns the value of Asynchronous clock Bypass bit.
- * \param msc pointer to the base of MSC registers
- * \return Get the value of Asynchronous clock bypass enable bit.
+/**
+ * \brief Checks if the asynchronous clock bypass is enabled.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval boolean TRUE  If the Asynchronous Block is not Bypassed and active.
+ * 				   FALSE If the Asynchronous Block is Bypassed and disabled.
  */
 IFX_INLINE boolean IfxMsc_getAsyncClockBypass(Ifx_MSC *msc);
 
-/** \brief Returns the value of Down stream extension enable bit.
- * \param msc pointer to the base of MSC registers
- * \return Get the value of Down stream extension enable bit.
+/**
+ * \brief Returns the value of the downstream extension enable bit.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval boolean TRUE  If the Downstream extension is enabled.
+ *        		   FALSE If the Downstream extension is disabled.
  */
 IFX_INLINE boolean IfxMsc_getDownStreamExtension(Ifx_MSC *msc);
 
-/** \brief Returns the Recieve DataInterrupt Flag Status
- * \param msc pointer to the base of MSC registers
- * \return Status
+/**
+ * \brief Returns the status of the Receive Data Interrupt Flag.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval boolean TRUE  If the Receive Data Interrupt Flag is set.
+ *                 FALSE If the Receive Data Interrupt Flag is not set.
  */
 IFX_INLINE boolean IfxMsc_getRecieveDataInterruptFlag(Ifx_MSC *msc);
 
-/** \brief Returns the Src pointer for the selected MSC interrupt node
- * \param msc pointer to the base of MSC registers
- * \param intRequest Interrupt Request
- * \return Pointer to SRCR register
+/**
+ * \brief Returns the SRC pointer for the selected MSC interrupt node, providing low-level access to the SRCR register.
+ *
+ * \param[in] msc        Pointer to the base address of MSC registers.
+ * \param[in] intRequest Interrupt Service Request to select the appropriate SRCR register.
+ * 						 Range: \ref IfxMsc_InterruptServiceRequest
+ *
+ * \retval Ifx_SRC_SRCR Pointer to the SRCR register of the selected interrupt service request.
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxMsc_getSrcPointer(Ifx_MSC *msc, IfxMsc_InterruptServiceRequest intRequest);
 
-/** \brief Returns the Upstream Data
- * \param msc pointer to the base of MSC registers
- * \param upstreamIdx upstream index
- * \return Upstream Data
+/**
+ * \brief Retrieves the upstream data for a specified index.
+ *
+ * \param[in] msc         Pointer to the base address of MSC registers.
+ * \param[in] upstreamIdx The index of the upstream data register to retrieve the data.
+ * 						  Range: 0 to 0x3
+ *
+ * \retval uint32 The upstream data value.
+ * 				  Range: 0 to 0xFF00FE00
  */
 IFX_INLINE uint32 IfxMsc_getUpstreamData(Ifx_MSC *msc, uint8 upstreamIdx);
 
-/** \brief Returns the Upstream Parity Error Flag Status
- * \param msc pointer to the base of MSC registers
- * \param upstreamIdx upstream index
- * \return Status
+/**
+ * \brief Returns the status of the Upstream Parity Error Flag for the specified upstream channel.
+ *
+ * \param[in] msc         Pointer to the base address of MSC registers.
+ * \param[in] upstreamIdx The Index of the upstream data register to check parity error flag.
+ * 						  Range: 0 to 0x3
+ *
+ * \retval boolean TRUE  If the Upstream Parity Error is detected.
+ * 				   FALSE If no Upstream Parity Error is detected.
  */
 IFX_INLINE boolean IfxMsc_getUpstreamParityErrorFlag(Ifx_MSC *msc, uint8 upstreamIdx);
 
-/** \brief Returns Upstream Timeout Flag Status
- * \param msc pointer to the base of MSC registers
- * \return Status
+/**
+ * \brief Returns the status of the upstream timeout flag.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ * 
+ * \retval boolean TRUE  If the Upstream Time-out Flag is Enabled.
+ * 		           FALSE If the Upstream Time-out Flag is Disabled.
  */
 IFX_INLINE boolean IfxMsc_getUpstreamTimeoutFlag(Ifx_MSC *msc);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param msc Pointer to MSC module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the MSC module is in a suspended state.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval boolean TRUE  If the Module is suspended
+ * 		   		   FALSE If the Module is not (yet) suspended.
  */
 IFX_INLINE boolean IfxMsc_isModuleSuspended(Ifx_MSC *msc);
 
-/** \brief Set or reset the Asynchronous clock bypass bit.
- * \param msc pointer to the base of MSC registers
- * \param value Set / reset value.
- * \return None
+/**
+ * \brief Sets or resets the Asynchronous clock bypass bit.
+ * 
+ * \param[inout] msc   Pointer to the base address of MSC registers.
+ * \param[in] 	 value Boolean value to set or reset the bypass bit.
+ * 					   Range: TRUE  Disables the bypass, and the asynchronous clock will become active.
+ * 						      FALSE Enables the bypass, and the asynchronous clock will be disabled.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setAsyncClockBypass(Ifx_MSC *msc, boolean value);
 
-/** \brief Sets the Down stream data
- * \param msc pointer to the base of MSC registers
- * \param data Data
- * \return None
+/**
+ * \brief Configures the downstream data for the MSC module.
+ *
+ * \param[inout] msc  Pointer to the base address of MSC registers.
+ * \param[in]    data The 32-bit data value to be set for downstream transmission.
+ * 					  Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setDownStreamData(Ifx_MSC *msc, uint32 data);
 
-/** \brief Set or reset the Down stream extension enable bit.
- * \param msc pointer to the base of MSC registers
- * \param value Set / reset value.
- * \return None
+/**
+ * \brief Enables or disables the Downstream extension feature.
+ * 
+ * \param[inout] msc   Pointer to the base address of MSC registers.
+ * \param[in]    value Boolean value to set or reset the downstream extension.
+ * 					   Range: TRUE  Enables the downstream extension.
+ * 					   		  FALSE Disables the downstream extension.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setDownStreamExtension(Ifx_MSC *msc, boolean value);
 
-/** \brief Sets the Down stream Extension data
- * \param msc pointer to the base of MSC registers
- * \param data Data
- * \return None
+/**
+ * \brief Configures the downstream extension data for the MSC module.
+ *
+ * \param[inout] msc  Pointer to the base address of MSC registers.
+ * \param[in] 	 data The 32-bit data value to be set as the downstream extension data.
+ * 					  Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setDownStreamExtensionData(Ifx_MSC *msc, uint32 data);
 
-/** \brief Set or reset the Fast Mode bit.
- * Select the correct NDD value when using Fast mode.
- * \param msc pointer to the base of MSC registers
- * \param value Set / reset value.
- * \return None
+/**
+ * \brief Enables or disables the Fast Mode for the MSC module.
+ *        When Fast Mode is enabled, the module operates at higher speeds,
+ *        and the correct NDD (Number of Data Delay) value must be selected.
+ *
+ * \param[inout] msc   Pointer to the base address of MSC registers.
+ * \param[in]    value Boolean value indicating whether to enable or disable Fast Mode.
+ * 					   Range: TRUE  Enables the Fast Mode.
+ * 					   		  FALSE Disables the Fast Mode.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setFastMode(Ifx_MSC *msc, boolean value);
 
-/** \brief Sets The Fractional Divider Step
- * \param msc pointer to the base of MSC registers
- * \param value Value
- * \return None
+/**
+ * \brief Configures the fractional divider step for the MSC module's clock generator.
+ *
+ * \param[inout] msc   Pointer to the base address of MSC registers.
+ * \param[in] 	 value The fractional divider step value to be set.
+ * 					   Range: 0 to 0x3FF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setFractionalDividerStep(Ifx_MSC *msc, uint16 value);
 
-/** \brief Set the required N divider downstream value.
- * \param msc pointer to the base of MSC registers
- * \param divisionRatio select the required division ratio.
- * \return None
+/**
+ * \brief Configures the N divider downstream value for the MSC module.
+ *
+ * \param[inout] msc           Pointer to the base address of MSC registers.
+ * \param[in]    divisionRatio The desired division ratio.
+ * 							   Range: \ref IfxMsc_NDividerDownstream
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setNdividerDownstream(Ifx_MSC *msc, IfxMsc_NDividerDownstream divisionRatio);
 
-/** \brief To enable or disable CX mode
- * \param msc
- * \param value To enable or disable CX mode
- * \return None
+/**
+ * \brief Enables or disables the Reset Command Extension (CX) mode.
+ *
+ * \param[inout] msc   Pointer to the base address of MSC registers.
+ * \param[in]    value Enable or disable CX mode.
+ * 					   Range: TRUE  Activates the CX mode.
+ * 					   		  FALSE Deactivates the CX mode.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setResetCommandExtensionMode(Ifx_MSC *msc, boolean value);
 
-/** \brief Sets The Serial Data Input Select
- * \param msc pointer to the base of MSC registers
- * \param select Serial Data Input Select
- * \return None
+/**
+ * \brief Configures the serial data input selection for the MSC module.
+ *
+ * \param[inout] msc    Pointer to the base address of MSC registers.
+ * \param[in]    select Serial data input selection.
+ * 						Range: \ref IfxMsc_SerialDataInput
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setSerialDataInputSelect(Ifx_MSC *msc, IfxMsc_SerialDataInput select);
 
-/** \brief Sets the sensitivity of the module to sleep signal
- * \param msc pointer to MSC registers
- * \param mode mode selection (enable/disable)
- * \return None
+/**
+ * \brief Sets the sensitivity of the module to the sleep signal.
+ *
+ * \param[inout] msc  Pointer to the base address of MSC registers.
+ * \param[in]    mode Mode selection for sleep sensitivity.
+ * 				      Range: \ref IfxMsc_SleepMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setSleepMode(Ifx_MSC *msc, IfxMsc_SleepMode mode);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param msc Pointer to MSC module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Configures the MSC module to the specified suspend mode.
+ *
+ * \param[inout] msc  Pointer to the base address of MSC registers.
+ * \param[in]    mode The suspend mode to configure.
+ * 					  Range: \ref IfxMsc_SuspendMode
+ *
+ * \retval None
+ *
+ * \note The API works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled, the OCS suspend control is ineffective.
  */
 IFX_INLINE void IfxMsc_setSuspendMode(Ifx_MSC *msc, IfxMsc_SuspendMode mode);
 
-/** \brief Sets the Transmission Mode
- * \param msc pointer to the base of MSC registers
- * \param mode mode
- * \return None
+/**
+ * \brief Configures the transmission mode for the MSC module.
+ *
+ * \param[inout] msc  Pointer to the base address of MSC registers.
+ * \param[in]    mode The transmission mode to be set.
+ *                	  Range: \ref IfxMsc_TransmissionMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setTransmissionMode(Ifx_MSC *msc, IfxMsc_TransmissionMode mode);
 
-/** \brief Sets The Upstream Channel Recieve Rate
- * \param msc pointer to the base of MSC registers
- * \param recieveRate Recieve Rate
- * \return None
+/**
+ * \brief Sets the upstream channel receive rate for the MSC module.
+ *
+ * \param[inout] msc         Pointer to the base address of MSC registers.
+ * \param[in]    recieveRate The desired receive rate.
+ * 							 Range: \ref IfxMsc_UpstreamChannelReceivingRate
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setUpstreamChannelRecieveRate(Ifx_MSC *msc, IfxMsc_UpstreamChannelReceivingRate recieveRate);
 
-/** \brief Sets The Upstream Timeout
- * \param msc pointer to the base of MSC registers
- * \param timeoutVal Timeout Value
- * \return None
+/**
+ * \brief Sets the upstream timeout value for the MSC module.
+ *
+ * \param[inout] msc        Pointer to the base address of MSC registers.
+ * \param[in]    timeoutVal The upstream timeout value to be set.
+ * 					        Range: \ref IfxMsc_UpstreamTimeoutValue
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setUpstreamTimeout(Ifx_MSC *msc, IfxMsc_UpstreamTimeoutValue timeoutVal);
 
-/** \brief Sets The Upstream Timeout Prescalar
- * \param msc pointer to the base of MSC registers
- * \param prescalar prescalar
- * \return None
+/**
+ * \brief Configures the upstream timeout prescaler value for the MSC module.
+ *
+ * \param[inout] msc       Pointer to the base address of MSC registers.
+ * \param[in]    prescalar The prescaler value to be set.
+ * 						   Range: \ref IfxMsc_UpstreamTimeoutPrescaler
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setUpstreamTimeoutPrescalar(Ifx_MSC *msc, IfxMsc_UpstreamTimeoutPrescaler prescalar);
 
-/** \brief Indicates if Overflow error has occured
- * \param msc Pointer to MSC SFR base address
- * \return Returns overflow error status
+/**
+ * \brief Checks if an ABRA (Asynchronous Baud Rate Adjustment Block) overflow error has occurred in the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval boolean TRUE  If the Overflow error has occurred in the ABRA mechanism.
+ * 				   FALSE If no Overflow error has occurred in the ABRA mechanism.
  */
 IFX_INLINE boolean IfxMsc_hasAbraOverflowErrorOccured(Ifx_MSC *msc);
 
-/** \brief Indicates if Underflow error has occured
- * \param msc Pointer to MSC SFR base address
- * \return Returns underflow error status
+/**
+ * \brief Checks if an ABRA (Asynchronous Baud Rate Adjustment Block) underflow error has occurred in the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval boolean TRUE  If the underflow error has occurred in the ABRA mechanism.
+ * 				   FALSE If no underflow error has occurred in the ABRA mechanism.
  */
 IFX_INLINE boolean IfxMsc_hasAbraUnderflowErrorOccured(Ifx_MSC *msc);
 
-/** \brief Sets the Overflow Flag and will trigger the overflow interrupt, if enabled
- * \param msc Pointer to MSC SFR base address
- * \return None
+/**
+ * \brief Sets the Overflow Flag and triggers the overflow interrupt if enabled.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setAbraOverflowFlag(Ifx_MSC *msc);
 
-/** \brief Sets the Underflow Flag and will trigger the underflow interrupt, if enabled
- * \param msc Pointer to MSC SFR base address
- * \return None
+/**
+ * \brief Sets the Underflow Flag and triggers the underflow interrupt if enabled.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxMsc_setAbraUnderflowFlag(Ifx_MSC *msc);
 
@@ -1447,60 +1695,98 @@ IFX_INLINE void IfxMsc_setAbraUnderflowFlag(Ifx_MSC *msc);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief clear data frame interrupt flag
- * \param msc pointer to the base of MSC registers
- * \return None
+/**
+ * \brief Clears the data frame interrupt flag for the MSC module.
+ *
+ * \param[inout] msc Pointer to the base address of MSC registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_clearDataFrameInterruptFlag(Ifx_MSC *msc);
 
-/** \brief Get the step value for the supplied baud rate when divider mode is fractional for downstream
- * \param msc pointer to the base of MSC registers
- * \param baud Required baud rate
- * \return Step Value
+/**
+ * \brief Calculates the step value for the specified baud rate when using fractional divider mode for downstream communication.
+ *
+ * \param[in] msc  Pointer to the base address of MSC registers.
+ * \param[in] baud Required baud rate to be configured.
+ * 				   Range: 0x5F5E1 (0.39 Mbaud) to 0x17D7840 (25 Mbaud)
+ *
+ * \retval uint64 The calculated step value for the fractional divider mode.
+ * 				  Range: 0x8 (for 0.39 Mbaud) to 0x200 (for 25 Mbaud)
  */
 IFX_EXTERN uint64 IfxMsc_downstreamFractionalBaudCalculator(Ifx_MSC *msc, uint32 baud);
 
-/** \brief Get the step value for the supplied baud rate when divider mode is normal for downstream
- * \param msc Select DataType Ref
- * \param baud Required baud rate
- * \return Step value
+/**
+ * \brief Calculates the step value for the specified baud rate in normal divider mode for downstream communication.
+ *
+ * \param[in] msc  Pointer to the base address of MSC registers.
+ * \param[in] baud The desired baud rate for downstream communication.
+ * 				   Range: 0x5F5E1 (0.39 Mbaud) to 0x17D7840 (25 Mbaud)
+ *
+ * \retval uint32 The calculated step value for the specified baud rate.
+ * 				  Range: 0x380 (for 0.39 Mbaud) to 0x3FE (for 25 Mbaud)
  */
 IFX_EXTERN uint32 IfxMsc_downstreamNormalBaudCalculator(Ifx_MSC *msc, uint32 baud);
 
-/** \brief get the status of the active data frame
- * \param msc pointer to the base of MSC registers
- * \return Status TRUE or FALSE
+/**
+ * \brief Checks if there is an active data frame being processed by the MSC module.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval boolean Status of the active data frame.
+ *				   TRUE  If the data frame is currently sent out.
+ *				   FALSE If no data frame is currently sent out.
  */
 IFX_EXTERN boolean IfxMsc_getActiveDataFrameStatus(Ifx_MSC *msc);
 
-/** \brief get the status of the data frame interrupt flag
- * \param msc pointer to the base of MSC registers
- * \return Status TRUE or FALSE
+/**
+ * \brief Gets the status of the data frame interrupt flag.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval boolean Status of the data frame interrupt flag.
+ * 				   TRUE  If the Data frame interrupt is generated.
+ * 				   FALSE If the Data frame interrupt is cleared.
  */
 IFX_EXTERN boolean IfxMsc_getDataFrameInterruptFlag(Ifx_MSC *msc);
 
 /**
- * \param msc Pointer to MSC module SFRs
- * \param command64 Command struct to be loaded to DCE & DC
- * \return None
+ * \brief Manually loads a 64-bit command to the DCE and DC registers for transmission.
+ *
+ * \param[inout] msc 	   Pointer to the base address of MSC registers.
+ * \param[in]    command64 Pointer to the command structure containing the 64-bit command.
+ *                         This structure includes the commands to be written to the DCE
+ *                         and DC registers. The DCE command is loaded first, followed by
+ *                         the DC command.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_manualLoadCxModeCommand(Ifx_MSC *msc, IfxMsc_CxModeCommand *command64);
 
-/** \brief Returns the downstream ABRA baudrate
- * \param msc Pointer to MSC SFR base address
- * \return Downstream ABRA baudrate
+/**
+ * \brief Returns the downstream ABRA baudrate.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval float32 The downstream ABRA baudrate in bits per second (bps).
  */
 IFX_EXTERN float32 IfxMsc_getDownstreamAbraBaudrate(Ifx_MSC *msc);
 
-/** \brief Returns the downstream baudrate(with ABRA disabled)
- * \param msc Pointer to MSC SFR base address
- * \return Returns the downstream baudrate(in case of ABRA disabled)
+/**
+ * \brief Returns the downstream baudrate with ABRA disabled.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval float32 The downstream baudrate value when ABRA is disabled in bits per second (bps).
  */
 IFX_EXTERN float32 IfxMsc_getDownstreamAbraDisabledBaudrate(Ifx_MSC *msc);
 
 /**
- * \param msc Pointer to MSC SFR base address
- * \return Returns the downstream baudrate.
+ * \brief Gets the downstream baudrate for the MSC module.
+ *
+ * \param[in] msc Pointer to the base address of MSC registers.
+ *
+ * \retval float32 The current downstream baudrate in bits per second (bps).
  */
 IFX_EXTERN float32 IfxMsc_getDownstreamBaudrate(Ifx_MSC *msc);
 

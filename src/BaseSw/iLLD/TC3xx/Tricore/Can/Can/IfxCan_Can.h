@@ -3,7 +3,7 @@
  * \brief CAN CAN details
  * \ingroup IfxLld_Can
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -124,8 +124,11 @@
  *
  *         nodeConfig.frame.type = IfxCan_FrameType_receive;
  *
- *         nodeConfig.filterConfig.standardListSize = 2;
+ *         nodeConfig.filterConfig.messageIdLength = IfxCan_MessageIdLength_both;
+ *         nodeConfig.filterConfig.extendedListSize = 1;
+ *         nodeConfig.filterConfig.standardListSize = 1;
  *
+ *         nodeConfig.messageRAM.extendedFilterListStartAddress = 0x80  + NODE0_RAM_OFFSET;
  *         nodeConfig.messageRAM.standardFilterListStartAddress = 0x100 + NODE0_RAM_OFFSET;
  *         nodeConfig.messageRAM.rxBuffersStartAddress          = 0x200 + NODE0_RAM_OFFSET;
  *         //nodeConfig.messageRAM.baseAddress                    = MODULE_CAN0_RAM;// No longer needed, driver derives it from module handle. Check line .baseAddress = (uint32)(can->can),
@@ -152,12 +155,87 @@
  *         nodeConfig.messageRAM.txBuffersStartAddress = 0x400 + NODE1_RAM_OFFSET;
  *         //nodeConfig.messageRAM.baseAddress           = MODULE_CAN0_RAM;// No longer needed, driver derives it from module handle. Check line .baseAddress = (uint32)(can->can),
  *
- *      // enable the required interrupts with respective to group interrupts configuration at module level
- *      nodeConfig.interruptConfig.transmissionCompletedEnabled = TRUE;
+ *         // enable the required interrupts with respective to group interrupts configuration at module level
+ *         nodeConfig.interruptConfig.transmissionCompletedEnabled = TRUE;
  *
  *         // initialize Node 1;
  *         IfxCan_Can_initNode(&canNode[1], &nodeConfig);
  *     }
+ * \endcode
+ *
+ * \subsection IfxLld_Can_Can_Alternate_Node_Initialization Alternative Node Initialization Method
+ *
+ * Alternatively the node can be initialized using APIs as shown in the following example sequence given below for receive Node 0:
+ *
+ * \code
+ *     // Node 0 as receive node
+ *	   {
+ *         IfxCan_Can_NodeConfig nodeConfig;
+ *         IfxCan_Can_initNodeConfig(&nodeConfig, &canBasic.drivers.can[0]);
+ *
+ *         // Update the configuration (clockSource, messageRAM, baudRate, fastBaudRate, frame, rxConfig, filterConfig, Rx pins, busLoopbackEnabled, interruptConfig) as per requirement
+ *
+ *         nodeConfig.nodeId = IfxCan_NodeId_0;
+ *         nodeConfig.clockSource = IfxCan_ClockSource_both;
+ *
+ *         nodeConfig.frame.type = IfxCan_FrameType_receive;
+ *         nodeConfig.frame.mode = IfxCan_FrameMode_standard;
+ *         nodeConfig.baudrate.baudrate      = 500000;
+ *
+ *         nodeConfig.filterConfig.messageIdLength = IfxCan_MessageIdLength_both;
+ *         nodeConfig.filterConfig.extendedListSize = 1;
+ *         nodeConfig.filterConfig.standardListSize = 1;
+ *
+ *         nodeConfig.messageRAM.extendedFilterListStartAddress = 0x80  + NODE0_RAM_OFFSET;
+ *         nodeConfig.messageRAM.standardFilterListStartAddress = 0x100 + NODE0_RAM_OFFSET;
+ *         nodeConfig.messageRAM.rxBuffersStartAddress          = 0x200 + NODE0_RAM_OFFSET;
+ *         nodeConfig.messageRAM.baseAddress                    = (uint32)&MODULE_CAN0;
+ *
+ *         IfxCan_Can_Pins pins;
+ *         pins.rxPin = &IfxCan_RXD00B_P20_7_IN;
+ *         pins.rxPinMode = IfxPort_InputMode_pullUp;
+ *         pins.txPin = &IfxCan_TXD00_P20_8_OUT;
+ *         pins.txPinMode = IfxPort_OutputMode_pushPull;
+ *         pins.padDriver = IfxPort_PadDriver_cmosAutomotiveSpeed2;
+ *         nodeConfig.pins = &pins;
+ *
+ *         // For interrupt configuration user needs to configure the priority and select one of the 16 interrupt lines
+ *         nodeConfig.interruptConfig.messageStoredToDedicatedRxBufferEnabled = TRUE;
+ *         nodeConfig.interruptConfig.reint.priority = ISR_PRIORITY_CAN0_RX ;
+ *         nodeConfig.interruptConfig.reint.interruptLine =  IfxCan_InterruptLine_14;
+ *         nodeConfig.interruptConfig.reint.typeOfService = IfxCpu_Irq_getTos(IfxCpu_getCoreIndex());
+ *
+ *         // Initialization sequence for Node 0
+ *         IfxCan_Can_Node *nodeRx = &canNode[0];
+ *         IfxCan_Can_NodeConfig *config = &nodeConfig;
+ *         Ifx_CAN   *canSfr  = config->can;
+ *         node->can          = canSfr;
+ *
+ *         Ifx_CAN_N *nodeSfr = IfxCan_getNodePointer(canSfr, config->nodeId);
+ *         node->node         = nodeSfr;
+ *
+ * 		   // CAN Node clock configuration
+ *         IfxCan_Can_initNodeClk(nodeRx, config->can, config->nodeId, config->clockSource);
+ *         // Configures the message RAM handle
+ * 		   IfxCan_Can_configureNodeMessageRamHandle(nodeRx, &config->messageRAM);
+ * 	       //CAN Node baudrate
+ * 		   IfxCan_Can_configureBaudrate(nodeRx, &config->baudRate, &config->fastBaudRate, config->calculateBitTimingValues, config->frame.mode);
+ * 		   // Receive frame configuration for the CAN node
+ * 	       IfxCan_Can_configureRx(nodeRx, &config->frame, &config->rxConfig);
+ *         // Configures the acceptance filter for a CAN node
+ *         IfxCan_Can_configureFilter(nodeRx, &config->frame, &config->filterConfig);
+ *         // Configures the CAN Rx pins
+ *         boolean status = IfxCan_Can_configurePins(nodeRx, config->pins);
+ *         // Configures interrupt groups configuration
+ *         IfxCan_Can_configureInterrupt(nodeRx, &config->interruptConfig);
+ *
+ *         // Transmit node initialization is also done in the same way as above.
+ *         // For configuring the transmit frame configuration for the CAN node use the API:
+ *         // IfxCan_Can_configureTx(nodeTx, &config->frame, &config->txConfig);
+ *
+ *         // For configuring loopback mode, use API : IfxCan_Can_configureLoopbackMode(nodeTx, config->busLoopbackEnabled);
+ *     }
+ *
  * \endcode
  *
  * \subsection IfxLld_Can_Can_filter Filter Initialisation
@@ -168,6 +246,7 @@
  * \code
  *     // set filters
  *
+ *     // Standard Filter 
  *     // set filter for Rx Buffer 0
  *     {
  *         // Initialize the filter structure
@@ -181,16 +260,17 @@
  *         IfxCan_Can_setStandardFilter(&canNode[0], &filter);
  *     }
  *
+ *     // Extended Filter 
  *     // set filter for rxBuffer 1
  *     {
  *          IfxCan_Filter filter;
  *
- *          filter.number = 1;
+ *          filter.number = 0;
  *          filter.elementConfiguration = IfxCan_FilterElementConfiguration_storeInRxBuffer;
- *          filter.id1 = 0x7ff;
+ *          filter.id1 = 0x01;
  *          filter.rxBufferOffset = IfxCan_RxBufferId_1;
  *
- *          IfxCan_Can_setStandardFilter(&canNode[0], &filter);
+ *          IfxCan_Can_setExtendedFilter(&canNode[0], &filter);
  *     }
  * \endcode
  *
@@ -566,25 +646,25 @@
  */
 typedef struct
 {
-    uint32 baudrate;            /**< \brief Specifies the baud rate. Unit: baud */
-    uint16 samplePoint;         /**< \brief Specifies the baud rate. Unit: baud */
-    uint16 syncJumpWidth;       /**< \brief Synchronization Jump Width */
-    uint16 prescaler;           /**< \brief Baud Rate Prescaler */
-    uint8  timeSegment1;        /**< \brief Time segment before sample point */
-    uint8  timeSegment2;        /**< \brief Time segment after sample point */
+    uint32 baudrate;            /**< \brief Specifies the baud rate. Unit: baud. Range upto 1000000 */
+    uint16 samplePoint;         /**< \brief Specifies the baud rate. Unit: baud. Range : 0 to 10000 */
+    uint16 syncJumpWidth;       /**< \brief Synchronization Jump Width. Range: 0 to 127 */
+    uint16 prescaler;           /**< \brief Baud Rate Prescaler. Range: 0 to 511 */
+    uint8  timeSegment1;        /**< \brief Time segment before sample point. Range: 1 to 255 */
+    uint8  timeSegment2;        /**< \brief Time segment after sample point. Range: 1 to 127 */
 } IfxCan_Can_BaudRate;
 
 /** \brief Structure for fast baudrate
  */
 typedef struct
 {
-    uint32 baudrate;                    /**< \brief Specifies the baud rate. Unit: baud */
-    uint16 samplePoint;                 /**< \brief Specifies the baud rate. Unit: baud */
-    uint16 syncJumpWidth;               /**< \brief Synchronization Jump Width */
-    uint16 prescaler;                   /**< \brief Baud Rate Prescaler */
-    uint8  timeSegment1;                /**< \brief Time segment before sample point */
-    uint8  timeSegment2;                /**< \brief Time segment after sample point */
-    uint8  tranceiverDelayOffset;       /**< \brief transceiver delay compensation offset */
+    uint32 baudrate;                    /**< \brief Specifies the baud rate. Unit: baud. Range upto 8000000 */
+    uint16 samplePoint;                 /**< \brief Specifies the baud rate. Unit: baud. Range : 0 to 10000 */
+    uint16 syncJumpWidth;               /**< \brief Synchronization Jump Width. Range: 0 to 15 */
+    uint16 prescaler;                   /**< \brief Baud Rate Prescaler. Range: 0 to 31 */
+    uint8  timeSegment1;                /**< \brief Time segment before sample point. Range: 0 to 31 */
+    uint8  timeSegment2;                /**< \brief Time segment after sample point. Range: 0 to 15 */
+    uint8  tranceiverDelayOffset;       /**< \brief transceiver delay compensation offset. Range: 0 to 127 */
 } IfxCan_Can_FastBaudRate;
 
 /** \brief Structure for Acceptance filter configuration
@@ -592,13 +672,13 @@ typedef struct
 typedef struct
 {
     IfxCan_MessageIdLength  messageIdLength;                          /**< \brief Message Id length (Standard / Extended) */
-    uint8                   standardListSize;                         /**< \brief List Size Standard */
-    uint8                   extendedListSize;                         /**< \brief List Size Extended */
-    uint32                  extendedIdAndMask;                        /**< \brief Extended ID and Mask */
-    boolean                 rejectRemoteFramesWithStandardId;         /**< \brief set whether to reject the remote frames with standard id. */
-    boolean                 rejectRemoteFramesWithExtendedId;         /**< \brief set whether to reject the remote frames with extended id. */
-    IfxCan_NonMatchingFrame standardFilterForNonMatchingFrames;       /**< \brief action to be taken on the frames with ids, which are not matching with the standard filter. */
-    IfxCan_NonMatchingFrame extendedFilterForNonMatchingFrames;       /**< \brief action to be taken on the frames with ids, which are not matching with the extended filter. */
+    uint8                   standardListSize;                         /**< \brief List Size Standard. Range: 0 to 0x80 */
+    uint8                   extendedListSize;                         /**< \brief List Size Extended. Range: 0 to 0x40 */
+    uint32                  extendedIdAndMask;                        /**< \brief Extended ID and Mask. Range: 0  to 0x1FFFFFFF */
+    boolean                 rejectRemoteFramesWithStandardId;         /**< \brief Set whether to reject the remote frames with standard id. Range: TRUE if reject, FALSE if do not reject */
+    boolean                 rejectRemoteFramesWithExtendedId;         /**< \brief Set whether to reject the remote frames with extended id. Range: TRUE if reject, FALSE if do not reject */
+    IfxCan_NonMatchingFrame standardFilterForNonMatchingFrames;       /**< \brief Action to be taken on the frames with ids, which are not matching with the standard filter. */
+    IfxCan_NonMatchingFrame extendedFilterForNonMatchingFrames;       /**< \brief Action to be taken on the frames with ids, which are not matching with the extended filter. */
 } IfxCan_Can_FilterConfig;
 
 /** \brief Structure for Frame Configuration
@@ -679,10 +759,10 @@ typedef struct
     IfxCan_DataFieldSize rxFifo1DataFieldSize;        /**< \brief Rx FIFO 1 Data Field Size */
     IfxCan_RxFifoMode    rxFifo0OperatingMode;        /**< \brief Rx FIFO 0 operating mode */
     IfxCan_RxFifoMode    rxFifo1OperatingMode;        /**< \brief Rx FIFO 1 operating mode */
-    uint8                rxFifo0WatermarkLevel;       /**< \brief Rx FIFO 0 watermark level */
-    uint8                rxFifo1WatermarkLevel;       /**< \brief Rx FIFO 1 watermark level */
-    uint8                rxFifo0Size;                 /**< \brief Rx FIFO 0 Size */
-    uint8                rxFifo1Size;                 /**< \brief Rx FIFO 1 Size */
+    uint8                rxFifo0WatermarkLevel;       /**< \brief Rx FIFO 0 watermark level. Range: 0 to 0x40 */
+    uint8                rxFifo1WatermarkLevel;       /**< \brief Rx FIFO 1 watermark level. Range: 0 to 0x40 */
+    uint8                rxFifo0Size;                 /**< \brief Rx FIFO 0 Size. Range: 0 to 0x40 */
+    uint8                rxFifo1Size;                 /**< \brief Rx FIFO 1 Size. Range: 0 to 0x40 */
 } IfxCan_Can_RxConfig;
 
 /** \brief Structure for Tx handle Configuration
@@ -690,10 +770,10 @@ typedef struct
 typedef struct
 {
     IfxCan_TxMode        txMode;                         /**< \brief Tx FIFO/Queue Mode */
-    uint8                dedicatedTxBuffersNumber;       /**< \brief Number of Dedicated Transmit Buffers */
-    uint8                txFifoQueueSize;                /**< \brief Transmit FIFO/Queue Size */
+    uint8                dedicatedTxBuffersNumber;       /**< \brief Number of Dedicated Transmit Buffers. Range: 0 to 0x20 */
+    uint8                txFifoQueueSize;                /**< \brief Transmit FIFO/Queue Size. Range: 0 to 0x20 */
     IfxCan_DataFieldSize txBufferDataFieldSize;          /**< \brief Tx Buffer Data Field Size */
-    uint8                txEventFifoSize;                /**< \brief Transmit Event FIFO Size */
+    uint8                txEventFifoSize;                /**< \brief Transmit Event FIFO Size. Range: 0 to 0x20 */
 } IfxCan_Can_TxConfig;
 
 /** \} */
@@ -749,15 +829,15 @@ typedef struct
  */
 typedef struct
 {
-    boolean                errorStateIndicator;             /**< \brief Error State Indicator */
-    boolean                extendedID;                      /**< \brief Extended Identifier */
-    boolean                remoteTransmissionRequest;       /**< \brief Remote Transmission Request */
-    uint32                 identifier;                      /**< \brief Identifier */
-    uint16                 messageMarker;                   /**< \brief Message Marker */
-    uint8                  eventType;                       /**< \brief Event Type */
+    boolean                errorStateIndicator;             /**< \brief Error State Indicator. Range: TRUE if error passive, FALSE if error active  */
+    boolean                extendedID;                      /**< \brief Extended Identifier. Range: TRUE if 29-bit extended identifier, FALSE if 11-bit standard identifier */
+    boolean                remoteTransmissionRequest;       /**< \brief Remote Transmission Request. Range: TRUE if Remote frame transmitted, FALSE if Data frame transmitted */
+    uint32                 identifier;                      /**< \brief Identifier. Range: 0x000 to 0x7FF (Standard); 0 to 0x1FFFFFFF (Extended) */
+    uint16                 messageMarker;                   /**< \brief Message Marker. Range 0 to 31 */
+    uint8                  eventType;                       /**< \brief Event Type. Range: 1 or 2 (0 and 3 are reserved) */
     IfxCan_FrameFormatType frameFormatType;                 /**< \brief Frame Format Type */
-    boolean                bitRateSwitch;                   /**< \brief Bit Rate Switch */
-    uint8                  dataLengthCode;                  /**< \brief Data Length Code */
+    boolean                bitRateSwitch;                   /**< \brief Bit Rate Switch. Range: TRUE if with bit rate switching, FALSE if without bit rate switching */
+    uint8                  dataLengthCode;                  /**< \brief Data Length Code. Range: 0 to 0xF */
 } IfxCan_Can_TransmitEvent;
 
 /** \addtogroup IfxLld_Can_Can_Module_Initialize_Functions
@@ -767,23 +847,27 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the CAN Module
- * \param can Specifies the module handle
- * \param config Configuration structure of the module
- * \return None
+/**
+ * \brief Initializes the CAN module according to the provided configuration.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[inout] can    Pointer to the module handle to be initialized.
+ * \param[in]    config Pointer to the configuration structure containing the necessary settings for the CAN module initialization.
  *
+ * \retval None
+ *
+ * \see IfxLld_Can_Can_Usage for example usage.
  */
 IFX_EXTERN void IfxCan_Can_initModule(IfxCan_Can *can, const IfxCan_Can_Config *config);
 
-/** \brief Fills the configuration stucture of the CAN Module with default values
- * \param config Configuration structure to be filled with default values
- * \param can Specifies the pointer to the CAN registers
- * \return None
+/**
+ * \brief Initializes the CAN module configuration structure with default values.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[inout] config Pointer to the configuration structure to be initialized with default values.
+ * \param[in]    can    Pointer to the CAN register interface used for initialization.
  *
+ * \retval None
+ *
+ * \see IfxLld_Can_Can_Usage for example usage.
  */
 IFX_EXTERN void IfxCan_Can_initModuleConfig(IfxCan_Can_Config *config, Ifx_CAN *can);
 
@@ -796,39 +880,53 @@ IFX_EXTERN void IfxCan_Can_initModuleConfig(IfxCan_Can_Config *config, Ifx_CAN *
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns Rx FIFO 1 Fill Level
- * \param node CAN Node handle
- * \return Fill level
+/**
+ * \brief Returns Rx FIFO 0 Fill Level for the specified CAN node.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[in] node Pointer to CAN Node handle.
+ *
+ * \retval uint8 Fill level of Rx FIFO 0. Range 0 to 64
+ *
+ * Coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_INLINE uint8 IfxCan_Can_getRxFifo0FillLevel(IfxCan_Can_Node *node);
 
-/** \brief Returns Rx FIFO 1 Fill Level
- * \param node CAN Node handle
- * \return Fill level
+/**
+ * \brief Returns the fill level of the Rx FIFO 1 for the specified CAN node.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[in] node Pointer to CAN Node handle.
+ *
+ * \retval uint8 The current fill level of Rx FIFO 1. Range 0 to 64
+ *
+ * Coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_INLINE uint8 IfxCan_Can_getRxFifo1FillLevel(IfxCan_Can_Node *node);
 
-/** \brief Returns the status of whether the selcted Rx buffer has been updated from new data
- * \param node CAN Node handle
- * \param rxBufferId Rx Buffer number
- * \return Status
+/**
+ * \brief Returns the status of whether the selcted Rx buffer has been updated from new data.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[in] node       Pointer to CAN Node handle.
+ * \param[in] rxBufferId Rx Buffer number to check. Range: \ref IfxCan_RxBufferId
+ *
+ * \retval TRUE If new data is available in the specified Rx buffer.
+ * 		   FALSE If no new data is available in the specified Rx buffer.
+ *
+ * Coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_INLINE boolean IfxCan_Can_isNewDataReceived(IfxCan_Can_Node *node, IfxCan_RxBufferId rxBufferId);
 
-/** \brief Returns the status of whether Tx Fifo/Queue is full or not
- * \param node CAN Node handle
- * \return Status
+/**
+ * \brief Returns the status of whether Tx Fifo/Queue is full or not.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[in] node Pointer to CAN Node handle.
+ *
+ * \retval TRUE If status of Tx Fifo Queue is full.
+ *         FALSE If status of Tx Fifo Queue is not full. 
+ * 
+ * Coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_INLINE boolean IfxCan_Can_isTxFifoQueueFull(IfxCan_Can_Node *node);
@@ -837,33 +935,42 @@ IFX_INLINE boolean IfxCan_Can_isTxFifoQueueFull(IfxCan_Can_Node *node);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the message frame with defualt values
- * \param message Structure for CAN Message
- * \return None
+/**
+ * \brief Initializes a CAN message structure with default values for transmission or reception.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[inout] message Pointer to the CAN Message structure to be initialized.
+ *
+ * \retval None
+ * 
+ * Coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_EXTERN void IfxCan_Can_initMessage(IfxCan_Message *message);
 
-/** \brief Reads the CAN received message
- * \param node CAN Node handle
- * \param message Structure for Message configuration filled with dummy values and will be relpaced by read values. see IfxCan_Can_initMessage
- * \param data Pointer to data (in words)
- * \return None
+/**
+ * \brief Reads a received CAN message from the specified node.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[inout] node    Pointer to CAN Node handle.
+ * \param[inout] message Pointer to structure for Message configuration filled with dummy values and will be relpaced by read values. \see IfxCan_Can_initMessage
+ * \param[inout]   data    Pointer to a data array (in words) where the received message data will be stored.
+ *
+ * \retval None
+ * 
+ * Coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_EXTERN void IfxCan_Can_readMessage(IfxCan_Can_Node *node, IfxCan_Message *message, uint32 *data);
 
-/** \brief Transmits the CAN message
- * \param node CAN Node handle
- * \param message Structure for Message configuration. see IfxCan_Can_initMessage
- * \param data Pointer to data (in words)
- * \return status
+/**
+ * \brief Transmits a CAN message through the specified node.
  *
- * A coding example can be found in \ref IfxLld_Can_Can_Usage
+ * \param[inout] node    Pointer to CAN Node handle.
+ * \param[in]    message Pointer to the message configuration structure, defining properties like message ID, length, and mode. \see IfxCan_Can_initMessage
+ * \param[in]    data    Pointer to the data payload (in words) to be transmitted with the message.
+ *
+ * \retval IfxCan_Status The status of the transmission operation. Range: \ref IfxCan_Status
+ * 
+ * Coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_EXTERN IfxCan_Status IfxCan_Can_sendMessage(IfxCan_Can_Node *node, IfxCan_Message *message, uint32 *data);
@@ -877,20 +984,26 @@ IFX_EXTERN IfxCan_Status IfxCan_Can_sendMessage(IfxCan_Can_Node *node, IfxCan_Me
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Sets the Extended Filter element configuration
- * \param node CAN Node handle
- * \param filter Structure for Filter Configuration
- * \return None
+/**
+ * \brief Configures the extended filter element configuration for a specified CAN node using the provided filter settings.
+ *
+ * \param[inout] node   Pointer to CAN Node handle.
+ * \param[in]    filter Pointer to the filter configuration structure. This structure defines the filter parameters, including filter number, element configuration, type, IDs, and Rx buffer offset.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_EXTERN void IfxCan_Can_setExtendedFilter(IfxCan_Can_Node *node, IfxCan_Filter *filter);
 
-/** \brief Sets the Standard Filter element configuration
- * \param node CAN Node handle
- * \param filter Structure for Filter Configuration
- * \return None
+/**
+ * \brief Configures the standard filter element configuration for a specified CAN node using the provided filter settings.
+ *
+ * \param[inout] node   Pointer to CAN Node handle.
+ * \param[in]    filter Pointer to the filter configuration structure that defines the filter properties, including filter number, type, ID values, and buffer offset.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Can_Can_Usage
  *
@@ -906,19 +1019,27 @@ IFX_EXTERN void IfxCan_Can_setStandardFilter(IfxCan_Can_Node *node, IfxCan_Filte
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the status of whether the NODE is synchronised or not
- * \param node CAN Node handle
- * \return Status TRUE: synchronized, FALSE : Sync in progress
+/**
+ * \brief Checks if the CAN node is synchronized.
+ *
+ * \param[in] node Pointer to CAN Node handle.
+ *
+ * \retval TRUE If the node is synchronized.
+ *         FALSE If synchronization is in progress.
  *
  * A coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_INLINE boolean IfxCan_Can_isNodeSynchronized(IfxCan_Can_Node *node);
 
-/** \brief Returns the status of pending request of the selected Tx buffer
- * \param node CAN Node handle
- * \param txBufferId Tx Buffer number
- * \return Status
+/**
+ * \brief Checks if a transmit buffer request is pending.
+ *
+ * \param[in] node       Pointer to CAN Node handle.
+ * \param[in] txBufferId Tx Buffer number to check. Range: \ref IfxCan_TxBufferId
+ *
+ * \retval TRUE If the transmit buffer request is pending.
+ * 	       FALSE If the transmit buffer request is not pending.
  */
 IFX_INLINE boolean IfxCan_Can_isTxBufferRequestPending(IfxCan_Can_Node *node, IfxCan_TxBufferId txBufferId);
 
@@ -926,93 +1047,137 @@ IFX_INLINE boolean IfxCan_Can_isTxBufferRequestPending(IfxCan_Can_Node *node, If
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the CAN Node
- * \param node CAN Node handle
- * \param config Configuration structure of the Node
- * \return TRUE: Returns TRUE if the operation was successful\n
- * FALSE: Returns FALSE if the operation was errorneous
+/**
+ * \brief Initializes a CAN node with the specified configuration.
+ *
+ * \param[inout] node   Pointer to CAN Node handle.
+ * \param[in]    config Pointer to the configuration structure containing the setup parameters
+ *                      for the CAN node, including clock source, baud rates,
+ *                      transmission/reception configurations, filter settings,
+ *                      interrupt configurations, and pin assignments.
+ *
+ * \retval TRUE If the the CAN node was successfully initialized.
+ *         FALSE If an error occurred during initialization.
  *
  * A coding example can be found in \ref IfxLld_Can_Can_Usage
  *
  */
 IFX_EXTERN boolean IfxCan_Can_initNode(IfxCan_Can_Node *node, const IfxCan_Can_NodeConfig *config);
 
-/** \brief Initializes the CAN Node clock
- * \param node CAN Node handle
- * \param can Specifies the pointer to the CAN registers
- * \param nodeId CAN Node number
- * \param clockSource Type of Clock Source selection
- * \return None
+/**
+ * \brief Initializes the CAN Node clock configuration.
+ *
+ * \param[inout] node        Pointer to CAN Node handle.
+ * \param[in]    can         Pointer to the CAN registers.
+ * \param[in]    nodeId      CAN Node number. Range: \ref IfxCan_NodeId
+ * \param[in]    clockSource The type of clock source to be used. Range: \ref IfxCan_ClockSource
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Can_initNodeClk(IfxCan_Can_Node *node, Ifx_CAN *can, IfxCan_NodeId nodeId, IfxCan_ClockSource clockSource);
 
-/** \brief Configures the CAN Node message RAM handle
- * \param node CAN Node handle
- * \param messageRAM Structure for Message RAM configuration
- * \return None
+/**
+ * \brief Configures the message RAM handle for the specified CAN node using the provided configuration structure.
+ *
+ * \param[inout] node       Pointer to CAN Node handle.
+ * \param[in]    messageRAM Pointer to configuration structure for Message RAM configuration.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Can_configureNodeMessageRamHandle(IfxCan_Can_Node *node, const IfxCan_MessageRAM *messageRAM);
 
-/** \brief Configures the CAN Node Baudrate
- * \param node CAN Node handle
- * \param baudRate Structure for nominal baudrate
- * \param fastBaudRate Structure for fast baudrate
- * \param calculateBitTimingValues Enable/Disable auto calculation of bit timing values for selected CAN node
- * \param frameMode CAN Frame mode
- * \return None
+/**
+ * \brief Configures the CAN Node baudrate.
+ *
+ * \param[inout] node                     Pointer to CAN Node handle.
+ * \param[in]    baudRate                 Pointer to structure containing nominal baudrate configuration parameters such as
+ *                                        baud rate, sample point, synchronization jump width, prescaler, and time
+ *                                        segments.
+ * \param[in]    fastBaudRate             Pointer to structure containing fast baudrate configuration parameters, including
+ *                                        baud rate, sample point, synchronization jump width, prescaler, time
+ *                                        segments, and transceiver delay offset.
+ * \param[in]    calculateBitTimingValues Flag to enable/disable automatic calculation of bit timing
+ *                                        values for the CAN node. Range: TRUE (calculate),
+ *                                        FALSE (do not calculate).
+ * \param[in]    frameMode                CAN frame mode. Range: \ref IfxCan_FrameMode
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Can_configureBaudrate(IfxCan_Can_Node *node, const IfxCan_Can_BaudRate *baudRate, const IfxCan_Can_FastBaudRate *fastBaudRate, boolean calculateBitTimingValues, IfxCan_FrameMode frameMode);
 
-/** \brief Configures transmit frame configuration
- * \param node CAN Node handle
- * \param frame Structure for Frame Configuration
- * \param txConfig Structure for Tx handle Configuration
- * \return None
+/**
+ * \brief Configures the transmit frame configuration for the specified CAN node.
+ *
+ * \param[inout] node     Pointer to CAN Node handle.
+ * \param[in]    frame    Pointer to structure for Frame Configuration.
+ * \param[in]    txConfig Pointer to structure for Tx handle Configuration.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Can_configureTx(IfxCan_Can_Node *node, const IfxCan_Can_Frame *frame, const IfxCan_Can_TxConfig *txConfig);
 
-/** \brief Configures receive frame configuration
- * \param node CAN Node handle
- * \param frame Structure for Frame Configuration
- * \param rxConfig Structure for Rx handle Configuration
- * \return None
+/**
+ * \brief Configures the receive frame configuration for the CAN node.
+ *
+ * \param[inout] node     Pointer to CAN Node handle.
+ * \param[in]    frame    Pointer to structure for Frame Configuration.
+ * \param[in]    rxConfig Pointer to structure for Rx handle Configuration.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Can_configureRx(IfxCan_Can_Node *node, const IfxCan_Can_Frame *frame, const IfxCan_Can_RxConfig *rxConfig);
 
-/** \brief Configures filter configuration
- * \param node CAN Node handle
- * \param frame Structure for Frame Configuration
- * \param filterConfig Structure for Acceptance filter configuration
- * \return None
+/**
+ * \brief Configures the acceptance filter for a CAN node based on the provided frame and filter settings.
+ *
+ * \param[inout] node         Pointer to CAN Node handle.
+ * \param[in]    frame        Pointer to structure for Frame Configuration.
+ * \param[in]    filterConfig Pointer to structure for Acceptance filter configuration.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Can_configureFilter(IfxCan_Can_Node *node, const IfxCan_Can_Frame *frame, const IfxCan_Can_FilterConfig *filterConfig);
 
-/** \brief Pins initialization
- * \param node CAN Node handle
- * \param pins Structure for CAN pin configuration
- * \return TRUE: Returns TRUE if the operation was successful\n
- *         FALSE: Returns FALSE if the operation was erroneous
+/**
+ * \brief Configures the CAN pins for a specified node based on the provided pin configuration.
+ *
+ * \param[inout] node Pointer to CAN Node handle.
+ * \param[in]    pins Pointer to the structure containing the pin configuration details,
+ *                    including TX pin, TX pin mode, RX pin, RX pin mode, and pad driver settings.
+ *
+ * \retval TRUE If operation was successful.
+ *         FALSE If an error occurred during pin configuration.
  */
 IFX_EXTERN boolean IfxCan_Can_configurePins(IfxCan_Can_Node *node, const IfxCan_Can_Pins *pins);
 
-/** \brief Configures internal virtual CAN bus loopback mode
- * \param node CAN Node handle
- * \param busLoopbackEnabled Internal Virtual CAN bus loopback mode enable/disable choice
- * \return None
+/**
+ * \brief Configures the internal virtual CAN bus loopback mode.
+ *
+ * \param[inout] node               Pointer to CAN Node handle.
+ * \param[in]    busLoopbackEnabled Boolean flag to enable (true) or disable (false) the loopback mode.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Can_configureLoopbackMode(IfxCan_Can_Node *node, boolean busLoopbackEnabled);
 
-/** \brief Configures interrupt groups configuration
- * \param node CAN Node handle
- * \param interruptConfig Structure for Interrupt configuration
- * \return None
+/**
+ * \brief Configures interrupt groups configuration for the specified CAN node.
+ *
+ * \param[inout] node            Pointer to CAN Node handle.
+ * \param[in]    interruptConfig Pointer to a structure containing interrupt
+ *                               configuration settings.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxCan_Can_configureInterrupt(IfxCan_Can_Node *node, const IfxCan_Can_InterruptConfig *interruptConfig);
 
-/** \brief Fills the configuration stucture of the Node with default values
- * \param config Configuration structure of the Node
- * \param can Specifies the module handle
- * \return None
+/**
+ * \brief Initializes the CAN node configuration structure with default values.
+ *
+ * \param[inout] config Pointer to the configuration structure of the node to be initialized.
+ * \param[in]    can    Specifies the CAN module handle to be used for configuration.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Can_Can_Usage
  *
@@ -1025,10 +1190,13 @@ IFX_EXTERN void IfxCan_Can_initNodeConfig(IfxCan_Can_NodeConfig *config, IfxCan_
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reads and extracts Tx event FIFO elements
- * \param node CAN Node handle
- * \param canTxEventFifoElements Structure of Tx event FIFO elements
- * \return Status of read Tx event
+/**
+ * \brief Reads and extracts Tx event FIFO elements.
+ *
+ * \param[inout] node                   Pointer to CAN Node handle.
+ * \param[inout] canTxEventFifoElements Pointer to structure of Tx event FIFO elements.
+ *
+ * \retval IfxCan_ReadTxEventStatus Status of read Tx event. Range: \ref IfxCan_ReadTxEventStatus
  */
 IFX_EXTERN IfxCan_ReadTxEventStatus IfxCan_Can_readTxEvent(IfxCan_Can_Node *node, IfxCan_Can_TransmitEvent *canTxEventFifoElements);
 

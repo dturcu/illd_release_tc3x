@@ -2,8 +2,8 @@
  * \file IfxPsi5s.c
  * \brief PSI5S  basic functionality
  *
- * \version iLLD_1_20_0
- * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
+ * \version iLLD_1_21_0
+ * \copyright Copyright (c) 2025 Infineon Technologies AG. All rights reserved.
  *
  *
  *
@@ -61,21 +61,27 @@
 
 void IfxPsi5s_disableAscReceiver(Ifx_PSI5S *psi5s)
 {
+    /* Clear Receiver Enable Bit in WHBCON Register*/
     psi5s->WHBCON.B.CLRREN = 1;
 }
 
 
 void IfxPsi5s_disableModule(Ifx_PSI5S *psi5s)
 {
+    /* Fetch the current password of the CPU Watchdog module*/
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
+    /* Disable the module */
     psi5s->CLC.B.DISR = 1;
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 }
 
 
 void IfxPsi5s_enableAscReceiver(Ifx_PSI5S *psi5s)
 {
+    /* Set Receiver Enable Bit */
     psi5s->WHBCON.B.SETREN = 1;
 }
 
@@ -120,31 +126,45 @@ float32 IfxPsi5s_getBaudrate(Ifx_PSI5S *psi5s, boolean synchMode, boolean divMod
 
 boolean IfxPsi5s_getReadFrameStatus(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channelId)
 {
+    /* Return the status of Receive Data Interrupt Request Flag*/
     return psi5s->INTSTAT[channelId].B.RDI;
 }
 
 
 boolean IfxPsi5s_getSuccessfullyReceivedFrameStatus(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channelId)
 {
+    /* Return the status of Receive Success Interrupt Request Flag*/
     return psi5s->INTSTAT[channelId].B.RSI;
 }
 
 
 void IfxPsi5s_resetModule(Ifx_PSI5S *psi5s)
 {
+    /* Fetch the current password of the CPU Watchdog module*/
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    psi5s->KRST0.B.RST = 1;         /* Only if both Kernel reset bits are set a reset is executed */
+
+    /* Only if both Kernel reset bits are set a reset is executed */
+    psi5s->KRST0.B.RST = 1;         
     psi5s->KRST1.B.RST = 1;
+
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
-    while (0 == psi5s->KRST0.B.RSTSTAT)     /* Wait until reset is executed */
+    /* Wait until reset is executed */
+    while (0 == psi5s->KRST0.B.RSTSTAT)     
 
     {}
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    psi5s->KRSTCLR.B.CLR = 1;           /* Clear Kernel reset status bit */
+
+    /* Clear Kernel reset status bit */
+    psi5s->KRSTCLR.B.CLR = 1;   
+    
+    /* Setting the endinit protection back on */        
     IfxScuWdt_setCpuEndinit(passwd);
 }
 

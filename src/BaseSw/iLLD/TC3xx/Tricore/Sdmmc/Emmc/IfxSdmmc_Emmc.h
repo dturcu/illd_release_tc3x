@@ -3,7 +3,7 @@
  * \brief SDMMC EMMC details
  * \ingroup IfxLld_Sdmmc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -264,8 +264,9 @@ typedef struct
 typedef struct
 {
     IfxSdmmc_DataLineTimeout timeoutValue;          /**< \brief The interval by which DAT line timeouts are detected */
-    boolean                  usePresetValues;       /**< \brief Selection of whether to use automatic selection of SDCLK frequency and Driver strength Preset Value registers. */
-    uint32                   frequency;             /**< \brief frequency select, clock divider will be calculated based on this */
+    boolean                  usePresetValues;       /**< \brief Selection of whether to use automatic selection of SDCLK frequency and Driver strength Preset Value registers.
+    												 * - Range: TRUE Use SDCLK frequency and Driver strength Preset Value registers. FALSE No SDCLK frequency and Driver strength Preset Value registers are used */
+    uint32                   frequency;             /**< \brief frequency select, clock divider will be calculated based on this. Range: 0 to 0x2FAF080 (0 Hz to 50 MHz ) */
 } IfxSdmmc_Emmc_HostConfig;
 
 /** \brief Configuration structure for SD card pins
@@ -295,13 +296,14 @@ typedef struct
 typedef struct
 {
     Ifx_SDMMC        *sdmmcSFR;            /**< \brief pointer to register base address of SDMMC */
-    boolean           flagF8;              /**< \brief f8 flag used during initialization */
-    IfxSdmmc_CardInfo cardInfo;            /**< \brief Card information */
-    uint8             cardCapacity;        /**< \brief Card Capacity */
-    uint8             cardState;           /**< \brief State of the card */
-    boolean           dmaUsed;             /**< \brief Status of selection whether to use DMA for data transfers or not */
+    boolean           flagF8;              /**< \brief f8 flag used during initialization. Range: TRUE - Set the f8 flag, FALSE - Reset the flag f8. */
+    IfxSdmmc_CardInfo cardInfo;            /**< \brief Card information. */
+    uint8             cardCapacity;        /**< \brief Card Capacity.
+    										* - Range: \ref IfxSdmmc_EmmcCardCapacity_byteAddressing (0) - less than 2GB: Byte Addressing. \ref IfxSdmmc_EmmcCardCapacity_sectorAddressing (1) - More than 2GB : Sector Addressing. */
+    uint8             cardState;           /**< \brief State of the card, Range: \ref IfxSdmmc_CardState */
+    boolean           dmaUsed;             /**< \brief Status of selection whether to use DMA for data transfers or not. Range: TRUE Use Dma for data transfers, FALSE No Dma is used for data transfers.*/
     IfxSdmmc_DmaType  dmaType;             /**< \brief Type of DMA used for data transfers */
-    uint32            userFrequency;       /**< \brief Frequency of usage set by the user */
+    uint32            userFrequency;       /**< \brief Frequency of usage set by the user. Range: 0 to 0x2FAF080 (0 Hz to 50 MHz) */
 } IfxSdmmc_Emmc;
 
 /** \brief Configuration Structure of SDMMC driver
@@ -313,7 +315,7 @@ typedef struct
     IfxSdmmc_InterruptConfig    interruptConfig;          /**< \brief Configuration structure for Normal and Error interrupts */
     IfxSdmmc_Emmc_Pins         *pins;                     /**< \brief Configuration structure for SD card pins */
     IfxSdmmc_Emmc_CardConfig    cardConfig;               /**< \brief Configuration structure for SD card */
-    boolean                     useDma;                   /**< \brief selection of whether to use DMA for transfers or not */
+    boolean                     useDma;                   /**< \brief selection of whether to use DMA for transfers or not. Range: TRUE Use Dma for data transfers, FALSE Dma is not used for data transfers. */
     IfxSdmmc_Emmc_DmaConfig     dmaConfig;                /**< \brief Configuration structure for ADMA */
 } IfxSdmmc_Emmc_Config;
 
@@ -326,73 +328,118 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the eMMC card
- * \param emmc Handle for eMMC interface
- * \param cardConfig Configuration structure for eMMC card
- * \return Status
+/**
+ * \brief Initializes the eMMC card and prepares it for operation.
+ *
+ * \param[inout] emmc       Pointer to the eMMC interface handle.
+ * \param[in]    cardConfig Configuration structure for the eMMC card. This includes settings such as data transfer width and speed mode.
+ *
+ * \retval IfxSdmmc_Status The status of eMMC card initialization. A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_initCard(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_CardConfig *cardConfig);
 
-/** \brief Identifies the eMMC card
- * \param emmc Handle for eMMC interface
- * \param cardConfig Configuration structure for eMMC card
- * \return Status
+/**
+ * \brief Identifies the eMMC card and retrieves card-specific information.
+ *
+ * \param[inout] emmc       Pointer to the eMMC interface handle.
+ * \param[in]    cardConfig Configuration structure for the eMMC card. This includes settings such as data transfer width and speed mode.
+ *
+ * \retval IfxSdmmc_Status The status of identification operation. A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_identifyCard(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_CardConfig *cardConfig);
 
-/** \brief Configures speed and bus width
- * \param emmc Handle for eMMC interface
- * \param cardConfig Configuration structure for eMMC card
- * \return Status
+/**
+ * \brief Configures the speed mode and data transfer width for the eMMC interface based on the provided card configuration.
+ *
+ * \param[inout] emmc 		Pointer to the eMMC interface handle.
+ * \param[in]    cardConfig Configuration structure for the eMMC card. This includes settings such as data transfer width and speed mode.
+ *
+ * \retval IfxSdmmc_Status The status of speed and bus width configuration. A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_configureSpeedAndBusWidth(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_CardConfig *cardConfig);
 
-/** \brief Initialises the Host controller
- * \param emmc Handle for eMMC interface
- * \param hostConfig Configuration dtructure for Host Controller
- * \return Status
+/**
+ * \brief Initializes the Host controller for the eMMC interface.
+ * 
+ * \param[inout] emmc 		Pointer to the eMMC interface handle.
+ * \param[in]    hostConfig Configuration structure for the Host controller. This includes settings such as timeout values, frequency selection,
+ * 							and other controller-specific parameters.
+ *
+ * \retval IfxSdmmc_Status The status of Host controller initialization. A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_initHostController(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_HostConfig *hostConfig);
 
-/** \brief initialises the SDMMC module, both host interface and eMMC card
- * \param emmc Handle for eMMC interface
- * \param config Configuration structure of Emmc driver
- * \return Status
+/**
+ * \brief Initializes the SDMMC module, both the Host interface and the eMMC card.
+ *
+ * \param[inout] emmc   Pointer to the eMMC interface handle.
+ * \param[in]    config Configuration structure for the SDMMC driver. This includes settings for the host interface, interrupt configuration,
+ * 						pin configuration, card configuration, and DMA usage.
+ *
+ * \retval IfxSdmmc_Status The status of module initialization. A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_initModule(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_Config *config);
 
-/** \brief Configures eMMC interrupts
- * \param emmc Handle for eMMC interface
- * \param interruptConfig Configuration structure of Emmc interrupts
- * \return Status
+/**
+ * \brief Configures the interrupt settings for the eMMC interface.
+ *
+ * \param[in] emmc 			  Pointer to the eMMC interface handle.
+ * \param[in] interruptConfig Configuration structure for the SDMMC driver. This includes settings for the host interface, interrupt configuration,
+ * 						      pin configuration, card configuration, and DMA usage.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_Emmc_configureInterrupt(IfxSdmmc_Emmc *emmc, IfxSdmmc_InterruptConfig *interruptConfig);
 
-/** \brief Filld the configuration structure with default values
- * \param config Configuration structure of Emmc driver
- * \param sdmmcSFR pointer to register base address of SDMMC
- * \return None
+/**
+ * \brief Initializes the Emmc driver configuration structure with default values.
+ *
+ * \param[inout] config   Configuration structure for the SDMMC driver. This includes settings for the host interface, interrupt configuration,
+ * 						  pin configuration, card configuration, and DMA usage.
+ * \param[in]    sdmmcSFR Pointer to the register base address of SDMMC.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_Emmc_initModuleConfig(IfxSdmmc_Emmc_Config *config, Ifx_SDMMC *sdmmcSFR);
 
-/** \brief Sets up the eMMC card pins
- * \param emmc Handle for eMMC interface
- * \param pins Configuration dtructure for eMMC card Pins
- * \return None
+/**
+ * \brief Configures the eMMC card pins according to the provided pin configuration.
+ *
+ * \param[in] emmc Pointer to the eMMC interface handle.
+ * \param[in] pins Configuration structure defining the pin settings, including clock, command, and data lines,
+ * 				   as well as their input modes and driver strengths.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxSdmmc_Emmc_setupPins(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_Pins *pins);
 
-/** \brief Switches the transfer bus width to 4bit wide
- * \param emmc Handle for eMMC interface
- * \param busWidth Data transfer width of eMMC card
- * \return Status
+/**
+ * \brief Switches the transfer bus width of the eMMC interface.
+ *
+ * \param[in] emmc 	   Pointer to the eMMC interface handle.
+ * \param[in] busWidth The desired data transfer width for the eMMC interface.
+ * 					   Range: \ref IfxSdmmc_EmmcDataTransferWidth
+ *
+ * \retval IfxSdmmc_Status The status of switching the transfer bus width operation. A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_switchBusWidth(IfxSdmmc_Emmc *emmc, IfxSdmmc_EmmcDataTransferWidth busWidth);
 
-/** \brief Switches the Speed mode from Legacy to High speed Sdr
- * \param emmc Handle for eMMC interface
- * \return Status
- */
+/**
+* \brief Switches the eMMC interface from Legacy mode to High-Speed SDR mode.
+*
+* \param[in] emmc Pointer to the eMMC interface handle.
+*
+* \retval IfxSdmmc_Status The status of switching to High-Speed mode operation. A return value of 0 indicates success,
+ *  					  while any non-zero value indicates an error.
+ * 						  Range: \ref IfxSdmmc_Status
+*/
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_switchToHighSpeed(IfxSdmmc_Emmc *emmc);
 
 /** \} */
@@ -404,100 +451,174 @@ IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_switchToHighSpeed(IfxSdmmc_Emmc *emmc);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reads data from Card
- * \param emmc Handle for eMMC interface
- * \param address Address where to read the data from
- * \param data Pointer of the buffer to read the data into
- * \return Status
+/**
+ * \brief Reads a block of data from the specified address on the eMMC card into the provided buffer.
+ *
+ * \param[in]    emmc    Pointer to the eMMC interface handle.
+ * \param[in]    address Memory address on the eMMC card from which to read data.
+ * 					     Range: 0 to 0xFFFFFFFF
+ * \param[inout] data    Pointer to the buffer where the read data will be stored.
+ *
+ * \retval IfxSdmmc_Status The status of read operation. A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_readBlock(IfxSdmmc_Emmc *emmc, uint32 address, uint32 *data);
 
-/** \brief Transfers one block of data from Hostcontroller to Card or Vice versa using ADMA2
- * \param emmc Handle for eMMC interface
- * \param command Command to send
- * \param address Address where to send the data
- * \param blockSize Size of the block
- * \param descrAddress Pointer to the descriptor containing data to read/write
- * \param direction Transfer direction
- * \return Status
+/**
+ * \brief Transfers one block of data between the host controller and the eMMC card using ADMA2.
+ *
+ * \param[in] emmc 	       Pointer to the eMMC interface handle.
+ * \param[in] command      The command to be sent to the eMMC card.
+ * 						   Range: \ref IfxSdmmc_Emmc_singleBlockAdma2Transfer
+ * \param[in] address      The memory address where the data will be sent or read from.
+ * 						   Range: 0 to 0xFFFFFFFF
+ * \param[in] blockSize    The size of the block to be transferred, specified as a 16-bit unsigned integer.
+ * 						   Range: 0 to 0xFFF
+ * \param[in] descrAddress Pointer to the buffer containing the data to be written to the card or where the data read from the card will be stored.
+ * 						   The direction of data flow is determined by the direction parameter.
+ * \param[in] direction    The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 						   Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of single block Adma2 transfer. A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockAdma2Transfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint32 *descrAddress, IfxSdmmc_TransferDirection direction);
 
-/** \brief Transfers one block of data from Hostcontroller to Card or Vice versa
- * \param emmc Handle for eMMC interface
- * \param command Command to send
- * \param address Address where to send the data
- * \param blockSize Size of the block
- * \param data Pointer of the buffer containing data to write
- * \param direction Transfer direction
- * \return Status
+/**
+ * \brief Transfers one block of data between the host controller and the eMMC card using DMA.
+ *
+ * \param[in] emmc    	Pointer to the eMMC interface handle.
+ * \param[in] command 	The command to be sent to the eMMC card.
+ * 					  	Rang: \ref IfxSdmmc_Command
+ * \param[in] address 	The memory address where the data will be transferred to or from.
+ * 						Range: 0 to 0xFFFFFFFF
+ * \param[in] blockSize The size of the data block to be transferred, specified in bytes.
+ * 						Range: 0 to 0xFFF
+ * \param[in] data 		Pointer to the buffer containing the data to be written to the card or where the data read from the card will be stored.
+ * 						The direction of data flow is determined by the direction parameter.
+ * \param[in] direction The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 						Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of single block dma transfer. A return value of 0 indicates success,
+ *  					   while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockDmaTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint32 *data, IfxSdmmc_TransferDirection direction);
 
-/** \brief Transfers one block of data from Hostcontroller to Card or Vice versa
- * \param emmc Handle for eMMC interface
- * \param command Command to send
- * \param address Address where to send the data
- * \param blockSize Size of the block
- * \param data Pointer of the buffer containing data to write
- * \param direction Transfer direction
- * \return Status
+/**
+ * \brief Transfers one block of data between the host controller and the eMMC card.
+ *
+ * \param[in]    emmc      Pointer to the eMMC interface handle.
+ * \param[in]    command   The command to be sent to the eMMC card.
+ * 					       Range: \ref IfxSdmmc_Command
+ * \param[in]    address   The address on the eMMC card where the data will be read from or written to.
+ * 					       Range: 0 to 0xFFFFFFFF
+ * \param[in]    blockSize The size of the block to be transferred, in bytes. Range:
+ *                         Range: 0 to 0xFFF
+ * \param[inout] data      Pointer to the buffer containing the data to be written to the card or where the data read from the card will be stored.
+ * 						   The direction of data flow is determined by the direction parameter.
+ * \param[in]    direction The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 					       Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of transfer operation. A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint32 *data, IfxSdmmc_TransferDirection direction);
 
-/** \brief Switches the card state to transferring state
- * \param emmc Handle for eMMC interface
- * \return Status
+/**
+ * \brief Switches the eMMC card to the transfer state, enabling data transfer operations.
+ *
+ * \param[in] emmc Pointer to the eMMC interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of switch to transfer state operation. A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_switchToTransferState(IfxSdmmc_Emmc *emmc);
 
-/** \brief Sends data from Hostcontroller to Card
- * \param emmc Handle for eMMC interface
- * \param address Address where to send the data
- * \param data Pointer of the buffer containing data to write
- * \return Status
+/**
+ * \brief Sends data from the Host controller to the specified address on the eMMC card.
+ *
+ * \param[in] 	 emmc 	 Pointer to the eMMC interface handle.
+ * \param[inout] address The destination address on the eMMC card where the data will be written.
+ * 						 Range: 0 to 0xFFFFFFFF
+ * \param[in] 	 data 	 Pointer to the buffer containing the data to be written to the eMMC card.
+ *
+ * \retval IfxSdmmc_Status The status of write block operation, A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_writeBlock(IfxSdmmc_Emmc *emmc, uint32 address, uint32 *data);
 
-/** \brief API to read multiple blocks from EMMC card.
- * \param emmc Handle for emmc device
- * \param address Address to write to card
- * \param data pointer to data to be written
- * \param numBlocks number of blocks to bewritten
- * \return status of write
+/**
+ * \brief Reads multiple blocks of data from the eMMC card.
+ *
+ * \param[in]    emmc      Pointer to the eMMC interface handle.
+ * \param[inout] address   Starting address on the eMMC card to read from.
+ * 					       Range: 0 to 0xFFFFFFFF
+ * \param[in]    data      Pointer to the buffer where the read data will be stored.
+ * \param[in]    numBlocks Number of blocks to read from the eMMC card. Range: 1 to N (dependent on eMMC capacity and system limitations).
+ * 						   Range: 0 to 0xFFFFFFFF
+ *
+ * \retval IfxSdmmc_Status The status of read multiblock operation, A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_readMultiBlock(IfxSdmmc_Emmc *emmc, uint32 address, uint32 *data, uint32 numBlocks);
 
-/** \brief API to write multiple blocks to EMMC card.
- * \param emmc Handle for emmc device
- * \param address Address to read from card
- * \param data pointer to data buffer in memory
- * \param numBlocks number of blocks to be read
- * \return status of read
+/**
+ * \brief Writes multiple blocks of data to the EMMC card.
+ *
+ * \param[in] emmc 	    Pointer to the eMMC interface handle.
+ * \param[in] address   Starting address on the EMMC card where the data will be written.
+ * 						Range: 0 to 0xFFFFFFFF
+ * \param[in] data      Pointer to the data buffer in memory that contains the data to be written to the EMMC card.
+ * \param[in] numBlocks Number of blocks to be written.
+ * 						Range: 0 to 0xFFFFFFFF
+ *
+ * \retval IfxSdmmc_Status The status of write multiblock operation, A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_writeMultiBlock(IfxSdmmc_Emmc *emmc, uint32 address, uint32 *data, uint32 numBlocks);
 
-/** \brief API to transfer multiblocks between system memory and card. (polling method)
- * \param emmc Pointer to emmc device handle
- * \param command Command to be sent to card
- * \param address Address of card for data rx/tx
- * \param blockSize size of block to be transferred
- * \param numBlocks Number of blocks to be transferred
- * \param data Pointer to data
- * \param direction Direction (write/read)
- * \return Status of data transfer
+/**
+ * \brief API to transfer multiple blocks between system memory and the eMMC card using the polling method.
+ *
+ * \param[in]    emmc 	   Pointer to the eMMC interface handle.
+ * \param[in]    command   Command to be sent to the card.
+ * 				           Range: \ref IfxSdmmc_Command
+ * \param[in]    address   The address on the card where the data will be read from or written to.
+ * 					       Range: 0 to 0xFFFFFFFF
+ * \param[in]    blockSize The size of each block to be transferred, in bytes.
+ * 						   Range: 0 to 0xFFF
+ * \param[in]    numBlocks The number of blocks to be transferred.
+ * 						   Range: 0 to 0xFFFF
+ * \param[inout] data      Pointer to the system memory buffer where data will be read into or written from, depending on the direction.
+ * 						   The direction of data flow is determined by the direction parameter.
+ * \param[in]    direction The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 						   Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of multiblock transfer operation, A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint16 numBlocks, uint32 *data, IfxSdmmc_TransferDirection direction);
 
-/** \brief API to transfer multiblocks between system memory and card. (using ADMA2)
- * \param emmc Pointer to emmc device handle
- * \param command Command to be sent to card
- * \param address Address of card for data rx/tx
- * \param blockSize size of block to be transferred
- * \param numBlocks Number of blocks to be transferred
- * \param descrAddress Pointer to descriptor entry
- * \param direction Direction (write/read)
- * \return Status of data transfer
+/**
+ * \brief Transfers multiple blocks between system memory and the eMMC card using ADMA2.
+ *
+ * \param[in] emmc 	       Pointer to the eMMC interface handle.
+ * \param[in] command      The command to be sent to the card. It is of type IfxSdmmc_Command, which defines various command operations (Range: 0 to 43).
+ * \param[in] address      The address on the card where the data will be read from or written to
+ * 						   Range: 0 to 0xFFFFFFFF
+ * \param[in] blockSize    The size of each block to be transferred.
+ * 						   Range: 0 to 0xFFF
+ * \param[in] numBlocks    The number of blocks to be transferred.
+ * 						   Range: 0 to 0xFFFF
+ * \param[in] descrAddress Pointer to the descriptor entry that contains the necessary information for the ADMA2 transfer.
+ * \param[in] direction    The direction of the data transfer (Write, Host to Card) (Read, Card to Host).
+ * 						   Range: \ref IfxSdmmc_TransferDirection
+ *
+ * \retval IfxSdmmc_Status The status of multiblock Adma2 transfer operation, A return value of 0 indicates success, while any non-zero value indicates an error.
+ * 						   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockAdma2Transfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_Command command, uint32 address, uint16 blockSize, uint16 numBlocks, uint32 *descrAddress, IfxSdmmc_TransferDirection direction);
 
@@ -510,28 +631,49 @@ IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockAdma2Transfer(IfxSdmmc_Emmc *
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reads CID register of the card
- * \param emmc Handle for eMMC interface
- * \return Status
- */
+/**
+* \brief Reads the CID register from the eMMC card.
+*
+* \param[inout] emmc Pointer to the eMMC interface handle.
+*
+* \retval IfxSdmmc_Status The status of read the CID register from the eMMC card, A return value of 0 indicates success,
+* 					      while any non-zero value indicates an error.
+*  						  Range: \ref IfxSdmmc_Status
+*/
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_readCid(IfxSdmmc_Emmc *emmc);
 
-/** \brief Reads CID register of the card
- * \param emmc Handle for eMMC interface
- * \return Status
+/**
+ * \brief Reads the CSD register from the eMMC card.
+ *
+ * \param[inout] emmc Pointer to the eMMC interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of read the CSD register from the eMMC card, A return value of 0 indicates success,
+ * 					       while any non-zero value indicates an error.
+ *  					   Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_readCsd(IfxSdmmc_Emmc *emmc);
 
-/** \brief Sets RCA for the card
- * \param emmc Handle for eMMC interface
- * \param rca RCA for the card
- * \return Status
+/**
+ * \brief Sets the RCA for the eMMC card.
+ *
+ * \param[inout] emmc Pointer to the eMMC interface handle.
+ * \param[in]    rca  The Relative Card Address to be set.
+ * 					  Range: 0 to 0xFFFF
+ *
+ * \retval IfxSdmmc_Status The status of set RCA for the eMMC card, A return value of 0 indicates success,
+ * 					       while any non-zero value indicates an error.
+ * 					       Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_setRca(IfxSdmmc_Emmc *emmc, uint16 rca);
 
-/** \brief Reads CID register of the card
- * \param emmc Handle for eMMC interface
- * \return Status
+/**
+ * \brief Validates the access mode configuration for the eMMC interface.
+ *
+ * \param[inout] emmc Pointer to the eMMC interface handle.
+ *
+ * \retval IfxSdmmc_Status The status of Validate the Access Mode operation, A return value of 0 indicates success,
+ * 					       while any non-zero value indicates an error.
+ * 					       Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_validateAccessMode(IfxSdmmc_Emmc *emmc);
 
@@ -541,15 +683,18 @@ IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_validateAccessMode(IfxSdmmc_Emmc *emmc)
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Erases blocks of data. Equivalent to a trim command.
- * Erases the data from start address to end address specified.
- * The addresses specify the block numbers and assume sector addressing.
- * If byte Addressing scheme is used for Card, specify the address after conversion to sector (512B) units.
- * Erase is not immediate by protocol - it happens at a later time.
- * \param emmc Pointer to base address of SDMMC SFR.
- * \param startAddress Start Address of the block to be erased.
- * \param endAddress End Address of the block to be erased
- * \return Status of execution
+/**
+ * \brief Erases specified blocks of data on the eMMC card.
+ *
+ * \param[in] emmc   	   Pointer to the eMMC interface handle.
+ * \param[in] startAddress Starting sector address of the block to be erased.
+ *                         Range: 0 to 0xFFFFFFFF
+ * \param[in] endAddress   Ending sector address of the block to be erased.
+ *                         Range: 0 to 0xFFFFFFFF
+ *
+ * \retval IfxSdmmc_Status The status of erase blocks operation, A return value of 0 indicates success,
+ * 					       while any non-zero value indicates an error.
+ * 					       Range: \ref IfxSdmmc_Status
  */
 IFX_EXTERN IfxSdmmc_Status IfxSdmmc_Emmc_eraseBlocks(IfxSdmmc_Emmc *emmc, uint32 startAddress, uint32 endAddress);
 #endif /* IFXSDMMC_EMMC_H */
