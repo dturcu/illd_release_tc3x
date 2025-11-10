@@ -3,7 +3,7 @@
  * \brief CCU6 ICU details
  * \ingroup IfxLld_Ccu6
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -263,7 +263,7 @@ typedef struct
 {
     IfxCcu6_InterruptSource source;               /**< \brief Interrupt source selection */
     IfxCcu6_ServiceRequest  serviceRequest;       /**< \brief Selection of service request outputs */
-    uint16                  priority;             /**< \brief Interrupt priority */
+    uint16                  priority;             /**< \brief Interrupt priority. Range: 0 to 0xFF */
     IfxSrc_Tos              typeOfService;        /**< \brief type of interrupt service */
 } IfxCcu6_Icu_InterruptConfig;
 
@@ -330,7 +330,7 @@ typedef struct
     IfxCcu6_Icu_InterruptConfig interrupt4;                     /**< \brief Structure for fourth interrupt configuration */
     IfxCcu6_Icu_TriggerConfig   trigger;                        /**< \brief Structure for trigger configuration */
     IfxCcu6_Icu_Pins           *pins;                           /**< \brief Structure for capture input pins */
-    boolean                     multiInputCaptureEnabled;       /**< \brief Choice of multi input capture */
+    boolean                     multiInputCaptureEnabled;       /**< \brief Choice of multi input capture. Range: TRUE Multi-input capture mode is enabled, FALSE Multi-input capture mode is disabled */
     IfxCcu6_Timer               timer;                          /**< \brief Timer handle */
 } IfxCcu6_Icu_ChannelConfig;
 
@@ -343,7 +343,7 @@ typedef struct
     Ifx_TimerValue       period;             /**< \brief PWM period in ticks */
     IfxCcu6_Icu_Clock    clock;              /**< \brief Structure for clock configuration */
     IfxCcu6_T12CountMode countMode;          /**< \brief Operating mode of Timer 12 */
-    uint16               counterValue;       /**< \brief 16-bit counter value of Timer12 */
+    uint16               counterValue;       /**< \brief 16-bit counter value of Timer12. Range: 0 to 0xFFFF */
 } IfxCcu6_Icu_Config;
 
 /** \} */

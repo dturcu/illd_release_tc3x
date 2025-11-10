@@ -2,7 +2,7 @@
  * \file IfxRif.c
  * \brief RIF  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -59,8 +59,11 @@
 void IfxRif_disableModule(Ifx_RIF *rif)
 {
     uint16 password = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(password);
+    /* Set the enable request */
     rif->CLC.B.DISR = 1U;
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(password);
 }
 
@@ -88,7 +91,7 @@ void IfxRif_enableFifos(Ifx_RIF *rif, uint8 count)
         IfxRif_enableFifo(rif, IfxRif_FifoId_3);
         break;
     default:
-        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* wrong selection  */
+        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* Wrong selection  */
         break;
     }
 }
@@ -97,8 +100,11 @@ void IfxRif_enableFifos(Ifx_RIF *rif, uint8 count)
 void IfxRif_enableModule(Ifx_RIF *rif)
 {
     uint16 password = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(password);
+    /* Set the disable request */
     rif->CLC.B.DISR = 0U;
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(password);
 
     /* Wait until module is enabled */

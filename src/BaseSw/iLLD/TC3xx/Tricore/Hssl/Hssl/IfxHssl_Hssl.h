@@ -3,7 +3,7 @@
  * \brief HSSL HSSL details
  * \ingroup IfxLld_Hssl
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -499,8 +499,8 @@ typedef enum
  */
 typedef struct
 {
-    uint32 start;       /**< \brief start of the access */
-    uint32 end;         /**< \brief end of the access */
+    uint32 start;       /**< \brief start of the access. Range: 0x00000000 to 0xFFFFFFFF */
+    uint32 end;         /**< \brief end of the access. Range: 0x00000000 to 0xFFFFFFFF */
 } IfxHssl_Hssl_AccessWindow;
 
 /** \} */
@@ -509,15 +509,15 @@ typedef struct
  */
 typedef struct
 {
-    uint8 notAcknowledgeError : 1;        /**< \brief not acknowledge error / tag error */
-    uint8 transactionTagError : 1;        /**< \brief transaction tag error */
-    uint8 timeoutError : 1;               /**< \brief timeout error */
-    uint8 unexpectedError : 1;            /**< \brief unexpected type of frame error */
-    uint8 memoryAccessViolation : 1;      /**< \brief memory access violation */
-    uint8 busAccessError : 1;             /**< \brief SRI/SPB bus access error */
-    uint8 channelNumberCodeError : 1;     /**< \brief PHY inconsistency error 1 (channel number code error) */
-    uint8 dataLengthError : 1;            /**< \brief PHY inconsistency error 2 (data length error) */
-    uint8 crcError : 1;                   /**< \brief CRC error */
+    uint8 notAcknowledgeError : 1;        /**< \brief not acknowledge error / tag error. Range : 1 if error occurred, 0 if no error */
+    uint8 transactionTagError : 1;        /**< \brief transaction tag error. Range : 1 if error occurred, 0 if no error */
+    uint8 timeoutError : 1;               /**< \brief timeout error. Range : 1 if error occurred, 0 if no error */
+    uint8 unexpectedError : 1;            /**< \brief unexpected type of frame error. Range : 1 if error occurred, 0 if no error */
+    uint8 memoryAccessViolation : 1;      /**< \brief memory access violation. Range : 1 if error occurred, 0 if no error */
+    uint8 busAccessError : 1;             /**< \brief SRI/SPB bus access error. Range : 1 if error occurred, 0 if no error */
+    uint8 channelNumberCodeError : 1;     /**< \brief PHY inconsistency error 1 (channel number code error). Range : 1 if error occurred, 0 if no error */
+    uint8 dataLengthError : 1;            /**< \brief PHY inconsistency error 2 (data length error). Range : 1 if error occurred, 0 if no error */
+    uint8 crcError : 1;                   /**< \brief CRC error. Range : 1 if error occurred, 0 if no error */
 } IfxHssl_Hssl_errorFlags;
 
 /** \addtogroup IfxLld_Hssl_Hssl_DataStructures
@@ -541,7 +541,7 @@ typedef struct
     IfxHssl_Hssl_FrameRequest currentFrameRequest;       /**< \brief current frame request */
     IfxHssl_StreamingMode     streamingMode;             /**< \brief streaming mode selection ( single / continuous ) */
     boolean                   loopBack;                  /**< \brief loopback (enable / disable) for streaming transfers within the microcontroller */
-    boolean                   streamingModeOn;           /**< \brief streaming mode or command mode */
+    boolean                   streamingModeOn;           /**< \brief streaming mode or command mode. Range: TRUE if streaming mode, FALSE if command mode */
 } IfxHssl_Hssl_Channel;
 
 /** \brief configuration structure for channel
@@ -564,7 +564,7 @@ typedef struct
     IfxHssl_Hssl_AccessWindow accessWindow1;       /**< \brief access window of channel 1 */
     IfxHssl_Hssl_AccessWindow accessWindow2;       /**< \brief access window of channel 2 */
     IfxHssl_Hssl_AccessWindow accessWindow3;       /**< \brief access window of channel 3 */
-    uint16                    preDivider;          /**< \brief Defines the down-scaled module clock to be used by all channel timeout timers */
+    uint16                    preDivider;          /**< \brief Defines the down-scaled module clock to be used by all channel timeout timers. Range 0 to 0x3FFF */
 } IfxHssl_Hssl_Config;
 
 /** \} */
@@ -576,43 +576,64 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the module
- * \param hsct HSCT Handle
- * \param config configuration structure of the HSCT module
- * \return None
+/**
+ * \brief Initializes the HSCT module with the provided configuration.
  *
+ * This function sets up the HSCT module according to the specified configuration parameters.
+ * It initializes the module's registers and configures its operational mode.
+ *
+ * \param[inout] hsct   Handle to the HSCT module.
+ * \param[in]    config Configuration structure for the HSCT module, specifying interface mode, high-speed mode, and loopback selection.
+ *
+ * \retval None
+ * 
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN void IfxHssl_Hssl_initHsctModule(IfxHssl_Hsct *hsct, const IfxHssl_Hsct_Config *config);
 
-/** \brief Fills the config structure with default values
- * \param config configuration structure of the HSCT module
- * \param hsct pointer to HSCT register
- * \return None
+/**
+ * \brief Initializes the HSCT module configuration structure with default values.
  *
+ * This function sets up the provided HSCT configuration structure with default
+ * settings for the HSCT module. The configuration includes interface mode,
+ * high-speed mode, and loopback settings.
+ *
+ * \param[inout] config The HSCT configuration structure to be initialized.
+ * \param[in]    hsct   Pointer to the HSCT register structure used for module setup.
+ *
+ * \retval None
+ * 
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN void IfxHssl_Hssl_initHsctModuleConfig(IfxHssl_Hsct_Config *config, Ifx_HSCT *hsct);
 
-/** \brief Initialises the Hssl module
- * \param hssl HSSL handle
- * \param config configuration structure of the module
- * \return None
+/**
+ * \brief Initializes the HSSL module with the provided configuration.
+ *
+ * This function sets up the HSSL module according to the specified configuration.
+ * It initializes the HSSL handle and applies the configuration parameters to the module.
+ *
+ * \param[inout] hssl   Handle to the HSSL module.
+ * \param[in]    config Pointer to the configuration structure that defines the module's settings.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN void IfxHssl_Hssl_initHsslModule(IfxHssl_Hssl *hssl, const IfxHssl_Hssl_Config *config);
 
-/** \brief Fills the config structure with default values
- * \param config configuration structure of the module
- * \param hssl pointer to HSSL registers
- * \return None
+/**
+ * \brief Initializes the HSSL module configuration structure with default values.
+ *
+ * \param[inout] config The configuration structure to be initialized. This structure
+ *                      contains fields for access windows (accessWindow0 to accessWindow3)
+ *                      and a preDivider value for clock scaling.
+ * \param[in]    hssl   Pointer to the HSSL registers, providing hardware-specific
+ *                      configuration details.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN void IfxHssl_Hssl_initHsslModuleConfig(IfxHssl_Hssl_Config *config, Ifx_HSSL *hssl);
 
@@ -625,24 +646,31 @@ IFX_EXTERN void IfxHssl_Hssl_initHsslModuleConfig(IfxHssl_Hssl_Config *config, I
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the channel
- * \param channel channel handle
- * \param channelConfig configuration structure for channel
- * \return None
+/**
+ * \brief Initializes a channel with the specified configuration.
  *
+ * \param[inout] channel       Pointer to channel handle.
+ * \param[in]    channelConfig Pointer to the configuration structure that provides the initialization
+ *                             parameters for the channel. This includes hardware register pointers,
+ *                             channel ID, streaming mode, and loopback settings.
+ *
+ * \retval None
+ * 
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN void IfxHssl_Hssl_initChannel(IfxHssl_Hssl_Channel *channel, const IfxHssl_Hssl_ChannelConfig *channelConfig);
 
-/** \brief Fills the channel config structure with default values
- * \param channelConfig configuration structure for channel
- * \param hssl HSSL Handle
- * \param hsct HSCT Handle
- * \return None
+/**
+ * \brief Initializes the HSSL channel configuration structure with default values.
+ *
+ * \param[inout] channelConfig Pointer to the configuration structure for the HSSL channel
+ *                             that will be initialized with default values.
+ * \param[inout] hssl          Pointer to HSSL handle.
+ * \param[in]    hsct          Pointer to HSCT handle.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN void IfxHssl_Hssl_initChannelConfig(IfxHssl_Hssl_ChannelConfig *channelConfig, IfxHssl_Hssl *hssl, IfxHssl_Hsct *hsct);
 
@@ -655,12 +683,14 @@ IFX_EXTERN void IfxHssl_Hssl_initChannelConfig(IfxHssl_Hssl_ChannelConfig *chann
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief reads and returs the data
- * \param channel channel handle
- * \return data
+/**
+ * \brief Reads and returns the data from the specified HSSL channel.
+ *
+ * \param[in] channel Pointer to channel handle.
+ *
+ * \retval uint32 The data read from the HSSL channel. Range: 0 to 0xFFFFFFFF
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_INLINE uint32 IfxHssl_Hssl_getReadData(IfxHssl_Hssl_Channel *channel);
 
@@ -668,59 +698,70 @@ IFX_INLINE uint32 IfxHssl_Hssl_getReadData(IfxHssl_Hssl_Channel *channel);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initiates read request
- * \param channel channel handle
- * \param address address of the location from where the data is to be read
- * \param dataLength length of the data
- * \return module status (ok, busy, error)
+/**
+ * \brief Initiates a read request from a specified address.
+ *
+ * \param[inout] channel    Pointer to channel handle.
+ * \param[in]    address    The memory address from which data is to be read. Range: 0 to 0xFFFFFFFF
+ * \param[in]    dataLength The length of the data to be read. Range: \ref IfxHssl_DataLength
+ *
+ * \retval IfxHssl_Hssl_Status The module status. Range: \ref IfxHssl_Hssl_Status
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN IfxHssl_Hssl_Status IfxHssl_Hssl_read(IfxHssl_Hssl_Channel *channel, uint32 address, IfxHssl_DataLength dataLength);
 
-/** \brief sends a predefined command from master to slave
- * \param hsct HSCT Handle
- * \param command command value
- * \return None
+/**
+ * \brief Sends a predefined command from master to slave.
+ *
+ * \param[inout] hsct    Handle to the HSCT module. 
+ * \param[in]    command The control command to be sent. Range: 0 to 0xFF
+ *
+ * \retval None
  *
  * Usage Example:
  * \code
- *     // enable slave Tx channel (Rx disable to Rx low peed)
+ *     // Enable slave Tx channel (Rx disable to Rx low speed)
  *     IfxHssl_Hssl_sendControlCommand(&channel, IfxHssl_ControlCommand_enableReception);
  * \endcode
- *
  */
 IFX_EXTERN void IfxHssl_Hssl_sendControlCommand(IfxHssl_Hsct *hsct, uint8 command);
 
-/** \brief serves the frame request (read, write, trigger frame and read id)
- * \param channel channel handle
- * \param frameRequest frame request
- * \param address address of the location (to be written into / read from)
- * \param data data to be written
- * \param dataLength length of the data
- * \return module status (ok, busy, error)
+/**
+ * \brief Serves a frame request, which can be a read, write, trigger frame, or read ID operation.
+ *
+ * \param[inout] channel      Pointer to the HSSL channel handle.
+ * \param[in]    frameRequest Specifies the type of frame request. Range: \ref IfxHssl_Hssl_FrameRequest
+ * \param[in]    address      Memory address for read or write operation. Range: 0 to 0xFFFFFFFF
+ * \param[in]    data         Data to be written. Range: 0 to 0xFFFFFFFF
+ * \param[in]    dataLength   Specifies the data length in bits. Range: \ref IfxHssl_DataLength
+ *
+ * \retval IfxHssl_Hssl_Status Module status. Range: \ref IfxHssl_Hssl_Status
  */
 IFX_EXTERN IfxHssl_Hssl_Status IfxHssl_Hssl_singleFrameRequest(IfxHssl_Hssl_Channel *channel, IfxHssl_Hssl_FrameRequest frameRequest, uint32 address, uint32 data, IfxHssl_DataLength dataLength);
 
-/** \brief waits until the current transaction is done
- * \param channel channel handle
- * \return module status (ok, busy, error)
+/**
+ * \brief Waits until the current transaction on the specified HSSL channel is completed.
+ *
+ * \param[inout] channel      Pointer to the HSSL channel handle.
+ *
+ * \retval IfxHssl_Hssl_Status Module status. Range: \ref IfxHssl_Hssl_Status
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN IfxHssl_Hssl_Status IfxHssl_Hssl_waitAcknowledge(IfxHssl_Hssl_Channel *channel);
 
-/** \brief writes single frame of data into the specified address
- * \param channel channel handle
- * \param address address of the location where the data is to be written
- * \param data data that needs to be written
- * \param dataLength length of the data (8, 16, 32 bit)
- * \return module status (ok, busy, error)
+/**
+ * \brief Writes a single frame of data into the specified address.
+ *
+ * \param[inout] channel    Pointer to the HSSL channel handle.
+ * \param[in]    address    Memory address where the data will be written. Range: 0 to 0xFFFFFFFF
+ * \param[in]    data       Data to be written to the specified address. Range: 0 to 0xFFFFFFFF
+ * \param[in]    dataLength Length of the data to be written. Range: \ref IfxHssl_DataLength
+ *
+ * \retval IfxHssl_Hssl_Status Module status. Range: \ref IfxHssl_Hssl_Status
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN IfxHssl_Hssl_Status IfxHssl_Hssl_write(IfxHssl_Hssl_Channel *channel, uint32 address, uint32 data, IfxHssl_DataLength dataLength);
 
@@ -733,21 +774,30 @@ IFX_EXTERN IfxHssl_Hssl_Status IfxHssl_Hssl_write(IfxHssl_Hssl_Channel *channel,
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief stores the status of errors in the respective members of the error flags structure
- * \param hssl HSSL Handle
- * \return None
+/**
+ * \brief Checks for errors in the HSSL module and updates the error flags accordingly.
+ *
+ * \param[inout] hssl Pointer to the HSSL handle containing the error flags structure where the error status will be stored.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_Hssl_checkErrors(IfxHssl_Hssl *hssl);
 
-/** \brief clears the status of members in the error flags structure
- * \param hssl HSSL Handle
- * \return None
+/**
+ * \brief Clears the error flags in the HSSL handle.
+ *
+ * \param[inout] hssl Pointer to the HSSL handle.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_Hssl_clearErrorFlags(IfxHssl_Hssl *hssl);
 
-/** \brief a simple software delay
- * \param hsct HSCT Handle
- * \return None
+/**
+ * \brief Introduces a software delay.
+ *
+ * \param[in] hsct Pointer to the HSCT module handle.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_Hssl_delay(IfxHssl_Hsct *hsct);
 
@@ -760,27 +810,31 @@ IFX_EXTERN void IfxHssl_Hssl_delay(IfxHssl_Hsct *hsct);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Prepares the target device for streaming
- * \param channel channel handle
- * \param slaveTargetAddress address of the location on target device where the data needs to be transfered
- * \param count Frame count (length of the data in the memory as 256 bytes per frame)
- * \return module status (ok, busy, error)
+/**
+ * \brief Prepares the target device for streaming data transfer.
+ *
+ * \param[inout] channel            Pointer to the channel handle.
+ * \param[in]    slaveTargetAddress The address of the location on target device where the data needs to be transfered. Range: 0 to 0xFFFFFFFF
+ * \param[in]    count              The number of frames to be transferred (each frame is 256 bytes). Range: 0 to 0xFFFF
+ *
+ * \retval IfxHssl_Hssl_Status Module status. Range: \ref IfxHssl_Hssl_Status
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN IfxHssl_Hssl_Status IfxHssl_Hssl_prepareStream(IfxHssl_Hssl_Channel *channel, uint32 slaveTargetAddress, Ifx_SizeT count);
 
-/** \brief transfers one memory block of data
- * useful for transfering huge data from one location to another and between devices.
- * NOTE: This function should be called only for IfxHssl_ChannelId_2
- * \param hssl HSSL handle
- * \param data starting address of the location to be read from (memory block 0 / HSSL_ISSA0)
- * \param count Frame count (length of the data in the memory as 256 bytes per frame)
- * \return module status (ok, busy, error)
+/**
+ * \brief Transfers a memory block of data, useful for transferring huge data between locations or devices.
+ * 
+ * \note This function is specifically intended for use with IfxHssl_ChannelId_2.
+ *
+ * \param[inout] hssl  Pointer to HSSL handle.
+ * \param[in]    data  Starting address of the memory block to be read from (memory block 0 / HSSL_ISSA0).
+ * \param[in]    count Number of frames (each frame is 256 bytes). Range: 0 to 0xFFFF
+ *
+ * \retval IfxHssl_Hssl_Status Module status. Range: \ref IfxHssl_Hssl_Status
  *
  * A coding example can be found in \ref IfxLld_Hssl_Hssl_Usage
- *
  */
 IFX_EXTERN IfxHssl_Hssl_Status IfxHssl_Hssl_writeStream(IfxHssl_Hssl *hssl, uint32 *data, Ifx_SizeT count);
 

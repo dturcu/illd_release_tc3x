@@ -3,7 +3,7 @@
  * \brief CCU6 PWMHL details
  * \ingroup IfxLld_Ccu6
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -104,7 +104,7 @@ typedef struct
     Ifx_ActiveState ccxActiveState;         /**< \brief Top PWM active state */
     Ifx_ActiveState coutxActiveState;       /**< \brief Bottom PWM active state */
     boolean         inverted;               /**< \brief Flag indicating the center aligned inverted mode (TRUE) */
-    uint8           channelCount;           /**< \brief Number of PWM channels, one channel is made of a top and bottom channel */
+    uint8           channelCount;           /**< \brief Number of PWM channels, one channel is made of a top and bottom channel. Range: 1 to 3 */
 } IfxCcu6_PwmHl_Base;
 
 /** \} */
@@ -114,8 +114,8 @@ typedef struct
 {
     float32            deadtime;            /**< \brief Dead time between the top and bottom channels in seconds */
     float32            minPulse;            /**< \brief Min pulse allowed as active state for the top and bottom PWM in seconds */
-    uint8              channelCount;        /**< \brief Number of PWM channels, one channel is made of a top and bottom channel */
-    boolean            emergencyEnabled;    /**< \brief Specifies if the emergency stop should be enabled or not */
+    uint8              channelCount;        /**< \brief Number of PWM channels, one channel is made of a top and bottom channel. Range: 1 to 3 */
+    boolean            emergencyEnabled;    /**< \brief Specifies if the emergency stop should be enabled or not. Range: TRUE enable the emergency stop, FALSE disable emergency stop */
 
     IfxPort_OutputMode outputMode;          /**< \brief Output mode of ccx and coutx pins */
     IfxPort_PadDriver  outputDriver;        /**< \brief Output pad driver of ccx and coutx pins */
@@ -146,7 +146,7 @@ typedef struct
 typedef struct
 {
     Ifx_Pwm_Mode         mode;           /**< \brief pwm mode */
-    boolean              inverted;       /**< \brief Inverted configuration for the selected mode */
+    boolean              inverted;       /**< \brief Inverted configuration for the selected mode. Range: TRUE Enable inverted configuration for the selected mode, FALSE disable inverted configuration for the selected mode */
     IfxCcu6_PwmHl_Update update;         /**< \brief update call back function for the selected mode */
 } IfxCcu6_PwmHl_Mode;
 

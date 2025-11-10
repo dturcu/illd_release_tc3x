@@ -3,7 +3,7 @@
  * \brief EVADC ADC details
  * \ingroup IfxLld_Evadc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -293,12 +293,12 @@ typedef struct
 {
     float32                                                sampleTime;                                /**< \brief Specifies the requested sample time for input class */
     IfxEvadc_ChannelNoiseReduction                         conversionMode;                            /**< \brief Specifies the conversion Mode, noise reduction levels */
-    IfxEvadc_SpreadEarlySamplePointStandardConversionsMode samplePointStandard;
-    IfxEvadc_AnalogInputPrechargeControl                   analogInputPrechargeControlStandard;
-    float32                                                sampleTimeEMUX;
-    IfxEvadc_ChannelNoiseReductionEMUX                     conversionModeEMUX;
-    IfxEvadc_SpreadEarlySamplePointEMUXConversionsMode     samplePointEMUX;
-    IfxEvadc_AnalogInputPrechargeControl                   analogInputPrechargeControlEMUX;
+    IfxEvadc_SpreadEarlySamplePointStandardConversionsMode samplePointStandard;						  /**< \brief Spread early sample point for standard conversions */
+    IfxEvadc_AnalogInputPrechargeControl                   analogInputPrechargeControlStandard;		  /**< \brief Analog input precharge control for standard conversions */
+    float32                                                sampleTimeEMUX;                            /**< \brief Sets the additional number of cycles in the sample time */
+    IfxEvadc_ChannelNoiseReductionEMUX                     conversionModeEMUX;                        /**< \brief Conversion mode for EMUX conversions */
+    IfxEvadc_SpreadEarlySamplePointEMUXConversionsMode     samplePointEMUX;                           /**< \brief Spread early sample point for EMUX conversions */
+    IfxEvadc_AnalogInputPrechargeControl                   analogInputPrechargeControlEMUX;           /**< \brief Analog input precharge control for standard conversions  */
 } IfxEvadc_Adc_ClassConfig;
 
 typedef struct
@@ -321,7 +321,7 @@ typedef struct
  */
 typedef struct
 {
-    boolean                          flushQueueAfterInit;        /**< \brief Specifies if the queue is flushed after configuration */
+    boolean                          flushQueueAfterInit;        /**< \brief Specifies if the queue is flushed after configuration. Range: TRUE: Clear all queue entries, FALSE: No action */
     IfxEvadc_Adc_GatingTriggerConfig triggerConfig;              /**< \brief trigger and gating configuration. */
     IfxEvadc_RequestSlotPriority     requestSlotPrio;            /**< \brief priority of used  queue request slot. */
     IfxEvadc_RequestSlotStartMode    requestSlotStartMode;       /**< \brief start mode for request queue source. */
@@ -344,11 +344,11 @@ typedef struct
  */
 typedef struct
 {
-    boolean                           globalResultUsage;              /**< \brief Specifies storage in global result register */
-    boolean                           synchonize;                     /**< \brief Specifies synchronized conversion channel */
+    boolean                           globalResultUsage;              /**< \brief Specifies storage in global result register. Range: TRUE: Store results in the global result register, FALSE: Store results in the selected group result register */
+    boolean                           synchonize;                     /**< \brief Specifies synchronized conversion channel. Range: TRUE: Request a synchronized conversion of this channel, FALSE: No synchronization request, standalone operation */
     boolean                           rightAlignedStorage;            /**< \brief Specifies result position, if False - result is right aligned, if True - result is left aligned */
-    Ifx_Priority                      resultPriority;                 /**< \brief Interrupt priority of the result trigger interrupt, if 0 the interrupt is disable */
-    Ifx_Priority                      channelPriority;                /**< \brief Interrupt priority of the channel trigger interrupt, if 0 the interrupt is disable */
+    Ifx_Priority                      resultPriority;                 /**< \brief Interrupt priority of the result trigger interrupt, if 0 the interrupt is disable. Range: 0 to 0xFF */
+    Ifx_Priority                      channelPriority;                /**< \brief Interrupt priority of the channel trigger interrupt, if 0 the interrupt is disable. Range: 0 to 0xFF */
     IfxSrc_Tos                        resultServProvider;             /**< \brief Interrupt service provider for the result trigger interrupt */
     IfxSrc_Tos                        channelServProvider;            /**< \brief Interrupt service provider for the channel trigger interrupt */
     IfxEvadc_SrcNr                    resultSrcNr;                    /**< \brief Service node of the result trigger */
@@ -364,8 +364,8 @@ typedef struct
     IFX_CONST IfxEvadc_Adc_Group     *group;                          /**< \brief Specifies pointer to the IfxEvadc_Adc_Group group handle */
     IfxEvadc_DataModificationMode     dataModificationMode;           /**< \brief Specifies the Data Modification Mode.According to the value entered here, the meanings of values entered for dataReductionControlMode will mean either the number of results accumulated(GxRCRy.B.DMM=0) or filter coefficients(GxRCRy.B.DMM=1). */
     IfxEvadc_DataReductionControlMode dataReductionControlMode;       /**< \brief Depending on the valued of dataModificationMode, the meanings of values in this will differ.For details refer definition of IfxEvadc_DataReductionControlMode enum in IfxEvadc.h */
-    IfxEvadc_WaitForRead              waitForReadMode;
-    IfxEvadc_FifoMode                 fifoMode;
+    IfxEvadc_WaitForRead              waitForReadMode;                /**< \brief Wait-for-read mode enable */
+    IfxEvadc_FifoMode                 fifoMode;                       /**< \brief FIFO mode enable  */
 } IfxEvadc_Adc_ChannelConfig;
 
 /** \brief EVADC module configuration structure
@@ -374,11 +374,11 @@ typedef struct
 {
     Ifx_EVADC                         *evadc;                                                    /**< \brief Specifies the pointer to the EVADC module registers */
     IfxEvadc_Adc_ClassConfig           globalInputClass[IFXEVADC_NUM_GLOBAL_INPUTCLASSES];       /**< \brief Specifies the global conversion settings one and two */
-    IfxEvadc_AnalogClockGenerationMode analogClockGenerationMode;
-    IfxEvadc_SupplyVoltageLevelControl supplyVoltage;
-    IfxEvadc_StartupCalibration        startupCalibrationControl;
-    uint16                             boundary0;                                                /**< \brief oundary Value 0 for limit checking. (12 Bits) */
-    uint16                             boundary1;                                                /**< \brief Boundary Value 1 for limit checking. (12 Bits) */
+    IfxEvadc_AnalogClockGenerationMode analogClockGenerationMode;                                /**< \brief Defines the way the analog clock is generated */
+    IfxEvadc_SupplyVoltageLevelControl supplyVoltage;                                            /**< \brief Adjusts the analog circuitry to the supply voltage used in the application system */
+    IfxEvadc_StartupCalibration        startupCalibrationControl;                                /**< \brief Start-up calibration */
+    uint16                             boundary0;                                                /**< \brief Boundary Value 0 for limit checking (12 Bits). Range: 0 to 0xFFF */
+    uint16                             boundary1;                                                /**< \brief Boundary Value 1 for limit checking (12 Bits). Range: 0 to 0xFFF */
 } IfxEvadc_Adc_Config;
 
 /** \brief Emux Control Structure
@@ -392,7 +392,7 @@ typedef struct
     IfxEvadc_EmuxCodingScheme        code;                        /**< \brief specifes binary/gray code */
     IfxEvadc_EmuxSampleTimeControl   sampleTimeControl;           /**< \brief specifies when to use sample time control */
     IfxEvadc_GroupId                 groupId;                     /**< \brief specifies groupId */
-    uint8                            channels;                    /**< \brief specifies channel number */
+    uint8                            channels;                    /**< \brief specifies channel number. Range: 0 to 0xD (Note: The ranges differ from variant to variant, refer to the IfxEvadc_Cfg.h file ) */
     IfxEvadc_EmuxInterface           emuxInterface;               /**< \brief specifies the Emux interface */
     IfxEvadc_Adc_EmuxPinConfig       emuxOutPinConfig;            /**< \brief configure the emux output pin */
     IfxEvadc_ChannelSelectionStyle   channelSelectionStyle;       /**< \brief External Multiplexer Channel Selection Style */
@@ -408,21 +408,21 @@ typedef struct
     IfxEvadc_Adc_ClassConfig                 inputClass[IFXEVADC_NUM_INPUTCLASSES];       /**< \brief Specifies conversion settings one and two */
     IfxEvadc_Adc_QueueConfig                 queueRequest[3];                             /**< \brief Specifies queue0 mode configuration */
     IfxEvadc_Adc_ArbiterConfig               arbiter;                                     /**< \brief Arbiter configuration structure. */
-    float32                                  analogFrequency;                             /**< \brief specifies analog frequency in Hz */
-    boolean                                  startupCalibration;                          /**< \brief Can be enabled to execute a startup calibration (disabled by default). */
-    boolean                                  disablePostCalibration;                      /**< \brief Specifies if calibration after conversion (post calibration) should be disabled */
-    IfxEvadc_InputClasses                    inputClasses;
-    boolean                                  doubleClockForMSBConversionSelection;
-    IfxEvadc_SampleSynchronization           sampleSynchronizationEnabled;
-    IfxEvadc_AnalogClockSynchronizationDelay analogClockSynchronizationDelay;
-    IfxEvadc_CalibrationSampleTimeControl    calibrationSampleTimeControlMode;
-    IfxEvadc_ReferencePrechargeControl       referencePrechargeControlMode;
-    boolean                                  referencePrechargeEnabled;
-    boolean                                  inputBufferEnabled;
+    float32                                  analogFrequency;                             /**< \brief specifies analog frequency in Hz. Range: 500000 to 20000000 */
+    boolean                                  startupCalibration;                          /**< \brief Can be enabled to execute a startup calibration (disabled by default). Range: TRUE: Initiate the start-up calibration phase, FALSE: No action */
+    boolean                                  disablePostCalibration;                      /**< \brief Specifies if calibration after conversion (post calibration) should be disabled. Range: TRUE: No post-calibration, FALSE: Automatic post-calibration after each conversion of group x */
+    IfxEvadc_InputClasses                    inputClasses;								  /**< \brief Input class select */
+    boolean                                  doubleClockForMSBConversionSelection;		  /**< \brief Selects an additional clock cycle for the conversion step of the MSB. Range: TRUE: 2 clock cycles for the MSB, FALSE: 1 clock cycle for the MSB */
+    IfxEvadc_SampleSynchronization           sampleSynchronizationEnabled;				  /**< \brief Sample synchronization enable */
+    IfxEvadc_AnalogClockSynchronizationDelay analogClockSynchronizationDelay;             /**< \brief Analog clock synchronization delay */
+    IfxEvadc_CalibrationSampleTimeControl    calibrationSampleTimeControlMode;			  /**< \brief Calibration sample time control */
+    IfxEvadc_ReferencePrechargeControl       referencePrechargeControlMode;               /**< \brief Reference precharge control */
+    boolean                                  referencePrechargeEnabled;                   /**< \brief Reference precharge enable. Range: TRUE: Precharge enabled, FALSE: No reference precharge */
+    boolean                                  inputBufferEnabled;						  /**< \brief Input buffer enable. Range: TRUE: Input buffer enabled, select buffering time via bitfields AIPS/AIPE in register GxICLASS0 etc, FALSE: Input buffer off, input buffering is not possible */
     IfxEvadc_IdlePrecharge                   idlePrechargeLevel;                          /**< \brief Voltage level to which sampling capacitor will be precharged when idle. */
-    IfxEvadc_AnalogConverterMode             analogConverterMode;
-    uint16                                   boundary0;                                   /**< \brief Boundary Value 0 for limit checking. (12 Bits) */
-    uint16                                   boundary1;                                   /**< \brief Boundary Value 1 for limit checking. (12 Bits) */
+    IfxEvadc_AnalogConverterMode             analogConverterMode;						  /**< \brief Analog converter control */
+    uint16                                   boundary0;                                   /**< \brief Boundary Value 0 for limit checking (12 Bits). Range: 0 to 0xFFF */
+    uint16                                   boundary1;                                   /**< \brief Boundary Value 1 for limit checking (12 Bits). Range: 0 to 0xFFF */
 } IfxEvadc_Adc_GroupConfig;
 
 /** \} */
@@ -433,7 +433,7 @@ typedef struct
 typedef struct
 {
     IfxEvadc_Adc     module;                     /**< \brief The EVADC handle structure */
-    Ifx_EVADC_FC    *fastCompareChannel;
+    Ifx_EVADC_FC    *fastCompareChannel;         /**< \brief Fast compare channels */
     IfxEvadc_GroupId fastCompareChannelId;       /**< \brief Following values can be taken for fastCompareChannelId:
                                                   *
                                                   *     IfxEvadc_GroupId_12 for Fast compare channel 0
@@ -445,6 +445,23 @@ typedef struct
                                                   *     IfxEvadc_GroupId_18 for Fast compare channel 6
                                                   *     IfxEvadc_GroupId_19 for Fast compare channel 7 */
 } IfxEvadc_Adc_FastCompareChannel;
+
+/** \brief Fast Compare Ramp configuration structure
+ */
+typedef struct
+{
+	uint16           compareValueA;         /**< \brief The content of FCRCOMPA is copied to the ramp counter when a ramp is started, i.e. upon the selected trigger event in FCRAMP0.B.FCRCOMPA. Range: 0 to 0x3FF */
+	uint16           compareValueB;		    /**< \brief Defines the stop level of the generated ramp. FCRCOMPB is also used in alternate value mode while the gate is inactive (low) in FCRAMP1.B.FCRCOMPB. Range: 0 to 0x3FF */
+	uint8			 stepWidth;             /**< \brief Configures the prescaler for FCRCOUNT in increments of 8 × 1/fADC in FCRAMP0.B.FCRSTEP. Range: 0 to 0xFF*/
+} IfxEvadc_Adc_FastCompareRampConfig;
+
+/** \brief Fast Compare Hysteresis configuration structure
+ */
+typedef struct
+{
+	uint16           lowerDeltaValue;                       /**< \brief This value is subtracted from the reference value while the last result is 1 in FCHYST.B.DELTAMINUS. Range: 0 to 0xFFC */
+	uint16           upperDeltaValue;                       /**< \brief This value is added to the reference value while the last result is 0 in FCHYST.B.DELTAPLUS. Range: 0 to 0xFFC */
+} IfxEvadc_Adc_FastCompareHysteresisConfig;
 #endif /*#if !defined(DEVICE_TC33XED) && !defined(DEVICE_TC33X) && !defined (DEVICE_TC35X)*/
 
 #if !defined(DEVICE_TC33XED) && !defined(DEVICE_TC33X) && !defined (DEVICE_TC35X)
@@ -453,31 +470,36 @@ typedef struct
 typedef struct
 {
     IfxEvadc_Adc                                       *module;                                /**< \brief Pointer to EVADC module handle */
-    IfxEvadc_GroupId                                    fastCompareChannelId;
+    IfxEvadc_GroupId                                    fastCompareChannelId;                  /**< \brief EVADC Groups */
     IfxEvadc_BoundaryFlagActivationMode                 boundaryFlagActivation;                /**< \brief Selects the behaviour of BoundaryFlag in FCBFL.B.BFA */
     IfxEvadc_BoundaryFlagInversionControl               boundaryFlagInversion;                 /**< \brief Select whether to use Boundary Flag(FCM.B.BFL) directly or in a inverted format */
     IfxEvadc_BoundaryFlagNodePointer                    boundaryFlagNodePointer;               /**< \brief Options for FCM.B.BFLNP to select Boundary Flag Node Pointer */
     IfxEvadc_BoundaryFlagSwControl                      boundaryFlagAction;                    /**< \brief Action to be performed on the boundary flag(BFL) */
     IfxEvadc_ChannelEventMode                           channelEventMode;                      /**< \brief Channel Event Mode for configuring generation of events for Fast Compare channels in FCCTRL.B.CHEVMODE */
     IfxEvadc_ClockDividerFactor                         clockDivider;                          /**< \brief Defines the frequency of the analog converter clock f_ADCI (base clock for conversion steps), derived from the peripheral clock. */
+    IfxEvadc_ExternalTriggerInputSelection              externalTriggerInputSelection;         /**< \brief External Trigger Input selection to be set in FCCTRL.B.XTSEL */
     IfxEvadc_ExternalTriggerPolarity                    externalTriggerPolarity;               /**< \brief External Trigger Polarity to be set in FCCTRL.B.XTPOL */
     IfxEvadc_FastCompareAnalogClockSynchronizationDelay delay;                                 /**< \brief Defines the delay of the analog clock in clocks after the sync signal in FCM.B.ACSD */
     IfxEvadc_FastCompareAnalogConverterControl          analogConverterControllerMode;         /**< \brief Settings for Analog Coverter Controller to be done in FCM.B.ANON */
     IfxEvadc_FastCompareAutomaticUpdate                 automaticUpdateMode;                   /**< \brief Defines the source of the value(s) in bitfield FCM.B.FCREF */
-    IfxEvadc_FastCompareRunControl                      runMode;
+    IfxEvadc_FastCompareRunControl                      runMode;                               /**< \brief Defines the basic run conditions of the fast compare channel in FCM.B.RUNCOMP */
     IfxEvadc_RampRunControl                             rampGenerationMode;                    /**< \brief Defines the run conditions for the ramp generation in FCM.B.RUNRAMP */
     IfxEvadc_FastCompareServiceRequestGeneration        serviceRequestGenerationEvent;         /**< \brief Criteria/mode settings for service request generation in FCM.B.SRG */
     IfxEvadc_GateOperatingMode                          gateOperatingMode;                     /**< \brief Gate Operating Mode to be filled in FCCTRL.B.GTMODE */
     IfxEvadc_RampDirection                              rampDirection;                         /**< \brief Ramp direction setting in FCM.B.FCRDIR */
     IfxEvadc_SampleSynchronization                      sampleTimingSynchronization;           /**< \brief Sample timing sync settings for FCM.B.SSE */
     IfxEvadc_TriggerOperatingMode                       externalTriggerOperatingMode;          /**< \brief Trigger operating mode in Fast Compare channels, to be entered in FCCTRL.B.XTMODE */
-    uint8                                               additionalClockCycles;                 /**< \brief Number of additional clock cycles to be added to the minimum sample phase of 2 analog clock cycles. */
+    uint8                                               additionalClockCycles;                 /**< \brief Number of additional clock cycles to be added to the minimum sample phase of 2 analog clock cycles.Range: 0 to 0x1F */
     IfxEvadc_ReferencePrechargeControl                  referenceInputPrechargeDuration;       /**< \brief Precharge duration for the reference input */
     IfxEvadc_AnalogInputPrechargeControl                analogInputPrechargeDuration;          /**< \brief Precharge duration for the analog input */
-    uint8                                               triggerInterval;                       /**< \brief Defines the interval at which fast compare operations are triggered in steps of 16 * 1/f_ADC */
+    uint8                                               triggerInterval;                       /**< \brief Defines the interval at which fast compare operations are triggered in steps of 16 * 1/f_ADC. Range: 0 to 0xFF */
     uint16                                              referenceValue;                        /**< \brief The input level is compared to this value.
-                                                                                                * The resulting reference level is (V_AREF / 1024) * FCM.B.FCREF */
-    boolean                                             boundaryFlagValue;                     /**< \brief Defines the logic value that replaces the compare result while the gate input is inactive (low) in lock mode. */
+                                                                                                           The resulting reference level is (V_AREF / 1024) * FCM.B.FCREF. Range: 0 to 0x3FF */
+    boolean                                             boundaryFlagValue;                     /**< \brief Defines the logic value that replaces the compare result while the gate input is inactive (low) in lock mode.
+                                                                                                           when '1' the logic value that replaces the compare result, when '0' The logic value that not replaces the compare result  */
+    boolean                                             boundaryFlagModeControl;			   /**< \brief Defines the Boundary Flag Mode Control in FCBFL.B.BFM. when '1' Enable boundary flag, when '0' Disable boundary flag, BFL is not changed by FCR */
+    IfxEvadc_Adc_FastCompareRampConfig                  rampConfig;                            /**< \brief Fast Compare Ramp configuration structure */
+    IfxEvadc_Adc_FastCompareHysteresisConfig            hysteresisConfig;                      /**< \brief Fast Compare Hysteresis configuration structure */
 } IfxEvadc_Adc_FastCompareChannelConfig;
 
 /** \} */
@@ -1039,6 +1061,26 @@ IFX_EXTERN void IfxEvadc_Adc_initFastCompareChannel(IfxEvadc_Adc_FastCompareChan
  * \retval None
  */
 IFX_EXTERN void IfxEvadc_Adc_initFastCompareChannelConfig(IfxEvadc_Adc_FastCompareChannelConfig *config, IfxEvadc_Adc *evadc);
+
+/**
+ * \brief Configures the ramp configuration for the specified EVADC channel.
+ *
+ * \param[inout] fcc          Pointer to the Fast Compare (FC) object.
+ * \param[in]    rampConfig   Pointer to the Fast Compare ramp0 configuration structure.
+ *
+ * \retval None
+ */
+IFX_EXTERN void IfxEvadc_Adc_configureFastCompareChannelRamp(Ifx_EVADC_FC *fcc, IfxEvadc_Adc_FastCompareRampConfig *rampConfig);
+
+/**
+ * \brief Configures the hysteresis configuration for the specified EVADC channel.
+ *
+ * \param[inout] fcc               Pointer to the Fast Compare (FC) object.
+ * \param[in]    hysteresisConfig  Pointer to the Fast Compare hysteresis configuration structure.
+ *
+ * \retval None
+ */
+IFX_EXTERN void IfxEvadc_Adc_configureFastCompareHysteresis(Ifx_EVADC_FC *fcc, IfxEvadc_Adc_FastCompareHysteresisConfig *hysteresisConfig);
 
 /** \} */
 #endif /*#if !defined(DEVICE_TC33XED) && !defined(DEVICE_TC33X) && !defined (DEVICE_TC35X)*/

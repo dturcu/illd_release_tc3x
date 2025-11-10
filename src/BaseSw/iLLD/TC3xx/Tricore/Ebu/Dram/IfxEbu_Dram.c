@@ -2,7 +2,7 @@
  * \file IfxEbu_Dram.c
  * \brief EBU DRAM details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -80,10 +80,11 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
 
     {
         uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
+        /* Clearing the endinit protection */
         IfxScuWdt_clearCpuEndinit(passwd);
-
+        /* Set the EBU external clock ratio for synchronous operation */
         IfxEbu_setExternalClockRatio(ebu, config->externalClockRatio);
-
+        /* Setting the endinit protection back on */
         IfxScuWdt_setCpuEndinit(passwd);
     }
 
@@ -109,7 +110,7 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
         IfxPort_setPinMode(&MODULE_P21, 1, IfxPort_Mode_outputPushPullAlt7);
     }
 
-    /* configuring Base and Alternate segment Address for EBU to Access External Memory */
+    /* Configuring Base and Alternate segment Address for EBU to Access External Memory */
     {
         Ifx_EBU_ADDRSEL addrsel;
         addrsel.U                          = 0;
@@ -144,39 +145,43 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
         deviceInterface = 3;
     }
 
+    /* Synchronous Read Access Parameters */
     if (config->syncReadAccessParameter.externalClock == 0)
     {
         Ifx_EBU_BUS_RCON busrcon;
         busrcon.U                           = 0;
-        busrcon.B.PORTW                     = deviceInterface; // config->asyncReadConfig.deviceInterface;
+        busrcon.B.PORTW                     = deviceInterface;  /* config->asyncReadConfig.deviceInterface; */
         busrcon.B.AGEN                      = config->asyncReadConfig.deviceType;
         busrcon.B.FETBLEN                   = config->asyncReadConfig.burstLength;
         ebu->BUS[config->chipSelect].RCON.U = busrcon.U;
     }
     else
+    /* Synchronous Read Configuration */
     {
         Ifx_EBU_BUS_RCON busrcon;
         busrcon.U                           = 0;
-        busrcon.B.PORTW                     = deviceInterface; // config->syncReadConfig.deviceInterface;
+        busrcon.B.PORTW                     = deviceInterface;  /* config->syncReadConfig.deviceInterface; */
         busrcon.B.AGEN                      = config->syncReadConfig.deviceType;
         busrcon.B.FETBLEN                   = config->syncReadConfig.burstLength;
         ebu->BUS[config->chipSelect].RCON.U = busrcon.U;
     }
 
     if (config->syncWriteAccessParameter.externalClock == 0)
+    /* Asynchronous Write Configuration */
     {
         Ifx_EBU_BUS_WCON buswcon;
         buswcon.U                           = 0;
-        buswcon.B.PORTW                     = deviceInterface; // config->asyncWriteConfig.deviceInterface;
+        buswcon.B.PORTW                     = deviceInterface;  /* config->asyncWriteConfig.deviceInterface; */
         buswcon.B.AGEN                      = config->asyncWriteConfig.deviceType;
         buswcon.B.FETBLEN                   = config->asyncWriteConfig.burstLength;
         ebu->BUS[config->chipSelect].WCON.U = buswcon.U;
     }
     else
+    /* Synchronous Write Configuration */
     {
         Ifx_EBU_BUS_WCON buswcon;
         buswcon.U                           = 0;
-        buswcon.B.PORTW                     = deviceInterface; // config->syncWriteConfig.deviceInterface;
+        buswcon.B.PORTW                     = deviceInterface;  /* config->syncWriteConfig.deviceInterface; */
         buswcon.B.AGEN                      = config->syncWriteConfig.deviceType;
         buswcon.B.FETBLEN                   = config->syncWriteConfig.burstLength;
         ebu->BUS[config->chipSelect].WCON.U = buswcon.U;
@@ -232,7 +237,7 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
         ebu->BUS[config->chipSelect].WAP.U = buswap.U;
     }
 
-    /* configuring SDRAM Registers */
+    /* Configuring SDRAM Registers */
     /* SDRAM is configured for Warm Start */
     /* SDRAM setting are dependent on the size of memory for example 4Mx16bit SDRAM
      * Asri[22:21] is BANKM, Asri[20:9] is Row Address and Asri[8:1] is Column Address */
@@ -244,6 +249,7 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
     /* The Sequence of writes to SDRAM Registers depends on Warm or Cold Start */
     IfxStm_wait(21000);
 
+    /* Control register configuration */
     {
         Ifx_EBU_SDRMCON sdrmcon;
 
@@ -251,10 +257,10 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
         sdrmcon.B.SDCMSEL  = config->sdramControlConfig.clockModeSelect;
         sdrmcon.B.PWR_MODE = config->sdramControlConfig.powerSaveMode;
         sdrmcon.B.CLKDIS   = config->sdramControlConfig.disableClockOutput;
-        sdrmcon.B.BANKM    = maskForBankTag;     // config->sdramControlConfig.maskForBankTag;
+        sdrmcon.B.BANKM    = maskForBankTag;  /* config->sdramControlConfig.maskForBankTag; */
         sdrmcon.B.CRC      = config->sdramControlConfig.refreshCycleTime;
         sdrmcon.B.CRCD     = config->sdramControlConfig.rowToColumnDelay;
-        sdrmcon.B.AWIDTH   = columnAddressWidth; // config->sdramControlConfig.columnAddressWidth;
+        sdrmcon.B.AWIDTH   = columnAddressWidth;  /* config->sdramControlConfig.columnAddressWidth; */
         sdrmcon.B.CRP      = config->sdramControlConfig.rowPrechargeTime;
         sdrmcon.B.CRSC     = config->sdramControlConfig.modeRegSetupTime;
         sdrmcon.B.CRFSH    = config->sdramControlConfig.initializationRefreshCommand;
@@ -262,6 +268,7 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
 
         ebu->SDRMCON.U     = sdrmcon.U;
     }
+    /* Mode register configuration */
     {
         Ifx_EBU_SDRMOD sdrmmod;
         sdrmmod.U           = 0;
@@ -273,6 +280,7 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
         sdrmmod.B.BURSTL    = config->sdramModConfig.burstLength;
         ebu->SDRMOD.U       = sdrmmod.U;
     }
+    /*  Refresh control configuration */
     {
         Ifx_EBU_SDRMREF sdrmref;
 
@@ -289,7 +297,7 @@ void IfxEbu_Dram_initMemory(IfxEbu_Dram *dram, const IfxEbu_Dram_Config *config)
 
         ebu->SDRMREF.U        = sdrmref.U;
 
-        /* read back to ensure that EBU is configured before first external access */
+        /* Read back to ensure that EBU is configured before first external access */
         if (ebu->SDRMREF.U)
         {}
     }
@@ -364,7 +372,8 @@ void IfxEbu_Dram_initMemoryConfig(IfxEbu_Dram_Config *config, Ifx_EBU *ebu)
     /* Sdram Control Parameters */
     config->sdramControlConfig.rowToPrechargeDelay          = 0xa;
     /* The Values can be optimized for SDRAM, currently it is set for the maximum value */
-    config->sdramControlConfig.initializationRefreshCommand = 0xf;                         /* This value can be optimized it is currently set to max to suite all SDRAMs */
+    /* This value can be optimized it is currently set to max to suite all SDRAMs */
+    config->sdramControlConfig.initializationRefreshCommand = 0xf;
     config->sdramControlConfig.modeRegSetupTime             = IfxEbu_ModeRegisterSetupTime_2;
     config->sdramControlConfig.rowPrechargeTime             = IfxEbu_RowPrechargeTime_3;
     config->sdramControlConfig.columnAddressWidth           = IfxEbu_ColumnAddressWidth_1; /* This is device Size Specific */
@@ -376,8 +385,10 @@ void IfxEbu_Dram_initMemoryConfig(IfxEbu_Dram_Config *config, Ifx_EBU *ebu)
     config->sdramControlConfig.clockModeSelect              = 0;
 
     /* SDRAM Mod Register is mainly for Mobile SDRAM */
-    config->sdramModConfig.extendedBankSelect    = IfxEbu_ExtendedOperationBankSelect_0; /* Applicable for Mobile SDRAM */
-    config->sdramModConfig.extendedOperationMode = 0;                                    /* Applicable for Mobile SDRAM */
+    /* Applicable for Mobile SDRAM */
+    config->sdramModConfig.extendedBankSelect    = IfxEbu_ExtendedOperationBankSelect_0;
+    /* Applicable for Mobile SDRAM */
+    config->sdramModConfig.extendedOperationMode = 0;
     /* We are selecting Warm Start */
     config->sdramModConfig.coldStart             = 0;
     config->sdramModConfig.opmode                = 0;

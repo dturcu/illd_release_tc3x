@@ -7,7 +7,7 @@
 #                                                                             #
 #                                                                             #
 # Infineon Technologies AG (Infineon) is supplying this file for use          #
-# exclusively with Infineon’s microcontroller products. This file can be      #
+# exclusively with Infineon's microcontroller products. This file can be      #
 # freely distributed within development tools that are supporting such        #
 # microcontroller products.                                                   #
 #                                                                             #
@@ -19,12 +19,12 @@
 #                                                                             #
 ###############################################################################
 
-B_DCC_TRICORE_PATH= C:\Tools\Compilers\WindRiver\compilers\diab-5.9.8.4\WIN32
+B_DCC_TRICORE_PATH= C:\Tools\Compilers\WindRiver\compilers\diab-5.9.9.0\WIN32
 
 B_DCC_TRICORE_CC_OPTIONS= -tTC162PMF:simple -O -XO -Xsection-split=1 \
                           -Xkeep-assembly-file=2 -g3 -Xinline=0 \
                           -Xabsolute18-data=0 -Xabsolute18-const=0 -Xsmall-data=0 -Xsmall-const=0 \
-                          -Xdialect-c99 -ei5388,2273,5387
+                          -Xdialect-c99 -ei5388,2273,5387,1824,4047,7266
 
 B_DCC_TRICORE_ASM_OPTIONS= $(B_DCC_TRICORE_CC_OPTIONS)
 

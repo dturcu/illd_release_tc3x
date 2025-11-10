@@ -3,7 +3,7 @@
  * \brief SCU  basic functionality
  * \ingroup IfxLld_Scu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -68,6 +68,7 @@
 /******************************************************************************/
 
 /** \brief Application selection bit for LBIST
+ * Definition in Ifx_SCU_LBISTCTRL1.B.BODY
  */
 typedef enum
 {
@@ -76,6 +77,7 @@ typedef enum
 } IfxScuLbist_Application;
 
 /** \brief prescaler values to divide the EVR frequency for the LBIST operational clock
+ * Definition in Ifx_SCU_LBISTCTRL1.B.LBISTFREQU
  */
 typedef enum
 {
@@ -98,6 +100,7 @@ typedef enum
 } IfxScuLbist_Freq;
 
 /** \brief Split Shift Selection
+ * Definition in Ifx_SCU_LBISTCTRL1.B.SPLITSH
  */
 typedef enum
 {
@@ -117,15 +120,15 @@ typedef struct
     IfxScuLbist_Application   application;           /**< \brief LBIST application selection */
     IfxScuLbist_Freq          freq;                  /**< \brief LBIST Frequency Selection. Pre-scaler value to derive LBIST operation clock from EVR oscillator */
     IfxScuLbist_SplitShiftSel splitShiftSel;         /**< \brief LBIST Split-Shift Selection */
-    uint32                    seed;                  /**< \brief LBIST Seed value (start value for the random pattern generator) */
-    uint32                    pattern;               /**< \brief LBIST Pattern Number for the scan loads */
-    uint32                    scanChainLength;       /**< \brief LBIST maximum scan chain length */
-    uint32                    signature;             /**< \brief LBIST Signature Value to compare with MISR signature from the last LBIST */
+    uint32                    seed;                  /**< \brief LBIST Seed value (start value for the random pattern generator). Range: 0 to 0x7FFFF */
+    uint32                    pattern;               /**< \brief LBIST Pattern Number for the scan loads. Range: 0 to 0x3FFFF */
+    uint32                    scanChainLength;       /**< \brief LBIST maximum scan chain length. Range: 0 to 0xFFF */
+    uint32                    signature;             /**< \brief LBIST Signature Value to compare with MISR signature from the last LBIST. Range: 0 to 0xFFFF */
 } IfxScuLbist_ParameterSet;
 
 typedef struct
 {
-    uint8                     numOfConfigSets;       /**< \brief Number of LBIST configuration sets */
+    uint8                     numOfConfigSets;       /**< \brief Number of LBIST configuration sets. Range: 0 to 0xFF */
     IfxScuLbist_ParameterSet *parameterSets;         /**< \brief Pointer to LBIST configuration set array */
 } IfxScuLbist_MultiTriggerConfig;
 

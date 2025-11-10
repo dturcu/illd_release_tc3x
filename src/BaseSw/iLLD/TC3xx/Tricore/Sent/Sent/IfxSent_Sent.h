@@ -3,7 +3,7 @@
  * \brief SENT SENT details
  * \ingroup IfxLld_Sent
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -395,20 +395,20 @@
  */
 typedef struct
 {
-    uint32 receiveDataInterrupt : 1;                     /**< \brief Specifies receive data interrupt enable */
-    uint32 receiveSuccessInterrupt : 1;                  /**< \brief Specifies receive success interrupt enable */
-    uint32 receiveBufferOverflowInterrupt : 1;           /**< \brief Specifies receive buffer overflow interrupt enable */
-    uint32 transferDataInterrupt : 1;                    /**< \brief Specifies transfer data interrupt enable */
-    uint32 transferBufferUnderflowInterrupt : 1;         /**< \brief Specifies transfer buffer underflow interrupt enable */
-    uint32 serialDataReceiveInterrupt : 1;               /**< \brief Specifies serial data interrupt enable */
-    uint32 watchdogErrorInterrupt : 1;                   /**< \brief Specifies watchdog error interrupt enable */
-    uint32 serialDataCrcErrorInterrupt : 1;              /**< \brief Specifies serial data CRC error interrupt enable */
-    uint32 wrongStatusNibbleErrorInterrupt : 1;          /**< \brief Specifies wrong status nibble error interrupt enable */
-    uint32 crcErrorInterrupt : 1;                        /**< \brief Specifies CRC error interrupt enable */
-    uint32 nibblesValueOutOfRangeErrorInterrupt : 1;     /**< \brief Specifies nibble value out of range error interrupt enable */
-    uint32 nibblesWrongErrorInterrupt : 1;               /**< \brief Specifies nibbles wrong error interrupt enable */
-    uint32 frequencyDriftErrorInterrupt : 1;             /**< \brief Specifies frequency drift error interrupt enable */
-    uint32 frequencyRangeErrorInterrupt : 1;             /**< \brief Specifies frequency not in the range error interrupt enable */
+    uint32 receiveDataInterrupt : 1;                     /**< \brief Specifies receive data interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 receiveSuccessInterrupt : 1;                  /**< \brief Specifies receive success interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 receiveBufferOverflowInterrupt : 1;           /**< \brief Specifies receive buffer overflow interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 transferDataInterrupt : 1;                    /**< \brief Specifies transfer data interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 transferBufferUnderflowInterrupt : 1;         /**< \brief Specifies transfer buffer underflow interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 serialDataReceiveInterrupt : 1;               /**< \brief Specifies serial data interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 watchdogErrorInterrupt : 1;                   /**< \brief Specifies watchdog error interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 serialDataCrcErrorInterrupt : 1;              /**< \brief Specifies serial data CRC error interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 wrongStatusNibbleErrorInterrupt : 1;          /**< \brief Specifies wrong status nibble error interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 crcErrorInterrupt : 1;                        /**< \brief Specifies CRC error interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 nibblesValueOutOfRangeErrorInterrupt : 1;     /**< \brief Specifies nibble value out of range error interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 nibblesWrongErrorInterrupt : 1;               /**< \brief Specifies nibbles wrong error interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 frequencyDriftErrorInterrupt : 1;             /**< \brief Specifies frequency drift error interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
+    uint32 frequencyRangeErrorInterrupt : 1;             /**< \brief Specifies frequency not in the range error interrupt enable. Range : 1 if an interrupt request can be generated, 0 if no interrupt request can be generated */
 } IfxSent_Sent_Enable;
 
 /** \} */
@@ -426,7 +426,7 @@ typedef struct
  */
 typedef union
 {
-    uint32              ALL;          /**< \brief Specifies to write and read to/from all flags as once via the ALL member. */
+    uint32              ALL;          /**< \brief Specifies to write and read to/from all flags as once via the ALL member. Range : 0 to 0x3FFF. */
     IfxSent_Sent_Enable enable;       /**< \brief Structure contains the interrupt flags */
 } IfxSent_Sent_EnabledInterrupts;
 
@@ -434,12 +434,12 @@ typedef union
  */
 typedef struct
 {
-    boolean                       inputPulsePolarityHigh;         /**< \brief Specifies the polarity of input of each channel */
-    boolean                       outputPulsePolarityHigh;        /**< \brief Specifies the polarity of input of each channel */
-    boolean                       edgeCounterCleared;             /**< \brief Specifies the edge counter reset */
-    boolean                       glitchFallingCleared;           /**< \brief Specifies the glitch falling edge clear */
-    boolean                       glitchRisingCleared;            /**< \brief Specifies the glitch rising edge clear */
-    boolean                       triggerMonitorCleared;          /**< \brief Specifies the trigger monitor reset */
+    boolean                       inputPulsePolarityHigh;         /**< \brief Specifies the polarity of input of each channel. Range: TRUE if input pulse polarity is active high , FALSE if input pulse polarity is active low. */
+    boolean                       outputPulsePolarityHigh;        /**< \brief Specifies the polarity of input of each channel. Range: TRUE if output pulse polarity is active high , FALSE if output pulse polarity is active low. */
+    boolean                       edgeCounterCleared;             /**< \brief Specifies the edge counter reset. Range: TRUE if edge counter is cleared. FALSE if edge counter is not cleared.*/
+    boolean                       glitchFallingCleared;           /**< \brief Specifies the glitch falling edge clear. Range: TRUE if FEG is cleared, FALSE if FEG is not cleared. */
+    boolean                       glitchRisingCleared;            /**< \brief Specifies the glitch rising edge clear. Range: TRUE if REG is cleared, FALSE if REG is not cleared. */
+    boolean                       triggerMonitorCleared;          /**< \brief Specifies the trigger monitor reset. Range: TRUE if TRM is cleared, FALSE if TRM is not cleared. */
     IfxSent_DigitalGlitchesLength digitalGlitchFilterDepth;       /**< \brief Specifies the Digital Glitch Filter depth for input signal delay */
     IfxSent_ExternalTrigger       externalTrigger;                /**< \brief Specifies the external trigger line source */
 } IfxSent_Sent_InputOutputControl;
@@ -448,7 +448,7 @@ typedef struct
  */
 typedef struct
 {
-    uint16     priority;          /**< \brief Specifies the interrupt priority. Always 1 since all interrupts are handled at a time */
+    uint16     priority;          /**< \brief Specifies the interrupt priority. Always 1 since all interrupts are handled at a time. Range: 0 to 0xFF. */
     IfxSrc_Tos isrProvider;       /**< \brief Specifies the interrupt service provider. CPU or DMA. */
 } IfxSent_Sent_Interrupt;
 
@@ -495,16 +495,18 @@ typedef struct
  */
 typedef struct
 {
-    boolean                         crcModeDisabled;                     /**< \brief Specifies the CRC mode disabled mode */
-    boolean                         crcMethodDisabled;                   /**< \brief Specifies the CRC with zero nibbles disabled or enabled */
-    boolean                         alternateCrcSelected;                /**< \brief Specifies the CRC is calculated for both fast and serial messages */
-    boolean                         serialDataProcessingEnabled;         /**< \brief Specifies the serial data processing mode */
-    boolean                         serialDataDisabledCrcDisabled;       /**< \brief Specifies the CRC disable for serial data disabled mode */
-    boolean                         statusNibbleEnabled;                 /**< \brief Specifies the status nibble to include in CRC */
-    boolean                         driftErrorsDisabled;                 /**< \brief Specifies the drift errors enabled or disabled */
-    boolean                         endPulseIgnored;                     /**< \brief Specifies the pause pulse during synchronization */
-    boolean                         suspendTriggered;                    /**< \brief Specifies the suspend trigger disables the channel or not */
-    uint8                           frameLength;                         /**< \brief Specifies frame length in nibbles */
+    boolean                         crcModeDisabled;                     /**< \brief Specifies the CRC mode disabled mode. Range: TRUE if CRC is disabled, FALSE if CRC is enabled. */
+    boolean                         crcMethodDisabled;                   /**< \brief Specifies the CRC with zero nibbles disabled or enabled. Range: TRUE if augmentation is switched off for both 4-bit message CRC and the 4-
+                                                                                     bit CRC of the serial messages, FALSE if augmentation is selected for both 4-bit message CRC and the 4-bit CRC of the serial messages. */
+    boolean                         alternateCrcSelected;                /**< \brief Specifies the CRC is calculated for both fast and serial messages. Range: TRUE if 4 bit in parallel CRC calculation as used e.g. in hall
+                                                                                     sensor TLE4998C, FALSE if Serial CRC calculation as specified in J2716 JAN2010. */
+    boolean                         serialDataProcessingEnabled;         /**< \brief Specifies the serial data processing mode. Range: TRUE if automatic Serial Data Processing is enabled, FALSE if automatic Serial Data Processing is disabled. */
+    boolean                         serialDataDisabledCrcDisabled;       /**< \brief Specifies the CRC disable for serial data disabled mode. Range: TRUE if CRC is disabled CRC nibble can be read from SDSx, FALSE if CRC is enabled. */
+    boolean                         statusNibbleEnabled;                 /**< \brief Specifies the status nibble to include in CRC. Range: TRUE if status Nibble included in CRC, FALSE if status Nibble not included in CRC. */
+    boolean                         driftErrorsDisabled;                 /**< \brief Specifies the drift errors enabled or disabled. Range: TRUE if drift Errors disabled, FALSE if drift Errors enabled. */
+    boolean                         endPulseIgnored;                     /**< \brief Specifies the pause pulse during synchronization. Range: TRUE if end Pulse ignored, FALSE if end Pulse not ignored. */
+    boolean                         suspendTriggered;                    /**< \brief Specifies the suspend trigger disables the channel or not. Range: TRUE if an OCDS suspend trigger disables the SENT channel, FALSE if an OCDS suspend trigger is ignored by this SENT channel. */
+    uint8                           frameLength;                         /**< \brief Specifies frame length in nibbles. Range: 0 to 0xFF. */
     IfxSent_FrameCheckMode          frameCheckMode;                      /**< \brief Specifies the frame check mode for valid frame */
     IfxSent_ExtendedSerialFrameMode extendedSerialFrameMode;             /**< \brief Specifies the extended serial frame mode */
     boolean                         frequencyDriftCheckEnabled;          /**< \brief Specifies the frequency drift check based on frame length is enable or disable */
@@ -514,8 +516,8 @@ typedef struct
  */
 typedef struct
 {
-    uint8                 pulseLength;            /**< \brief Specifies the pulse length in ticktimes */
-    uint8                 pulseDelayLength;       /**< \brief Specifies the pulse delay length */
+    uint8                 pulseLength;            /**< \brief Specifies the pulse length in ticktimes. Range: 0 to 0x3F. */
+    uint8                 pulseDelayLength;       /**< \brief Specifies the pulse delay length. Range: 0 to 0x3F. */
     IfxSent_TriggerSource triggerSource;          /**< \brief Specifies the trigger source and mode */
     IfxSent_TimeBase      timeBase;               /**< \brief Specifies the pulse time base */
     IfxSent_SpcMode       spcMode;                /**< \brief Specifies the SENT SPC operational mode */
@@ -539,7 +541,7 @@ typedef struct
 typedef struct
 {
     IfxSent_Sent                     *driver;                    /**< \brief Specifies the pointer to SENT module handler */
-    uint16                            watchDogTimerLimit;        /**< \brief Speciifes the enabled interrupts for each Channel */
+    uint16                            watchDogTimerLimit;        /**< \brief Speciifes the enabled interrupts for each Channel. Range: 0 to 0xFFFF. */
     IfxSent_ChannelId                 channelId;                 /**< \brief Specifies the SENT channel number */
     IfxSent_Sent_InputOutputControl   inputOutputControl;        /**< \brief Specifies the input output controllable properties */
     IfxSent_Sent_ReceiveControl       receiveControl;            /**< \brief Specifies the receive control properties */
@@ -548,8 +550,8 @@ typedef struct
     IFX_CONST IfxSent_Sent_Pins      *pins;                      /**< \brief Specifies the pins configuration for SENT channel */
     float32                           tUnit;                     /**< \brief desired unit time (f_tick), e.g. 3E-6 for 3 uS */
     IfxSent_Sent_NibbleControl        nibbleControl;             /**< \brief Specifies the received nibbles control properties */
-    IfxSent_Sent_Interrupt            interrupt;                 /**< \brief Specifies the interrupt control properties structure */
-    boolean                           spcModeOn;                 /**< \brief Specifies the SENT SPC mode enable/disable */
+    IfxSent_Sent_Interrupt            interrupt;                 /**< \brief Specifies the interrupt control properties structure.*/
+    boolean                           spcModeOn;                 /**< \brief Specifies the SENT SPC mode enable/disable. Range: TRUE if SPC mode is enabled, FALSE if if SPC mode is disabled. */
     IfxSent_Sent_EnabledInterrupts    enabledInterrupts;
 } IfxSent_Sent_ChannelConfig;
 
@@ -558,26 +560,26 @@ typedef struct
 typedef struct
 {
     Ifx_SENT *module;                    /**< \brief Specifies pointer to SENT registers */
-    boolean   sleepModeEnabled;          /**< \brief Specifies SENT enable/disable */
-    uint32    timeStampPreDivider;       /**< \brief Specifies the pre-divider to get clock in time stamp */
+    boolean   sleepModeEnabled;          /**< \brief Specifies SENT enable/disable. Range: TRUE if sleep mode enable, FALSE if sleep mode disable. */
+    uint32    timeStampPreDivider;       /**< \brief Specifies the pre-divider to get clock in time stamp.Range: 0 to 0xFFFFF. */
 } IfxSent_Sent_Config;
 
 /** \brief Specifies the frame configuration structure for a channel
  */
 typedef struct
 {
-    uint32 data;               /**< \brief Contains the data from last received frame */
-    uint32 timeStamp;          /**< \brief Contains the timestamp of last received frame */
-    uint8  statusNibble;       /**< \brief Contains the status and communication Nibble of last received frame */
+    uint32 data;               /**< \brief Contains the data from last received frame. Range: 0 to 0xFFFFFFFF. */
+    uint32 timeStamp;          /**< \brief Contains the timestamp of last received frame. Range: 0 to 0xFFFFFFFF. */
+    uint8  statusNibble;       /**< \brief Contains the status and communication Nibble of last received frame 0 to 0xF. */
 } IfxSent_Sent_Frame;
 
 /** \brief Specifies received message frame
  */
 typedef struct
 {
-    uint8             crc;              /**< \brief Contains the received CRC value */
-    uint8             messageId;        /**< \brief Contains the received message ID value */
-    uint16            serialData;       /**< \brief Contains the received serial data value */
+    uint8             crc;              /**< \brief Contains the received CRC value 0 to 0x3F. */
+    uint8             messageId;        /**< \brief Contains the received message ID value.Range: 0 to 0xFF. */
+    uint16            serialData;       /**< \brief Contains the received serial data value. Range: 0 to 0xFFFF. */
     IfxSent_ConfigBit configBit;        /**< \brief Contains the received configuration bit value */
 } IfxSent_Sent_SerialMessageFrame;
 
@@ -590,26 +592,37 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reset the SENT module
- * \param driver pointer to the SENT module handler
- * \return None
+/**
+ * \brief Resets the SENT module to its initial state.
+ *
+ * \param[inout] driver Pointer to the SENT module handler.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxSent_Sent_deInitModule(IfxSent_Sent *driver);
 
-/** \brief Initialise the SENT with the supplied configureation
- * \param driver pointer to the SENT module handler
- * \param config pointer to the SENT module configuration
- * \return TRUE if valid configuration otherwise FALSE
+/** \brief Initialise the SENT with the supplied configuration.
+ *
+ * \param[inout] driver Pointer to the SENT module handler.
+ * \param[in]    config Pointer to the SENT module configuration.
+ *
+ * \retval TRUE If initialization successful.
+ *         FALSE If initialization unsuccessful.
  *
  * Usage example: see \ref IfxLld_Sent_Sent_Usage
  *
  */
 IFX_EXTERN boolean IfxSent_Sent_initModule(IfxSent_Sent *driver, const IfxSent_Sent_Config *config);
 
-/** \brief Initialise buffer with default SENT configuration
- * \param config pointer to the SENT module configuration
- * \param sent base address of the SENT register space
- * \return None
+/**
+ * \brief Initializes the SENT module configuration structure with default values.
+ *
+ * \param[inout] config Pointer to the SENT module configuration.
+ *
+ * \param[in]    sent   Pointer to the base address of the SENT register space.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxLld_Sent_Sent_Usage
  *
@@ -626,10 +639,11 @@ IFX_EXTERN void IfxSent_Sent_initModuleConfig(IfxSent_Sent_Config *config, Ifx_S
 /******************************************************************************/
 
 /** \brief Copies the current interrupt flags into the Ifx_SENT_CH_INTSTAT structure, and clears the flags in hardware.
- *
  * This function should be used in an ISR to retrieve the events which triggered the interrupt.
- * \param channel Specifies the SENT Channel handle structure
- * \return Interrupt flags which have been cleared.
+
+ * \param[inout] channel Pointer to the SENT channel handle structure.
+ *
+ * \retval Ifx_SENT_CH_INTSTAT The interrupt flags that were cleared.
  *
  * Usage example: see \ref IfxLld_Sent_Sent_Usage
  *
@@ -640,40 +654,55 @@ IFX_INLINE Ifx_SENT_CH_INTSTAT IfxSent_Sent_getAndClearInterruptStatus(IfxSent_S
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialize the channel with the supplied configuration
- * \param channel pointer to the SENT channel
- * \param config pointer to the SENT channel configuration
- * \return TRUE if valid configuration otherwise FALSE
+/**
+ * \brief Initializes the SENT channel with the specified configuration.
+ *
+ * \param[inout] channel Pointer to the SENT channel handle structure.
+ * \param[in]    config  Pointer to the SENT channel configuration.
+ *
+ * \retval TRUE If the configuration is valid and initialization is successful.
+ *         FALSE If the configuration is invalid or initialization fails.
  *
  * Usage example: see \ref IfxLld_Sent_Sent_Usage
  *
  */
 IFX_EXTERN boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Sent_ChannelConfig *config);
 
-/** \brief Initialise channel buffer with default SENT channel configuration
- * \param config pointer to the SENT channel configuration
- * \param driver pointer to the SENT module handler
- * \return None
+/**
+ * \brief Initializes the SENT channel configuration structure with default values.
+ *
+ * \param[inout] config Pointer to the SENT channel configuration.
+ * \param[in]    driver Pointer to the SENT module handler.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxLld_Sent_Sent_Usage
  *
  */
 IFX_EXTERN void IfxSent_Sent_initChannelConfig(IfxSent_Sent_ChannelConfig *config, IfxSent_Sent *driver);
 
-/** \brief Reads the nibbles recieved in the Data register
- * \param channel SENT Channel whose data has to be read
- * \param frame Data read from the SENT Channel
- * \return TRUE if data received otherwise false
+/**
+ * \brief Reads the nibbles received in the Data register from a specified SENT channel and stores the data in the provided frame structure.
  *
+ * \param[in]    channel Pointer to the SENT channel handle structure.
+ * \param[inout] frame   Pointer to the frame structure where the received data, timestamp, and status nibble will be stored.
+ *
+ * \retval TRUE If data was successfully received and stored in the frame structure.
+ *         FALSE If no data was received.
+ * 
  * Usage example: see \ref IfxLld_Sent_Sent_Usage
  *
  */
 IFX_EXTERN boolean IfxSent_Sent_readChannelSerialDataFrame(IfxSent_Sent_Channel *channel, IfxSent_Sent_Frame *frame);
 
-/** \brief reads the Serial data recieved and collected over several SENT frames
- * \param channel reads the Serial data recieved and collected over several SENT frames
- * \param message Data pointer pointing to the serial data read from the SENT Channel
- * \return TRUE if serial message received otherwise false
+/**
+ * \brief Reads the serial data received and collected over several SENT frames from a specified channel.
+ *
+ * \param[in] channel    Pointer to the SENT channel handle structure.
+ * \param[inout] message Pointer to the structure where the received serial message frame data will be stored. This structure includes fields for CRC, message ID, serial data, and configuration bit.
+ *
+ * \retval TRUE If a serial message was successfully received and stored in the message structure.
+ *         FALSE If no serial message was received.
  *
  * Usage example: see \ref IfxLld_Sent_Sent_Usage
  *
@@ -686,17 +715,25 @@ IFX_EXTERN boolean IfxSent_Sent_readChannelSerialMessageFrame(IfxSent_Sent_Chann
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Generates SPC signal for the sensor
- * \param channel channel reads the Serial data recieved and collected over several SENT frames
- * \param pulseLength pulseLength configure the SPC pulse length
- * \param delay delay configure the SPC pulse start delay
- * \return None
+/**
+ * \brief Generates SPC signal for the sensor and configures pulse timing parameters.
+ *
+ * \param[inout] channel     Pointer to the SENT channel handle structure.
+ * \param[in]    pulseLength Configures the length of the SPC pulse. Range: 0 to 63.
+ * \param[in]    delay       Configures the start delay of the SPC pulse. Range: 0 to 63.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSent_Sent_spcPulseUpdate(IfxSent_Sent_Channel *channel, uint8 pulseLength, uint8 delay);
 
-/** \brief Trigger SPC signal for the sensor
- * \param channel channel reads the Serial data recieved and collected over several SENT frames
- * \return None
+/**
+ * \brief Triggers the SPC signal for the specified SENT channel.
+ *
+ * \param[inout] channel Pointer to the SENT channel handle structure.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSent_Sent_spcPulseTrigger(IfxSent_Sent_Channel *channel);
 

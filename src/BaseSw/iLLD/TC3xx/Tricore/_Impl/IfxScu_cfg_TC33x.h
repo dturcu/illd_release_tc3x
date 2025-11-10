@@ -3,7 +3,7 @@
  * \brief SCU on-chip implementation data
  * \ingroup IfxLld_Scu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -585,6 +585,7 @@
         IfxScuCcu_PllInputClockSelection_fOsc0,\
         IFXSCU_CFG_SYS_PLL_INITIAL_STEP, \
         IFXSCU_CFG_PER_PLL_INITIAL_STEP, \
+		IfxScuCcu_OscModeSelection_extCrystal, \
     },\
     IFXSCU_CFG_WAIT_INITIAL_STEP \
 }

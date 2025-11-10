@@ -2,7 +2,7 @@
  * \file IfxSdmmc_Sd.c
  * \brief SDMMC SD details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -61,21 +61,36 @@
 /*-----------------------Private Function Prototypes--------------------------*/
 /******************************************************************************/
 
-/** \brief Set voltage window in the OCR register
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Set voltage window in the OCR register.
+ *
+ * \param[inout] sd Pointer to the SD device handle.
+ *
+ * \retval IfxSdmmc_Status The status of Set Voltage Window, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_STATIC IfxSdmmc_Status IfxSdmmc_Sd_setVoltageWindow(IfxSdmmc_Sd *sd);
 
-/** \brief Validate Interface Condition of Host and Card, (CMD8)
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Validate Interface Condition of Host and Card, (CMD8).
+ *
+ * \param[inout] sd Pointer to the SD device handle.
+ *
+ * \retval IfxSdmmc_Status The status of Validate Interface Condition, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_STATIC IfxSdmmc_Status IfxSdmmc_Sd_validateInterfaceCondition(IfxSdmmc_Sd *sd);
 
-/** \brief Validate the Operating Condition of the Card, (ACMD41)
- * \param sd Handle for SD interface
- * \return Status
+/**
+ * \brief Validate the Operating Condition of the Card, (ACMD41).
+ *
+ * \param[inout] sd Pointer to the SD device handle.
+ *
+ * \retval IfxSdmmc_Status The status of Validate Operating Condition, indicating success or failure. A return value of 0 indicates success,
+ *                         while any non-zero value indicates an error.
+ *                         Range: \ref IfxSdmmc_Status
  */
 IFX_STATIC IfxSdmmc_Status IfxSdmmc_Sd_validateOperatingCondition(IfxSdmmc_Sd *sd);
 
@@ -99,12 +114,12 @@ IfxSdmmc_Status IfxSdmmc_Sd_getLockStatus(IfxSdmmc_Sd *sd, IfxSdmmc_CardLockStat
     IfxSdmmc_Response response;
     uint32            argument = 0UL;
 
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     argument |= (sd->cardInfo.rca << IFXSDMMC_BITSHIFT_POS16);
 
-    /* Send CMD13 to read card status  */
+    /* Send CMD13 to read card status */
     status = IfxSdmmc_sendCommand(sdPtr, IfxSdmmc_Command_sendStatus, argument, IfxSdmmc_ResponseType_r1, &response);
 
     if (status == IfxSdmmc_Status_success)
@@ -131,11 +146,11 @@ IfxSdmmc_Status IfxSdmmc_Sd_initCard(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *ca
     IfxSdmmc_Status         status     = IfxSdmmc_Status_success;
     IfxSdmmc_Response       response;
 
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
-    /* set up the SD card interface, power up the card */
-    /* power on bus */
+    /* Set up the SD card interface, power up the card */
+    /* Power on bus */
     sdPtr->PWR_CTRL.B.SD_BUS_PWR_VDD1 = 1;
 
     /* Enable the SD clock */
@@ -154,7 +169,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_initCard(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *ca
     }
 
     /* Initialize and identify the SD card */
-    /* reset all flags first */
+    /* Reset all flags first */
     sd->flags.f2      = FALSE;
     sd->flags.f8      = FALSE;
     sd->flags.ioInit  = FALSE;
@@ -198,7 +213,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioInit(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *card
     IfxSdmmc_Sd_Flags *sdflags    = &(sd->flags);
     IfxSdmmc_CardLockStatus lockStatus = IfxSdmmc_CardLockStatus_unlocked;
 
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* Reset the card (CMD0) */
@@ -207,7 +222,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioInit(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *card
 #if IFXSDMMC_VALIDATE_INTERFACE_CONDITION
     if (status == IfxSdmmc_Status_success)
     {
-        /* validate Interface condition (CMD8) */
+        /* Validate Interface condition (CMD8) */
         status = IfxSdmmc_Sd_validateInterfaceCondition(sd);
     }
 #endif
@@ -218,14 +233,14 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioInit(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *card
         {
             if (sdflags->ioInit == FALSE) /* IO is not initialized */
             {
-                /* Validate Operating Condition for SDIO (CMD5)*/
+                /* Validate Operating Condition for SDIO (CMD5) */
                 status = IfxSdmmc_Sd_ioValidateOperatingCondition(sd);
 
                 if (status == IfxSdmmc_Status_success)
                 {
                     sdflags->ioInit = TRUE; /* IO is now initialized */
 
-                    /* update memory present status */
+                    /* Update memory present status */
                     sdflags->memoryPresent = (sd->cardInfo.io.ioInfo.bits.mp != 0);
                 }
                 else
@@ -237,40 +252,40 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioInit(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_CardConfig *card
 
         if (sdflags->supportMEM && sdflags->memoryPresent)
         {
-            /* validate operating condition (ACMD41) */
+            /* Validate operating condition (ACMD41) */
             status = IfxSdmmc_Sd_validateOperatingCondition(sd);
 
             if (status == IfxSdmmc_Status_success)
             {
-                // Update mem flag here.
+                /* Update mem flag here */
                 sdflags->memInit = TRUE;
             }
         }
 
-        /* we skip voltage switch sequences (CMD11 based on S18A) */
+        /* We skip voltage switch sequences (CMD11 based on S18A) */
         /* This is because our controller does not support 1.8V */
 
         if (status == IfxSdmmc_Status_success)
         {
             if ((sdflags->f2 == FALSE) && (sdflags->memInit))   /* CMD2 not completed */
             {
-                /* Read CID (CMD2)*/
+                /* Read CID (CMD2) */
                 status = IfxSdmmc_Sd_readCid(sd);
             }
 
             if (status == IfxSdmmc_Status_success)
             {
-                // set F2 flag here.
+                /* Set F2 flag here */
                 sdflags->f2 = TRUE;
 
-                /* Read RCA (CMD3)*/
+                /* Read RCA (CMD3) */
                 status = IfxSdmmc_Sd_readRca(sd);
 
                 if (status == IfxSdmmc_Status_success)
                 {
-                    // now based on MEM / IO flags:
-                    // populate the SD card type
-                    // Capacity of card is initialized during ACMD41 test
+                    /* Now based on MEM / IO flags: */
+                    /* Populate the SD card type */
+                    /* Capacity of card is initialized during ACMD41 test */
                     sd->cardType = (IfxSdmmc_SdCardType)((uint8)(sdflags->ioInit) | ((uint8)(sdflags->memInit) << 1));
 
                     /* Check card lock/unlock status */
@@ -302,7 +317,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_configureSpeedAndBusWidth(IfxSdmmc_Sd *sd, IfxSdmmc_
 {
     IfxSdmmc_Status status = IfxSdmmc_Status_success;
     /* Switch speed and bus width */
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
     if (sd->cardType != IfxSdmmc_SdCardType_io)
     {
@@ -316,7 +331,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_configureSpeedAndBusWidth(IfxSdmmc_Sd *sd, IfxSdmmc_
 
     if (status == IfxSdmmc_Status_success)
     {
-        /* switch card clock to desired frequency now */
+        /* Switch card clock to desired frequency now */
         if (sd->presetMode == TRUE)
         {
             sdPtr->CLK_CTRL.B.SD_CLK_EN = 0; /* Disable card clock */
@@ -331,14 +346,14 @@ IfxSdmmc_Status IfxSdmmc_Sd_configureSpeedAndBusWidth(IfxSdmmc_Sd *sd, IfxSdmmc_
 
     if (sd->cardType != IfxSdmmc_SdCardType_io)
     {
-        /* read SCR register contents */
+        /* Read SCR register contents */
         status = IfxSdmmc_Sd_readScr(sd);
     }
 
     if (status == IfxSdmmc_Status_success)
     {
-        /* support SDIO switches also here */
-        /* switch Bus Width if selected */
+        /* Support SDIO switches also here */
+        /* Switch Bus Width if selected */
         if (cardConfig->dataWidth == IfxSdmmc_SdDataTransferWidth_4Bit)
         {
             status = IfxSdmmc_Sd_switchToBusWidth4(sd);
@@ -358,25 +373,25 @@ IfxSdmmc_Status IfxSdmmc_Sd_configureSpeedAndBusWidth(IfxSdmmc_Sd *sd, IfxSdmmc_
 IfxSdmmc_Status IfxSdmmc_Sd_initHostController(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_HostConfig *hostConfig)
 {
     IfxSdmmc_Status status = IfxSdmmc_Status_success;
-    /* set the bus voltage */
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Set the bus voltage */
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
     sdPtr->PWR_CTRL.B.SD_BUS_VOL_VDD1 = IFXSDMMC_BUS_VOLTAGE_SELECT_VDD;
 
-    /* set the data line timeout value */
+    /* Set the data line timeout value */
     sdPtr->TOUT_CTRL.B.TOUT_CNT = hostConfig->timeoutValue;
 
-    /* read and set Host Support Flags */
+    /* Read and set Host Support Flags */
     IfxSdmmc_SdModes mode = hostConfig->supportedModes;
     sd->flags.supportIO  = (mode == IfxSdmmc_SdModes_combo) || (mode == IfxSdmmc_SdModes_ioOnly);
     sd->flags.supportMEM = (mode == IfxSdmmc_SdModes_combo) || (mode == IfxSdmmc_SdModes_memOnly);
 
-    /* update memory present flag by default */
+    /* Update memory present flag by default */
     sd->flags.memoryPresent = TRUE;
 
-    /* version is above 4 no need to check version register */
+    /* Version is above 4 no need to check version register */
 
-    /* set up clock for 400KHz now; we will change later */
+    /* Set up clock for 400KHz now; we will change later */
     IfxSdmmc_configureClock(sdPtr, IFXSDMMC_INIT_FREQUENCY);
 
     if (hostConfig->usePresetValues == TRUE)
@@ -389,10 +404,10 @@ IfxSdmmc_Status IfxSdmmc_Sd_initHostController(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_Host
         sd->userFrequency = hostConfig->frequency;
     }
 
-    /* enable internal clock */
+    /* Enable internal clock */
     status = IfxSdmmc_setUpInternalClock(sdPtr);
 
-    /* enable Host version 4 */
+    /* Enable Host version 4 */
     sdPtr->HOST_CTRL2.B.HOST_VER4_ENABLE = 1;
 
     return status;
@@ -408,14 +423,14 @@ IfxSdmmc_Status IfxSdmmc_Sd_initModule(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_Config *conf
     sd->dmaUsed  = config->useDma;
     sd->dmaType  = config->dmaConfig.dmaType;
 
-    /* enable module */
+    /* Enable module */
     IfxSdmmc_enableModule(config->sdmmcSFR);
     config->sdmmcSFR->SW_RST.U |= 1;
 
-    /* initialize the host controller for the card type */
+    /* Initialize the host controller for the card type */
     IfxSdmmc_Sd_initHostController(sd, &config->hostConfig);
 
-    /* set DMA type if DMA is used for transfers */
+    /* Set DMA type if DMA is used for transfers */
     if (config->useDma)
     {
         sd->sdmmcSFR->HOST_CTRL1.B.DMA_SEL = config->dmaConfig.dmaType;
@@ -423,13 +438,13 @@ IfxSdmmc_Status IfxSdmmc_Sd_initModule(IfxSdmmc_Sd *sd, IfxSdmmc_Sd_Config *conf
 
     IfxSdmmc_Sd_configureInterrupt(sd, &config->interruptConfig);
 
-    /* setup pins */
+    /* Setup pins */
     if (config->pins != NULL_PTR)
     {
         IfxSdmmc_Sd_setupPins(sd, config->pins);
     }
 
-    /* set up, initialize and identify the card  */
+    /* Set up, initialize and identify the card  */
     status = IfxSdmmc_Sd_initCard(sd, &config->cardConfig);
 
     return status;
@@ -440,17 +455,17 @@ void IfxSdmmc_Sd_configureInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_InterruptConfig *i
 {
     Ifx_SDMMC *sdmmcSFR = sd->sdmmcSFR;
 
-    /* Enable the necessary normal interrupt status flags*/
+    /* Enable the necessary normal interrupt status flags */
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_commandComplete);
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_transferComplete);
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_dma);
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_bufferWriteReady);
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_bufferReadReady);
 
-    /* enable all the error interrupt status flags */
+    /* Enable all the error interrupt status flags */
     IfxSdmmc_enableAllErrorInterruptStatus(sdmmcSFR);
 
-    /* initialize the normal interrupts */
+    /* Initialize the normal interrupts */
     if (interruptConfig->priority > 0)
     {
         if (interruptConfig->commandCompleteInterruptEnable)
@@ -478,7 +493,7 @@ void IfxSdmmc_Sd_configureInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_InterruptConfig *i
             IfxSdmmc_enableErrorInterrupt(sdmmcSFR, IfxSdmmc_ErrorInterrupt_dataTimeout);
         }
 
-        /* initialize service request node */
+        /* Initialize service request node */
         volatile Ifx_SRC_SRCR *srcSFR;
         srcSFR = IfxSdmmc_getSrcPointer(sdmmcSFR, IfxSdmmc_InterruptType_normal);
         IfxSrc_init(srcSFR, interruptConfig->provider, interruptConfig->priority);
@@ -520,7 +535,7 @@ void IfxSdmmc_Sd_initModuleConfig(IfxSdmmc_Sd_Config *config, Ifx_SDMMC *sdmmcSF
     /* Default Configuration */
     *config = defaultConfig;
 
-    /* take over module pointer */
+    /* Take over module pointer */
     config->sdmmcSFR = sdmmcSFR;
 }
 
@@ -529,7 +544,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_readBlock(IfxSdmmc_Sd *sd, uint32 address, uint32 *d
 {
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -561,7 +576,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_readBlock(IfxSdmmc_Sd *sd, uint32 address, uint32 *d
     }
 
     /* Wait for until the command OR data lines aren't busy */
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6; 
 
     while ((IfxSdmmc_isDataLineBusy(sdPtr) || (IfxSdmmc_isCommandLineBusy(sdPtr))) && (timeout > 0))
@@ -599,7 +614,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_readRca(IfxSdmmc_Sd *sd)
 {
     IfxSdmmc_Status   status = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
     status = IfxSdmmc_sendCommand(sdPtr, IfxSdmmc_Command_sendRelativeAddress, IFXSDMMC_ARG_NONE, IfxSdmmc_ResponseType_r6, &response);
 
@@ -621,7 +636,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_readScr(IfxSdmmc_Sd *sd)
     IfxSdmmc_Status      status   = IfxSdmmc_Status_success;
     uint32               argument = 0;
     IfxSdmmc_CardReg_SCR scr;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     status = IfxSdmmc_sendApplicationCommand(sdPtr, sd->cardInfo.rca);
@@ -644,7 +659,7 @@ IFX_STATIC IfxSdmmc_Status IfxSdmmc_Sd_setVoltageWindow(IfxSdmmc_Sd *sd)
     uint32            loopCount    = 0U;
     uint32            argument     = 0U;
     uint32            retryLoopCtr = 0U;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     if (sd->flags.f8 == 0U)
@@ -691,7 +706,7 @@ IFX_STATIC IfxSdmmc_Status IfxSdmmc_Sd_setVoltageWindow(IfxSdmmc_Sd *sd)
             loopCount = IFXSDMMC_RETRYCOUNT_ACMD41_1S;
         }
 
-        /* send this command for 1second, or until busy bit in OCR = 1 */
+        /* Send this command for 1second, or until busy bit in OCR = 1 */
     } while (((loopCount++) < IFXSDMMC_RETRYCOUNT_ACMD41_1S) && (!(((uint32)sd->cardInfo.ocr & IFXSDMMC_CARD_POWERUP_STATUS_MASK) != 0)));
 
     return status;
@@ -754,7 +769,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockAdma2Transfer(IfxSdmmc_Sd *sd, IfxSdmmc_C
     IfxSdmmc_Status   status  = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* set the system address */
@@ -784,7 +799,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockAdma2Transfer(IfxSdmmc_Sd *sd, IfxSdmmc_C
     {
         timeout = IFXSDMMC_TIMEOUT_1E5;
 
-        /* wait until transfer complete or adma error flags are set */
+        /* Wait until transfer complete or adma error flags are set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0)
                && (IfxSdmmc_isErrorInterruptOccured(sdPtr, IfxSdmmc_ErrorInterrupt_adma) == 0)        
                && (timeout > 0))
@@ -817,10 +832,10 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockDmaTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Com
     IfxSdmmc_Status   status  = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
-    /* set the system address */
+    /* Set the system address */
     IfxSdmmc_setSystemAddressForDma(sdPtr, (uint32)data);
 
     sdPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
@@ -830,7 +845,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockDmaTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Com
 
     sdPtr->XFER_MODE.B.DMA_ENABLE = 1; /* Enable DMA transfers */
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     if (direction == IfxSdmmc_TransferDirection_read)
     {
         sdPtr->XFER_MODE.B.DATA_XFER_DIR = IfxSdmmc_TransferDirection_read;
@@ -847,7 +862,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockDmaTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Com
         /* Perform data transfer */
         timeout = IFXSDMMC_TIMEOUT_1E6;
 
-        /* wait until transfer complete flag is set */
+        /* Wait until transfer complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -875,7 +890,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Comman
     uint32            loopIndex = 0;
     uint32            timeout   = 0;
     uint32            numWords  = (uint32)((blockSize + 3) >> IFXSDMMC_BITSHIFT_POS2);
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     sdPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
@@ -883,7 +898,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Comman
 
     sdPtr->XFER_MODE.B.BLOCK_COUNT_ENABLE = 0; /* Disable block count in transfer mode */
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     if (direction == IfxSdmmc_TransferDirection_read)
     {
         sdPtr->XFER_MODE.B.DATA_XFER_DIR = IfxSdmmc_TransferDirection_read;
@@ -901,7 +916,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Comman
         {
             timeout = IFXSDMMC_TIMEOUT_1E6;
 
-            /* wait until Read ready flag is set */
+            /* Wait until Read ready flag is set */
             while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_bufferReadReady) == 0) && (timeout > 0))
             {
                 timeout--;
@@ -939,7 +954,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_singleBlockTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Comman
 
         timeout = IFXSDMMC_TIMEOUT_1E6;
 
-        /* wait until transfer complete flag is set */
+        /* Wait until transfer complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -966,7 +981,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_switchToBusWidth4(IfxSdmmc_Sd *sd)
     uint32            argument = 0;
     uint8             cardCpblty = 0;
     uint8             busIfCtrl;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     if (sd->flags.memInit)  /* for Mem cards */
@@ -985,10 +1000,10 @@ IfxSdmmc_Status IfxSdmmc_Sd_switchToBusWidth4(IfxSdmmc_Sd *sd)
 
     if (sd->flags.ioInit) /* for IO cards */
     {
-        /* read Card Capability register from CCCR */
+        /* Read Card Capability register from CCCR */
         status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_CARDCPBLTY, &cardCpblty);
 
-        /* check if Low speed card supports 4 bit */
+        /* Check if Low speed card supports 4 bit */
         if (((cardCpblty >> IFXSDMMC_SDIO_CCCR_CARDCPBLTY_LSC_BITPOS) & (uint8)0x3) == 0x1)
         {
             status = IfxSdmmc_Status_failure;
@@ -996,17 +1011,17 @@ IfxSdmmc_Status IfxSdmmc_Sd_switchToBusWidth4(IfxSdmmc_Sd *sd)
 
         if (status == IfxSdmmc_Status_success)
         {
-            /* switch to bus width 4 now */
-            /* read BUS IF CTRL register */
+            /* Switch to bus width 4 now */
+            /* Read BUS IF CTRL register */
             status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_BUSIFCTRL, &busIfCtrl);
 
             if (status == IfxSdmmc_Status_success)
             {
-                /* reset bus width to 4Bit mode. (it could have been 8 bit before!) */
+                /* Reset bus width to 4Bit mode. (it could have been 8 bit before!) */
                 busIfCtrl &= (uint8)IfxSdmmc_SdIoTransferWidth_4Bit;
                 busIfCtrl |= (uint8)IfxSdmmc_SdIoTransferWidth_4Bit;
 
-                /* write back */
+                /* Write back */
                 status = IfxSdmmc_Sd_ioWriteRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_BUSIFCTRL, busIfCtrl);
             }
         }
@@ -1030,7 +1045,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_switchToHighSpeed(IfxSdmmc_Sd *sd)
     IfxSdmmc_Status status           = IfxSdmmc_Status_failure;
     uint32          switchStatus[16] = {0};
     uint8           busSpeedSel = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     if (sd->flags.memInit) /* for memory cards */
@@ -1058,15 +1073,15 @@ IfxSdmmc_Status IfxSdmmc_Sd_switchToHighSpeed(IfxSdmmc_Sd *sd)
 
     if ((sd->flags.ioInit) && (status != IfxSdmmc_Status_success))   /* for IO cards */
     {
-        /* read Card Capability register from CCCR */
+        /* Read Card Capability register from CCCR */
         status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_BUSSPEEDSEL, &busSpeedSel);
 
-        /* check if Card supports High speed*/
+        /* Check if Card supports High speed */
         if (((busSpeedSel >> IFXSDMMC_SDIO_CCCR_BUSSPEEDSEL_SHS_BITPOS) & (uint8)0x1) == 0x1)
         {
-            /* switch to high speed now */
+            /* Switch to high speed now */
             busSpeedSel |= (uint8)0x1 << IFXSDMMC_SDIO_CCCR_BUSSPEEDSEL_EHS_BITPOS;
-            /* write back */
+            /* Write back */
             status       = IfxSdmmc_Sd_ioWriteRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_BUSSPEEDSEL, busSpeedSel);
         }
     }
@@ -1090,17 +1105,17 @@ IfxSdmmc_Status IfxSdmmc_Sd_switchToTransferState(IfxSdmmc_Sd *sd)
     IfxSdmmc_Status   status   = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            argument = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     argument |= (uint32)(sd->cardInfo.rca << IFXSDMMC_BITSHIFT_POS16);
 
-    /* read card status CMD13 */
+    /* Read card status CMD13 */
     status = IfxSdmmc_sendCommand(sdPtr, IfxSdmmc_Command_sendStatus, argument, IfxSdmmc_ResponseType_r1, &response);
 
     if (status == IfxSdmmc_Status_success)
     {
-        /* if the card is not in transfer state already,  Switch to transfer state (CMD7)*/
+        /* If the card is not in transfer state already,  Switch to transfer state (CMD7) */
         if (response.cardStatus.B.currentState != 4)
         {
             status = IfxSdmmc_sendCommand(sdPtr, IfxSdmmc_Command_selectDeselectCard, argument, IfxSdmmc_ResponseType_r1b, &response);
@@ -1116,7 +1131,7 @@ IFX_STATIC IfxSdmmc_Status IfxSdmmc_Sd_validateInterfaceCondition(IfxSdmmc_Sd *s
     IfxSdmmc_Status   status   = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            argument = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* Check operating condition (cmd8) */
@@ -1131,7 +1146,7 @@ IFX_STATIC IfxSdmmc_Status IfxSdmmc_Sd_validateInterfaceCondition(IfxSdmmc_Sd *s
         {
             status = IfxSdmmc_Status_badResponse;
         }
-        /* Check if input voltage accepted by the card in the response  */
+        /* Check if input voltage accepted by the card in the response */
         else if (((uint8)(response.resp01 >> IFXSDMMC_BITSHIFT_POS8) & 0xF) != IFXSDMMC_HOST_SUPPORTED_VOLTAGE)
         {
             status = IfxSdmmc_Status_badResponse;
@@ -1160,7 +1175,7 @@ IFX_STATIC IfxSdmmc_Status IfxSdmmc_Sd_validateOperatingCondition(IfxSdmmc_Sd *s
 {
     IfxSdmmc_Status   status = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
     /* Send CMD55 for application specific commands with 0 as the default RCA */
     status = IfxSdmmc_sendApplicationCommand(sdPtr, IFXSDMMC_RCA_NONE);
@@ -1211,7 +1226,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_writeBlock(IfxSdmmc_Sd *sd, uint32 address, uint32 *
 {
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -1264,7 +1279,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_writeBlock(IfxSdmmc_Sd *sd, uint32 address, uint32 *
     }
 
     /* Wait for until the command OR data lines aren't busy */
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6; 
 
     while ((sdPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || sdPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))
@@ -1293,7 +1308,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioValidateOperatingCondition(IfxSdmmc_Sd *sd)
     /* Send CMD5 with argument 0 to query the card's voltage window */
     status = IfxSdmmc_sendCommand(sdPtr, IfxSdmmc_Command_ioSendOpCond, argument, IfxSdmmc_ResponseType_r4, &response);
 
-    /* read card info here */
+    /* Read card info here */
     ioInfo->r4 = (response.resp01);
 
     if (status == IfxSdmmc_Status_success)   /* only if success : check working of this */
@@ -1304,7 +1319,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioValidateOperatingCondition(IfxSdmmc_Sd *sd)
         }
         else
         {
-            /* set the WV */
+            /* Set the WV */
             status = IfxSdmmc_Sd_ioSetVoltageWindow(sd);
         }
     }
@@ -1321,10 +1336,10 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioSetVoltageWindow(IfxSdmmc_Sd *sd)
     IfxSdmmc_SdIoResponseR4 ioInfo;
     uint32                  loopCount    = IFXSDMMC_SDIO_RETRYCOUNT_CMD5_1S;
     uint32                  retryLoopCtr = (uint32)0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
-    /* send CMD5 with WV set (3.3V) */
+    /* Send CMD5 with WV set (3.3V) */
     argument      = IFXSDMMC_ARG_CMD5_WV;
 
     ioInfo.bits.c = (uint8)IfxSdmmc_SdIoInit_notReady; /* Initialize to NOT READY first */
@@ -1335,11 +1350,11 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioSetVoltageWindow(IfxSdmmc_Sd *sd)
 
         if ((status != IfxSdmmc_Status_success) && (status != IfxSdmmc_Status_commandError))
         {
-            loopCount = 0; /* break out if command is not accepted */
+            loopCount = 0; /* Break out if command is not accepted */
         }
         else
         {
-            ioInfo.r4 = response.resp01; /* read response in */
+            ioInfo.r4 = response.resp01; /* Read response in */
 
             /* This command to be sent every 3ms for 1 second */
             {
@@ -1355,9 +1370,9 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioSetVoltageWindow(IfxSdmmc_Sd *sd)
 
             loopCount--;
         }
-    }                                      /* loop is repeated 350 times every 3ms; or till IORDY */
+    }                                      /* Loop is repeated 350 times every 3ms; or till IORDY */
 
-    sd->cardInfo.io.ioInfo.r4 = ioInfo.r4; /* copy final response to sd card info */
+    sd->cardInfo.io.ioInfo.r4 = ioInfo.r4; /* Copy final response to sd card info */
 
     return status;
 }
@@ -1369,17 +1384,17 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioReadRegister(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunctio
     IfxSdmmc_Response       response;
     IfxSdmmc_SdIoCmd52      argument;
     IfxSdmmc_SdIoResponseR5 r5resp;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* Populate the argument */
-    argument.arg          = 0;      /* initialize to 0 */
+    argument.arg          = 0;      /* Initialize to 0 */
 
     argument.bits.func    = (uint32)func;
     argument.bits.regAddr = addr;
-    argument.bits.rw      = 0;   /* read operation */
+    argument.bits.rw      = 0;   /* Read operation */
 
-    /* check if function is enabled */
+    /* Check if function is enabled */
     if (IfxSdmmc_Sd_ioIsFunctionEnabled(sd, func) == IfxSdmmc_FunctionIO_enabled)
     {
         /* Send the command */
@@ -1401,18 +1416,18 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioWriteRegister(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFuncti
     IfxSdmmc_Status    status = IfxSdmmc_Status_failure;
     IfxSdmmc_Response  response;
     IfxSdmmc_SdIoCmd52 argument;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* Populate the argument */
-    argument.arg          = 0;      /* initialize to 0 */
+    argument.arg          = 0;      /* Initialize to 0 */
 
     argument.bits.func    = (uint32)func;
     argument.bits.regAddr = addr;
-    argument.bits.rw      = 1;   /* write operation */
+    argument.bits.rw      = 1;   /* Write operation */
     argument.bits.data    = (uint32)reg;
 
-    /* check if function is enabled */
+    /* Check if function is enabled */
     if (IfxSdmmc_Sd_ioIsFunctionEnabled(sd, func) == IfxSdmmc_FunctionIO_enabled)
     {
         /* Send the command */
@@ -1437,7 +1452,7 @@ boolean IfxSdmmc_Sd_ioIsMultiBlockSupported(IfxSdmmc_Sd *sd)
     {
         if ((reg >> IFXSDMMC_SDIO_CCCR_CARDCPBLTY_SMB_BITPOS) & (uint8)1)
         {
-            /* card supports the multiBlock feature */
+            /* Card supports the multiBlock feature */
             blockSupport = TRUE;
         }
     }
@@ -1450,12 +1465,12 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioSetFuncBlockSize(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFun
 {
     IfxSdmmc_Status status  = IfxSdmmc_Status_failure;
     uint32          timeout = (uint32)0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     if (blockSize != IfxSdmmc_Sd_FuncBlockSize[func])
     {
-        /* set the block size with block command */
+        /* Set the block size with block command */
         uint8              blockSizeArr[4];
         blockSizeArr[1] = (uint8)(blockSize >> (uint8)IFXSDMMC_BITSHIFT_POS8);
         blockSizeArr[0] = (uint8)blockSize;
@@ -1463,20 +1478,20 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioSetFuncBlockSize(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFun
         IfxSdmmc_SdIoCmd53 argument;
 
         /* Populate the argument */
-        argument.arg            = 0;    /* initialize to 0 */
+        argument.arg            = 0;    /* Initialize to 0 */
 
         argument.bits.func      = (uint32)IfxSdmmc_SdIoFunction_0;
         argument.bits.regAddr   = address;
-        argument.bits.rw        = 1;    /* write operation */
-        argument.bits.blockMode = 0;    /* write bytes */
+        argument.bits.rw        = 1;    /* Write operation */
+        argument.bits.blockMode = 0;    /* Write bytes */
         argument.bits.Count     = 2;
-        argument.bits.opCode    = 1;    /* write to incrementing address */
+        argument.bits.opCode    = 1;    /* Write to incrementing address */
 
-        /* transfer */
+        /* Transfer */
         status = IfxSdmmc_Sd_ioBlockTransfer(sd, argument.arg, 2, 1, (uint32 *)blockSizeArr, IfxSdmmc_TransferDirection_write);
 
         /* Wait for until the command OR data lines aren't busy */
-        /* check if command and data lines are free */
+        /* Check if command and data lines are free */
         timeout = IFXSDMMC_TIMEOUT_1E6; 
 
         while ((sdPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || sdPtr->PSTATE_REG.B.CMD_INHIBIT_DAT) && (timeout > 0))
@@ -1491,13 +1506,13 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioSetFuncBlockSize(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFun
 
         if (status == IfxSdmmc_Status_success)
         {
-            IfxSdmmc_Sd_FuncBlockSize[func] = blockSize; /* update running block size now */
+            IfxSdmmc_Sd_FuncBlockSize[func] = blockSize; /* Update running block size now */
         }
     }
     else
     {
         status = IfxSdmmc_Status_success;
-        /* do nothing - already set block size */
+        /* Do nothing - already set block size */
     }
 
     return status;
@@ -1509,7 +1524,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioReadRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoF
     IfxSdmmc_Status    status = IfxSdmmc_Status_failure;
     IfxSdmmc_SdIoCmd53 argument;
     uint32             timeout;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -1528,20 +1543,20 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioReadRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoF
 
         argument.bits.func    = (uint32)func;
         argument.bits.regAddr = startAddr;
-        argument.bits.rw      = 0;      /* read operation */
+        argument.bits.rw      = 0;      /* Read operation */
 
         if (blockCount > 1)
         {
-            argument.bits.blockMode = 1;    /* read blocks */
+            argument.bits.blockMode = 1;    /* Read blocks */
             argument.bits.Count     = blockCount;
         }
         else
         {
-            argument.bits.blockMode = 0;    /* read bytes */
+            argument.bits.blockMode = 0;    /* Read bytes */
             argument.bits.Count     = blocksize;
         }
 
-        argument.bits.opCode = 1;       /* read from incrementing address */
+        argument.bits.opCode = 1;       /* Read from incrementing address */
 
         if (blockCount > 1)
         {
@@ -1561,7 +1576,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioReadRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoF
         }
 
         /* Wait for until the command OR data lines aren't busy */
-        /* check if command and data lines are free */
+        /* Check if command and data lines are free */
         timeout = IFXSDMMC_TIMEOUT_1E6; 
 
         while ((sdPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || sdPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))
@@ -1576,7 +1591,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioReadRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoF
     }
     else
     {
-        /* do nothing - return failure */
+        /* Do nothing - return failure */
     }
 
     return status;
@@ -1588,7 +1603,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioWriteRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIo
     IfxSdmmc_Status    status = IfxSdmmc_Status_failure;
     IfxSdmmc_SdIoCmd53 argument;
     uint32             timeout;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -1603,24 +1618,24 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioWriteRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIo
     else if (IfxSdmmc_Sd_ioIsFunctionEnabled(sd, func) == IfxSdmmc_FunctionIO_enabled)
     {
         /* Populate the argument */
-        argument.arg          = 0;      /* initialize to 0 */
+        argument.arg          = 0;      /* Initialize to 0 */
 
         argument.bits.func    = (uint32)func;
         argument.bits.regAddr = startAddr;
-        argument.bits.rw      = 1;      /* write operation */
+        argument.bits.rw      = 1;      /* Write operation */
 
         if (blockCount > 1)
         {
-            argument.bits.blockMode = 1;    /* write blocks */
+            argument.bits.blockMode = 1;    /* Write blocks */
             argument.bits.Count     = blockCount;
         }
         else
         {
-            argument.bits.blockMode = 0;    /* write bytes */
+            argument.bits.blockMode = 0;    /* Write bytes */
             argument.bits.Count     = blocksize;
         }
 
-        argument.bits.opCode = 1;       /* write to incrementing address */
+        argument.bits.opCode = 1;       /* Write to incrementing address */
 
         if (blockCount > 1)
         {
@@ -1647,7 +1662,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioWriteRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIo
         }
 
         /* Wait for until the command OR data lines aren't busy */
-        /* check if command and data lines are free */
+        /* Check if command and data lines are free */
         timeout = IFXSDMMC_TIMEOUT_1E6; 
 
         while ((sdPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || sdPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))
@@ -1662,7 +1677,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioWriteRegisterBlocks(IfxSdmmc_Sd *sd, IfxSdmmc_SdIo
     }
     else
     {
-        /* do nothing - return failure */
+        /* Do nothing - return failure */
     }
 
     return status;
@@ -1677,7 +1692,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockTransfer(IfxSdmmc_Sd *sd, uint32 argument, ui
     uint32            timeout   = 0;
     uint32            numWords  = (uint32)(((blockSize) + 3) >> IFXSDMMC_BITSHIFT_POS2);
     uint32            numBlocks = blockCount;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     IfxSdmmc_setBlockSize(sdPtr, blockSize);
@@ -1695,12 +1710,12 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockTransfer(IfxSdmmc_Sd *sd, uint32 argument, ui
         sdPtr->XFER_MODE.B.BLOCK_COUNT_ENABLE = 0; /* Disable block count */
     }
 
-    /* set Transfer direction */
+    /* Set Transfer direction */
     sdPtr->XFER_MODE.B.DATA_XFER_DIR = direction;
 
     status = IfxSdmmc_sendCommand(sdPtr, IfxSdmmc_Command_ioRwExtended, argument, IfxSdmmc_ResponseType_r5, &response);
 
-    while (numBlocks > 0)   /* iterate over all the blocks */
+    while (numBlocks > 0)   /* Iterate over all the blocks */
     {
         if (status == IfxSdmmc_Status_success)
         {
@@ -1708,7 +1723,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockTransfer(IfxSdmmc_Sd *sd, uint32 argument, ui
 
             if (direction == IfxSdmmc_TransferDirection_read)
             {
-                /* wait until Read ready flag is set */
+                /* Wait until Read ready flag is set */
                 while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_bufferReadReady) == 0) && (timeout > 0))
                 {
                     timeout--;
@@ -1725,7 +1740,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockTransfer(IfxSdmmc_Sd *sd, uint32 argument, ui
             }
             else if ((direction == IfxSdmmc_TransferDirection_write) && (numBlocks < blockCount))
             {
-                /* wait until Read ready flag is set */
+                /* Wait until Read ready flag is set */
                 while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_bufferWriteReady) == 0) && (timeout > 0))
                 {
                     timeout--;
@@ -1761,7 +1776,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockTransfer(IfxSdmmc_Sd *sd, uint32 argument, ui
                 data++;
             }
 
-            numBlocks--;    /* we have one less block to send / receive now */
+            numBlocks--;    /* We have one less block to send / receive now */
         }
     }
 
@@ -1769,7 +1784,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockTransfer(IfxSdmmc_Sd *sd, uint32 argument, ui
     {
         timeout = IFXSDMMC_TIMEOUT_1E6;
 
-        /* wait until transfer complete flag is set */
+        /* Wait until transfer complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -1794,17 +1809,17 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockAdma2Transfer(IfxSdmmc_Sd *sd, uint32 argumen
     IfxSdmmc_Status   status  = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
-    /* set the system address */
+    /* Set the system address */
     IfxSdmmc_setSystemAddressForDma(sdPtr, (uint32)descrAddress);
 
     sdPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
 
     if (blockCount > 1)
     {
-        sdPtr->XFER_MODE.B.MULTI_BLK_SEL = TRUE; /* Set multi-block select*/
+        sdPtr->XFER_MODE.B.MULTI_BLK_SEL = TRUE; /* Set multi-block select */
         IfxSdmmc_setBlockCount(sdPtr, blockCount);
         sdPtr->XFER_MODE.B.BLOCK_COUNT_ENABLE = 0;   /* To be disabled when ADMA is used :: UM */
     }
@@ -1816,7 +1831,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockAdma2Transfer(IfxSdmmc_Sd *sd, uint32 argumen
 
     sdPtr->XFER_MODE.B.DMA_ENABLE = 1;
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     if (direction == IfxSdmmc_TransferDirection_read)
     {
         sdPtr->XFER_MODE.B.DATA_XFER_DIR = IfxSdmmc_TransferDirection_read;
@@ -1832,7 +1847,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockAdma2Transfer(IfxSdmmc_Sd *sd, uint32 argumen
     {
         timeout = IFXSDMMC_TIMEOUT_1E5; 
 
-        /* wait until transfer complete or ADMA error flags are set */
+        /* Wait until transfer complete or ADMA error flags are set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) 
                && (IfxSdmmc_isErrorInterruptOccured(sdPtr, IfxSdmmc_ErrorInterrupt_adma) == 0)            
                && (timeout > 0))
@@ -1865,10 +1880,10 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockDmaTransfer(IfxSdmmc_Sd *sd, uint32 argument,
     IfxSdmmc_Status   status  = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
-    /* set the system address */
+    /* Set the system address */
     IfxSdmmc_setSystemAddressForDma(sdPtr, (uint32)data);
 
     sdPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
@@ -1887,7 +1902,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockDmaTransfer(IfxSdmmc_Sd *sd, uint32 argument,
 
     sdPtr->XFER_MODE.B.DMA_ENABLE = 1; /* Enable DMA transfers */
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     if (direction == IfxSdmmc_TransferDirection_read)
     {
         sdPtr->XFER_MODE.B.DATA_XFER_DIR = IfxSdmmc_TransferDirection_read;
@@ -1904,7 +1919,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioBlockDmaTransfer(IfxSdmmc_Sd *sd, uint32 argument,
         /* Perform data transfer */
         timeout = IFXSDMMC_TIMEOUT_1E6;
 
-        /* wait until transfer complete flag is set */
+        /* Wait until transfer complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -1929,7 +1944,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioSwitchToTransferState(IfxSdmmc_Sd *sd)
     IfxSdmmc_Status   status   = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            argument = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     argument |= (uint32)(sd->cardInfo.rca << IFXSDMMC_BITSHIFT_POS16);
@@ -1948,7 +1963,7 @@ IfxSdmmc_FunctionIO IfxSdmmc_Sd_ioIsFunctionEnabled(IfxSdmmc_Sd *sd, IfxSdmmc_Sd
 
     if (func == IfxSdmmc_SdIoFunction_0)
     {
-        ioe = IfxSdmmc_FunctionIO_enabled;  // Function 0 is always enabled
+        ioe = IfxSdmmc_FunctionIO_enabled;  /* Function 0 is always enabled */
     }
     else
     {
@@ -1971,18 +1986,18 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioEnableFunction(IfxSdmmc_Sd *sd, IfxSdmmc_SdIoFunct
 
     if (func == IfxSdmmc_SdIoFunction_0)
     {
-        status = IfxSdmmc_Status_commandError; // Error - Function 0 is always enabled.
+        status = IfxSdmmc_Status_commandError; /* Error - Function 0 is always enabled. */
     }
     else
     {
-        /* read the IOE register first */
+        /* Read the IOE register first */
         status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_IOEX, &ioeReg);
 
         if (status == IfxSdmmc_Status_success)
         {
             ioeReg |= (uint8)IfxSdmmc_FunctionIO_enabled << (uint8)func;
 
-            /* write back to IOE*/
+            /* Write back to IOE */
             status = IfxSdmmc_Sd_ioWriteRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_IOEX, ioeReg);
         }
     }
@@ -2015,14 +2030,14 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioEnableFuncInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_SdIo
 
     if (func != IfxSdmmc_SdIoFunction_0)
     {
-        /* read register first */
+        /* Read register first */
         status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_INTENABLE, &ienReg);
 
         if (status == IfxSdmmc_Status_success)
         {
-            /* manipulate ienReg to enable interrupt */
+            /* Manipulate ienReg to enable interrupt */
             ienReg |= (uint8)IfxSdmmc_SdIoInterruptStatus_enabled << (uint8)func;
-            /* write back */
+            /* Write back */
             status  = IfxSdmmc_Sd_ioWriteRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_INTENABLE, ienReg);
         }
     }
@@ -2038,14 +2053,14 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioDisableFuncInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_SdI
 
     if (func != IfxSdmmc_SdIoFunction_0)
     {
-        /* read register first */
+        /* Read register first */
         status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_INTENABLE, &ienReg);
 
         if (status == IfxSdmmc_Status_success)
         {
-            /* manipulate ienReg to disable interrupt */
+            /* Manipulate ienReg to disable interrupt */
             ienReg &= ~((uint8)(~IfxSdmmc_SdIoInterruptStatus_disabled) << (uint8)func);
-            /* write back */
+            /* Write back */
             status  = IfxSdmmc_Sd_ioWriteRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_INTENABLE, ienReg);
         }
     }
@@ -2059,16 +2074,16 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioSetMasterInterruptEnable(IfxSdmmc_Sd *sd, IfxSdmmc
     uint8           ienReg;
     IfxSdmmc_Status status = IfxSdmmc_Status_failure;
 
-    /* read register first */
+    /* Read register first */
     status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_INTENABLE, &ienReg);
 
     if (status == IfxSdmmc_Status_success)
     {
-        /* manipulate ienReg to for Master interrupt */
-        ienReg &= (uint8)0xFE;      /* clear the IENM bit */
-        ienReg |= (uint8)irqEnable; /* now set the bit with requested val */
+        /* Manipulate ienReg to for Master interrupt */
+        ienReg &= (uint8)0xFE;      /* Clear the IENM bit */
+        ienReg |= (uint8)irqEnable; /* Now set the bit with requested val */
 
-        /* write back */
+        /* Write back */
         status = IfxSdmmc_Sd_ioWriteRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_INTENABLE, ienReg);
     }
 
@@ -2100,14 +2115,14 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioClearPendingInterrupt(IfxSdmmc_Sd *sd, IfxSdmmc_Sd
 
     if (func != IfxSdmmc_SdIoFunction_0)
     {
-        /* read register first */
+        /* Read register first */
         status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_INTPENDING, &intReg);
 
         if (status == IfxSdmmc_Status_success)
         {
-            /* manipulate ienReg to disable interrupt */
+            /* Manipulate ienReg to disable interrupt */
             intReg &= ~((uint8)(~IfxSdmmc_SdIoInterruptPendingStatus_cleared) << (uint8)func);
-            /* write back */
+            /* Write back */
             status  = IfxSdmmc_Sd_ioWriteRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_INTPENDING, intReg);
         }
     }
@@ -2121,17 +2136,17 @@ IfxSdmmc_Status IfxSdmmc_Sd_ioEnableMultiBlockInterrupt(IfxSdmmc_Sd *sd)
     uint8           cardCpblty;
     IfxSdmmc_Status status = IfxSdmmc_Status_failure;
 
-    /* read register first */
+    /* Read register first */
     status = IfxSdmmc_Sd_ioReadRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_CARDCPBLTY, &cardCpblty);
 
     if (status == IfxSdmmc_Status_success)
     {
         if (cardCpblty >> IFXSDMMC_SDIO_CCCR_CARDCPBLTY_S4MI_BITPOS)
         {
-            /* multiBlock Interrupt is supported. Enable now. */
+            /* MultiBlock Interrupt is supported. Enable now. */
             cardCpblty |= (uint8)1 << IFXSDMMC_SDIO_CCCR_CARDCPBLTY_E4MI_BITPOS;
 
-            /* write back */
+            /* Write back */
             status = IfxSdmmc_Sd_ioWriteRegister(sd, IfxSdmmc_SdIoFunction_0, IFXSDMMC_SDIO_CCCR_ADDRESS_CARDCPBLTY, cardCpblty);
         }
         else
@@ -2148,7 +2163,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_readMultiBlock(IfxSdmmc_Sd *sd, uint32 address, uint
 {
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -2180,7 +2195,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_readMultiBlock(IfxSdmmc_Sd *sd, uint32 address, uint
     }
 
     /* Wait for until the command OR data lines aren't busy */
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6;
 
     while ((sdPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || sdPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))
@@ -2202,10 +2217,10 @@ IfxSdmmc_Status IfxSdmmc_Sd_multiBlockAdma2Transfer(IfxSdmmc_Sd *sd, IfxSdmmc_Co
     IfxSdmmc_Status   status  = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
-    /* set the system address */
+    /* Set the system address */
     IfxSdmmc_setSystemAddressForDma(sdPtr, (uint32)descrAddress);
 
     sdPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
@@ -2217,7 +2232,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_multiBlockAdma2Transfer(IfxSdmmc_Sd *sd, IfxSdmmc_Co
     sdPtr->XFER_MODE.B.DMA_ENABLE = 1; /* Enable DMA transfers */
     sdPtr->XFER_MODE.B.AUTO_CMD_ENABLE = IfxSdmmc_AutoCmdSelect_cmd12; /* Set auto command enable */
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     if (direction == IfxSdmmc_TransferDirection_read)
     {
         sdPtr->XFER_MODE.B.DATA_XFER_DIR = IfxSdmmc_TransferDirection_read;
@@ -2233,7 +2248,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_multiBlockAdma2Transfer(IfxSdmmc_Sd *sd, IfxSdmmc_Co
     {
         timeout = IFXSDMMC_TIMEOUT_1E5;
 
-        /* wait until transfer complete or ADMA error flags are set */
+        /* Wait until transfer complete or ADMA error flags are set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) 
                && (IfxSdmmc_isErrorInterruptOccured(sdPtr, IfxSdmmc_ErrorInterrupt_adma) == 0)            
                && (timeout > 0))
@@ -2265,7 +2280,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_multiBlockDmaTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Comm
     IfxSdmmc_Status   status  = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     uint32            timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* set the system address */
@@ -2281,7 +2296,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_multiBlockDmaTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Comm
     sdPtr->XFER_MODE.B.DMA_ENABLE = 1; /* Enable DMA transfers */
     sdPtr->XFER_MODE.B.AUTO_CMD_ENABLE = IfxSdmmc_AutoCmdSelect_cmd12; /* Set auto command enable */
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     if (direction == IfxSdmmc_TransferDirection_read)
     {
         sdPtr->XFER_MODE.B.DATA_XFER_DIR = IfxSdmmc_TransferDirection_read;
@@ -2298,7 +2313,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_multiBlockDmaTransfer(IfxSdmmc_Sd *sd, IfxSdmmc_Comm
         /* Perform data transfer */
         timeout = IFXSDMMC_TIMEOUT_1E6;
 
-        /* wait until transfer complete flag is set */
+        /* Wait until transfer complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(sdPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -2323,7 +2338,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_writeMultiBlock(IfxSdmmc_Sd *sd, uint32 address, uin
 {
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
-    /* Local pointer for sd->sdmmcSFR*/
+    /* Local pointer for sd->sdmmcSFR */
     Ifx_SDMMC *sdPtr = sd->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -2376,7 +2391,7 @@ IfxSdmmc_Status IfxSdmmc_Sd_writeMultiBlock(IfxSdmmc_Sd *sd, uint32 address, uin
     }
 
     /* Wait for until the command OR data lines aren't busy */
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6;
 
     while ((sdPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || sdPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))

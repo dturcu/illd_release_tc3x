@@ -3,7 +3,7 @@
  * \brief GETH  basic functionality
  * \ingroup IfxLld_Geth
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -171,6 +171,7 @@ typedef enum
 } IfxGeth_MtlQueue;
 
 /** \brief External Phy Interface RMII Mode
+ * Definition in GPCTL.B.EPR
  */
 typedef enum
 {
@@ -723,86 +724,131 @@ typedef union
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the Receiver of MAC Core
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Disables the Receiver of MAC Core
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_disableReceiver(Ifx_GETH *gethSFR);
 
-/** \brief Disables the Trasnmitter of MAC Core
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Disables the Transmitter of MAC Core
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_disableTransmitter(Ifx_GETH *gethSFR);
 
-/** \brief Enables the Receiver of MAC Core
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Enables the Receiver of the MAC Core
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_enableReceiver(Ifx_GETH *gethSFR);
 
-/** \brief Enables the Trasnmitter of MAC Core
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Enables the Transmitter of MAC Core
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_enableTransmitter(Ifx_GETH *gethSFR);
 
-/** \brief Enables / Disables Passing of All Multicast packets
- * \param gethSFR Pointer to GETH register base address
- * \param enabled Pass All Multicast enable / disable
- * \return None
+/**
+ * \brief Enables or disables the passing of all multicast packets.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    enabled Boolean flag to enable (TRUE) or disable (FALSE) the passing of all multicast packets.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setAllMulticastPassing(Ifx_GETH *gethSFR, boolean enabled);
 
-/** \brief Enables / Disables CRC Checking for Received Packets
- * \param gethSFR Pointer to GETH register base address
- * \param enabled CRC Checking for Received Packets enable / disable
- * \return None
+/**
+ * \brief Configures CRC checking for received packets
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    enabled Boolean flag to enable (true) or disable (false) CRC checking.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setCrcChecking(Ifx_GETH *gethSFR, boolean enabled);
 
-/** \brief Enables/Disables the Automatic Pad or CRC Stripping for frames less than 1536 bytes and \n
- *     CRC stripping for Type packets
- * \param gethSFR Pointer to GETH register base address
- * \param acsEnabled Automatic Pad or CRC Stripping enable/disable
- * \param cstEnabled CRC Stripping for Type packets enable/disable
- * \return None
+/**
+ * \brief Enables/Disables the Automatic Pad or CRC Stripping for frames less than 1536 bytes and CRC stripping for Type packets.
+ *
+ * \param[inout] gethSFR    Pointer to GETH register base address.
+ * \param[in]    acsEnabled Automatic Pad or CRC Stripping enable/disable.
+ *                          Range: 0 and 1
+ * \param[in]    cstEnabled CRC Stripping for Type packets enable/disable.
+ *                          Range: 0 and 1
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setCrcStripping(Ifx_GETH *gethSFR, boolean acsEnabled, boolean cstEnabled);
 
-/** \brief Sets the Duplex Mode
- * \param gethSFR Pointer to GETH register base address
- * \param mode Duplex Mode
- * \return None
+/**
+ * \brief Sets the Duplex Mode
+ *
+ * \param[inout] gethSFR Pointer to GETH register base address.
+ * \param[in]    mode    Duplex Mode
+ *                       Range: \ref IfxGeth_DuplexMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setDuplexMode(Ifx_GETH *gethSFR, IfxGeth_DuplexMode mode);
 
-/** \brief Sets the Preamble Length for Transmit packets
- * \param gethSFR Pointer to GETH register base address
- * \param length Preamble Length for Transmit packets
- * \return None
+/**
+ * \brief Sets the preamble length for MAC transmit packets.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    length  Preamble length for transmit packets.
+ *                       Range: \ref IfxGeth_PreambleLength
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setPreambleLength(Ifx_GETH *gethSFR, IfxGeth_PreambleLength length);
 
-/** \brief Enables / Disables Promiscuous Mode
- * \param gethSFR Pointer to GETH register base address
- * \param enabled Promiscuous Mode enable / disable
- * \return None
+/**
+ * \brief Enables or disables the Promiscuous Mode for the GETH MAC.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    enabled Boolean flag to enable (TRUE) or disable (FALSE) Promiscuous Mode.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setPromiscuousMode(Ifx_GETH *gethSFR, boolean enabled);
 
-/** \brief Set the priorities for Rx queues for mapping tagged packets
- * \param gethSFR Pointer to GETH register base address
- * \param channel Rx DMA channel
- * \param priorities Rx queue priority
- * \return None
+/**
+ * \brief Sets the priorities for Rx queues for mapping tagged packets.
+ *
+ * \param[inout] gethSFR    Pointer to the GETH register base address.
+ * \param[in]    channel    Rx DMA channel to configure.
+ *                          Range: \ref IfxGeth_RxDmaChannel
+ * \param[in]    priorities Rx queue priority level.
+ *                          Range: 0 to 3
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setVlanPriorityQueueRouting(Ifx_GETH *gethSFR, IfxGeth_RxDmaChannel channel, uint8 priorities);
 
-/** \brief Enable / Disable Queue Insertion
- * \param gethSFR Pointer to GETH register base address
- * \param enable config parameter TRUE: enabled/ FALSE: disabled
- * \return None
+/**
+ * \brief Enables or disables the insertion of VLAN tags into queues for the GETH module.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    enable  Boolean to enable (TRUE) or disable (FALSE) VLAN insertion.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setQueueVlanInsertion(Ifx_GETH *gethSFR, boolean enable);
 
@@ -810,49 +856,80 @@ IFX_INLINE void IfxGeth_mac_setQueueVlanInsertion(Ifx_GETH *gethSFR, boolean ena
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Sets the Ethernet Line Speed
- * \param gethSFR Pointer to GETH register base address
- * \param speed Ethernet Line Speed
- * \return None
+/**
+ * \brief Sets the MAC line speed for the Ethernet controller.
+ *
+ * \param[inout] gethSFR  Pointer to the GETH register base address.
+ * \param[in]    speed    Ethernet line speed to be set.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mac_setLineSpeed(Ifx_GETH *gethSFR, IfxGeth_LineSpeed speed);
 
-/** \brief Sets the MAC Address
- * \param gethSFR Pointer to GETH register base address
- * \param macAddress MAC Address
- * \return None
+/**
+ * \brief Sets the MAC Address for the Ethernet controller
+ *
+ * \param[inout] gethSFR    Pointer to the GETH register base address.
+ * \param[in]    macAddress Pointer to a 6-byte array containing the MAC address to be set.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mac_setMacAddress(Ifx_GETH *gethSFR, uint8 *macAddress);
 
-/** \brief Writes to Queue Vlan tag
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Queue Index
- * \param vLanTag VLAN Tag
- * \return TRUE if write was successfull
+/**
+ * \brief Writes the VLAN tag to the specified queue.
+ *
+ * \param[inout] gethSFR  Pointer to the GETH register base address.
+ * \param[in]    queueId  The queue identifier.
+ *                        Range: \ref IfxGeth_MtlQueue
+ * \param[in]    vLanTag  The VLAN tag to be written, represented as a uint16 value.
+ *                        Range: 0 to 0xFFFF
+ *                        Bits[15:13]: User Priority field.
+ *                        Bit 12     : Canonical Format Indicator (CFI) or Drop Eligible Indicator (DEI).
+ *                        Bits[11:0] : VLAN Identifier (VID) field of VLAN tag.
+ *
+ * \retval TRUE  The write operation was successful.
+ *         FALSE The write operation failed.
  */
 IFX_EXTERN boolean IfxGeth_mac_writeQueueVlanTag(Ifx_GETH *gethSFR, IfxGeth_MtlQueue queueId, uint16 vLanTag);
 
-/** \brief Reads from Queue Vlan tag
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Queue Index
- * \param const vLanTag VLAN Tag
- * \return TRUE if read was successfull
+/**
+ * \brief Reads the VLAN tag from the specified queue.
+ *
+ * \param[inout] gethSFR  Pointer to the GETH register base address.
+ * \param[in]    queueId  Queue index of type IfxGeth_MtlQueue.
+ *                        Range: \ref IfxGeth_MtlQueue
+ * \param[inout] vLanTag  Pointer to the variable where the retrieved VLAN tag will be stored.
+ *
+ *
+ * \retval TRUE  If the read operation was successful.
+ *         FALSE If the read operation failed.
  */
 IFX_EXTERN boolean IfxGeth_mac_readQueueVlanTag(Ifx_GETH *gethSFR, IfxGeth_MtlQueue queueId, uint16 *const vLanTag);
 
-/** \brief Reads from Vlan tag Filter
- * \param gethSFR Pointer to GETH register base address
- * \param filterId Filter Id
- * \param const data Vlan Tag Data to be read
- * \return TRUE if read was successfull
+/**
+ * \brief Reads the VLAN tag filter data for a specified filter identifier from the GETH MAC module.
+ *
+ * \param[inout] gethSFR   Pointer to the GETH register base address.
+ * \param[in]    filterId  Filter identifier to specify which VLAN tag filter to read.
+ *                         Range: 0 to 0x1F
+ * \param[inout] data      Pointer to the Ifx_GETH_MAC_VLAN_TAG_DATA structure that will be filled with the VLAN tag filter data.
+ *
+ * \retval TRUE  The VLAN tag filter data was successfully read.
+ *         FALSE The read operation failed.
  */
 IFX_EXTERN boolean IfxGeth_mac_readVlanTagFilter(Ifx_GETH *gethSFR, uint8 filterId, Ifx_GETH_MAC_VLAN_TAG_DATA *const data);
 
-/** \brief Writes to Vlan tag Filter
- * \param gethSFR Pointer to GETH register base address
- * \param filterId Filter Id
- * \param data Vlan Tag Data to be write
- * \return TRUE if write was successfull
+/**
+ * \brief Writes VLAN tag filter data to the specified filter identifier.
+ *
+ * \param[inout] gethSFR   Pointer to the GETH register base address.
+ * \param[in]    filterId  Filter identifier to specify which VLAN tag filter to write.
+ *                         Range: 0 to 0x1F
+ * \param[in]    data      VLAN tag data structure containing the configuration to be written.
+ *
+ * \retval TRUE  If the write operation was successful.
+ *         FALSE If the write operation failed.
  */
 IFX_EXTERN boolean IfxGeth_mac_writeVlanTagFilter(Ifx_GETH *gethSFR, uint8 filterId, Ifx_GETH_MAC_VLAN_TAG_DATA data);
 
@@ -865,18 +942,24 @@ IFX_EXTERN boolean IfxGeth_mac_writeVlanTagFilter(Ifx_GETH *gethSFR, uint8 filte
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the status of whether clock for GETH module is enabled or diabled
- * \param gethSFR Pointer to GETH register base address
- * \return Status:\n
- * TRUE : if module is enabled\n
- * FALSE : if module is disabled
+/**
+ * \brief Checks if the clock for the GETH module is enabled.
+ *
+ * \param[in] gethSFR Pointer to the GETH register base address.
+ *
+ * \retval TRUE  If the module is enabled.
+ *         FALSE If the module is disabled.
  */
 IFX_INLINE boolean IfxGeth_isModuleEnabled(Ifx_GETH *gethSFR);
 
-/** \brief Sets the External Phy Interface mode
- * \param gethSFR Pointer to GETH register base address
- * \param mode PHY Interface Mode (MII/RGMII/RMII)
- * \return None
+/**
+ * \brief Configures the PHY interface mode for the given GETH instance.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    mode    The desired PHY interface mode.
+ *                       Range: \ref IfxGeth_PhyInterfaceMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_setPhyInterfaceMode(Ifx_GETH *gethSFR, IfxGeth_PhyInterfaceMode mode);
 
@@ -884,40 +967,59 @@ IFX_INLINE void IfxGeth_setPhyInterfaceMode(Ifx_GETH *gethSFR, IfxGeth_PhyInterf
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the clock for GETH module
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Disables the clock for GETH module.
+ *
+ * \param[inout] gethSFR Pointer to GETH register base address.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_disableModule(Ifx_GETH *gethSFR);
 
-/** \brief Enables the clock for GETH module
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Enables the clock for the GETH module.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_enableModule(Ifx_GETH *gethSFR);
 
-/** \brief Returns the Src Pointer of the selected GETH service request node
- * \param gethSFR Pointer to GETH register base address
- * \param serviceRequest Service Request number
- * \return pointer to Src register
+/**
+ * \brief Returns the Src Pointer of the selected GETH service request node.
+ *
+ * \param[in] gethSFR        Pointer to GETH register base address.
+ * \param[in] serviceRequest Service Request number.
+ *                           Range: \ref IfxGeth_ServiceRequest
+ *
+ * \retval Ifx_SRC_SRCR, pointer to Src register.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxGeth_getSrcPointer(Ifx_GETH *gethSFR, IfxGeth_ServiceRequest serviceRequest);
 
-/** \brief resets Ethernet kernel
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Resets the Ethernet kernel module to its initial state.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_resetModule(Ifx_GETH *gethSFR);
 
-/** \brief API to get the resource index of the GETH specified.
- * \param geth Pointer to Geth register
- * \return geth resource index
+/**
+ * \brief Retrieves the resource index of the specified GETH instance.
+ *
+ * \param[in] geth Pointer to the GETH register base address.
+ *
+ * \retval IfxGeth_Index The resource index of the GETH instance.
  */
 IFX_EXTERN IfxGeth_Index IfxGeth_getIndex(Ifx_GETH *geth);
 
-/** \brief Get the address of the specified GETH resource index
- * \param geth Module index of the GETH
- * \return GETH module register address
+/**
+ * \brief Retrieves the memory address of the GETH module registers corresponding to the specified index.
+ *
+ * \param[in] geth Module index of the GETH.
+ *
+ * \retval Ifx_GETH* Pointer to the base address of the GETH module registers. The return value should not be NULL if the index is valid.
  */
 IFX_EXTERN Ifx_GETH *IfxGeth_getAddress(IfxGeth_Index geth);
 
@@ -930,79 +1032,125 @@ IFX_EXTERN Ifx_GETH *IfxGeth_getAddress(IfxGeth_Index geth);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enables the selected Rx Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx Queue Index
- * \return None
+/**
+ * \brief Enables the selected Rx Queue for frame reception.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId Rx Queue Index to be enabled.
+ *               Range: \ref IfxGeth_RxMtlQueue
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_enableRxQueue(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId);
 
-/** \brief sets the Rx Arbitration algorithm
- * \param gethSFR Pointer to GETH register base address
- * \param arbitrationAlgorithm Rx Arbitration Algorithm
- * \return None
+/**
+ * \brief Configures the Receive Arbitration Algorithm for the specified GETH instance.
+ *
+ * \param[inout] gethSFR               Pointer to the GETH register base address.
+ * \param[in]    arbitrationAlgorithm  Rx Arbitration Algorithm to be configured.
+ *                                     Range: \ref IfxGeth_RxArbitrationAlgorithm
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_setRxArbitrationAlgorithm(Ifx_GETH *gethSFR, IfxGeth_RxArbitrationAlgorithm arbitrationAlgorithm);
 
-/** \brief Sets the selected DMA Channel mapping for the selected Rx Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx Queue Index
- * \param dmaChannel DMA channel for selected Rx Queue
- * \return None
+/**
+ * \brief Sets the selected DMA Channel mapping for the specified Receive Queue.
+ *
+ * \param[inout] gethSFR    Pointer to the GETH register base address.
+ * \param[in]    queueId    Rx MTL Queue ID.
+ *                          Range: \ref IfxGeth_RxMtlQueue
+ * \param[in]    dmaChannel DMA channel for the selected Rx Queue.
+ *                          Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_setRxQueueDmaChannelMapping(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId, IfxGeth_RxDmaChannel dmaChannel);
 
-/** \brief Sets the selected Rx Queue for DA based DMA channel
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx Queue Index
- * \param enabled Enable/Disable Receive Store and Forward
- * \return None
+/**
+ * \brief Sets the selected Rx Queue for DA based DMA channel.
+ * 
+ * This function configures the specified Rx queue for a DA (Destination Address) based DMA channel.
+ * It enables or disables the Receive Store and Forward functionality for the selected queue.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address
+ * \param[in]    queueId Rx MTL Queue ID.
+ *                       Range: \ref IfxGeth_RxMtlQueue
+ * \param[in]    enabled Enable/Disable Receive Store and Forward.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_setRxQueueForDaBasedDmaChannel(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId, boolean enabled);
 
-/** \brief sets the Tx Scheduling algorithm
- * \param gethSFR Pointer to GETH register base address
- * \param schedulingAlgorithm Tx Scheduling Algorithm
- * \return None
+/**
+ * \brief Sets the Tx Scheduling algorithm for the GETH module.
+ *
+ * \param[inout] gethSFR          Pointer to the GETH register base address.
+ * \param[in] schedulingAlgorithm Tx Scheduling Algorithm to be configured.
+ *                                Range: \ref IfxGeth_TxSchedulingAlgorithm
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_setTxSchedulingAlgorithm(Ifx_GETH *gethSFR, IfxGeth_TxSchedulingAlgorithm schedulingAlgorithm);
 
-/** \brief Enable and set queue ID to route packets failing unicast filter
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx MTL Queue ID
- * \return None
+/**
+ * \brief Enable and set queue ID to route packets failing unicast filter.
+ *
+ * \param[inout] gethSFR Pointer to GETH register base address.
+ * \param[in]    queueId Rx MTL Queue ID.
+ *                       Range: \ref IfxGeth_RxMtlQueue
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_enableUnicastFilterFailQueuing(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId);
 
-/** \brief Disable queuing of packets failing unicast filtering
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Disable queuing of packets failing unicast filtering.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_disableUnicastFilterFailQueuing(Ifx_GETH *gethSFR);
 
-/** \brief Enable and set queue ID to route packets failing multicast filter
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx MTL Queue ID
- * \return None
+/**
+ * \brief Enable and set queue ID to route packets failing multicast filter.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId Rx MTL Queue ID.
+ *                       Range: \ref IfxGeth_RxMtlQueue
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_enableMulticastFilterFailQueuing(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId);
 
-/** \brief Disable queuing of packets failing multicast filtering
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Disables queuing of packets that fail multicast filtering.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_disableMulticastFilterFailQueuing(Ifx_GETH *gethSFR);
 
-/** \brief Enable and set queue ID to route packets failing VLAN tag filter
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx MTL Queue ID
- * \return None
+/**
+ * \brief Enable and set queue ID to route packets failing VLAN tag filter.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId Rx MTL Queue ID.
+ *                       Range: \ref IfxGeth_RxMtlQueue
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_enableVlanFilterFailQueuing(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId);
 
-/** \brief Disable queuing of packets failing VLAN tag filtering
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Disable queuing of packets failing VLAN tag filtering.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mtl_disableVlanFilterFailQueuing(Ifx_GETH *gethSFR);
 
@@ -1010,98 +1158,155 @@ IFX_INLINE void IfxGeth_mtl_disableVlanFilterFailQueuing(Ifx_GETH *gethSFR);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears all the Mtl interrupt flags
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Queue Index
- * \return None
+/**
+ * \brief Clears all pending MTL interrupt flags for a specified queue.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId The queue for which to clear interrupt flags.
+ *                       Range: \ref IfxGeth_MtlQueue
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_clearAllInterruptFlags(Ifx_GETH *gethSFR, IfxGeth_MtlQueue queueId);
 
-/** \brief Clears the selected Mtl interrupt flag
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Queue Index
- * \param flag MTL interrupt flag
- * \return None
+/**
+ * \brief Clears the selected MTL interrupt flag.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId Queue Index.
+ *                       Range: \ref IfxGeth_MtlQueue
+ * \param[in]    flag    MTL interrupt flag to be cleared.
+ *                       Range: \ref IfxGeth_MtlInterruptFlag
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_clearInterruptFlag(Ifx_GETH *gethSFR, IfxGeth_MtlQueue queueId, IfxGeth_MtlInterruptFlag flag);
 
-/** \brief Disables the selected Mtl interrupt flag
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Queue Index
- * \param flag MTL interrupt flag
- * \return None
+/**
+ * \brief Disables the specified MTL interrupt flag for the given queue.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId The queue for which to disable the interrupt.
+ *                       Range: \ref IfxGeth_MtlQueue
+ * \param[in]    flag    The MTL interrupt flag to disable.
+ *                       Range: \ref IfxGeth_MtlInterruptFlag
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_disableInterrupt(Ifx_GETH *gethSFR, IfxGeth_MtlQueue queueId, IfxGeth_MtlInterruptFlag flag);
 
-/** \brief Enables the selected Mtl interrupt flag
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Queue Index
- * \param flag MTL interrupt flag
- * \return None
+/**
+ * \brief Enables the selected Mtl interrupt flag.
+ *
+ * \param[inout] gethSFR Pointer to GETH register base address.
+ * \param[in]    queueId Queue Index.
+ *                       Range: \ref IfxGeth_MtlQueue
+ * \param[in]    flag    The MTL interrupt flag to enable.
+ *                       Range: \ref IfxGeth_MtlInterruptFlag
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_enableInterrupt(Ifx_GETH *gethSFR, IfxGeth_MtlQueue queueId, IfxGeth_MtlInterruptFlag flag);
 
-/** \brief Enables the selected TX Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Tx Queue Index
- * \return None
+/**
+ * \brief Enables the selected TX Queue for the MTL module.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId TX Queue Index.
+ *                       Range: \ref IfxGeth_TxMtlQueue
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_enableTxQueue(Ifx_GETH *gethSFR, IfxGeth_TxMtlQueue queueId);
 
-/** \brief Returns the status of selected Mtl interrupt flag
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Queue Index
- * \param flag MTL interrupt flag
- * \return TRUE: if set\n
- * FLASE : if not set
+/**
+ * \brief Checks if the specified MTL interrupt flag is set for the given queue.
+ *
+ * \param[in] gethSFR Pointer to the GETH register base address.
+ * \param[in] queueId Queue Index.
+ *                    Range: \ref IfxGeth_MtlQueue
+ * \param[in] flag    MTL interrupt flag to check.
+ *                    Range: \ref IfxGeth_MtlInterruptFlag
+ *
+ * \retval TRUE  If the interrupt flag is set.
+ *         FALSE If the interrupt flag is not set.
  */
 IFX_EXTERN boolean IfxGeth_mtl_isInterruptFlagSet(Ifx_GETH *gethSFR, IfxGeth_MtlQueue queueId, IfxGeth_MtlInterruptFlag flag);
 
-/** \brief Sets the Receive Forward Error Packets for the selected RX Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx Queue Index
- * \param enabled Enable/Disable Receive Forward Error Packets
- * \return None
+/**
+ * \brief Sets the Receive Forward Error Packets for the selected RX Queue.
+ * 
+ * \param[inout] gethSFR Pointer to GETH register base address.
+ * \param[in]    queueId Rx Queue Index.
+ *                       Range: \ref IfxGeth_RxMtlQueue
+ * \param[in]    enabled Enable/Disable Receive Forward Error Packets.
+ *                       Range:TRUE = enabled, FALSE = disabled.
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_setRxForwardErrorPacket(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId, boolean enabled);
 
-/** \brief Sets the Receive Forward Undersized Good Packets for the selected RX Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx Queue Index
- * \param enabled Enable/Disable Receive Forward Undersized Good Packets
- * \return None
+/**
+ * \brief Sets the Receive Forward Undersized Good Packets for the selected RX Queue.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId Rx Queue Index.
+ *                       Range: \ref IfxGeth_RxMtlQueue
+ * \param[in]    enabled Enable/Disable Receive Forward Undersized Good Packets.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_setRxForwardUndersizedGoodPacket(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId, boolean enabled);
 
-/** \brief Sets the size of the selected RX Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx Queue Index
- * \param queueSize Rx Queue Size
- * \return None
+/**
+ * \brief Sets the size of the selected RX Queue in blocks of 256 bytes.
+ *
+ * \param[inout] gethSFR   Pointer to GETH register base address.
+ * \param[in]    queueId   Rx Queue Index.
+ *                         Range: \ref IfxGeth_RxMtlQueue
+ * \param[in]    queueSize Rx Queue Size.
+ *                         Range: \ref IfxGeth_QueueSize
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_setRxQueueSize(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId, IfxGeth_QueueSize queueSize);
 
-/** \brief Sets the Receive Store And Forward for the selected RX Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Rx Queue Index
- * \param enabled Enable/Disable Receive Store and Forward
- * \return None
+/**
+ * \brief Sets the Receive Store And Forward feature for the specified RX queue.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId Rx Queue Index.
+ *                       Range: \ref IfxGeth_RxMtlQueue
+ * \param[in]    enabled Boolean flag to enable (TRUE) or disable (FALSE).
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_setRxStoreAndForward(Ifx_GETH *gethSFR, IfxGeth_RxMtlQueue queueId, boolean enabled);
 
-/** \brief Sets the size of the selected TX Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Tx Queue Index
- * \param queueSize Tx Queue Size
- * \return None
+/**
+ * \brief Sets the size of the selected TX Queue.
+ *
+ * \param[inout] gethSFR   Pointer to the GETH register base address.
+ * \param[in]    queueId   Tx Queue Index.
+ *                         Range: \ref IfxGeth_TxMtlQueue
+ * \param[in]    queueSize Tx Queue Size.
+ *                         Range: \ref IfxGeth_QueueSize
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_setTxQueueSize(Ifx_GETH *gethSFR, IfxGeth_TxMtlQueue queueId, IfxGeth_QueueSize queueSize);
 
-/** \brief Sets the Transmit Store And Forward for teh selected TX Queue
- * \param gethSFR Pointer to GETH register base address
- * \param queueId Tx Queue Index
- * \param enabled Enable/Disable Transmit Store and Forward
- * \return None
+/**
+ * \brief Sets the Transmit Store And Forward feature for the specified TX queue.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    queueId Tx Queue Index.
+ *                       Range: \ref IfxGeth_TxMtlQueue
+ * \param[in]    enabled Boolean flag to enable (TRUE) or disable (FALSE) the Transmit Store And Forward feature.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mtl_setTxStoreAndForward(Ifx_GETH *gethSFR, IfxGeth_TxMtlQueue queueId, boolean enabled);
 
@@ -1114,176 +1319,281 @@ IFX_EXTERN void IfxGeth_mtl_setTxStoreAndForward(Ifx_GETH *gethSFR, IfxGeth_TxMt
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Applies a software reset of MAC and DMA controller
- * \param gethSFR Pointer to GETH register base address
- * \return None
+/**
+ * \brief Applies a software reset to the MAC and DMA controller.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_applySoftwareReset(Ifx_GETH *gethSFR);
 
-/** \brief Returns the status of selected DMA interrupt flag
- * \param gethSFR Pointer to GETH register base address
- * \param channelId DMA channel Id
- * \return None
+/**
+ * \brief Returns the status of selected DMA interrupt flag.
+ *
+ * \param[inout] gethSFR   Pointer to GETH register base address.
+ * \param[in]    channelId DMA channel Id.
+ *                         Range: \ref IfxGeth_DmaChannel
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_clearAllInterruptFlags(Ifx_GETH *gethSFR, IfxGeth_DmaChannel channelId);
 
-/** \brief Returns the status of selected DMA interrupt flag
- * \param gethSFR Pointer to GETH register base address
- * \param channelId DMA channel Id
- * \param flag DMA interrupt flag
- * \return None
+/**
+ * \brief Clears the specified DMA interrupt flag for the given channel.
+ *
+ * \param[inout] gethSFR    Pointer to the GETH register base address.
+ * \param[in]    channelId  DMA channel Id.
+ *                          Range: \ref IfxGeth_DmaChannel
+ * \param[in]    flag       The specific DMA interrupt flag to be cleared.
+ *                          Range: \ref IfxGeth_DmaChannel
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_clearInterruptFlag(Ifx_GETH *gethSFR, IfxGeth_DmaChannel channelId, IfxGeth_DmaInterruptFlag flag);
 
-/** \brief Disables the selected DMA interrupt
- * \param gethSFR Pointer to GETH register base address
- * \param channelId DMA channel Id
- * \param flag DMA interrupt flag
- * \return None
+/**
+ * \brief Disables the selected DMA interrupt for the specified channel.
+ *
+ * \param[inout] gethSFR   Pointer to the GETH register base address.
+ * \param[in]    channelId DMA channel Id.
+ *                         Range: \ref IfxGeth_DmaChannel
+ * \param[in]    flag      DMA interrupt flag specifying which interrupt to disable.
+ *                         Range: \ref IfxGeth_DmaInterruptFlag
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_disableInterrupt(Ifx_GETH *gethSFR, IfxGeth_DmaChannel channelId, IfxGeth_DmaInterruptFlag flag);
 
-/** \brief Enables the selected DMA interrupt
- * \param gethSFR Pointer to GETH register base address
- * \param channelId DMA channel Id
- * \param flag DMA interrupt flag
- * \return None
+/**
+ * \brief Enables the selected DMA interrupt for the specified channel.
+ *
+ * \param[inout] gethSFR   Pointer to the GETH register base address.
+ * \param[in]    channelId DMA channel Id.
+ *                         Range: \ref IfxGeth_DmaChannel
+ * \param[in]    flag      DMA interrupt flag.
+ *                         Range: \ref IfxGeth_DmaInterruptFlag
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_enableInterrupt(Ifx_GETH *gethSFR, IfxGeth_DmaChannel channelId, IfxGeth_DmaInterruptFlag flag);
 
-/** \brief Returns the status of selected DMA interrupt flag
- * \param gethSFR Pointer to GETH register base address
- * \param channelId DMA channel Id
- * \param flag DMA interrupt flag
- * \return TRUE: if set\n
- * FLASE : if not set
+/**
+ * \brief Checks if the specified DMA interrupt flag is set for the given channel.
+ *
+ * \param[in] gethSFR   Pointer to the GETH register base address.
+ * \param[in] channelId DMA channel Id.
+ *                      Range: \ref IfxGeth_DmaChannel
+ * \param[in] flag      DMA interrupt flag to check.
+ *                      Range: \ref IfxGeth_DmaInterruptFlag
+ *
+ * \retval TRUE  If the specified DMA interrupt flag is set.
+ *         FALSE If the specified DMA interrupt flag is not set.
  */
 IFX_INLINE boolean IfxGeth_dma_isInterruptFlagSet(Ifx_GETH *gethSFR, IfxGeth_DmaChannel channelId, IfxGeth_DmaInterruptFlag flag);
 
-/** \brief Wiats until software reset of MAC and DMA controller is done or until timout.
- * \param gethSFR Pointer to GETH register base address
+/**
+ * \brief Waits until software reset of MAC and DMA controller is done or until timeout.
+ *
+ * \param[in] gethSFR Pointer to GETH register base address.
+ *
+ * \retval TRUE  Software reset of MAC and DMA controller is done.
+ *         FALSE Timeout occurred before software reset completion.
  */
 IFX_INLINE boolean IfxGeth_dma_isSoftwareResetDone(Ifx_GETH *gethSFR);
 
-/** \brief Enables/Disables Address aligned beats
- * \param gethSFR Pointer to GETH register base address
- * \param enabled Enable/Disable Address Aligned Beats
- * \return None
+/**
+ * \brief Configures the DMA address-aligned beats feature.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    enabled Boolean flag to enable (TRUE) or disable (FALSE) address-aligned beats.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setAddressAlignedBeats(Ifx_GETH *gethSFR, boolean enabled);
 
-/** \brief Enables/Disables Fixed Burst Length
- * \param gethSFR Pointer to GETH register base address
- * \param enabled Enable/Disable Fixed Burst
- * \return None
+/**
+ * \brief Enables or disables the fixed burst length for DMA transfers in the GETH module.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    enabled Boolean flag to enable or disable the fixed burst length.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setFixedBurst(Ifx_GETH *gethSFR, boolean enabled);
 
-/** \brief Enables/Disables Mixed Burst Length
- * \param gethSFR Pointer to GETH register base address
- * \param enabled Enable/Disable Mixed Burst
- * \return None
+/**
+ * \brief Enables or disables the mixed burst length feature for DMA transfers.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    enabled Boolean flag to enable (TRUE) or disable (FALSE) mixed burst.
+ *                       Range:TRUE = enabled, FALSE = disabled
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setMixedBurst(Ifx_GETH *gethSFR, boolean enabled);
 
-/** \brief sets the size of the rx buffers in descriptors for selected Rx channel of DMA
- * \param gethSFR Pointer to GETH register base address
- * \param channel Rx channel Id
- * \param size Rx Buffers size (applies for both buffers)
- * \return None
+/**
+ * \brief Sets the size of the RX buffers in descriptors for the selected RX channel of DMA.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel The RX DMA channel to configure.
+ *                       Range: \ref IfxGeth_RxDmaChannel
+ * \param[in]    size    The size of the RX buffers.
+ *                       Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setRxBufferSize(Ifx_GETH *gethSFR, IfxGeth_RxDmaChannel channel, uint16 size);
 
-/** \brief sets the base address of the first descriptor in the Receive descriptor list
- * \param gethSFR Pointer to GETH register base address
- * \param channel Rx channel Id
- * \param address base address of the first descriptor in the Receive descriptor list
- * \return None
+/**
+ * \brief Sets the base address of the first descriptor in the Receive descriptor list for a specified Rx DMA channel.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Rx DMA channel identifier.
+ *                       Range: \ref IfxGeth_RxDmaChannel
+ * \param[in]    address Base address of the first descriptor in the Receive descriptor list.
+ *                       Range: 0 to 0xFFFFFFFC
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setRxDescriptorListAddress(Ifx_GETH *gethSFR, IfxGeth_RxDmaChannel channel, uint32 address);
 
-/** \brief sets the Length of the Rx descriptors ring
- * \param gethSFR Pointer to GETH register base address
- * \param channel Rx channel Id
- * \param length Length of the ring (no of total Rx descriptors)
- * \return None
+/**
+ * \brief Configures the number of Rx descriptors in the descriptor ring for a specified DMA channel.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Rx DMA channel identifier.
+ *                       Range: \ref IfxGeth_RxDmaChannel
+ * \param[in]    length  Length of the ring, representing the total number of Rx descriptors. Must be a positive integer.
+ *                       Range: 0 to 0x3FF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setRxDescriptorRingLength(Ifx_GETH *gethSFR, IfxGeth_RxDmaChannel channel, uint32 length);
 
-/** \brief sets the address of the last valid descriptor in the Receive descriptor list
- * \param gethSFR Pointer to GETH register base address
- * \param channel Rx channel Id
- * \param address address of the last valid descriptor in the Receive descriptor list
- * \return None
+/**
+ * \brief Sets the address of the last valid descriptor in the Receive descriptor list.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Rx DMA channel identifier.
+ *                       Range: \ref IfxGeth_RxDmaChannel
+ * \param[in]    address Memory address of the last valid descriptor in the Receive descriptor list.
+ *                       Range: 0 to 0xFFFFFFFC
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setRxDescriptorTailPointer(Ifx_GETH *gethSFR, IfxGeth_RxDmaChannel channel, uint32 address);
 
-/** \brief sets the programmable burst length of selected Rx channel of DMA
- * \param gethSFR Pointer to GETH register base address
- * \param channel Rx channel Id
- * \param length Programmable burst length
- * \return None
+/**
+ * \brief Configures the maximum burst length for the specified Rx DMA channel.
+ * 
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Rx DMA channel ID.
+ *                       Range: \ref IfxGeth_RxDmaChannel
+ * \param[in]    length  Programmable burst length.
+ *                       Range: \ref IfxGeth_DmaBurstLength
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setRxMaxBurstLength(Ifx_GETH *gethSFR, IfxGeth_RxDmaChannel channel, IfxGeth_DmaBurstLength length);
 
-/** \brief sets the base address of the first descriptor in the Transmit descriptor list
- * \param gethSFR Pointer to GETH register base address
- * \param channel Tx channel Id
- * \param address base address of the first descriptor in the Transmit descriptor list
- * \return None
+/**
+ * \brief sets the base address of the first descriptor in the Transmit descriptor list.
+ *
+ * \param[inout] gethSFR Pointer to GETH register base address.
+ * \param[in]    channel Tx channel Id.
+ *                       Range: \ref IfxGeth_TxDmaChannel
+ * \param[in]    address Base address of the first descriptor in the Transmit descriptor list.
+ *                       Range: 0 to 0xFFFFFFFC
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setTxDescriptorListAddress(Ifx_GETH *gethSFR, IfxGeth_TxDmaChannel channel, uint32 address);
 
-/** \brief sets the Length of the Tx descriptors ring
- * \param gethSFR Pointer to GETH register base address
- * \param channel Tx channel Id
- * \param length Length of the ring (no of total Tx descriptors)
- * \return None
+/**
+ * \brief Sets the length of the TX descriptors ring for a specific DMA channel.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Tx DMA channel ID.
+ *                       Range: \ref IfxGeth_TxDmaChannel
+ * \param[in]    length  Length of the ring.
+ *                       Range: 0 to 0x3FF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setTxDescriptorRingLength(Ifx_GETH *gethSFR, IfxGeth_TxDmaChannel channel, uint32 length);
 
-/** \brief sets the address of the last valid descriptor in the Transmit descriptor list
- * \param gethSFR Pointer to GETH register base address
- * \param channel Tx channel Id
- * \param address address of the last valid descriptor in the Transmit descriptor list
- * \return None
+/**
+ * \brief Sets the address of the last valid descriptor in the Transmit descriptor list.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Tx DMA channel ID.
+ *                       Range: \ref IfxGeth_TxDmaChannel
+ * \param[in]    address Address of the last valid descriptor in the Transmit descriptor list.
+ *                       Range: 0 to 0xFFFFFFFC
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setTxDescriptorTailPointer(Ifx_GETH *gethSFR, IfxGeth_TxDmaChannel channel, uint32 address);
 
-/** \brief sets the programmable burst length of selected Tx channel of DMA
- * \param gethSFR Pointer to GETH register base address
- * \param channel Tx channel Id
- * \param length Programmable burst length
- * \return None
+/**
+ * \brief Sets the programmable burst length of the selected Tx channel of DMA.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Tx channel ID.
+ *                       Range: \ref IfxGeth_TxDmaChannel
+ * \param[in]    length  Programmable burst length.
+ *                       Range: \ref IfxGeth_DmaBurstLength
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setTxMaxBurstLength(Ifx_GETH *gethSFR, IfxGeth_TxDmaChannel channel, IfxGeth_DmaBurstLength length);
 
-/** \brief starts the receiver of selected Rx channel of DMA
- * \param gethSFR Pointer to GETH register base address
- * \param channel Rx channel Id
- * \return None
+/**
+ * \brief starts the receiver of selected Rx channel of DMA.
+ *
+ * \param[inout] gethSFR Pointer to GETH register base address.
+ * \param[in]    channel Rx channel Id.
+ *                       Range: \ref IfxGeth_RxDmaChannel
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_startReceiver(Ifx_GETH *gethSFR, IfxGeth_RxDmaChannel channel);
 
-/** \brief starts the tramsimitter of selected Tx channel of DMA
- * \param gethSFR Pointer to GETH register base address
- * \param channel Tx channel Id
- * \return None
+/**
+ * \brief Starts the transmitter of the selected Tx DMA channel.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Tx channel ID to be started.
+ *                       Range: \ref IfxGeth_TxDmaChannel
+ *
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_startTransmitter(Ifx_GETH *gethSFR, IfxGeth_TxDmaChannel channel);
 
-/** \brief Stops the tramsimitter of selected Tx channel of DMA
- * \param gethSFR Pointer to GETH register base address
- * \param channel Tx channel Id
- * \return None
+/**
+ * \brief Stops the transmitter of a selected Tx DMA channel.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Tx channel ID.
+ *                       Range: \ref IfxGeth_TxDmaChannel
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_stopTransmitter(Ifx_GETH *gethSFR, IfxGeth_TxDmaChannel channel);
 
-/** \brief Enables Tx DMA to operate on second frame
- * \param gethSFR gethSFR Pointer to GETH register base address
- * \param channel Tx channel Id
- * \param enable Operate on Second Frame, True: Enabled, False: Disabled
- * \return None
+/**
+ * \brief Enables or disables the Tx DMA to operate on the second frame.
+ *
+ * \param[inout] gethSFR Pointer to the GETH register base address.
+ * \param[in]    channel Tx DMA channel ID.
+ *                       Range: \ref IfxGeth_TxDmaChannel
+ * \param[in]    enable Boolean flag to enable (TRUE) or disable (FALSE).
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_dma_setTxOSF(Ifx_GETH *gethSFR, IfxGeth_TxDmaChannel channel, boolean enable);
 
@@ -1293,10 +1603,13 @@ IFX_INLINE void IfxGeth_dma_setTxOSF(Ifx_GETH *gethSFR, IfxGeth_TxDmaChannel cha
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enables/Disables the MAC operation in the loopback mode at GMII or MII
- * \param gethSFR Pointer to GETH register base address
- * \param mode Loopback Mode Enable / Disable
- * \return None
+/**
+ * \brief Enables/Disables the MAC operation in the loopback mode at GMII or MII.
+ *
+ * \param[inout] gethSFR Pointer to GETH register base address.
+ * \param[in]    mode    Loopback Mode Enable / Disable.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxGeth_mac_setLoopbackMode(Ifx_GETH *gethSFR, IfxGeth_LoopbackMode mode);
 
@@ -1304,44 +1617,72 @@ IFX_INLINE void IfxGeth_mac_setLoopbackMode(Ifx_GETH *gethSFR, IfxGeth_LoopbackM
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reads a MDIO register of Clause 22 PHY
- * \param layerAddr Layer Address
- * \param regAddr Register Address
- * \param pData Pointer to Data
- * \return None
+/**
+ * \brief Reads a 32-bit value from a specified MDIO register of Clause 22 PHY.
+ *
+ * \param[in]    layerAddr The layer address of the PHY device.
+ *                         Range: 0 to 0xFFF7F1F
+ * \param[in]    regAddr   The address of the MDIO register to read.
+ *                         Range: 0 to 0xFFF7F1F
+ * \param[inout] pData     Pointer to the variable where the read data will be stored.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_phy_Clause22_readMDIORegister(uint32 layerAddr, uint32 regAddr, uint32 *pData);
 
-/** \brief Writes to a MDIO register of Clause 22 PHY
- * \param layerAddr Layer Address
- * \param regAddr Register Address
- * \param data Data
- * \return None
+/**
+ * \brief Writes data to a specified MDIO register of Clause 22 PHY.
+ *
+ * \param[in] layerAddr The layer address of the PHY device.
+ *                      Range: 0 to 0xFFF7F1F
+ * \param[in] regAddr   The register address within the PHY layer.
+ *                      Range: 0 to 0xFFF7F1F
+ * \param[in] data      The data value to be written to the specified register.
+ *                      Range: 0 to 0xFFF7F1F
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Phy_Clause22_writeMDIORegister(uint32 layerAddr, uint32 regAddr, uint32 data);
 
-/** \brief Reads a MDIO register of Clause 45 PHY
- * \param layerAddr Layer Address
- * \param deviceAddr Device Address
- * \param regAddr Register Address
- * \param pData Pointer to Data
- * \return None
+/**
+ * \brief Reads a 32-bit value from a Clause 45 PHY MDIO register.
+ *
+ * \param[in]    layerAddr  Layer address within the Clause 45 PHY device.
+ *                          Range: 0 to 0xFFF7F1F
+ * \param[in]    deviceAddr Device address within the specified layer.
+ *                          Range: 0 to 0xFFF7F1F
+ * \param[in]    regAddr    Register address to read from.
+ *                          Range: 0 to 0xFFF7F1F
+ * \param[inout] pData      Pointer to a uint32 where the read data will be stored.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_phy_Clause45_readMDIORegister(uint32 layerAddr, uint32 deviceAddr, uint32 regAddr, uint32 *pData);
 
-/** \brief Writes to a MDIO register for Clause 45 PHY
- * \param layerAddr Layer Address
- * \param deviceAddr Device Address
- * \param regAddr Register Address
- * \param data Data
- * \return None
+/**
+ * \brief Writes data to a specific MDIO register for Clause 45 PHY.
+ *
+ * \param[in] layerAddr  The layer address to be used for the MDIO operation.
+ *                       Range: 0 to 0xFFF7F1F
+ * \param[in] deviceAddr The device address within the specified layer.
+ *                       Range: 0 to 0xFFF7F1F
+ * \param[in] regAddr    The register address within the specified device.
+ *                       Range: 0 to 0xFFF7F1F
+ * \param[in] data       The data value to be written to the specified register.
+ *                       Range: 0 to 0xFFF7F1F
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_Phy_Clause45_writeMDIORegister(uint32 layerAddr, uint32 deviceAddr, uint32 regAddr, uint32 data);
 
-/** \brief Sets the maximum size of the packet
- * \param gethSFR Pointer to GETH register base address
- * \param maxPacketSize Minimum size of the frame beyond which giant packet status is set.
- * \return None
+/**
+ * \brief Configures the maximum packet size for the MAC.
+ *
+ * \param[in] gethSFR       Pointer to the GETH register base address.
+ * \param[in] maxPacketSize Minimum size of the frame beyond which giant packet status is set.
+ *                          Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxGeth_mac_setMaxPacketSize(Ifx_GETH *gethSFR, uint16 maxPacketSize);
 

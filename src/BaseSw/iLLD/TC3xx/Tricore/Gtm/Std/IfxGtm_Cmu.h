@@ -3,7 +3,7 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -63,35 +63,42 @@
 
 /** \addtogroup IfxLld_Gtm_Std_Cmu_CMUEnumerations
  * \{ */
+/** \brief CMU clock
+ */
 typedef enum
 {
-    IfxGtm_Cmu_Clk_0 = 0,
-    IfxGtm_Cmu_Clk_1,
-    IfxGtm_Cmu_Clk_2,
-    IfxGtm_Cmu_Clk_3,
-    IfxGtm_Cmu_Clk_4,
-    IfxGtm_Cmu_Clk_5,
-    IfxGtm_Cmu_Clk_6,
-    IfxGtm_Cmu_Clk_7
+    IfxGtm_Cmu_Clk_0 = 0,  /**< \brief CMU Clock0 */
+    IfxGtm_Cmu_Clk_1,      /**< \brief CMU Clock1 */
+    IfxGtm_Cmu_Clk_2,      /**< \brief CMU Clock2 */
+    IfxGtm_Cmu_Clk_3,      /**< \brief CMU Clock3 */
+    IfxGtm_Cmu_Clk_4,      /**< \brief CMU Clock4 */
+    IfxGtm_Cmu_Clk_5,      /**< \brief CMU Clock5 */
+    IfxGtm_Cmu_Clk_6,      /**< \brief CMU Clock6 */
+    IfxGtm_Cmu_Clk_7       /**< \brief CMU Clock7 */
 } IfxGtm_Cmu_Clk;
 
+/** \brief External clock
+ */
 typedef enum
 {
-    IfxGtm_Cmu_Eclk_0 = 0,
-    IfxGtm_Cmu_Eclk_1,
-    IfxGtm_Cmu_Eclk_2
+    IfxGtm_Cmu_Eclk_0 = 0,  /**< \brief External Clock Eclk0 */
+    IfxGtm_Cmu_Eclk_1,      /**< \brief External Clock Eclk1 */
+    IfxGtm_Cmu_Eclk_2       /**< \brief External Clock Eclk2 */
 } IfxGtm_Cmu_Eclk;
 
+/** \brief Fixed clock
+ */
 typedef enum
 {
-    IfxGtm_Cmu_Fxclk_0 = 0,
-    IfxGtm_Cmu_Fxclk_1,
-    IfxGtm_Cmu_Fxclk_2,
-    IfxGtm_Cmu_Fxclk_3,
-    IfxGtm_Cmu_Fxclk_4
+    IfxGtm_Cmu_Fxclk_0 = 0,  /**< \brief Fixed Clock Fxclk0 */
+    IfxGtm_Cmu_Fxclk_1,      /**< \brief Fixed Clock Fxclk1 */
+    IfxGtm_Cmu_Fxclk_2,      /**< \brief Fixed Clock Fxclk2 */
+    IfxGtm_Cmu_Fxclk_3,      /**< \brief Fixed Clock Fxclk3 */
+    IfxGtm_Cmu_Fxclk_4       /**< \brief Fixed Clock Fxclk4 */
 } IfxGtm_Cmu_Fxclk;
 
-/** \brief Tim Filter counter frequency select
+/** \brief Tim Filter counter frequency select.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.FLT_CNT_FRQ
  */
 typedef enum
 {

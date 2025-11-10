@@ -2,7 +2,7 @@
  * \file IfxIom_Driver.c
  * \brief IOM DRIVER details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -74,6 +74,7 @@
 void IfxIom_Driver_clearAllGlitch(IfxIom_Driver *driver)
 {
     Ifx_IOM *module = driver->module;
+    /* Clear all glitch flags */
     module->FPCESR.U = 0xFFFFFFFF;
 }
 
@@ -81,6 +82,7 @@ void IfxIom_Driver_clearAllGlitch(IfxIom_Driver *driver)
 void IfxIom_Driver_clearHistory(IfxIom_Driver *driver)
 {
     Ifx_IOM *module = driver->module;
+    /* Clear the event history */
     module->ECMETH0.U = 0;
 }
 
@@ -110,7 +112,9 @@ void IfxIom_Driver_clearLamRefGlitch(IfxIom_Driver_Lam *driver)
 uint32 IfxIom_Driver_disableEvents(IfxIom_Driver *driver)
 {
     uint32 value;
+    /* Read the current event selection register value */
     value                     = driver->module->ECMSELR.U;
+    /* Disable all event generation */
     driver->module->ECMSELR.U = 0;
     return value;
 }
@@ -162,7 +166,7 @@ void IfxIom_Driver_getHistory(IfxIom_Driver *driver, uint16 *a, uint16 *b, uint1
 {
     Ifx_IOM *module = driver->module;
     uint32   value;
-
+    /* Read event combiner module event trigger history register 0 */
     value = module->ECMETH0.U;
     *a    = value & 0xFFFF;
     *b    = value >> 16;
@@ -175,6 +179,7 @@ void IfxIom_Driver_getHistory(IfxIom_Driver *driver, uint16 *a, uint16 *b, uint1
 
 boolean IfxIom_Driver_init(IfxIom_Driver *driver, IfxIom_Driver_Config *config)
 {
+	/* Initializes the IOM driver */
     driver->module                   = config->module;
     driver->accumulatedEventUsedMask = 0;
     driver->lamUsedMask              = 0;
@@ -194,6 +199,7 @@ boolean IfxIom_Driver_initLam(IfxIom_Driver_Lam *driver, IfxIom_Driver_LamConfig
     IfxIom_Driver *iomDriver = config->iomDriver;
     Ifx_IOM       *module    = iomDriver->module;
     float32        fiom;
+    /* Get the IOM module frequency */
     fiom = IfxIom_getFrequency(module);
 
     /* Check parameter ranges */
@@ -226,6 +232,7 @@ boolean IfxIom_Driver_initLam(IfxIom_Driver_Lam *driver, IfxIom_Driver_LamConfig
 
             if (refInput == IfxIom_RefInputSignal_p)
             {
+            	/* Initialize the IOM filter and prescaler channel control register */
                 if (config->ref.filter.mode == IfxIom_LamFilterMode_noFilter)
                 {
                     module->FPCCTR[refIndex].B.MOD = IfxIom_LamFilterMode_immediateDebounceBothEdge;
@@ -261,6 +268,7 @@ boolean IfxIom_Driver_initLam(IfxIom_Driver_Lam *driver, IfxIom_Driver_LamConfig
 
             if (monInput == IfxIom_MonInputSignal_p)
             {
+            	/* Initialize the IOM filter and prescaler channel control register */
                 if (config->mon.filter.mode == IfxIom_LamFilterMode_noFilter)
                 {
                     module->FPCCTR[monIndex].B.MOD = IfxIom_LamFilterMode_immediateDebounceBothEdge;
@@ -340,15 +348,20 @@ boolean IfxIom_Driver_initLam(IfxIom_Driver_Lam *driver, IfxIom_Driver_LamConfig
 
 void IfxIom_Driver_initLamConfig(IfxIom_Driver_LamConfig *config, IfxIom_Driver *driver)
 {
+	/* Initialize the IOM driver */
     config->iomDriver                        = driver;
+    /* Initialize the default LAM channel */
     config->channel                          = IfxIom_LamId_0;
+    /* Initialize the default values of IOM LAM event */
     config->event.source                     = IfxIom_LamEventSource_mon;
     config->event.trigger                    = IfxIom_LamEventTrigger_none;
+    /* Initialize the default values of IOM LAM event window */
     config->eventWindow.clearEvent           = IfxIom_LamEventWindowClearEvent_anyEdge;
     config->eventWindow.controlSource        = IfxIom_LamEventWindowControlSource_ref;
     config->eventWindow.inverted             = FALSE;
     config->eventWindow.run                  = IfxIom_LamEventWindowRunControl_freeRunning;
     config->eventWindow.threshold            = 0.0;
+    /* Initialize the default values of IOM LAM monitor input configuration */
     config->mon.filter.clearTimerOnGlitch    = FALSE;
     config->mon.filter.fallingEdgeFilterTime = 0.0;
     config->mon.filter.mode                  = IfxIom_LamFilterMode_noFilter;
@@ -356,6 +369,7 @@ void IfxIom_Driver_initLamConfig(IfxIom_Driver_LamConfig *config, IfxIom_Driver 
     config->mon.filter.risingEdgeFilterTime  = 0.0;
     config->mon.input                        = IfxIom_MonInput_p33_0;
     config->mon.inverted                     = FALSE;
+    /* Initialize the default values of IOM LAM reference input configuration */
     config->ref.filter.clearTimerOnGlitch    = FALSE;
     config->ref.filter.fallingEdgeFilterTime = 0.0;
     config->ref.filter.mode                  = IfxIom_LamFilterMode_noFilter;
@@ -363,6 +377,7 @@ void IfxIom_Driver_initLamConfig(IfxIom_Driver_LamConfig *config, IfxIom_Driver 
     config->ref.filter.risingEdgeFilterTime  = 0.0;
     config->ref.input                        = IfxIom_RefInput_p33_0;
     config->ref.inverted                     = FALSE;
+    /* Initialize the default value of IOM LAM event that triggers the System Event */
     config->systemEventTriggerThreshold      = 1;
 }
 
@@ -373,6 +388,7 @@ void IfxIom_Driver_isLamMonGlitch(IfxIom_Driver_Lam *driver, boolean *risingEdge
 
     if (driver->monInput == IfxIom_MonInputSignal_p)
     {
+    	/* Check if rising edge glitch and falling edge glitch were detected on the monitor signal */
         uint32 index;
         index              = driver->monIndex;
         *risingEdgeGlitch  = (module->FPCESR.U >> (index + IFX_IOM_FPCESR_REG0_OFF)) != 0;
@@ -392,6 +408,7 @@ void IfxIom_Driver_isLamRefGlitch(IfxIom_Driver_Lam *driver, boolean *risingEdge
 
     if (driver->refInput == IfxIom_RefInputSignal_p)
     {
+    	/* Check if rising edge glitch and falling edge glitch were detected on the reference signal */
         uint32 index;
         index              = driver->refIndex;
         *risingEdgeGlitch  = (module->FPCESR.U >> (index + IFX_IOM_FPCESR_REG0_OFF)) != 0;

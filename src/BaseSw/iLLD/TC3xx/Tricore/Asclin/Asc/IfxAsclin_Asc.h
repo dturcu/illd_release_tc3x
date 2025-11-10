@@ -3,7 +3,7 @@
  * \brief ASCLIN ASC details
  * \ingroup IfxLld_Asclin
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -249,11 +249,11 @@
  */
 typedef struct
 {
-    uint8 parityError : 1;         /**< \brief parity error */
-    uint8 frameError : 1;          /**< \brief transmit complete/pending error */
-    uint8 rxFifoOverflow : 1;      /**< \brief receive FIFO overflow error */
-    uint8 rxFifoUnderflow : 1;     /**< \brief receive FIFO underflow error */
-    uint8 txFifoOverflow : 1;      /**< \brief transmit FIFO overflow error */
+    uint8 parityError : 1;         /**< \brief Parity error. Range: 0 - Last message received error free, 1 - Last message received with parity error */
+    uint8 frameError : 1;          /**< \brief Transmit complete/pending error. Range: 0 - Last message received error free, 1 - Last message received with framing error */
+    uint8 rxFifoOverflow : 1;      /**< \brief Receive FIFO overflow error. Range: 0 - No overflow error occurred, 1 - Overflow error occurred */
+    uint8 rxFifoUnderflow : 1;     /**< \brief Receive FIFO underflow error. Range: 0 - No underflow error occurred, 1 - Underflow error occurred */
+    uint8 txFifoOverflow : 1;      /**< \brief Transmit FIFO overflow error. Range: 0 - No overflow error occurred, 1 - Overflow error occurred */
 } IfxAsclin_Asc_ErrorFlags;
 
 /** \addtogroup IfxLld_Asclin_Asc_DataStructures
@@ -262,8 +262,10 @@ typedef struct
  */
 typedef struct
 {
-    float32                      baudrate;           /**< \brief value of the required baudrate */
-    uint16                       prescaler;          /**< \brief BITCON.PRESCALER, the division ratio of the predevider */
+    float32                      baudrate;           /**< \brief Value of the required baudrate.
+                                                      * Range: Min baud rate fA/ 268435456 (0.37 Baud @ 100 MHz fA module clock)
+                                                      *        Max baud rate fA/ 16 (6.25 MBaud @ 100 MHz fA module clock) */
+    uint16                       prescaler;          /**< \brief BITCON.PRESCALER, the division ratio of the predevider. Range: 0 to 4095 */
     IfxAsclin_OversamplingFactor oversampling;       /**< \brief BITCON.OVERSAMPLING, division ratio of the baudrate post devider */
 } IfxAsclin_Asc_BaudRate;
 
@@ -298,17 +300,17 @@ typedef struct
     IfxAsclin_ShiftDirection shiftDir;         /**< \brief FRAMECON.MSB, shift direction */
     IfxAsclin_ParityType     parityType;       /**< \brief FRAMECON.ODD, parity type (even or odd) */
     IfxAsclin_DataLength     dataLength;       /**< \brief DATCON.DATALENGTH, data length, number of bits per transfer */
-    boolean                  parityBit;        /**< \brief FRAMECON.PEN, parity enable */
+    boolean                  parityBit;        /**< \brief FRAMECON.PEN, parity enable. Range: TRUE: Enabled, FALSE: Disabled */
 } IfxAsclin_Asc_FrameControl;
 
 /** \brief Structure for interrupt configuration
  */
 typedef struct
 {
-    uint16     txPriority;          /**< \brief transmit interrupt priority */
-    uint16     rxPriority;          /**< \brief receive interrupt priority */
-    uint16     erPriority;          /**< \brief error interrupt priority */
-    IfxSrc_Tos typeOfService;       /**< \brief type of interrupt service */
+    uint16     txPriority;          /**< \brief Transmit interrupt priority. Range: 0 to 255 */
+    uint16     rxPriority;          /**< \brief Receive interrupt priority. Range: 0 to 255 */
+    uint16     erPriority;          /**< \brief Rrror interrupt priority. Range: 0 to 255 */
+    IfxSrc_Tos typeOfService;       /**< \brief Type of interrupt service */
 } IfxAsclin_Asc_InterruptConfig;
 
 /** \brief Structure for ASC pin configuration
@@ -323,7 +325,7 @@ typedef struct
     IfxPort_OutputMode           rtsMode;         /**< \brief Rts as output */
     IFX_CONST IfxAsclin_Tx_Out  *tx;              /**< \brief ASC Tx pin */
     IfxPort_OutputMode           txMode;          /**< \brief Tx as output */
-    IfxPort_PadDriver            pinDriver;       /**< \brief pad driver */
+    IfxPort_PadDriver            pinDriver;       /**< \brief Pad driver */
 } IfxAsclin_Asc_Pins;
 
 /** \} */
@@ -342,14 +344,14 @@ typedef union
  */
 typedef struct
 {
-    Ifx_ASCLIN                   *asclin;                 /**< \brief pointer to ASCLIN registers */
+    Ifx_ASCLIN                   *asclin;                 /**< \brief Pointer to ASCLIN registers */
     Ifx_Fifo                     *tx;                     /**< \brief Transmit FIFO buffer */
     Ifx_Fifo                     *rx;                     /**< \brief Receive FIFO buffer */
     volatile boolean              txInProgress;           /**< \brief Ongoing transfer. Will be set by IfxAsclin_Asc_initiateTransmission, and cleared by IfxAsclin_Asc_isrTransmit */
     volatile boolean              rxSwFifoOverflow;       /**< \brief Will be set by IfxAsclin_Asc_isrReceive if the SW Fifo overflowed */
-    IfxAsclin_Asc_ErrorFlagsUnion errorFlags;             /**< \brief error reported by ASCLIN during runtime (written by IfxAsclin_Asc_isrError) */
+    IfxAsclin_Asc_ErrorFlagsUnion errorFlags;             /**< \brief Error reported by ASCLIN during runtime (written by IfxAsclin_Asc_isrError) */
     IfxAsclin_DataBufferMode      dataBufferMode;         /**< \brief Rx buffer mode */
-    volatile uint32               sendCount;              /**< \brief Number of byte that are send out, this value is reset with the function Asc_If_resetSendCount() */
+    volatile uint32               sendCount;              /**< \brief Number of byte that are send out, this value is reset with the function Asc_If_resetSendCount(). Range: 0 to 0xFFFFFFFF */
     volatile Ifx_TickTime         txTimestamp;            /**< \brief Time stamp of the latest send byte */
 } IfxAsclin_Asc;
 
@@ -357,22 +359,22 @@ typedef struct
  */
 typedef struct
 {
-    Ifx_ASCLIN                    *asclin;               /**< \brief pointer to ASCLIN registers */
-    IfxAsclin_Asc_BaudRate         baudrate;             /**< \brief structure for baudrate */
-    IfxAsclin_Asc_BitTimingControl bitTiming;            /**< \brief structure for bit timings */
-    IfxAsclin_Asc_FrameControl     frame;                /**< \brief structure for frame control */
-    IfxAsclin_Asc_FifoControl      fifo;                 /**< \brief structure for FIFO control */
-    IfxAsclin_Asc_InterruptConfig  interrupt;            /**< \brief structure for interrupt configuration */
-    IFX_CONST IfxAsclin_Asc_Pins  *pins;                 /**< \brief structure for ASC pins */
+    Ifx_ASCLIN                    *asclin;               /**< \brief Pointer to ASCLIN registers */
+    IfxAsclin_Asc_BaudRate         baudrate;             /**< \brief Structure for baudrate */
+    IfxAsclin_Asc_BitTimingControl bitTiming;            /**< \brief Structure for bit timings */
+    IfxAsclin_Asc_FrameControl     frame;                /**< \brief Structure for frame control */
+    IfxAsclin_Asc_FifoControl      fifo;                 /**< \brief Structure for FIFO control */
+    IfxAsclin_Asc_InterruptConfig  interrupt;            /**< \brief Structure for interrupt configuration */
+    IFX_CONST IfxAsclin_Asc_Pins  *pins;                 /**< \brief Structure for ASC pins */
     IfxAsclin_ClockSource          clockSource;          /**< \brief CSR.CLKSEL, clock source selection */
-    IfxAsclin_Asc_ErrorFlagsUnion  errorFlags;           /**< \brief structure for error flags */
-    Ifx_SizeT                      txBufferSize;         /**< \brief Size of the tx buffer */
+    IfxAsclin_Asc_ErrorFlagsUnion  errorFlags;           /**< \brief Structure for error flags */
+    Ifx_SizeT                      txBufferSize;         /**< \brief Size of the tx buffer. Range: 0 to 0x7FFF */
     void                          *txBuffer;             /**< \brief The buffer parameter must point on a free memory location where the buffer object will be Initialised.
                                                           *
                                                           * The Size of this area must be at least equals to "txBufferSize + sizeof(Ifx_Fifo) + 8". Not tacking this in account may result in unpredictable behavior.
                                                           *
                                                           * If set to NULL_PTR, the buffer will  be allocated dynamically according to txBufferSize */
-    Ifx_SizeT rxBufferSize;                              /**< \brief Size of the rx buffer */
+    Ifx_SizeT rxBufferSize;                              /**< \brief Size of the rx buffer. Range: 0 to 0x7FFF */
     void     *rxBuffer;                                  /**< \brief The buffer parameter must point on a free memory location where the buffer object will be Initialised.
                                                           *
                                                           * The Size of this area must be at least equals to "rxBufferSize + sizeof(Ifx_Fifo) + 8". Not tacking this in account may result in unpredictable behavior.

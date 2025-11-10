@@ -3,7 +3,7 @@
  * \brief GPT12 INCRENC details
  * \ingroup IfxLld_Gpt12
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -275,11 +275,11 @@ typedef struct
     IfxGpt12_TxEud_In                *pinB;                     /**< \brief Encoder B signal. Should be connecting to T2 or T3 or T4(If no Z signal) TxEUD. See \ref IfxLld_Gpt12__Pinmap "GPT12 pin map data" */
     IfxGpt12_TxIn_In                 *pinZ;                     /**< \brief Encoder Z signal. Should be connecting to T4 TxIn for use with T3 and TxEUD (Ignore compiler type conflict warning) for use with T2.  See \ref IfxLld_Gpt12__Pinmap "GPT12 pin map data" */
     IfxPort_InputMode                 pinMode;                  /**< \brief Pin mode for A, B and Z inputs */
-    Ifx_Priority                      zeroIsrPriority;          /**< \brief Interrupt isrPriority of the zero interrupt, if 0 the interrupt is disable */
+    Ifx_Priority                      zeroIsrPriority;          /**< \brief Interrupt isrPriority of the zero interrupt, if 0 the interrupt is disable. Range: 0 to 0xFF. */
     IfxSrc_Tos                        zeroIsrProvider;          /**< \brief Interrupt service provider for the zero interrupt */
     IfxPort_PadDriver                 pinDriver;                /**< \brief Pad Driver */
     IfxGpt12_IncrEnc_ResolutionFactor resolutionFactor;         /**< \brief Resolution multiplier for encoder interface, valid is 2, 4. */
-    boolean                           reversed;                 /**< \brief If true, the sensor direction is reversed */
+    boolean                           reversed;                 /**< \brief If TRUE, the sensor direction is reversed, FALSE the sensor direction is not reversed. */
     boolean                           initPins;                 /**< \brief TRUE: Initialize pins in driver
                                                                  * FALSE: Don't initialize pins. User handles separately. */
 } IfxGpt12_IncrEnc_Config;

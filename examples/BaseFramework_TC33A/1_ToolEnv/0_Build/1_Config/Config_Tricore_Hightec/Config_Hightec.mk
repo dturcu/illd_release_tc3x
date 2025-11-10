@@ -7,7 +7,7 @@
 #                                                                             #
 #                                                                             #
 # Infineon Technologies AG (Infineon) is supplying this file for use          #
-# exclusively with Infineon’s microcontroller products. This file can be      #
+# exclusively with Infineon's microcontroller products. This file can be      #
 # freely distributed within development tools that are supporting such        #
 # microcontroller products.                                                   #
 #                                                                             #
@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-B_HIGHTEC_TRICORE_PATH:= C:\Tools\Compilers\HIGHTEC\toolchains\tricore\v9.1.2
+B_HIGHTEC_TRICORE_PATH:= C:\Tools\Compilers\HIGHTEC\toolchains\tricore\v10.0.0
 
 
 B_HIGHTEC_TRICORE_CC_OPTIONS= -fdata-sections -ffunction-sections -fno-common \

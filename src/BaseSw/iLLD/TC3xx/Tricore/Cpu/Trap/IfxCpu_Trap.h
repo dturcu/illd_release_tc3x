@@ -2,7 +2,7 @@
  * \file IfxCpu_Trap.c
  * \brief This file contains the APIs for Trap related functions.
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -182,10 +182,10 @@ typedef union
  */
 typedef struct
 {
-    unsigned int tAddr;
-    unsigned int tId : 8;
-    unsigned int tClass : 8;
-    unsigned int tCpu : 3;
+    unsigned int tAddr;		  /**< \brief Trap address. Range: 0 to 0xFFFFFFFF */
+    unsigned int tId : 8;     /**< \brief Trap ID. Range: 0 to 0x7 */
+    unsigned int tClass : 8;  /**< \brief Trap Class. Range: 0 to 0x7 */
+    unsigned int tCpu : 3;	  /**< \brief Core ID of the CPU. Range: 0 to 0x5 */
 } IfxCpu_Trap;
 
 /*******************************************************************************

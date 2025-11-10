@@ -3,7 +3,7 @@
  * \brief QSPI SPISLAVE details
  * \ingroup IfxLld_Qspi
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -314,6 +314,15 @@
 
 /** \addtogroup IfxLld_Qspi_SpiSlave_DataStructures
  * \{ */
+/** \brief Slave Lvds pins configuration
+ */
+typedef struct
+{
+    IfxPort_LvdsConfig sclkInLvdsCfg;        /**< \brief SCLK_in LVDS P/N Pin configuration structure */
+    IfxPort_LvdsConfig mtsrInLvdsCfg;        /**< \brief MTSR_in LVDS P/N Pin configuration structure */
+    IfxPort_LvdsConfig mrstOutLvdsCfg;       /**< \brief MRST_out LVDS P/N Pin configuration structure */
+} IfxQspi_SpiSlave_LvdsProperties;
+
 /** \brief Dma handle
  */
 typedef struct
@@ -322,7 +331,7 @@ typedef struct
     IfxDma_Dma_Channel txDmaChannel;         /**< \brief transmit DMA channel handle */
     IfxDma_ChannelId   rxDmaChannelId;       /**< \brief DMA channel no for the Spi recieve */
     IfxDma_ChannelId   txDmaChannelId;       /**< \brief DMA channel no for the Spi transmit */
-    boolean            useDma;               /**< \brief use Dma for Data transfers */
+    boolean            useDma;               /**< \brief use Dma for Data transfers. Range: TRUE enable Data transfer, FALSE disable Data transfer. */
 } IfxQspi_SpiSlave_Dma;
 
 /** \brief Dma configuration
@@ -331,37 +340,38 @@ typedef struct
 {
     IfxDma_ChannelId rxDmaChannelId;       /**< \brief DMA channel no for the Spi receive */
     IfxDma_ChannelId txDmaChannelId;       /**< \brief DMA channel no for the Spi transmit */
-    boolean          useDma;               /**< \brief use Dma for Data transfers */
+    boolean          useDma;               /**< \brief use Dma for Data transfers. Range: TRUE enable Data transfer, FALSE disable Data transfer. */
 } IfxQspi_SpiSlave_DmaConfig;
 
 /** \brief Qspi Slave Mode Error Flags
  */
 typedef struct
 {
-    boolean parityError;                   /**< \brief [0:0] Parity Error */
-    boolean configurationError;            /**< \brief [1:1] Configuration Error */
-    boolean baudrateError;                 /**< \brief [2:2] baudrate Error */
-    boolean txFifoOverflowError;           /**< \brief [3:3] TxFifo Overflow Error */
-    boolean txFifoUnderflowError;          /**< \brief [4:4] TxFifo underflow Error */
-    boolean rxFifoOverflowError;           /**< \brief [5:5] RxFifo Overflow Error */
-    boolean rxFifoUnderflowError;          /**< \brief [6:6] RxFifo underflow Error */
-    boolean expectTimeoutError;            /**< \brief [7:7] Expect Timeout Error */
-    boolean slsiMisplacedInactivation;     /**< \brief [8:8] SLSI misplaced inactivation (slave mode) */
+    boolean parityError;                   /**< \brief [0:0] Parity Error. Range: TRUE Parity Error occurred, FALSE Parity Error not occurred. */
+    boolean configurationError;            /**< \brief [1:1] Configuration Error. Range: TRUE Configuration Error occurred, FALSE Configuration Error not occurred. */
+    boolean baudrateError;                 /**< \brief [2:2] baudrate Error. Range: TRUE baudrate Error occurred, FALSE baudrate Error not occurred. */
+    boolean txFifoOverflowError;           /**< \brief [3:3] TxFifo Overflow Error. Range: TRUE TxFifo Overflow Error occurred, FALSE disable TxFifo Overflow Error not occurred. */
+    boolean txFifoUnderflowError;          /**< \brief [4:4] TxFifo underflow Error. Range: TRUE TxFifo underflow Error occurred, FALSE disable TxFifo underflow Error not occurred. */
+    boolean rxFifoOverflowError;           /**< \brief [5:5] RxFifo Overflow Error. Range: TRUE RxFifo Overflow Error occurred, FALSE disable RxFifo Overflow Error not occurred. */
+    boolean rxFifoUnderflowError;          /**< \brief [6:6] RxFifo underflow Error. Range: TRUE RxFifo underflow Error occurred, FALSE RxFifo underflow Error not occurred. */
+    boolean expectTimeoutError;            /**< \brief [7:7] Expect Timeout Error. Range: TRUE Expect Timeout Error occurred, FALSE Expect Timeout Error not occurred. */
+    boolean slsiMisplacedInactivation;     /**< \brief [8:8] SLSI misplaced inactivation (slave mode). Range: TRUE SLSI misplaced inactivation Error occurred, FALSE SLSI misplaced inactivation Error not occurred. */
 } IfxQspi_SpiSlave_ErrorFlags;
 
 /** \brief Slave pin IO configuration structure
  */
 typedef struct
 {
-    IFX_CONST IfxQspi_Sclk_In  *sclk;            /**< \brief Pointer to SLCK in pin */
-    IfxPort_InputMode           sclkMode;        /**< \brief The SCLK pin input mode */
-    IFX_CONST IfxQspi_Mtsr_In  *mtsr;            /**< \brief Pointer to MTSR in pin */
-    IfxPort_InputMode           mtsrMode;        /**< \brief The MTSR pin input mode */
-    IFX_CONST IfxQspi_Mrst_Out *mrst;            /**< \brief Pointer to MRST out pin */
-    IfxPort_OutputMode          mrstMode;        /**< \brief The MRST pin output mode */
-    IFX_CONST IfxQspi_Slsi_In  *slsi;            /**< \brief Pointer to SLSI in pin */
-    IfxPort_InputMode           slsiMode;        /**< \brief The SLSI pin input mode */
-    IfxPort_PadDriver           pinDriver;       /**< \brief The pad driver mode which should be configured */
+    IFX_CONST IfxQspi_Sclk_In       *sclk;            /**< \brief Pointer to SLCK in pin */
+    IfxPort_InputMode                sclkMode;        /**< \brief The SCLK pin input mode */
+    IFX_CONST IfxQspi_Mtsr_In       *mtsr;            /**< \brief Pointer to MTSR in pin */
+    IfxPort_InputMode                mtsrMode;        /**< \brief The MTSR pin input mode */
+    IFX_CONST IfxQspi_Mrst_Out      *mrst;            /**< \brief Pointer to MRST out pin */
+    IfxPort_OutputMode               mrstMode;        /**< \brief The MRST pin output mode */
+    IFX_CONST IfxQspi_Slsi_In       *slsi;            /**< \brief Pointer to SLSI in pin */
+    IfxPort_InputMode                slsiMode;        /**< \brief The SLSI pin input mode */
+    IfxPort_PadDriver                pinDriver;       /**< \brief The pad driver mode which should be configured */
+    IfxQspi_SpiSlave_LvdsProperties *lvdsProperties;  /**< \brief LVDS config structure for Slave's P or N pins */
 } IfxQspi_SpiSlave_Pins;
 
 /** \brief Configures the SPI Protocol
@@ -384,10 +394,10 @@ typedef struct
 typedef struct
 {
     Ifx_QSPI                   *qspi;             /**< \brief Pointer to QSPI module registers */
-    uint8                       dataWidth;        /**< \brief Number of bits which will be written into the FIFO */
+    uint8                       dataWidth;        /**< \brief Number of bits which will be written into the FIFO. Range: 2 to 32. */
     IfxQspi_Job                 rxJob;            /**< \brief Rx Stream which has been received */
     IfxQspi_Job                 txJob;            /**< \brief Tx Stream which should be sent */
-    boolean                     onTransfer;       /**< \brief set to TRUE during ongoing transfer */
+    boolean                     onTransfer;       /**< \brief set to TRUE during ongoing transfer. Range: TRUE transfer as active, FALSE transfer as inactive. */
     IfxQspi_SpiSlave_Dma        dma;              /**< \brief Dma handle */
     IfxQspi_SpiSlave_ErrorFlags errorFlags;       /**< \brief Spi Slave Error Flags */
 } IfxQspi_SpiSlave;
@@ -400,6 +410,7 @@ typedef struct
     Ifx_Priority                     rxPriority;                       /**< \brief Specifies the priority of the receive interrupt */
     Ifx_Priority                     txPriority;                       /**< \brief Specifies the priority of the transmit interrupt */
     Ifx_Priority                     erPriority;                       /**< \brief Specifies the priority of the error interrupt */
+    Ifx_Priority                     ptPriority;                       /**< \brief Specifies the priority of the phase transition interrupt */
     IfxSrc_Tos                       isrProvider;                      /**< \brief Specifies the handler of the interrupts */
     Ifx_SizeT                        bufferSize;                       /**< \brief Specifies the number of channels that can be buffered. If 0, buffering is disabled */
     void                            *buffer;                           /**< \brief Specifies the buffer location.The buffer parameter must point on a free memory location where the
@@ -409,16 +420,22 @@ typedef struct
                                                                         *          this in account may result in unpredictable behaviour. */
     float32                          maximumBaudrate;                  /**< \brief Maximum baudrate used by the channels, this value is used to optimise the SPI internal clock */
     Ifx_QSPI                        *qspi;                             /**< \brief Pointer to QSPI module registers */
-    boolean                          allowSleepMode;                   /**< \brief Specifies module sleep mode */
-    boolean                          pauseOnBaudrateSpikeErrors;       /**< \brief Specifies module pause on baudrate or spike errors */
+    boolean                          allowSleepMode;                   /**< \brief Specifies module sleep mode. Range: TRUE if sleep mode enable, FALSE if sleep mode disable. */
+    boolean                          pauseOnBaudrateSpikeErrors;       /**< \brief Specifies module pause on baudrate or spike errors. Range: TRUE baud rate and spike error in slave mode enable, FALSE baud rate and spike error in slave mode disable. */
     IfxQspi_PauseRunTransition       pauseRunTransition;               /**< \brief Specifies module run or pause mode */
     IfxQspi_TxFifoInt                txFifoThreshold;                  /**< \brief Specifies the TXFIFO interrupt threshold */
     IfxQspi_RxFifoInt                rxFifoThreshold;                  /**< \brief Specifies the RXFIFO interrupt threshold */
-    IFX_CONST IfxQspi_SpiSlave_Pins *pins;                             /**< \brief structure for QSPI Slave pins */
-    IfxQspi_SpiSlave_Protocol        protocol;
+    IFX_CONST IfxQspi_SpiSlave_Pins *pins;                             /**< \brief Config. structure for QSPI Slave pins (P Pins in LVDS mode when useLvds is TRUE) */
+    IFX_CONST IfxQspi_SpiSlave_Pins *pinsN;                            /**< \brief Config. structure for QSPI Slave N pins in LVDS mode  when useLvds is TRUE. This should be NULL when useLvds is FALSE. */
+    IfxQspi_SpiSlave_Protocol        protocol;                         /**< \brief structure for QSPI Slave protocol parameters */
     IfxQspi_SpiSlave_DmaConfig       dma;                              /**< \brief Dma configuration */
     IfxQspi_FifoMode                 txFifoMode;                       /**< \brief Specifies the transfer FIFO mode. */
     IfxQspi_FifoMode                 rxFifoMode;                       /**< \brief Specifies the receive FIFO mode */
+    boolean 						 phaseTransition1Enable;           /**< \brief Specifies the enable/disable state of PT1 interrupt */
+    IfxQspi_PhaseTransitionEvent     phaseTransition1Event;            /**< \brief Specifies the event for which PT1 interrupt is to be triggered */
+    boolean 						 phaseTransition2Enable;           /**< \brief Specifies the enable/disable state of PT1 interrupt */
+    IfxQspi_PhaseTransitionEvent     phaseTransition2Event;            /**< \brief Specifies the event for which PT2 interrupt is to be triggered */
+    boolean                          useLvds;                          /**< \brief enables the configuration and use of LVDS pins */
 } IfxQspi_SpiSlave_Config;
 
 /** \} */
@@ -430,20 +447,26 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the module
- * \param handle Module handle
- * \param config Predefined configuration structure of the module
- * \return None
+/**
+ * \brief Initializes the QSPI Slave module with the provided configuration.
+ *
+ * \param[inout] handle  Pointer to the QSPI Slave module handle.
+ * \param[in]    config  Pointer to the QSPI Slave configuration structure.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxLld_Qspi_SpiSlave_Usage
  *
  */
 IFX_EXTERN void IfxQspi_SpiSlave_initModule(IfxQspi_SpiSlave *handle, const IfxQspi_SpiSlave_Config *config);
 
-/** \brief Fills the config structure with default values
- * \param config Configuration structure which should be initialized.
- * \param qspi pointer to QSPI registers
- * \return None
+/**
+ * \brief Initializes the SPI Slave module configuration structure with default values.
+ *
+ * \param[inout] config Pointer to the QSPI Slave configuration structure.
+ * \param[in]    qspi   Pointer to the QSPI module registers.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxLld_Qspi_SpiSlave_Usage
  *
@@ -459,23 +482,29 @@ IFX_EXTERN void IfxQspi_SpiSlave_initModuleConfig(IfxQspi_SpiSlave_Config *confi
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Exchanges data between source and data
- * \param handle Module handle
- * \param src Source of data. Can be set to NULL_PTR if nothing to receive (transmit only)
- * \param dest Destination to which to be sent. Can be set to NULL_PTR if nothing to transmit (receive only) - in this case, all-1 will be sent.
- * \param count Number of data in pending
- * \return Status of exchange of data
+/**
+ * \brief Exchanges data between source and destination in SPI slave mode.
+ *
+ * \param[inout] handle Pointer to the QSPI Slave module handle.
+ * \param[in]    src    Pointer to the source data to be transmitted. Can be NULL if no data is to be transmitted (receive only).
+ * \param[out]   dest   Pointer to the destination where received data will be stored. Can be NULL if no data is to be received (transmit only).
+ * \param[in]    count  Number of data items to exchange. Should be a positive value.
+ *
+ * \retval IfxQspi_Status Success or error status from the exchange operation. Range: \ref IfxQspi_Status.
  *
  * Usage example: see \ref IfxLld_Qspi_SpiSlave_Usage
  *
  */
 IFX_EXTERN IfxQspi_Status IfxQspi_SpiSlave_exchange(IfxQspi_SpiSlave *handle, const void *src, void *dest, Ifx_SizeT count);
 
-/** \brief Gets the transmission status
- * \param handle Module handle
- * \return Transmission status
+/**
+ * \brief Gets the current transmission status of the SPI slave module.
  *
- * Usage example: see \ref IfxLld_Qspi_SpiSlave_Usage
+ * \param[in] handle Pointer to the QSPI Slave module handle.
+ *
+ * \retval IfxQspi_Status The current transmission status. Range: \ref IfxQspi_Status.
+ *
+ *  Usage example: see \ref IfxLld_Qspi_SpiSlave_Usage
  *
  */
 IFX_EXTERN IfxQspi_Status IfxQspi_SpiSlave_getStatus(IfxQspi_SpiSlave *handle);
@@ -489,33 +518,53 @@ IFX_EXTERN IfxQspi_Status IfxQspi_SpiSlave_getStatus(IfxQspi_SpiSlave *handle);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Dma receive interrupt handler
- * \param qspiHandle Module handle
- * \return None
+/**
+ * \brief Interrupt service routine handling DMA receive events for the QSPI slave module.
+ *
+ * \param[inout] qspiHandle Pointer to the QSPI Slave module handle.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxQspi_SpiSlave_isrDmaReceive(IfxQspi_SpiSlave *qspiHandle);
 
-/** \brief Transmit interrupt handler
- * \param qspiHandle Module handle
- * \return None
+/**
+ * \brief Interrupt service routine for handling DMA-based transmit operations in SPI slave mode.
+ *
+ * \param[in] qspiHandle Pointer to the QSPI Slave module handle.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_SpiSlave_isrDmaTransmit(IfxQspi_SpiSlave *qspiHandle);
 
-/** \brief Error Interrupt handler
- * \param handle Module handle
- * \return None
+/**
+ * \brief Handles error interrupts for the QSPI slave module.
+ *
+ * \param[inout] handle Pointer to the QSPI Slave module handle.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_SpiSlave_isrError(IfxQspi_SpiSlave *handle);
 
-/** \brief Receive Interrupt handler
- * \param handle Module handle
- * \return None
+/**
+ * \brief Handles the receive interrupt for the QSPI slave module.
+ *
+ * \param[inout] handle Pointer to the QSPI Slave module handle.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxQspi_SpiSlave_isrReceive(IfxQspi_SpiSlave *handle);
 
-/** \brief Transmit interrupt handler
- * \param handle Module handle
- * \return None
+/**
+ * \brief Handles the transmit interrupt for the QSPI slave module.
+ * 
+ * \param[in] handle Pointer to the QSPI Slave module handle.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxQspi_SpiSlave_isrTransmit(IfxQspi_SpiSlave *handle);
 
@@ -528,31 +577,54 @@ IFX_EXTERN void IfxQspi_SpiSlave_isrTransmit(IfxQspi_SpiSlave *handle);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reads data or status in RxFIFO
- * \param handle QSpi Slave handle
- * \return Data or Status in RxFIFO
+/**
+ * \brief Reads data or status from the Receive FIFO (RxFIFO) of the SPI Slave module.
+ *
+ * \param[in] handle Pointer to the QSPI Slave module handle.
+ *
+ * \retval uint32 The data or status value read from the RxFIFO. Range: 0 to 0xFFFF FFFF.
+ *
  */
 IFX_INLINE uint32 IfxQspi_SpiSlave_readReceiveFifo(IfxQspi_SpiSlave *handle);
 
-/** \brief Writes the data to TxFIFO
- * \param handle QSpi slave handle
- * \param data Data to be entered in Tx FIFO
- * \return None
+/**
+ * \brief Writes data to the transmit FIFO for SPI slave communication.
+ *
+ * \param[inout] handle Pointer to the QSPI Slave module handle.
+ * \param[in]    data   Data to be written to the Tx FIFO. Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxQspi_SpiSlave_writeTransmitFifo(IfxQspi_SpiSlave *handle, uint32 data);
 
-/** \brief Initialize the pins for the spi in slave mode
- * \param pins pointer to the pin configuration table
- * \return None
+/**
+ * \brief Initializes the pins for SPI slave mode operation based on the provided pin configuration.
+ *
+ * \param[in] pins Pointer to the pin configuration structure that contains pin assignments and their respective modes for SPI slave operation.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxQspi_SpiSlave_initPin(const IfxQspi_SpiSlave_Pins *pins);
 
-/** \brief Writes the data to TxFIFO
- * \param qspiSFR QSpi SFR handle
- * \param config pointer to the spi slave configuration table
- * \return None
+/**
+ * \brief Initializes the interrupt configuration for the QSPI slave module.
+ * 
+ * \param[inout] qspiSFR Pointer to the QSPI module registers.
+ * \param[in]    config  Pointer to the configuration structure containing interrupt priorities, buffer settings, and other module-specific parameters.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxQspi_SpiSlave_initInterrupt(Ifx_QSPI *qspiSFR, const IfxQspi_SpiSlave_Config *config);
+
+/** \brief Initialize the pins for the spi in slave mode
+ * \param[in] pins pointer to the pin configuration table
+ * \retval None
+ */
+IFX_EXTERN void IfxQspi_SpiSlave_initLvdsPin(const IfxQspi_SpiSlave_Pins *pins);
+
 /** \} */
 
 /******************************************************************************/

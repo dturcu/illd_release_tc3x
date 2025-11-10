@@ -2,7 +2,7 @@
  * \file IfxFce_Crc.c
  * \brief FCE CRC details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -111,19 +111,19 @@ uint32 IfxFce_Crc_calculateCrc(IfxFce_Crc_Crc *fce, const uint32 *crcData, uint1
     uint32            crcResultValue;
     uint32           *dataPtr = (uint32 *)crcData;
 
-    /*set the Legth*/
+    /* Set the Length */
     /* IfxFce_setChannelCrcLength: Replaced definition for the code optimization */
-    /*As per the UM, write the dafault value 0xFACECAFE to the register before writing requested value */
+    /* As per the UM, write the dafault value 0xFACECAFE to the register before writing requested value */
     fce->fce->IN[crcChannel].LENGTH.U = IFXFCE_CRC_DEFAULT_LENGTH;
     fce->fce->IN[crcChannel].LENGTH.U = crcDataLength;
 
-    /*set the expected CRC*/
+    /* Set the expected CRC */
     /* IfxFce_setExpectedCrc: Replaced definition for the code optimization */
-    /*As per the UM, write the dafault value 0xFACECAFE to the register before writing requested value */
+    /* As per the UM, write the dafault value 0xFACECAFE to the register before writing requested value */
     fce->fce->IN[crcChannel].CHECK.U = IFXFCE_CRC_DEFAULT_LENGTH;
     fce->fce->IN[crcChannel].CHECK.U = fce->expectedCrc;
 
-    /*Configure CRC register*/
+    /* Configure CRC register */
     /* IfxFce_setCrcstartValue: Replaced definition for the code optimization */
     fce->fce->IN[crcChannel].CRC.U = crcStartValue;
 
@@ -135,7 +135,7 @@ uint32 IfxFce_Crc_calculateCrc(IfxFce_Crc_Crc *fce, const uint32 *crcData, uint1
     }
     else
     {
-        /* input in INIT register */
+        /* Input in INIT register */
         for (inputDataCounter = 0; inputDataCounter < crcDataLength; ++inputDataCounter)
         {
             InputData->U = *(dataPtr++);
@@ -161,6 +161,7 @@ void IfxFce_Crc_clearErrorFlags(IfxFce_Crc_Crc *fce)
 
 void IfxFce_Crc_deInitModule(IfxFce_Crc_Crc *fce)
 {
+	/* Reset the FCE hardware module */
     IfxFce_resetModule(fce->fce);
 }
 
@@ -202,7 +203,8 @@ void IfxFce_Crc_initCrc(IfxFce_Crc_Crc *fceCrc, const IfxFce_Crc_CrcConfig *crcC
     fceCrc->crcChannel  = crcConfig->crcChannel;
     fceCrc->crcKernel   = crcConfig->crcKernel;
 
-    uint16         password = IfxScuWdt_getCpuWatchdogPassword();
+    uint16 password = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clear Cpu endinit protection to allow register modification */
     IfxScuWdt_clearCpuEndinit(password);
 
     Ifx_FCE_IN_CFG tempCFG;
@@ -220,10 +222,13 @@ void IfxFce_Crc_initCrc(IfxFce_Crc_Crc *fceCrc, const IfxFce_Crc_CrcConfig *crcC
     tempCFG.B.BYTESWAP                      = crcConfig->swapOrderOfBytes;
     tempCFG.B.KERNEL                        = crcConfig->crcKernel;
 
+    /* Write configuration to FCE channel configuration register */
     fceSFR->IN[crcConfig->crcChannel].CFG.U = tempCFG.U;
 
+    /* Set Cpu endinit protection after register modification */
     IfxScuWdt_setCpuEndinit(password);
 
+    /* Initialize DMA for CRC if enabled in configuration */
     if (crcConfig->useDma == TRUE)
     {
         IfxFce_Crc_initCrcWithDma(fceCrc, crcConfig);
@@ -242,7 +247,7 @@ void IfxFce_Crc_initCrcConfig(IfxFce_Crc_CrcConfig *crcConfig, IfxFce_Crc *fce)
     crcConfig->crc32BitReflectionEnabled     = TRUE;
     crcConfig->swapOrderOfBytes              = FALSE;
     crcConfig->crcResultInverted             = TRUE;
-    crcConfig->enabledInterrupts.crcMismatch = FALSE; // enable if CRC is already known
+    crcConfig->enabledInterrupts.crcMismatch = FALSE; /* Enable if CRC is already known */
     crcConfig->enabledInterrupts.configError = TRUE;
     crcConfig->enabledInterrupts.lengthError = TRUE;
     crcConfig->enabledInterrupts.busError    = TRUE;
@@ -256,11 +261,14 @@ void IfxFce_Crc_initModule(IfxFce_Crc *fce, const IfxFce_Crc_Config *config)
     fce->fce = config->fce;
     Ifx_FCE *fceSFR = config->fce;
 
+    /* Enable the FCE hardware module */
     IfxFce_enableModule(fceSFR);
 
     /* IfxFce_getSrcPointer: Replaced definition for the code optimization */
     volatile Ifx_SRC_SRCR *src = &SRC_FCE0;
+    /* Initialize interrupt source with configured type of service and priority */
     IfxSrc_init(src, config->isrTypeOfService, config->isrPriority);
+    /* Enable the interrupt source */
     IfxSrc_enable(src);
 }
 

@@ -3,7 +3,7 @@
  * \brief CCU6 TPWM details
  * \ingroup IfxLld_Ccu6
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -244,7 +244,7 @@ typedef struct
 {
     IfxCcu6_InterruptSource source;               /**< \brief Interrupt source selection */
     IfxCcu6_ServiceRequest  serviceRequest;       /**< \brief Selection of service request outputs */
-    uint16                  priority;             /**< \brief Interrupt priority */
+    uint16                  priority;             /**< \brief Interrupt priority. Range: 0 to 0xFF */
     IfxSrc_Tos              typeOfService;        /**< \brief type of interrupt service */
 } IfxCcu6_TPwm_InterruptConfig;
 
@@ -274,9 +274,9 @@ typedef struct
     IfxCcu6_T12Channel      channelId;           /**< \brief Capture compare channel of the Timer12 */
     IfxCcu6_T12ChannelMode  channelMode;         /**< \brief The operating mode for the T12 channel */
     IfxCcu6_T12CountMode    countMode;           /**< \brief Operating mode of Timer 12 */
-    uint16                  counterValue;        /**< \brief 16-bit counter value of Timer12 */
-    uint8                   deadTimeValue;       /**< \brief Value of the dead time to be induced */
-    uint16                  compareValue;        /**< \brief 16-bit comapre value of Timer12 */
+    uint16                  counterValue;        /**< \brief 16-bit counter value of Timer12. Range: 0 to 0xFFFF */
+    uint8                   deadTimeValue;       /**< \brief Value of the dead time to be induced. Range: 0 to 0xFF */
+    uint16                  compareValue;        /**< \brief 16-bit comapre value of Timer12. Range: 0 to 0xFFFF */
 } IfxCcu6_TPwm_Timer12;
 
 /** \brief Structure for Timer 13
@@ -284,8 +284,8 @@ typedef struct
 typedef struct
 {
     IfxCcu6_TimerInputClock     clockInput;             /**< \brief Input clock selection (prescaler) */
-    uint16                      counterValue;           /**< \brief 16-bit counter value of Timer13 */
-    uint16                      compareValue;           /**< \brief 16-bit comapre value of Timer12 */
+    uint16                      counterValue;           /**< \brief 16-bit counter value of Timer13. Range: 0 to 0xFFFF */
+    uint16                      compareValue;           /**< \brief 16-bit comapre value of Timer12. Range: 0 to 0xFFFF */
     IfxCcu6_T13TriggerEvent     t12SyncEvent;           /**< \brief T12 sync trigger event to start T13 */
     IfxCcu6_T13TriggerDirection t12SyncDirection;       /**< \brief Additional information to control trigger event selection */
 } IfxCcu6_TPwm_Timer13;
@@ -297,7 +297,7 @@ typedef struct
     IfxCcu6_T12hr_In           *t12ExtInputTrigger;         /**< \brief External trigger input signal selection to start the timer 12 */
     IfxCcu6_T13hr_In           *t13ExtInputTrigger;         /**< \brief External trigger input signal selection to start the timer 13 */
     IfxCcu6_ExternalTriggerMode extInputTriggerMode;        /**< \brief Event of signal T1xHR that can set the run bit T1xR by HW */
-    boolean                     t13InSyncWithT12;           /**< \brief Selection of Timer 13 start in sync with T12 */
+    boolean                     t13InSyncWithT12;           /**< \brief Selection of Timer 13 start in sync with T12. Range: TRUE Timer 13 start in sync with T12, FALSE Timer 13 stop in sync with T12 */
     boolean                     outputTriggerEnabled;       /**< \brief Output trigger connection to VADC enable / disable choice */
     IfxCcu6_TrigOut             outputLine;                 /**< \brief Trigger out selection */
     IfxCcu6_TrigSel             outputTrigger;              /**< \brief Output Trigger selection */

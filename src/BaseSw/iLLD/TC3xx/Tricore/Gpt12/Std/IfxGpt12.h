@@ -3,7 +3,7 @@
  * \brief GPT12  basic functionality
  * \ingroup IfxLld_Gpt12
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -83,7 +83,8 @@ typedef enum
     IfxGpt12_CaptureInput_D = 3   /**< \brief signal CAPIND selected */
 } IfxGpt12_CaptureInput;
 
-/** \brief Tx Input Edge Selection (Capture Mode, x=2,4)
+/** \brief Tx Input Edge Selection (Capture Mode) \n
+ * Definition in IfxGPT12.TxCON.B.T4I and gpt12.TxCON.B.T2I (x = 2,4)
  */
 typedef enum
 {
@@ -220,7 +221,8 @@ typedef enum
     IfxGpt12_SleepMode_disable = 1  /**< \brief disables sleep mode */
 } IfxGpt12_SleepMode;
 
-/** \brief OCDS Suspend Control (OCDS.SUS)
+/** \brief OCDS Suspend Control
+ * Definition in IfxGPT12.OCS.B.SUS
  */
 typedef enum
 {
@@ -557,7 +559,7 @@ IFX_INLINE void IfxGpt12_T3_setIncrementalInterfaceInputMode(Ifx_GPT12 *gpt12, I
  * \param[inout] gpt12 Pointer to the GPT12 module base address.
  * \param[in]    input Select the Input signal. Range: \ref IfxGpt12_Input.
  *
- * \return None
+ * \retval None
  *
  */
 IFX_INLINE void IfxGpt12_T3_setInput(Ifx_GPT12 *gpt12, IfxGpt12_Input input);
@@ -696,7 +698,7 @@ IFX_INLINE void IfxGpt12_T4_setInterruptEnable(Ifx_GPT12 *gpt12, boolean enabled
  * \param[inout] gpt12 Pointer to the GPT12 module base address.
  * \param[in]    mode  Select the mode of operation. Range: \ref IfxGpt12_Mode.
  *
- * \return None
+ * \retval None
  *
  */
 IFX_INLINE void IfxGpt12_T4_setMode(Ifx_GPT12 *gpt12, IfxGpt12_Mode mode);
@@ -938,7 +940,7 @@ IFX_INLINE void IfxGpt12_T6_setInput(Ifx_GPT12 *gpt12, IfxGpt12_Input input);
  * \param[inout] gpt12 Pointer to the GPT12 module base address.
  * \param[in]    mode  Select the mode of operation. Range: \ref IfxGpt12_Mode.
  *
- * \return None
+ * \retval None
  *
  */
 IFX_INLINE void IfxGpt12_T6_setMode(Ifx_GPT12 *gpt12, IfxGpt12_Mode mode);
@@ -1145,7 +1147,7 @@ IFX_INLINE uint16 IfxGpt12_T3_getTimerValue(Ifx_GPT12 *gpt12);
  *
  * \param[in] gpt12 Pointer to the GPT12 module base address.
  *
- * \return TRUE If the Overflow Toggle Latch is set, FALSE otherwise.
+ * \retval TRUE If the Overflow Toggle Latch is set, FALSE otherwise.
  *
  */
 IFX_INLINE boolean IfxGpt12_T3_getOverflowToggleLatch(Ifx_GPT12 *gpt12);
@@ -1165,7 +1167,7 @@ IFX_INLINE IfxGpt12_Mode IfxGpt12_T4_getMode(Ifx_GPT12 *gpt12);
  *
  * \param[in] gpt12 Pointer to the Ifx_GPT12 module base address.
  *
- * \return uint16 The current value of the T4 timer as a 16-bit unsigned integer. Range: 0 to 0xFFFF.
+ * \retval uint16 The current value of the T4 timer as a 16-bit unsigned integer. Range: 0 to 0xFFFF.
  *
  */
 IFX_INLINE uint16 IfxGpt12_T4_getTimerValue(Ifx_GPT12 *gpt12);

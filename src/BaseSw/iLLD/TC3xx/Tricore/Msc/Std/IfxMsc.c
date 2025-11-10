@@ -2,7 +2,7 @@
  * \file IfxMsc.c
  * \brief MSC  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -69,14 +69,16 @@ void IfxMsc_clearDataFrameInterruptFlag(Ifx_MSC *msc)
 void IfxMsc_clearReset(Ifx_MSC *msc)
 {
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
-
+    /* Clear endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
 
     if (msc->KRST0.B.RSTSTAT == 1)
     {
-        msc->KRSTCLR.B.CLR = 1; /* Clear Kernel reset status bit */
+    	/* Clear Kernel reset status bit */
+        msc->KRSTCLR.B.CLR = 1;
     }
 
+    /* Set the endinit protection again */
     IfxScuWdt_setCpuEndinit(passwd);
 }
 
@@ -84,9 +86,13 @@ void IfxMsc_clearReset(Ifx_MSC *msc)
 void IfxMsc_disableModule(Ifx_MSC *msc)
 {
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clear endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    /* Disable module  */
+
+    /* Disable module */
     msc->CLC.B.DISR = 1;
+
+    /* Set the endinit protection again */
     IfxScuWdt_setCpuEndinit(passwd);
 }
 
@@ -202,20 +208,22 @@ void IfxMsc_manualLoadCxModeCommand(Ifx_MSC *msc, IfxMsc_CxModeCommand *command6
 void IfxMsc_resetModule(Ifx_MSC *msc)
 {
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
-
+    /* Clear endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
 
     /* Reset kernel */
     msc->KRST1.B.RST = 1;
     msc->KRST0.B.RST = 1;               /* Only if both Kernel reset bits are set a reset is executed */
 
-    while (msc->KRST0.B.RSTSTAT == 0)   /* Wait until reset is executed */
+    /* Wait until reset is executed */
+    while (msc->KRST0.B.RSTSTAT == 0)
 
     {}
 
     /* TODO Check if CLC enable is required */
     //msc->KRSTCLR.B.CLR = 1; /* Clear Kernel reset status bit */
 
+    /* Set the endinit protection again */
     IfxScuWdt_setCpuEndinit(passwd);
 }
 
@@ -286,14 +294,14 @@ float32 IfxMsc_getDownstreamAbraDisabledBaudrate(Ifx_MSC *msc)
     float32 f_spb    = IfxScuCcu_getSpbFrequency();
     uint16  step     = (uint16)(msc->FDR.B.STEP);
 
-    /* normal divider mode( DM = 1) */
+    /* Normal divider mode( DM = 1) */
     if (msc->FDR.B.DM == 1)
     {
         baudrate = (f_spb / 2) * (1 / (1024 - step));
     }
     else
     {
-        /*fractional divider mode*/
+        /* Fractional divider mode */
         baudrate = (f_spb / 2) * (step / 1024);
     }
 
@@ -307,12 +315,12 @@ float32 IfxMsc_getDownstreamBaudrate(Ifx_MSC *msc)
 
     if (msc->ABC.B.ABB == 1)
     {
-        /* ABRA enabled*/
+        /* ABRA enabled */
         downstreamBaudrate = IfxMsc_getDownstreamAbraBaudrate(msc);
     }
     else
     {
-        /* ABRA disabled*/
+        /* ABRA disabled */
         downstreamBaudrate = IfxMsc_getDownstreamAbraDisabledBaudrate(msc);
     }
 

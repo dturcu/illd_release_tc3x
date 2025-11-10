@@ -3,7 +3,7 @@
  * \brief PMS  basic functionality
  * \ingroup IfxLld_Pms
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -39,6 +39,43 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *
+ * \defgroup IfxLld_Pms_Std_Evr How to use the PMS EVR driver?
+ * \ingroup IfxLld_Pms_Std
+ *
+ * The PMS EVR driver provides APIs to monitor, configure, and control the on-chip voltage regulators and supply domains.
+ * It enables detection and handling of over-voltage and under-voltage conditions, adjustment of regulator output levels, and configuration of supply monitoring and trimming.
+ * The driver supports initialization sequences, interrupt configuration, and voltage measurement for safe and reliable power management.
+ *
+ * In the following sections it will be described, how to integrate the driver into the application framework.
+ *
+ * \section IfxLld_Pms_Std_Evr_Preparation Preparation
+ * \subsection IfxLld_Pms_Std_Include      Include Files
+ *
+ * Include following header file into your C code:
+ * \code
+ * #include <Pms/Std/IfxPmsEvr.h>
+ * \endcode
+ *
+ * \subsection IfxLld_Pms_Std_Evr_Variables Variables
+ *
+ * \code
+ * // used globally
+ * Ifx_PMS modulePms;  //PMS Module instance
+ * \encode
+ *
+ * \subsection IfxLld_Pms_Std_Evr_PmsSecondaryVoltageConfig Pms Secondary voltage configuration
+ *
+ * \code
+ * IfxPmsEvr_SupplyMode supply = IfxPmsEvr_SupplyMode_evrc;
+ *
+ * IfxPmsEvr_filterSecondaryConversionResult(&modulePms, IfxPmsEvr_SupplyFilter_avgAdcConversionResult0, supply);
+ *
+ * IfxPmsEvr_setSecondaryOverVoltageThresholdMv(&modulePms, overVoltageThreshold, supply);
+ *
+ * IfxPmsEvr_setSecondaryUnderVoltageThresholdMv(&modulePms, underVoltageThreshold, supply);
+ *
+ * IfxPmsEvr_getSecondaryAdcResult(&modulePms, supply);
+ * \encode
  *
  * \defgroup IfxLld_Pms_Std_Evr EVR
  * \ingroup IfxLld_Pms_Std
@@ -91,7 +128,7 @@
 
 /** \addtogroup IfxLld_Pms_Std_Evr_Enum
  * \{ */
-/** \brief Configure respective interrupts define in register Ifx_PMS.PMSIEN
+/** \brief Configure respective interrupts defined in register Ifx_PMS.PMSIEN
  */
 typedef enum
 {
@@ -229,7 +266,7 @@ typedef enum
     IfxPmsEvr_PrimaryAdcTrimValue_63          /**< \brief Primary Adc Trim Value 63  */
 } IfxPmsEvr_PrimaryAdcTrimValue;
 
-/** \brief This Declare the Under and overvoltage counter defined in Ifx_PMS.EVR.MONFILT.B.ERRCNTLIMT
+/** \brief This Declare the Under and over voltage counter defined in Ifx_PMS.EVR.MONFILT.B.ERRCNTLIMT
  */
 typedef enum
 {
@@ -299,7 +336,7 @@ typedef enum
     IfxPmsEvr_SecondaryVoltageErrorCounter_level63          /**< \brief Error Counter Limit 63  */
 } IfxPmsEvr_SecondaryVoltageErrorCounter;
 
-/** \brief ADC result for the generating Alarm declare in Ifx_PMS.EVR.MONFILT
+/** \brief ADC result for the generating Alarm declared in Ifx_PMS.EVR.MONFILT
  */
 typedef enum
 {
@@ -350,30 +387,38 @@ typedef enum
 /*-----------------------------Data Structures--------------------------------*/
 /******************************************************************************/
 
+/** \brief Step down regulator register configuration.
+ */
 typedef struct
 {
     volatile void *regAddr;       /**< \brief Register Address to be updated. */
-    uint32         value;         /**< \brief Register value to be updated. */
-    uint32         mask;          /**< \brief Mask to select the bit fields to be updated. */
+    uint32         value;         /**< \brief Register value to be updated. Range: 0 to 0xFFFFFFFF */
+    uint32         mask;          /**< \brief Mask to select the bit fields to be updated. Range: 0 to 0xFFFFFFFF */
 } IfxPmsEvr_StepDownRegulatorRegConfig;
 
+/** \brief Initialization sequence phase configuration.
+ */
 typedef struct
 {
-    uint8                                           numOfRegisters;
-    IFX_CONST IfxPmsEvr_StepDownRegulatorRegConfig *regConfig;
-    float32                                         waitInSecs;
+    uint8                                           numOfRegisters;    /**< \brief Number of registers to process in this phase. Range: 0 to 0xFF */
+    IFX_CONST IfxPmsEvr_StepDownRegulatorRegConfig *regConfig;		   /**< \brief Pointer to an array of register configurations for this phase. */
+    float32                                         waitInSecs;		   /**< \brief Waiting time in seconds for this phase to complete. */
 } IfxPmsEvr_initSequencePhase;
 
+/** \brief Register validation configuration.
+ */
 typedef struct
 {
-    uint8                                           numOfRegisters;
-    IFX_CONST IfxPmsEvr_StepDownRegulatorRegConfig *regConfig;
+    uint8                                           numOfRegisters;    /**< \brief Number of registers to be validated. Range: 0 to 0xFF */
+    IFX_CONST IfxPmsEvr_StepDownRegulatorRegConfig *regConfig;		   /**< \brief Pointer to an step down regulator register configuration for validation. */
 } IfxPmsEvr_checkRegConfig;
 
+/** \brief Initialization sequence configuration.
+ */
 typedef struct
 {
-    uint8                                  numOfPhases;
-    IFX_CONST IfxPmsEvr_initSequencePhase *phaseConfig;
+    uint8                                  numOfPhases;				 	/**< \brief Number of initialization phases in the sequence. Range: 0 to 0xFF */
+    IFX_CONST IfxPmsEvr_initSequencePhase *phaseConfig;					/**< \brief Pointer to an array of phase configurations for the initialization sequence. */
 } IfxPmsEvr_initSequence;
 
 /** \addtogroup IfxLld_Pms_Std_Evr_Over-Voltage
@@ -383,11 +428,16 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief set Over Voltage Monitoring Mode
- * \param pms pointer to the Module space
- * \param mode specifies the monitoring mode
- * \param supply select EVRC,EVR33,VDDM,SWD or SB supply
- * \return None
+/**
+ * \brief Sets the over-voltage monitoring mode for a specified supply.
+ *
+ * \param[inout] pms    Pointer to the base address of PMS registers.
+ * \param[in]    mode   Specifies the over-voltage monitoring mode.
+ * 					    Range: \ref IfxPmsEvr_OverVoltageMonitoring
+ * \param[in]    supply Specifies the supply mode to configure.
+ * 					    Range: \ref IfxPmsEvr_SupplyMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setOverVoltageMonitoringMode(Ifx_PMS *pms, IfxPmsEvr_OverVoltageMonitoring mode, IfxPmsEvr_SupplyMode supply);
 
@@ -395,12 +445,15 @@ IFX_INLINE void IfxPmsEvr_setOverVoltageMonitoringMode(Ifx_PMS *pms, IfxPmsEvr_O
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief set Secondary Over Voltage Threshold level
- * \param pms Pointer to PMS Module
- * \param thresholdLevel over-voltage monitoring threshold level of the respective
- * regulator output or supply
- * \param supply select EVRC,EVR33,SWD,EVRPR,VDDM or SB supply mode
- * \return None
+/**
+ * \brief Sets the secondary over-voltage threshold level for a specified supply mode.
+ *
+ * \param[inout] pms            Pointer to the base address of PMS registers.
+ * \param[in]    thresholdLevel Over-voltage monitoring threshold level of the respective regulator output or supply, in millivolts.
+ * \param[in]    supply         Specifies the supply mode to configure.
+ * 							    Range: \ref IfxPmsEvr_SupplyMode
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsEvr_setSecondaryOverVoltageThresholdMv(Ifx_PMS *pms, float32 thresholdLevel, IfxPmsEvr_SupplyMode supply);
 
@@ -413,115 +466,196 @@ IFX_EXTERN void IfxPmsEvr_setSecondaryOverVoltageThresholdMv(Ifx_PMS *pms, float
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Configure a Blanking Filter Delay
- * \param pms Pointer To PMS Module
- * \param delay Blanking Filter Delay in ms
- * \return None
+/**
+ * \brief Configures the blanking filter delay for the PMS EVR module.
+ *
+ * \param[inout] pms   Pointer to the base address of PMS registers.
+ * \param[in]    delay Blanking filter delay value in milliseconds.
+ *                     Range: 0 to 0xD
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_configureBlankingFilterDelay(Ifx_PMS *pms, uint8 delay);
 
-/** \brief This function enables the synchronisation output to synchronize the external
- * SMPS regulator with respect to the internal EVRC regulator
- * \param pms Pointer to PMS Module
- * \param enabled enable/disable DC-DC synchronisation
- * \return None
+/**
+ * \brief Enables the synchronization output to synchronize the external SMPS regulator with the internal EVRC regulator.
+ *
+ * \param[inout] pms     Pointer to the base address of PMS registers.
+ * \param[in]    enabled Boolean flag to enable or disable DC-DC synchronization.
+ * 					     Range: TRUE  DC-DC Synchronisation signal available.
+ * 					  	        FALSE DC-DC Synchronisation signal not available.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_enableDcdcSynchronisation(Ifx_PMS *pms, boolean enabled);
 
-/** \brief Enable Interrupts
- * \param pms Pointer to PMS Module
- * \param interruptType Select The Interrupt Type
- * \return None
+/**
+ * \brief Enables specified interrupts for the PMS module.
+ *
+ * \param[inout] pms           Pointer to the base address of PMS registers.
+ * \param[in]    interruptType The type of interrupt to be enabled.
+ * 							   Range: \ref IfxPmsEvr_EnableInterrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_enableInterrupts(Ifx_PMS *pms, IfxPmsEvr_EnableInterrupt interruptType);
 
-/** \brief enables wakeup on VEXT supply ramp-up after blanking filter
- * time has expired
- * \param pms Pointer To PMS Module
- * \param enabled Wake-up Enable on VEXT Supply ramp-up
- * \return None
+/**
+ * \brief Enables or disables the wakeup functionality on VEXT supply ramp-up after the blanking filter time has expired.
+ *
+ * \param[inout] pms     Pointer to the base address of PMS registers.
+ * \param[in]    enabled Boolean flag to enable or disable the wakeup on VEXT supply ramp-up.
+ * 					     Range: TRUE  Wake-up on VEXT supply ramp-down disabled. Blanking filter configuration has no effect.
+ *						        FALSE Standby Wake-up on VEXT supply ramp-up is enabled after blanking filter expiry.
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_enableWakeupOnVextSupplyRampUp(Ifx_PMS *pms, boolean enabled);
 
-/** \brief OSC Fine Trim 100MHz Clock
- * \param pms pointer to PMS Module
- * \param trimValue OSC fine trim value
- * \return None
+/**
+ * \brief Fine trims the EVR clock frequency to 100MHz using the provided trim value.
+ *
+ * \param[inout] pms       Pointer to the base address of PMS registers.
+ * \param[in]    trimValue The fine trim value to be applied to the EVR clock oscillator.
+ *                         Range: Supported bits combination.
+ *                         		  0x0  0    MHz
+ *                         		  0x1F 3.65 MHz
+ *                         		  0x3F 7.3  MHz
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_fineTrimEvrClock(Ifx_PMS *pms, uint8 trimValue);
 
-/** \brief set frequency spread threshold
- * \param pms pointer to PMS module
- * \param thresholdLevel maximum frequency spreading value
- * \return None
+/**
+ * \brief Sets the maximum frequency spreading threshold for the PMS module.
+ *
+ * \param[inout] pms            Pointer to the base address of PMS registers.
+ * \param[in]    thresholdLevel Maximum frequency spreading value.
+ * 							    Range: 0x0 no frequency spreading activated
+ * 							           0x1 SDSWPRDNOM - (SDSWPRDNOM+2) switching period spread
+ * 							           0x2 (SDSWPRDNOM-2) - (SDSWPRDNOM+2) switching period spread
+ * 							           0x3 (SDSWPRDNOM-2) - (SDSWPRDNOM+4) switching period spread
+ * 							           0x4 (SDSWPRDNOM-4) - (SDSWPRDNOM+4) switching period spread
+ * 							           0x5 (SDSWPRDNOM-4) - (SDSWPRDNOM+6) switching period spread
+ * 							           0x6 (SDSWPRDNOM-6) - (SDSWPRDNOM+6) switching period spread
+ * 							           0x7 (SDSWPRDNOM-6) - (SDSWPRDNOM+8) switching period spread
+ * 							           0x8 (SDSWPRDNOM-8) - (SDSWPRDNOM+8) switching period spread
+ * 							           0x9 (SDSWPRDNOM-8) - (SDSWPRDNOM+10) switching period spread
+ * 							           0xA (SDSWPRDNOM-10) - (SDSWPRDNOM+10) switching period
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setFrequencySpreadThreshold(Ifx_PMS *pms, uint16 thresholdLevel);
 
-/** \brief This configures the state of N ch. MOSFET driver during start-up and
- * shut-down phases
- * \param pms Pointer to PMS Module
- * \param nmosLevel TRISTATE/LOW
- * \return None
+/**
+ * \brief Sets the NMOS level for the PMS EVR module.
+ *
+ * \param[inout] pms       Pointer to the base address of PMS registers.
+ * \param[in]    nmosLevel Boolean value indicating the NMOS level to be set.
+ *						   Range: TRUE  Set MOSFET in LOW state.
+ *						          FALSE Set MOSFET in TRISTATE.
+ * \retval None
  */
 #ifndef DEVICE_TC33X
 IFX_INLINE void IfxPmsEvr_setNmosLevel(Ifx_PMS *pms, boolean nmosLevel);
 
-/** \brief This configures the state of P ch. MOSFET driver during start-up and
- * shut-down phases
- * \param pms Pointer to PMS Module
- * \param pmosLevel TRISTATE/LOW
- * \return None
+/**
+ * \brief Configures the state of P channel MOSFET driver during power-up and power-down phases.
+ *
+ * \param[inout] pms       Pointer to the base address of PMS registers.
+ * \param[in]    pmosLevel The desired state of the P channel MOSFET driver.
+ *                         Range: TRUE  Set MOSFET in TRISTATE.
+ *                                FALSE Set MOSFET in LOW state.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setPmosLevel(Ifx_PMS *pms, boolean pmosLevel);
 
-/** \brief set regulator switching frequency in Hz....(100MHz/samplingFactor)
- * \param pms Pointer to PMS Module
- * \param samplingFactor Over-sampling Factor
- * \return None
+/**
+ * \brief Sets the regulator switching frequency in Hz (100MHz/samplingFactor).
+ *
+ * \param[inout] pms            Pointer to the base address of PMS registers.
+ * \param[in]    samplingFactor Over-sampling factor used to calculate the switching frequency.
+ *								Range: 0x37 - 1.82 MHz (100 MHz/(54+1)) SMPS switching frequency.
+ *									   0x7D - 0.8 MHz (100 MHz/(124+1)) SMPS switching frequency.
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setRegulatorSwitchingFrequency(Ifx_PMS *pms, uint16 samplingFactor);
 #endif
-/** \brief set reset trim value for EVRC,EVR33 and external VEXT supply
- * \param pms Pointer to PMS Module Space
- * \param resetTrimValue Reset Trim Value
- * \param supply select EVRC,EVR33 regulator or external VEXT supply watchdog
- * \return None
+
+/**
+ * \brief Sets the reset trim value for the specified supply mode.
+ * 
+ * \param[inout] pms 			Pointer to the base address of PMS registers.
+ * \param[in]    resetTrimValue The reset trim value to be set (in millivolts).
+ * \param[in]    supply 		The supply mode to configure.
+ * 								Range: \ref IfxPmsEvr_SupplyMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setResetTrimValueMv(Ifx_PMS *pms, float32 resetTrimValue, IfxPmsEvr_SupplyMode supply);
 
-/** \brief SD Regulator Voltage Target selection
- * \param pms Pointer to PMS Module
- * \param outputLevel The VDD output level of the Step down regulator
- * \return None
+/**
+ * \brief Sets the output voltage level of the step-down regulator.
+ *
+ * \param[inout] pms         Pointer to the base address of PMS registers.
+ * \param[in]    outputLevel The desired output voltage level of the step-down regulator.
+ *                           Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setSdRegulatorOutputLevel(Ifx_PMS *pms, uint8 outputLevel);
 
-/** \brief SD Regulator Voltage Trim Value
- * \param pms Pointer to PMS Moule Space
- * \param trimValue offset added to the VDD output level
- * \return None
+/**
+ * \brief Sets the primary ADC trim value for the SD regulator voltage.
+ * 
+ * \param[inout] pms       Pointer to the base address of PMS registers.
+ * \param[in]    trimValue The trim value to be applied.
+ * 						   Range: \ref IfxPmsEvr_PrimaryAdcTrimValue
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setSdRegulatorPrimaryAdcTrimValue(Ifx_PMS *pms, IfxPmsEvr_PrimaryAdcTrimValue trimValue);
 
-/** \brief set DLMU RAM Block in Standby Mode
- * \param pms Pointer To PMS Module
- * \param ramBlock DLMU RAM block
- * \return None
+/**
+ * \brief Configures the specified DLMU RAM block to enter Standby Mode.
+ *
+ * \param[inout] pms      Pointer to the base address of PMS registers.
+ * \param[in]    ramBlock DLMU RAM block to be set in Standby Mode.
+ * 						  Range: Supported bits combination.
+ * 						  		 0x0 Standby RAM is not supplied.
+ * 						  		 0x1 Standby RAM (CPU0 dLMU RAM Lower Half) is supplied.
+ * 						 		 0x2 Standby RAM (CPU0 dLMU RAM) is supplied.
+ * 						  		 0x4 Reserved.
+ * 						         0x7 Reserved.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setStandbyRamSupply(Ifx_PMS *pms, uint8 ramBlock);
 
-/** \brief Set Switching frequency division factor for external synchronisation.
- * \param pms Pointer To PMS Module
- * \param divider Switching frequency division factor for external synchronisation
- * \return None
+/**
+ * \brief Sets the switching frequency division factor for external synchronization.
+ *
+ * \param[inout] pms     Pointer to the base address of PMS registers.
+ * \param[in]    divider Division factor for the switching frequency.
+ * 						 Range: \ref IfxPmsEvr_ExtSyncSwitchingFreqDivFactor
+ *
+ * \retval None
  */
 #ifndef DEVICE_TC33X
 IFX_INLINE void IfxPmsEvr_setSwitchingFreqDivFactorForExternalsync(Ifx_PMS *pms, IfxPmsEvr_ExtSyncSwitchingFreqDivFactor divider);
 #endif
-/** \brief OSC Fine Trim 100MHz Clock
- * \param pms Pointer to PMS Module
- * \param trimValue OSC Signed fine trim value
- * \return None
+
+/**
+ * \brief Adjusts the fine trim value of the EVR clock oscillator.
+ *
+ * \param[inout] pms  Pointer to the base address of PMS registers.
+ * \param[in]    trim Signed fine trim value for the EVR clock oscillator.
+ *             		  Range: Supported bits combination.
+ *                           0x0 -  0    MHz
+ *                           0x1F - 3.65 MHz
+ *                           0x3F - 7.3  MHz
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_signedFineTrimEvrClock(Ifx_PMS *pms, sint8 trimValue);
 
@@ -529,19 +663,28 @@ IFX_INLINE void IfxPmsEvr_signedFineTrimEvrClock(Ifx_PMS *pms, sint8 trimValue);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief filter the  each conversion result or avarage of consecutive adc result to compare with threshold
- * \param pms Pointer to PMS Module
- * \param adcFilterValue specify average of consecutive ADC results
- * \param supply select EVRC,EVR33,SWD,EVRPR,VDDM or SB supply mode
- * \return None
+/**
+ * \brief Filters each conversion result or calculates the average of consecutive ADC results for comparison with a threshold.
+ *
+ * \param[inout] pms            Pointer to the base address of PMS registers.
+ * \param[in]    adcFilterValue Specifies whether to use individual conversion results or an average of consecutive results.
+ * 								Range: \ref IfxPmsEvr_SupplyFilter
+ * \param[in]    supply         Selects the supply mode to be used for filtering.
+ * 								Range: \ref IfxPmsEvr_SupplyMode
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsEvr_filterSecondaryConversionResult(Ifx_PMS *pms, IfxPmsEvr_SupplyFilter adcFilterValue, IfxPmsEvr_SupplyMode supply);
 
-/** \brief get secondray ADC result for respective Voltage supply
- * \param pms Pointer To PMS Module
- * \param supply select EVRC,EVR33,SWD,EVRPR,VDDM or SB supply mode
- * \return last conversion result of the ADC measurement
- * of respective voltage by secondary monitor
+/**
+ * \brief Get secondray ADC result for respective Voltage supply.
+ *
+ * \param[in] pms    Pointer to the base address of PMS registers.
+ * \param[in] supply Selects the supply mode to be configured for getting secondary Adc result.
+ * 					 Range: \ref IfxPmsEvr_SupplyMode
+ *
+ * \return uint8 last conversion result of the ADC measurement of respective voltage by secondary monitor
+ * 				 Range: 0 to 0xFF
  */
 IFX_EXTERN uint8 IfxPmsEvr_getSecondaryAdcResult(Ifx_PMS *pms, IfxPmsEvr_SupplyMode supply);
 
@@ -554,11 +697,16 @@ IFX_EXTERN uint8 IfxPmsEvr_getSecondaryAdcResult(Ifx_PMS *pms, IfxPmsEvr_SupplyM
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief set Under Voltage Monitoring mode
- * \param pms Pointer to the PMS Module space
- * \param mode specifies the monitoring mode
- * \param supply select EVRC,EVR33,VDDM,SWD or SB supply
- * \return None
+/**
+ * \brief Sets the under-voltage monitoring mode for a specified supply.
+ *
+ * \param[inout] pms    Pointer to the base address of PMS registers.
+ * \param[in]    mode   Mode to be configured
+ * 						Range: \ref IfxPmsEvr_UnderVoltageMonitoring
+ * \param[in]    supply Specifies the supply type to configure to set under-voltage monitoring mode.
+ * 						Range: \ref IfxPmsEvr_SupplyMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setUnderVoltageMonitoringMode(Ifx_PMS *pms, IfxPmsEvr_UnderVoltageMonitoring mode, IfxPmsEvr_SupplyMode supply);
 
@@ -566,12 +714,16 @@ IFX_INLINE void IfxPmsEvr_setUnderVoltageMonitoringMode(Ifx_PMS *pms, IfxPmsEvr_
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief set Secondary under Voltage Threshold level
- * \param pms Pointer to PMS Module space
- * \param thresholdLevel under-voltage monitoring threshold level of the respective
- * regulator output or supply
- * \param supply select EVRC,EVR33,SWD,EVRPR,VDDM or SB supply mode
- * \return None
+/**
+ * \brief Sets the secondary under-voltage threshold level for a specified supply mode.
+ *
+ * \param[inout] pms            Pointer to the base address of PMS registers.
+ * \param[in]    thresholdLevel Under-voltage threshold level in millivolts (mV).
+ *                              Range: \ref IfxPmsEvr_SupplyMode
+ * \param[in]    supply         Supply mode selector
+ * 							    Range: \ref IfxPmsEvr_SupplyMode
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPmsEvr_setSecondaryUnderVoltageThresholdMv(Ifx_PMS *pms, float32 thresholdLevel, IfxPmsEvr_SupplyMode supply);
 
@@ -584,35 +736,57 @@ IFX_EXTERN void IfxPmsEvr_setSecondaryUnderVoltageThresholdMv(Ifx_PMS *pms, floa
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enabled/Disable Reset Trigger signal for EVRC
- * \param pms pointer to PMS Module
- * \param enableReset Enable/Disable the reset trigger signal
- * \return None
+/**
+ * \brief Configures the Reset Trigger signal for the EVRC.
+ *
+ * \param[inout] pms         Pointer to the base address of PMS registers.
+ * \param[in]    enableReset Boolean flag to enable or disable the reset trigger signal.
+ *                           Range: TRUE  No reset trigger signal is generated and forwarded to the SCU,
+ *                           			  by primary monitor depending on the selected reset trim value.
+ *                        		    FALSE A reset trigger signal is generated and forwarded to the SCU,
+ *                        		    	  by primary monitor depending on the selected reset trim value.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_evrcResetTriggerSignalConfig(Ifx_PMS *pms, boolean enableReset);
 
 /**
- * \param averageADCC Average value of PMS_EVRADCSTAT.ADCCV.
- * \return ADC VDD Core Voltage Conversion Result
+ * \brief Converts the average ADCC value to the ADC VDD core voltage.
+ *
+ * \param[in] averageADCC The average value of PMS_EVRADCSTAT.ADCCV.
+ *
+ * \retval float32 The computed ADC VDD core voltage.
  */
 IFX_INLINE float32 IfxPmsEvr_getAdcVddResult(float32 averageADCC);
 
-/** \brief get current operating mode of EVRC
- * \param pms Pointer to PMS Module Space
- * \return EVRC Mode
+/**
+ * \brief Gets the current operating mode of the EVRC.
+ *
+ * \param[in] pms Pointer to the base address of PMS registers.
+ *
+ * \retval IfxPmsEvr_EvrcMode The current mode of the EVRC.
+ *             				  Range: \ref IfxPmsEvr_EvrcMode
  */
 IFX_INLINE IfxPmsEvr_EvrcMode IfxPmsEvr_getEvrcMode(Ifx_PMS *pms);
 
-/** \brief get EVRC Regulator Voltage status
- * \param pms Pointer to PMS Module Space
- * \return EVRC Regulator Voltage OK status
+/**
+ * \brief Gets the EVRC Regulator Voltage status
+ *
+ * \param[in] pms Pointer to the base address of PMS registers.
+ *
+ * \retval boolean Status of the Evr Regulator Volatge
+ * 				   TRUE  EVRC regulator setpoint voltage is reached and VDD voltage is ok.
+ * 				   FALSE EVRC regulator setpoint voltage has not been reached.
  */
 IFX_INLINE boolean IfxPmsEvr_getEvrcVoltageRegulator(Ifx_PMS *pms);
 
-/** \brief get ADC 1.25 V Core Voltage Conversion Result
- * \param pms Pointer to PMS Module space
- * \return last conversion result of the ADC measurement of
- * the VDD / EVRC supply by the Primary Monitor
+/**
+ * \brief Retrieves the last conversion result of the ADC measurement of the VDD/EVRC supply by the Primary Monitor.
+ *
+ * \param[in] pms Pointer to the base address of PMS registers.
+ *
+ * \retval uint8 The last conversion result of the ADC measurement.
+ * 				 Range: 0 to 0xFF
  */
 IFX_INLINE uint8 IfxPmsEvr_getPrimaryAdcEvrcResult(Ifx_PMS *pms);
 
@@ -625,31 +799,49 @@ IFX_INLINE uint8 IfxPmsEvr_getPrimaryAdcEvrcResult(Ifx_PMS *pms);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enabled/Disable Reset Trigger signal for EVR33
- * \param pms pointer to PMS Module
- * \param enableReset Enable/Disable the reset trigger signal
- * \return None
+/**
+ * \brief Configures the reset trigger signal for EVR33.
+ *
+ * \param[inout] pms         Pointer to the base address of PMS registers.
+ * \param[in]    enableReset Boolean flag to enable or disable the reset trigger signal.
+ * 							 Range: TRUE  A reset trigger signal is generated and forwarded to the SCU by primary monitor
+ * 							              depending on the selected reset trim value.
+ * 							        FALSE No reset trigger signal is generated and forwarded to the SCU by primary monitor
+ * 							              depending on the selected reset trim value.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_evr33ResetTriggerSignalConfig(Ifx_PMS *pms, boolean enableReset);
 
-/** \brief get ADC 3.3 V Voltage Conversion Result
- * \param pms Pointer to PMS Module Space
- * \return last conversion result of the ADC measurement of
- * the VDDP3 / EVR33 supply by the Primary Monitor
+/**
+ * \brief Retrieves the last conversion result of the ADC measurement of the VDDP3 / EVR33 supply by the Primary Monitor.
+ *
+ * \param[in] pms Pointer to the base address of PMS registers.
+ *
+ * \retval uint8 The last conversion result of the ADC measurement the VDDP3 / EVR33 supply by the Primary Monitor.
+ * 				 Range: 0 to 0xFF
  */
 IFX_INLINE uint8 IfxPmsEvr_getPrimaryAdcEvr33Result(Ifx_PMS *pms);
 
-/** \brief set 3.3 V Regulator Voltage Primary ADC Trim Value
- * \param pms Pointer to PMS Module
- * \param trimValue Trimming value offeset added to Output level
- * \return None
+/**
+ * \brief Sets the 3.3 V Regulator Voltage Primary ADC Trim Value.
+ *
+ * \param[inout] pms       Pointer to the base address of PMS registers.
+ * \param[in]    trimValue The trim value to be set. The value is an offset added to the output level.
+ *                         Range: \ref IfxPmsEvr_PrimaryAdcTrimValue
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setEvr33PrimaryAdcTrimValue(Ifx_PMS *pms, IfxPmsEvr_PrimaryAdcTrimValue trimValue);
 
-/** \brief The VDDP3 output level of the EVR33 LDO regulator
- * \param pms Pointer to PMS Module
- * \param outputLevel define VDDP3 output level of the EVR33 LDO regulator.
- * \return None
+/**
+ * \brief Sets the VDDP3 output level of the EVR33 LDO regulator.
+ *
+ * \param[inout] pms         Pointer to the base address of PMS registers.
+ * \param[in]    outputLevel Defines the VDDP3 output level of the EVR33 LDO regulator.
+ * 					         Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_setEvr33VoltageOutputlevel(Ifx_PMS *pms, uint8 outputLevel);
 
@@ -662,17 +854,27 @@ IFX_INLINE void IfxPmsEvr_setEvr33VoltageOutputlevel(Ifx_PMS *pms, uint8 outputL
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief get ADC External Supply Conversion Result
- * \param pms Pointer to PMS Module space
- * \return last conversion result of the ADC measurement of
- * the external VEXT (3.3V / 5V) supply by the Primary Monitor
+/**
+ * \brief Retrieves the last conversion result of the ADC measurement for the external VEXT supply (3.3V / 5V) by the Primary Monitor.
+ *
+ * \param[in] pms Pointer to the base address of PMS registers.
+ *
+ * \retval uint8 The last conversion result of the ADC measurement.
+ * 				 Range: 0 to 0xFF
  */
 IFX_INLINE uint8 IfxPmsEvr_getPrimaryAdcSwdResult(Ifx_PMS *pms);
 
-/** \brief Enabled/Disable Reset Trigger signal for SWD
- * \param pms Pointer to PMS Module
- * \param enableReset Enable/Disable the reset trigger signal
- * \return None
+/**
+ * \brief Enables or disables the reset trigger signal for SWD.
+ *
+ * \param[inout] pms         Pointer to the base address of PMS registers.
+ * \param[in]    enableReset Boolean flag to enable or disable the reset trigger signal.
+ *                           Range: TRUE  No reset trigger signal is generated and forwarded to the SCU,
+ *                           			  by primary monitor depending on the selected reset trim value.
+ *                                  FALSE A reset trigger signal is generated and forwarded to the SCU,
+ *                                  	  by primary monitor depending on the selected reset trim value.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_swdResetTriggerSignalConfig(Ifx_PMS *pms, boolean enableReset);
 
@@ -683,32 +885,61 @@ IFX_INLINE void IfxPmsEvr_swdResetTriggerSignalConfig(Ifx_PMS *pms, boolean enab
 /******************************************************************************/
 
 /**
+ * \brief Checks if the initialization values of the EVR configuration are correct.
+ *
+ * \param[in] checkConfig Pointer to the configuration structure containing the initialization values to be checked.
+ *
+ * \retval boolean TRUE  If the initialization values are correct.
+ * 		           FALSE If the initialization values are incorrect.
  */
 IFX_INLINE boolean IfxPmsEvr_areInitValuesRight(const IfxPmsEvr_checkRegConfig *const checkConfig);
 
-/** \brief Disable Interrupts
- * \return None
+/**
+ * \brief Disables a specified interrupt for the PMS module.
+ *
+ * \param[inout] pms           Pointer to the base address of PMS registers.
+ * \param[in]    interruptType Type of interrupt to disable.
+ * 							   Range: \ref IfxPmsEvr_EnableInterrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_disableInterrupt(Ifx_PMS *pms, IfxPmsEvr_EnableInterrupt interruptType);
 
 /**
- * \param averageADC33V Average of PMS_EVRSTAT.ADC33V values
- * \return ADC VDDP3 Voltage Conversion Result
+ * \brief Converts the average ADC value to the corresponding VDDP3 voltage.
+ *
+ * \param[in] averageADC33V The average of PMS_EVRSTAT.ADC33V values used for conversion.
+ *
+ * \retval float32 The calculated VDDP3 voltage.
  */
 IFX_INLINE float32 IfxPmsEvr_getAdcVddp3Result(float32 averageADC33V);
 
 /**
- * \param averageADCSWDV Average of PMS_EVRADCSTAT.ADCSWDV values.
- * \return ADC VEXT Supply Conversion Result
+ * \brief Computes the VEXT supply voltage based on the average ADC value.
+ *
+ * \param[in] averageADCSWDV The average of PMS_EVRADCSTAT.ADCSWDV values.
+ *
+ * \retval float32 The computed VEXT supply voltage in volts.
  */
 IFX_INLINE float32 IfxPmsEvr_getAdcVextResult(float32 averageADCSWDV);
 
 /**
+ * \brief Runs the initialization sequence for the PMS EVR module using the provided configuration.
+ *
+ * \param[in] sequence A pointer to the IfxPmsEvr_initSequence instance containing the initialization
+ *                     parameters for the PMS EVR module.
+ *
+ * \retval boolean TRUE	 If the initialization sequence was successfully executed.
+  		   	   	   FALSE If an error occurred during the initialization sequence.
  */
 IFX_INLINE boolean IfxPmsEvr_runInitSequence(const IfxPmsEvr_initSequence *const sequence);
 
 /**
- * \return None
+ * \brief Introduces a delay in seconds for the IfxPmsEvr module.
+ *
+ * \param[in] waitInSec The duration to wait, specified in seconds.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPmsEvr_wait(float32 waitInSec);
 

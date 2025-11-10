@@ -3,7 +3,7 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -61,7 +61,8 @@
 
 /** \addtogroup IfxLld_Gtm_Std_Enumerations
  * \{ */
-/** \brief Enum for GTM interrupt modes
+/** \brief Enum for GTM interrupt modes.
+ * Definition in Ifx_GTM_TOM_CH_IRQ_MODE.B.IRQ_MODE
  */
 typedef enum
 {
@@ -72,6 +73,7 @@ typedef enum
 } IfxGtm_IrqMode;
 
 /** \brief OCDS Suspend Control (OCDS.SUS)
+ * Definition in Ifx_GTM_OCDS_OCS.B.SUS
  */
 typedef enum
 {

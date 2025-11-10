@@ -3,7 +3,7 @@
  * \brief STM  basic functionality
  * \ingroup IfxLld_Stm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -103,7 +103,7 @@
  *     IfxStm_initCompareConfig(&stmConfig);
  *
  *     // configure to generate interrupt every 10 us
- *     sint32 ticks = IfxStm_getTicksFromMicroseconds(10);
+ *     uint32 ticks = IfxStm_getTicksFromMicroseconds(10);
  *
  *     stmConfig.ticks = ticks;
  *
@@ -256,6 +256,7 @@ typedef enum
 } IfxStm_SleepMode;
 
 /** \brief OCDS Suspend Control (OCDS.SUS)
+ * Definition in Ifx_STM.OCS.B.SUS
  */
 typedef enum
 {
@@ -280,7 +281,7 @@ typedef struct
     IfxStm_ComparatorInterrupt comparatorInterrupt;       /**< \brief Comparator Interrupt request source defined in MODULE_SRC.STM.STM[index].SRx (x =0, 1). */
     IfxStm_ComparatorOffset    compareOffset;             /**< \brief Comparator start bit position  defined in MODULE_STMx.CMCON.B.MSTART0(x = 0,1,2). */
     IfxStm_ComparatorSize      compareSize;               /**< \brief Size of compare value to compare with timer defined in  MODULE_STMx.CMCON.B.MSIZE0(x = 0,1,2). */
-    uint32                     ticks;                     /**< \brief count for next comparison from current timer count. */
+    uint32                     ticks;                     /**< \brief count for next comparison from current timer count. Range: 0 to 0xFFFFFFFF. */
     Ifx_Priority               triggerPriority;           /**< \brief Interrupt priority. Range = 0 .. 255. 0 = interrupt is disabled. */
     IfxSrc_Tos                 typeOfService;             /**< \brief Type of service. */
 } IfxStm_CompareConfig;
@@ -298,8 +299,8 @@ typedef struct
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval The 64-bit system timer value where the lower 32 bits are from TIM0.U and the upper 32 bits are from CAP.U.
- *         Range: 0 to 0xFFFFFFFFFFFFFFFF
+ * \retval uint64 The 64-bit system timer value where the lower 32 bits are from TIM0.U and the upper 32 bits are from CAP.U. Range: 0 to 0xFFFFFFFFFFFFFFFF.
+ *
  */
 IFX_INLINE uint64 IfxStm_get(Ifx_STM *stm);
 
@@ -308,6 +309,7 @@ IFX_INLINE uint64 IfxStm_get(Ifx_STM *stm);
  * \param[in] stm Pointer to the STM module registers.
  *
  * \retval float32 The frequency of the STM in Hz.
+ *
  */
 IFX_INLINE float32 IfxStm_getFrequency(Ifx_STM *stm);
 
@@ -315,8 +317,9 @@ IFX_INLINE float32 IfxStm_getFrequency(Ifx_STM *stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval Suspend status.
- *         Range: `TRUE` (module is suspended) or `FALSE` (module is not suspended).
+ * \retval TRUE If module is suspended.
+ *         FALSE If module is not suspended.
+ *
  */
 IFX_INLINE boolean IfxStm_isModuleSuspended(Ifx_STM *stm);
 
@@ -324,10 +327,10 @@ IFX_INLINE boolean IfxStm_isModuleSuspended(Ifx_STM *stm);
  * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
  *
  * \param[inout] stm  Pointer to the STM module registers.
- * \param[in] mode The suspend mode to set.
- *                 Range: \ref IfxStm_SuspendMode
+ * \param[in]    mode The suspend mode to set. Range: \ref IfxStm_SuspendMode.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxStm_setSuspendMode(Ifx_STM *stm, IfxStm_SuspendMode mode);
 
@@ -340,6 +343,7 @@ IFX_INLINE void IfxStm_setSuspendMode(Ifx_STM *stm, IfxStm_SuspendMode mode);
  * \param[inout] stm Pointer to the STM module registers.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_disableModule(Ifx_STM *stm);
 
@@ -349,6 +353,7 @@ IFX_EXTERN void IfxStm_disableModule(Ifx_STM *stm);
  * \param[inout] stm Pointer to the STM module registers.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_enableOcdsSuspend(Ifx_STM *stm);
 
@@ -357,6 +362,7 @@ IFX_EXTERN void IfxStm_enableOcdsSuspend(Ifx_STM *stm);
  * \param[in] stm Pointer to the STM module registers.
  *
  * \retval Ifx_STM* Pointer to the STM module's address if the index is valid.
+ *
  */
 IFX_EXTERN Ifx_STM *IfxStm_getAddress(IfxStm_Index stm);
 
@@ -364,7 +370,8 @@ IFX_EXTERN Ifx_STM *IfxStm_getAddress(IfxStm_Index stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval system timer module index.
+ * \retval IfxStm_Index system timer module index. Range: \ref IfxStm_Index.
+ *
  */
 IFX_EXTERN IfxStm_Index IfxStm_getIndex(Ifx_STM *stm);
 
@@ -381,8 +388,8 @@ IFX_EXTERN IfxStm_Index IfxStm_getIndex(Ifx_STM *stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval uint32 The lower 32-bit value of the STM module's TIM0 register.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The lower 32-bit value of the STM module's TIM0 register. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getLower(Ifx_STM *stm);
 
@@ -390,8 +397,8 @@ IFX_INLINE uint32 IfxStm_getLower(Ifx_STM *stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval uint32 TIM3 counter value.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 TIM3 counter value. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getOffset12Timer(Ifx_STM *stm);
 
@@ -399,8 +406,8 @@ IFX_INLINE uint32 IfxStm_getOffset12Timer(Ifx_STM *stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval uint32 TIM4 counter value.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 TIM4 counter value. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getOffset16Timer(Ifx_STM *stm);
 
@@ -408,8 +415,8 @@ IFX_INLINE uint32 IfxStm_getOffset16Timer(Ifx_STM *stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval uint32 TIM5 counter value.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 TIM5 counter value. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getOffset20Timer(Ifx_STM *stm);
 
@@ -417,8 +424,8 @@ IFX_INLINE uint32 IfxStm_getOffset20Timer(Ifx_STM *stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval uint32 TIM6 counter value.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 TIM6 counter value. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getOffset32Timer(Ifx_STM *stm);
 
@@ -426,8 +433,8 @@ IFX_INLINE uint32 IfxStm_getOffset32Timer(Ifx_STM *stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval uint32 TIM1 counter value.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 TIM1 counter value. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getOffset4Timer(Ifx_STM *stm);
 
@@ -435,29 +442,28 @@ IFX_INLINE uint32 IfxStm_getOffset4Timer(Ifx_STM *stm);
  *
  * \param[in] stm Pointer to the STM module registers.
  *
- * \retval uint32 TIM2 counter value.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 TIM2 counter value. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getOffset8Timer(Ifx_STM *stm);
 
 /** \brief Retrieves the offset timer value from the STM module.
  *
- * \param[in] stm Pointer to the STM module registers.
- * \param[in] offset Offset value to select the specific timer.
-              Range: 0 to 31
+ * \param[in] stm    Pointer to the STM module registers.
+ * \param[in] offset Offset value to select the specific timer. Range: 0 to 31.
  *
- * \retval The lower system timer value shifted by offset.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The lower system timer value shifted by offset. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getOffsetTimer(Ifx_STM *stm, uint8 offset);
 
 /** \brief Waits for a specified number of system ticks using the System Timer Module (STM).
  *
- * \param[in] stm Pointer to the STM module registers.
- * \param[in] ticks Number of ticks to wait. Should be a positive integer value.
-              Range: 0 to 0xFFFFFFFF
+ * \param[in] stm   Pointer to the STM module registers.
+ * \param[in] ticks Number of ticks to wait. Should be a positive integer value. Range: 0 to 0xFFFFFFFF.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxStm_waitTicks(Ifx_STM *stm, uint32 ticks);
 
@@ -472,55 +478,53 @@ IFX_INLINE void IfxStm_waitTicks(Ifx_STM *stm, uint32 ticks);
 
 /** \brief Retrieves the current comparison value from the specified comparator of the STM unit.
  *
- * \param[in] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-          Range: \ref IfxStm_Comparator.
+ * \param[in] stm        Pointer to the STM module registers.
+ * \param[in] comparator Comparator selection. Range: \ref IfxStm_Comparator.
  *
- * \retval The compare value.
-           Range: 0 to 0xFFFFFFFF
+ * \retval uint32 The compare value. Range: 0 to 0xFFFFFFFF.
+ *
  */
 IFX_INLINE uint32 IfxStm_getCompare(Ifx_STM *stm, IfxStm_Comparator comparator);
 
 /** \brief Retrieves the number of ticks for the selected micro seconds based on the STM frequency.
  *
- * \param[in] stm Pointer to the STM module registers.
- * \param[in] Number of micro seconds that need to be converted to ticks
-              Range: 0 to 0xFFFFFFFF
+ * \param[in] stm          Pointer to the STM module registers.
+ * \param[in] microSeconds Number of micro seconds that need to be converted to ticks. Range: 0 to 0xFFFFFFFF
  *
- * \retval The equivalent number of STM ticks.
+ * \retval uint32 The equivalent number of STM ticks.
+ *
  */
-IFX_INLINE sint32 IfxStm_getTicksFromMicroseconds(Ifx_STM *stm, uint32 microSeconds);
+IFX_INLINE uint32 IfxStm_getTicksFromMicroseconds(Ifx_STM *stm, uint32 microSeconds);
 
 /** \brief Retrieves the number of ticks for the selected milli seconds based on the STM frequency.
  *
- * \param[in] stm Pointer to the STM module registers.
- * \param[in] milliSeconds Time in milliseconds to be converted to ticks.
-              Range: 0 to 0xFFFFFFFF
+ * \param[in] stm          Pointer to the STM module registers.
+ * \param[in] milliSeconds Time in milliseconds to be converted to ticks. Range: 0 to 0xFFFFFFFF.
  *
- * \retval The number of ticks corresponding to the given milliseconds.
+ * \retval uint32 The number of ticks corresponding to the given milliseconds.
+ *
  */
-IFX_INLINE sint32 IfxStm_getTicksFromMilliseconds(Ifx_STM *stm, uint32 milliSeconds);
+IFX_INLINE uint32 IfxStm_getTicksFromMilliseconds(Ifx_STM *stm, uint32 milliSeconds);
 
 /** \brief Increases the compare value of a specified STM comparator by a given number of ticks.
  *
- * \param[inout] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-          Range: \ref IfxStm_Comparator.
- * \param[in] ticks The number of ticks to add to the current compare value.
+ * \param[inout] stm        Pointer to the STM module registers.
+ * \param[in]    comparator Comparator selection. Range: \ref IfxStm_Comparator.
+ * \param[in]    ticks      The number of ticks to add to the current compare value. Range: 0 to 0xFFFFFFFF.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxStm_increaseCompare(Ifx_STM *stm, IfxStm_Comparator comparator, uint32 ticks);
 
 /** \brief Updates the compare value of a specific comparator in the STM with a new number of ticks.
  *
- * \param[inout] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-          Range: \ref IfxStm_Comparator.
- * \param[in] ticks The number of ticks to add to the current compare value.
-          Range: 0 to 0xFFFFFFFF
+ * \param[inout] stm        Pointer to the STM module registers.
+ * \param[in]    comparator Comparator selection. Range: \ref IfxStm_Comparator.
+ * \param[in]    ticks      The number of ticks to add to the current compare value. Range: 0 to 0xFFFFFFFF.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxStm_updateCompare(Ifx_STM *stm, IfxStm_Comparator comparator, uint32 ticks);
 
@@ -530,50 +534,52 @@ IFX_INLINE void IfxStm_updateCompare(Ifx_STM *stm, IfxStm_Comparator comparator,
 
 /** \brief Clears the compare flag for the specified comparator in the STM module.
  *
- * \param[inout] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-              Range: \ref IfxStm_Comparator.
+ * \param[inout] stm        Pointer to the STM module registers.
+ * \param[in]    comparator Comparator selection. Range: \ref IfxStm_Comparator.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_clearCompareFlag(Ifx_STM *stm, IfxStm_Comparator comparator);
 
 /** \brief Disables the comparator interrupt for the specified comparator in the STM module.
  *
- * \param[inout] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-          Range: \ref IfxStm_Comparator.
+ * \param[inout] stm        Pointer to the STM module registers.
+ * \param[in]    comparator Comparator selection. Range: \ref IfxStm_Comparator.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_disableComparatorInterrupt(Ifx_STM *stm, IfxStm_Comparator comparator);
 
 /** \brief Enables the comparator interrupt for the specified comparator in the STM module.
  *
- * \param[inout] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-              Range: \ref IfxStm_Comparator.
+ * \param[inout] stm        Pointer to the STM module registers.
+ * \param[in]    comparator Comparator selection. Range: \ref IfxStm_Comparator.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_enableComparatorInterrupt(Ifx_STM *stm, IfxStm_Comparator comparator);
 
 /** \brief Retrieves the source pointer for the specified comparator of the STM module.
  *
- * \param[in] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-              Range: \ref IfxStm_Comparator.
+ * \param[in] stm        Pointer to the STM module registers.
+ * \param[in] comparator Comparator selection. Range: \ref IfxStm_Comparator.
  *
- * \retval A volatile pointer to the source register (SR) of the specified comparator.
+ * \retval A Ifx_SRC_SRCR* pointer to the source register (SR) of the specified comparator.
+ *
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxStm_getSrcPointer(Ifx_STM *stm, IfxStm_Comparator comparator);
 
 /** \brief Initializes the comparator for the specified STM instance with the given configuration.
  *
- * \param[inout] stm Pointer to the STM module registers.
- * \param[in] config Pointer to the comparator configuration structure.
+ * \param[inout] stm    Pointer to the STM module registers.
+ * \param[in]    config Pointer to the comparator configuration structure.
  *
- * \retval TRUE if the comparator was successfully initialized, FALSE otherwise.
+ * \retval TRUE If the comparator was successfully initialized.
+ *         FALSE If the comparator was not successfully initialized.
+ *
  */
 IFX_EXTERN boolean IfxStm_initCompare(Ifx_STM *stm, const IfxStm_CompareConfig *config);
 
@@ -582,32 +588,31 @@ IFX_EXTERN boolean IfxStm_initCompare(Ifx_STM *stm, const IfxStm_CompareConfig *
  * \param[inout] config Pointer to the configuration structure.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_initCompareConfig(IfxStm_CompareConfig *config);
 
 /** \brief Checks if the compare flag for a specified comparator is set in the STM module.
  *
- * \param[in] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-              Range: \ref IfxStm_Comparator.
+ * \param[in] stm        Pointer to the STM module registers.
+ * \param[in] comparator Comparator selection.  Range: \ref IfxStm_Comparator.
  *
- * \retval TRUE if the interrupt flag is set, FALSE otherwise.
+ * \retval TRUE If the interrupt flag is set.
+ *         FALSE If the interrupt flag is not set.
+ *
  */
 IFX_EXTERN boolean IfxStm_isCompareFlagSet(Ifx_STM *stm, IfxStm_Comparator comparator);
 
 /** \brief Configures the compare control settings for the STM module.
  *
- * \param[inout] stm Pointer to the STM module registers.
- * \param[in] comparator Comparator selection.
-              Range: \ref IfxStm_Comparator.
- * \param[in] offset Offset value for the comparator
-              Range: \ref IfxStm_ComparatorOffset.
- * \param[in] size Size of the comparator.
-              Range: \ref IfxStm_ComparatorSize.
- * \param[in] interrupt Interrupt configuration for the comparator.
-              Range: \ref IfxStm_ComparatorInterrupt.
+ * \param[inout] stm        Pointer to the STM module registers.
+ * \param[in]    comparator Comparator selection. Range: \ref IfxStm_Comparator.
+ * \param[in]    offset     Offset value for the comparator. Range: \ref IfxStm_ComparatorOffset.
+ * \param[in]    size       Size of the comparator. Range: \ref IfxStm_ComparatorSize.
+ * \param[in]    interrupt  Interrupt configuration for the comparator. Range: \ref IfxStm_ComparatorInterrupt.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_setCompareControl(Ifx_STM *stm, IfxStm_Comparator comparator, IfxStm_ComparatorOffset offset, IfxStm_ComparatorSize size, IfxStm_ComparatorInterrupt interrupt);
 
@@ -620,17 +625,18 @@ IFX_EXTERN void IfxStm_setCompareControl(Ifx_STM *stm, IfxStm_Comparator compara
 /**
  * \brief Sets the sleep mode for the System Timer Module (STM).
  *
- * \param[inout] stm Pointer to the STM module registers.
- * \param[in] mode Sleep mode selection.
-              Range: \ref IfxStm_SleepMode.
+ * \param[inout] stm  Pointer to the STM module registers.
+ * \param[in]    mode Sleep mode selection. Range: \ref IfxStm_SleepMode.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxStm_setSleepMode(Ifx_STM *stm, IfxStm_SleepMode mode);
 
 /** \brief Retrieves the STM counter value.
  *
  * \retval sint64 The current tick time as a signed 64-bit integer.
+ *
  */
 IFX_INLINE sint64 IfxStm_now(void);
 
@@ -639,6 +645,7 @@ IFX_INLINE sint64 IfxStm_now(void);
  * \param[in] timeout The timeout value to be added to the current time (in milliseconds).
  *
  * \retval sint64 TIME_INFINITE If the timeout is set to TIME_INFINITE, indicating no deadline.
+ *
  */
 IFX_INLINE sint64 IfxStm_getDeadLine(sint64 timeout);
 
@@ -646,7 +653,9 @@ IFX_INLINE sint64 IfxStm_getDeadLine(sint64 timeout);
  *
  * \param[in] deadLine Deadline value to check.
  *
- * \retval TRUE if the deadline has occurred, FALSE otherwise.
+ * \retval TRUE If the deadline has occurred.
+ *         FALSE If If the deadline has not occurred.
+ *
  */
 IFX_INLINE boolean IfxStm_isDeadLine(sint64 deadLine);
 
@@ -655,6 +664,7 @@ IFX_INLINE boolean IfxStm_isDeadLine(sint64 deadLine);
  * \param[in] timeout The duration in milliseconds to wait before resuming execution.
  *
  * \retval None
+ *
  */
 IFX_INLINE void IfxStm_wait(sint64 timeout);
 
@@ -667,6 +677,7 @@ IFX_INLINE void IfxStm_wait(sint64 timeout);
  * \param[inout] stm Pointer to the STM module registers.
  *
  * \retval None
+ *
  */
 IFX_EXTERN void IfxStm_resetModule(Ifx_STM *stm);
 
@@ -754,16 +765,16 @@ IFX_INLINE uint32 IfxStm_getOffsetTimer(Ifx_STM *stm, uint8 offset)
 }
 
 
-IFX_INLINE sint32 IfxStm_getTicksFromMicroseconds(Ifx_STM *stm, uint32 microSeconds)
+IFX_INLINE uint32 IfxStm_getTicksFromMicroseconds(Ifx_STM *stm, uint32 microSeconds)
 {
-    sint32 freq = (sint32)IfxStm_getFrequency(stm);
+    uint32 freq = (uint32)IfxStm_getFrequency(stm);
     return (freq / (1000000)) * microSeconds;
 }
 
 
-IFX_INLINE sint32 IfxStm_getTicksFromMilliseconds(Ifx_STM *stm, uint32 milliSeconds)
+IFX_INLINE uint32 IfxStm_getTicksFromMilliseconds(Ifx_STM *stm, uint32 milliSeconds)
 {
-    sint32 freq = (sint32)IfxStm_getFrequency(stm);
+    uint32 freq = (uint32)IfxStm_getFrequency(stm);
     return (freq / (1000)) * milliSeconds;
 }
 

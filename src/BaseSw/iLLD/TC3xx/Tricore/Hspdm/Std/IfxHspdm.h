@@ -3,7 +3,7 @@
  * \brief HSPDM  basic functionality
  * \ingroup IfxLld_Hspdm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -40,6 +40,117 @@
  * DEALINGS IN THE SOFTWARE.
  *
  *
+ *
+ * \defgroup IfxLld_Hspdm_Std_Usage How to use the Hspdm Interface driver?
+ * \ingroup IfxLld_Hspdm_Std
+ *
+ * The HSPDM is intended to generate up to two 1-bit bit-streams. Each bit-stream represents the 16-bit data stored
+ * inside the dedicated 8 KB SRAM. This bit-stream is a pulse-density modulated (PDM) bit-stream which can be
+ * averaged outside the microcontroller using a low pass filter (LPF) to generate the analog voltage.
+ *
+ * In the following sections it will be described, how to integrate the driver into the application framework.
+ *
+ * \section IfxLld_Hspdm_Std_Preparation Preparation
+ * \subsection IfxLld_Hspdm_Std_Include Include Files
+ *
+ * Include following header file into your C code:
+ *
+ * \code
+ * #include <Hspdm/Std/IfxHspdm.h>
+ * #include <Port/Std/IfxPort.h>
+ * \endcode
+ *
+ * \subsection IfxLld_Hspdm_Std_Variables Variables
+ *
+ * The following buffer are declared globally
+ * \code
+ * const unsigned hspdmPatternA[19] = {
+ *    0x00018000,
+ *    0x0003c000,
+ *    0x0007e000,
+ *    0x000ff000,
+ *    0x001ff800,
+ *    0x003ffc00,
+ *    0x007ffe00,
+ *    0x00ffff00,
+ *    0x01ffff80,
+ *    0x03ffffc0,
+ *    0x01ffff80,
+ *    0x00ffff00,
+ *    0x007ffe00,
+ *    0x003ffc00,
+ *    0x001ff800,
+ *    0x000ff000,
+ *    0x0007e000,
+ *    0x0003c000,
+ *    0x00018000
+ *  };
+ * \endcode
+ *
+ * The following Macros into your C code:
+ * \code
+ *    #define WAIT_TIME   100
+ * \endcode
+ *
+ * \subsection IfxLld_Hspdm_Std_Init Module Initialisation
+ *
+ * The High Speed Pulse Density Modulation (HSPDM) is configured in Single buffer mode.
+ *
+ * Initialize the Hspdm with following code:
+ * \code
+ *  // Enable HSPDM pins
+ *  IfxHspdm_initBsPin(&IfxHspdm0_BS0_OUT_P22_4_OUT, IfxPort_OutputMode_pushPull, IfxPort_PadDriver_cmosAutomotiveSpeed1);
+ *  IfxHspdm_initBsPin(&IfxHspdm0_BS1_OUT_P22_5_OUT, IfxPort_OutputMode_pushPull, IfxPort_PadDriver_cmosAutomotiveSpeed1);
+ *  IfxHspdm_initMutePin(&IfxHspdm0_MUTE_P22_3_OUT, IfxPort_OutputMode_pushPull, IfxPort_PadDriver_cmosAutomotiveSpeed1);
+ *
+ *  // Init HSPDM
+ *  Ifx_HSPDM *hspdm = &MODULE_HSPDM;
+ *  IfxHspdm_enableModule(hspdm);
+ *
+ *  // Update frequency must be Fupd/10 in Shift Register Generated Bit Stream mode
+ *  IfxHspdm_setUpdateFreq(hspdm, IfxHspdm_UpdateFreq_10MHz);
+ *
+ *  // Enable both Bit Streams
+ *  IfxHspdm_enableBSB(hspdm, IfxHspdm_BSB_0, TRUE);
+ *  IfxHspdm_enableBSB(hspdm, IfxHspdm_BSB_1, TRUE);
+ *
+ *  // Select the Shift Register Bit Streaming mode
+ *  IfxHspdm_setStreamingMode(hspdm, IfxHspdm_StreamingMode_shiftRegister);
+ *
+ *  // Select the Single Buffer mode
+ *  IfxHspdm_setBufferMode(hspdm, IfxHspdm_BufferMode_singleBuffer);
+ *
+ *  // Enable the ADC Trigger Generation to signal the start of the stream output
+ *  IfxHspdm_enableAdcTrigger(hspdm);
+ *
+ *  // Configure the ADC Trigger generator to create just one trigger
+ *  IfxHspdm_setAdcTriggerOffset(hspdm, 0); // No Trigger offset
+ *  IfxHspdm_setAdcTriggerCounts(hspdm, 0); // Only 1 Trigger per Ramp
+ * \endcode
+ *
+ * The Hspdm is ready for use now!
+ *
+ * \subsection IfxLld_Hspdm_Std_Bit_Streaming  Send different bitstream patterns.
+ *
+ * This example is used to send different bitstream patterns.
+ * \code
+ *  Ifx_HSPDM *hspdm = &MODULE_HSPDM;
+ *  unsigned volatile *hspdmRam = (unsigned volatile *)HSPDM_SRAM;
+ *
+ *  // Preload buffer and set start/end address
+ *  unsigned *pattern = (unsigned *)hspdmPatternA;
+ *  unsigned patternSize = sizeof(hspdmPatternA) / 4;
+ *
+ *  for(unsigned i=0; i<patternSize; ++i) {
+ *  	*(hspdmRam++) = *(pattern++); }
+ *  IfxHspdm_setStartAddress(hspdm, IfxHspdm_Buffer_a, 0*4);
+ *  IfxHspdm_setEndAddress(hspdm, IfxHspdm_Buffer_a, (patternSize-1) * 4);
+ *
+ *  // Start stream, run for 100 uS
+ *  IfxHspdm_startBitStream(hspdm);
+ *  waitTime(IfxStm_getTicksFromMicroseconds(BSP_DEFAULT_TIMER, WAIT_TIME));    // Wait 100 microseconds
+ *  IfxHspdm_stopBitStream(hspdm);
+ * \endcode
  *
  * \defgroup IfxLld_Hspdm_Std_Enumerations Enumerations
  * \ingroup IfxLld_Hspdm_Std
@@ -213,100 +324,155 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief disable the ADC Trigger.
- * \param hspdm hspdm device
- * \return None
+/**
+ * \brief Disables the ADC trigger functionality of the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_disableAdcTrigger(Ifx_HSPDM *hspdm);
 
-/** \brief sets the ADC Trigger offset value (specified in counts of Fshift)
- * \param hspdm hspdm device
- * \param offsetCount offset counts
- * \return None
+/**
+ * \brief Sets the ADC Trigger offset value specified in counts of Fshift.
+ *
+ * \param[inout] hspdm       Pointer to the HSPDM device instance.
+ * \param[in]    offsetCount Offset value specified in Fshift counts. Range: 0 to 65535.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_setAdcTriggerOffset(Ifx_HSPDM *hspdm, uint32 offsetCount);
 
-/** \brief sets the trigger period in counts of Fshift.
- * If Period is set to <9 counts, Trigger will always be High.\n
- * This will assert an error.
- * \param hspdm hspdm device
- * \param periodCount period in Fshift counts
- * \return None
+/**
+ * \brief Sets the trigger period in counts of Fshift for the HSPDM ADC.
+ * If the period is set to less than 9 counts, the trigger will always be high,
+ * which asserts an error.
+ *
+ * \param[inout] hspdm       Pointer to the HSPDM device instance.
+ * \param[in]    periodCount Period in Fshift counts. Range: 0 to 65535.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setAdcTriggerPeriod(Ifx_HSPDM *hspdm, uint32 periodCount);
 
-/** \brief This will set the desired count as the ADC Trigger count value.\n
- * (TriggerCounts - 1) will be written into the TGCNT field.\n
- * \param hspdm hspdm device
- * \param triggerCounts trigger counts
- * \return None
+/**
+ * \brief Sets the desired count as the ADC Trigger count value.
+ *  The value (triggerCounts - 1) is stored in the TGCNT field of the HSPDM device.
+ *
+ * \param[inout] hspdm         Pointer to the HSPDM device instance.
+ * \param[in]    triggerCounts The desired trigger count value to be set. Range: 0 to 65535.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_setAdcTriggerCounts(Ifx_HSPDM *hspdm, uint32 triggerCounts);
 
-/** \brief enable the Pad Assymetry Compensation.
- * \param hspdm hspdm device
- * \return None
+/**
+ * \brief Enables the Pad Asymmetry Compensation (PAC) for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_enablePac(Ifx_HSPDM *hspdm);
 
-/** \brief sets the buffer mode
- * \param hspdm hspdm device.
- * \param bufferMode buffer modes.\n
- * Definition in Ifx_Hspdm.CON.MM
- * \return None
+/**
+ * \brief Sets the buffer mode for the HSPDM device.
+ *
+ * \param[inout]  hspdm      Pointer to the HSPDM device instance.
+ * \param[in]     bufferMode The buffer mode to be set. Definition in Ifx_Hspdm.CON.MM. Range: \ref IfxHspdm_BufferMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setBufferMode(Ifx_HSPDM *hspdm, IfxHspdm_BufferMode bufferMode);
 
-/** \brief set the polarity of the mute signal as desired.
- * \param hspdm hspdm device
- * \param polarity mute signal polarity
- * \return None
+/**
+ * \brief Sets the mute signal polarity for the HSPDM device.
+ *
+ * \param[inout] hspdm    Pointer to the HSPDM device instance.
+ * \param[in]    polarity Mute signal polarity to be set. Range: \ref IfxHspdm_MutePolarity.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setMutePolarity(Ifx_HSPDM *hspdm, IfxHspdm_MutePolarity polarity);
 
-/** \brief enables the Adc Trigger.
- * \param hspdm hspdm device
- * \return None
+/**
+ * \brief Enables the ADC trigger for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_enableAdcTrigger(Ifx_HSPDM *hspdm);
 
-/** \brief set the active edge of the trigger signal which will activate HSPDM.
- * \param hspdm hspdm device
- * \param activeEdge active edge
- * \return None
+/**
+ * \brief Set the active edge of the trigger signal which will activate HSPDM.
+ *
+ * \param[inout] hspdm      Pointer to the HSPDM device instance.
+ * \param[in]    activeEdge Active edge of the trigger signal to be set. Range: \ref IfxHspdm_HwRunActiveEdge.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setHwRunActiveEdge(Ifx_HSPDM *hspdm, IfxHspdm_HwRunActiveEdge activeEdge);
 
-/** \brief sets the Hardware Run Trigger Source to the selected source.
- * \param hspdm hspdm device
- * \param triggerSource hardware trigger source
- * \return None
+/**
+ * \brief Sets the Hardware Run Trigger Source to the selected source.
+ *
+ * \param[inout] hspdm         Pointer to the Ifx_HSPDM device instance.
+ * \param[in]    triggerSource The hardware trigger source to be configured. Range: \ref IfxHspdm_HwTriggerSource.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_setHwRunTriggerSource(Ifx_HSPDM *hspdm, IfxHspdm_HwTriggerSource triggerSource);
 
-/** \brief Enable the Hardware Run Signal
- * \param hspdm hspdm device
- * \return None
+/**
+ * \brief Enables the Hardware Run Signal for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_enableHwRun(Ifx_HSPDM *hspdm);
 
-/** \brief disables the Hardware Run feature.
- * \param hspdm hspdm device
- * \return None
+/**
+ * \brief Disables the Hardware Run feature for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_disableHwRun(Ifx_HSPDM *hspdm);
 
-/** \brief sets the OCDS suspend mode
- * \param hspdm pointer to the hspdm device
- * \param mode suspend mode.
- * \return None
+/**
+ * \brief Sets the OCDS suspend mode for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ * \param[in]    mode  The suspend mode to be set. Range: \ref IfxHspdm_SuspendMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setSuspendMode(Ifx_HSPDM *hspdm, IfxHspdm_SuspendMode mode);
 
-/** \brief sets the sleep mode.
- * \param hspdm pointer to the hspdm device
- * \param mode suspend mode.
- * \return None
+/**
+ * \brief Sets the sleep mode for the specified HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ * \param[in]    mode  Sleep mode to be set. Range: \ref IfxHspdm_SleepMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setSleepMode(Ifx_HSPDM *hspdm, IfxHspdm_SleepMode mode);
 
@@ -314,27 +480,39 @@ IFX_INLINE void IfxHspdm_setSleepMode(Ifx_HSPDM *hspdm, IfxHspdm_SleepMode mode)
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief enable / disable the bit streaming blocks
- * \param hspdm hspdm device
- * \param bsb bsb number
- * \param enable enable status
- * \return None
+/**
+ * \brief Enables or disables the specified bit streaming block (BSB) for the HSPDM device.
+ *
+ * \param[inout] hspdm  Pointer to the HSPDM device instance.
+ * \param[in]    bsb    BSB number to enable or disable. Range: TRUE for enabling or FALSE for disabling.
+ * \param[in]    enable Boolean flag to enable (TRUE) or disable (FALSE) the BSB.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxHspdm_enableBSB(Ifx_HSPDM *hspdm, IfxHspdm_BSB bsb, boolean enable);
 
-/** \brief initializes the BSB pin
- * \param bsPin BS pin
- * \param outputMode output mode
- * \param padDriver pad driver
- * \return None
+/**
+ * \brief Initializes the BSB pin with the specified output mode and pad driver configuration.
+ *
+ * \param[inout] bsPin      Pointer to the BSB pin structure to be initialized.
+ * \param[in]    outputMode Output mode configuration for the pin. Range: \ref IfxPort_OutputMode.
+ * \param[in]    padDriver  Pad driver configuration. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxHspdm_initBsPin(IfxHspdm_Bs_Out *bsPin, IfxPort_OutputMode outputMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes the Mute pin
- * \param mutePin mute pin
- * \param outputMode output mode
- * \param padDriver pad driver
- * \return None
+/**
+ * \brief Initializes the Mute pin with the specified output mode and pad driver settings.
+ *
+ * \param[inout] mutePin    Pointer to the mute pin configuration structure to be initialized.
+ * \param[in]    outputMode The output mode to be configured for the mute pin. Range: \ref IfxPort_OutputMode.
+ * \param[in]    padDriver  The pad driver configuration to be applied to the mute pin. Range: \ref IfxPort_PadDriver.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxHspdm_initMutePin(IfxHspdm_Mute_Out *mutePin, IfxPort_OutputMode outputMode, IfxPort_PadDriver padDriver);
 
@@ -347,83 +525,126 @@ IFX_EXTERN void IfxHspdm_initMutePin(IfxHspdm_Mute_Out *mutePin, IfxPort_OutputM
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function used to set the streaming mode.
- * \param hspdm hspdm module
- * \param streamingMode Streaming modes available at HSPDM.\n
- * Definition in IfxHspdm.CON.SM
- * \return None
+/**
+ * \brief Sets the streaming mode for the HSPDM module.
+ *
+ * \param[inout] hspdm         Pointer to the HSPDM module instance.
+ * \param[in]    streamingMode The desired streaming mode for the HSPDM module. Definition in IfxHspdm.CON.SM. Range: \ref IfxHspdm_StreamingMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setStreamingMode(Ifx_HSPDM *hspdm, IfxHspdm_StreamingMode streamingMode);
 
-/** \brief set the desired dither level in Bit stream output.
- * \param hspdm hspdm device
- * \param ditherLevel Dither level values.\n
- * Definition in Ifx_Hspdm.CON.DITH
- * \return None
+/**
+ * \brief Configures the dither level for the bit stream output.
+ *
+ * \param[inout] hspdm       Pointer to the HSPDM device instance.
+ * \param[in]    ditherLevel Dither level to be set. Definition in Ifx_Hspdm.CON.DITH. Range: \ref IfxHspdm_DitherLevel.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setDitherLevel(Ifx_HSPDM *hspdm, IfxHspdm_DitherLevel ditherLevel);
 
-/** \brief sets the divider value required in the ITMDIV field to realize the required update frequency.
- * \param hspdm hspdm device
- * \param updateFrequency update freq
- * \return None
+/**
+ * \brief Sets the divider value required in the ITMDIV field to realize the specified update frequency.
+ *
+ * \param[inout] hspdm           Pointer to the HSPDM device instance.
+ * \param[in]    updateFrequency The desired update frequency. Range: \ref IfxHspdm_UpdateFreq.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setUpdateFreq(Ifx_HSPDM *hspdm, IfxHspdm_UpdateFreq updateFrequency);
 
-/** \brief start the bit stream from HSPDM.
- * \param hspdm hspdm device
- * \return None
+/**
+ * \brief Starts the bit stream operation for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_startBitStream(Ifx_HSPDM *hspdm);
 
-/** \brief stop the bit stream from HSPDM.
- * \param hspdm hspdm device
- * \return None
+/**
+ * \brief Stops the bit stream transmission or reception from the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_stopBitStream(Ifx_HSPDM *hspdm);
 
-/** \brief sets the specified flag.
- * \param hspdm hspdm device
- * \param flag event flag
- * \return None
+/** \brief Sets the specified flag for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ * \param[in]    flag  Specified flag for the HSPDM device to be set. Range: \ref IfxHspdm_Flag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_setFlag(Ifx_HSPDM *hspdm, IfxHspdm_Flag flag);
 
-/** \brief clears the specified flag.
- * \param hspdm hspdm device
- * \param flag event flag
- * \return None
+/** \brief Clears the specified flag for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ * \param[in]    flag  Specified flag for the HSPDM device to be clear. Range: \ref IfxHspdm_Flag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_clearFlag(Ifx_HSPDM *hspdm, IfxHspdm_Flag flag);
 
-/** \brief enable the interrupt on event
- * \param hspdm hspdm device
- * \param flag event flag
- * \return None
+/** \brief Enable the interrupt on event for the HSPDM device.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ * \param[in]    flag  Specified flag for the HSPDM device to be enable. Range: \ref IfxHspdm_Flag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_enableFlag(Ifx_HSPDM *hspdm, IfxHspdm_Flag flag);
 
-/** \brief disable the Pad Assymetry Compensation.
- * \param hspdm hspdm device
- * \return None
+/**
+ * \brief Disables the Pad Asymmetry Compensation (PAC) feature.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_disablePac(Ifx_HSPDM *hspdm);
 
-/** \brief enable the HSPDM
- * \param hspdm pointer to the hspdm device
- * \return None
+/**
+ * \brief Enables the HSPDM module.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_enableModule(Ifx_HSPDM *hspdm);
 
-/** \brief disables the hspdm module.
- * \param hspdm pointer to the hspdm device
- * \return None
+/**
+ * \brief Disables the HSPDM module.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxHspdm_disableModule(Ifx_HSPDM *hspdm);
 
-/** \brief resets the hspdm module.
- * \param hspdm pointer to the hspdm device
- * \return None
+/**
+ * \brief Resets the HSPDM module to its initial state.
+ *
+ * \param[inout] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxHspdm_resetModule(Ifx_HSPDM *hspdm);
 
@@ -431,28 +652,40 @@ IFX_INLINE void IfxHspdm_resetModule(Ifx_HSPDM *hspdm);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief sets the start address of the chosen buffer.
- * \param hspdm hspdm device
- * \param buffer buffer number
- * \param address start address
- * \return None
+/**
+ * \brief Sets the start address for the specified buffer within the HSPDM device.
+ *
+ * \param[inout] hspdm   Pointer to the HSPDM device instance.
+ * \param[in]    buffer  Specifies the buffer to configure. Range: \ref IfxHspdm_Buffer.
+ * \param[in]    address Start address to set for the buffer. Range: 0 to 0x1FFC.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxHspdm_setStartAddress(Ifx_HSPDM *hspdm, IfxHspdm_Buffer buffer, uint32 address);
 
-/** \brief sets the end address of the chosen buffer.
- * \param hspdm hspdm device
- * \param buffer buffer number
- * \param address end address
- * \return None
+/**
+ * \brief Sets the end address of the chosen buffer for the HSPDM device.
+ *
+ * \param[inout] hspdm   Pointer to the HSPDM device instance.
+ * \param[in]    buffer  Specifies the buffer to configure. Range: \ref IfxHspdm_Buffer.
+ * \param[in]    address End address of the buffer. Range: 0 to 0x1FFC.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxHspdm_setEndAddress(Ifx_HSPDM *hspdm, IfxHspdm_Buffer buffer, uint32 address);
 
-/** \brief set the start and end address of the mute signals
- * \param hspdm hspdm device
- * \param muteRange Mute Range selection
- * \param startAddress Start Address
- * \param endAddress end address
- * \return None
+/**
+ * \brief Sets the start and end addresses for the mute signals in the specified mute range.
+ *
+ * \param[inout] hspdm        Pointer to the HSPDM device instance.
+ * \param[in]    muteRange    Enumeration specifying the mute range to configure. Range: \ref IfxHspdm_MuteRange.
+ * \param[in]    startAddress Starting address of the mute range. Must be less than or equal to endAddress. Range: 0 to 0x1FFC.
+ * \param[in]    endAddress   Ending address of the mute range. Must be greater than or equal to startAddress. Range: 0 to 0x1FFC.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxHspdm_setMuteAddresses(Ifx_HSPDM *hspdm, IfxHspdm_MuteRange muteRange, uint32 startAddress, uint32 endAddress);
 
@@ -465,45 +698,72 @@ IFX_EXTERN void IfxHspdm_setMuteAddresses(Ifx_HSPDM *hspdm, IfxHspdm_MuteRange m
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief function returns the current address being access in HSPDM SRAM
- * \param hspdm hspdm device
- * \return current address
+/**
+ * \brief Returns the current address being accessed in the HSPDM SRAM.
+ *
+ * \param[in] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval uint32 The current address in the HSPDM SRAM. Range: 0 to 0x1FFC.
+ *
  */
 IFX_INLINE uint32 IfxHspdm_getCurrentSramAddr(Ifx_HSPDM *hspdm);
 
-/** \brief returns the run status of the hspdm module.
- * \param hspdm hspdm device
- * \return HSPDM running status.\n
- * Definition in IfxHspdm.CON.RUN
+/**
+ * \brief Retrieves the current run status of the HSPDM module.
+ *
+ * \param[in] hspdm Pointer to the HSPDM device instance.
+ *  Definition in IfxHspdm.CON.RUN
+ *
+ * \retval IfxHspdm_RunState The current run state of the HSPDM module. Range: \ref IfxHspdm_RunState.
+ *
  */
 IFX_INLINE IfxHspdm_RunState IfxHspdm_getRunStatus(Ifx_HSPDM *hspdm);
 
-/** \brief returns the physical level of the mute signal
- * \param hspdm hspdm device
- * \return mute level
+/**
+ * \brief Returns the physical level of the mute signal.
+ *
+ * \param[in] hspdm Pointer to the HSPDM device instance.
+ *
+ * \retval TRUE If  mute is active (signal is muted).
+ *         FALSE If mute is inactive (signal is not muted).
+ *
  */
 IFX_INLINE boolean IfxHspdm_getMuteLevel(Ifx_HSPDM *hspdm);
 
-/** \brief returns the status of the flag specified.
- * \param hspdm hspdm device
- * \param flag enumeration holding event flags of HSPDM
- * \return flag status
+/**
+ * \brief Returns the status of the specified HSPDM flag.
+ *
+ * \param[in] hspdm Pointer to the HSPDM device instance.
+ * \param[in] flag  Enumeration specifying the HSPDM flag to check. Range: \ref IfxHspdm_Flag.
+ *
+ * \retval TRUE The specified flag is set.
+ *         FALSE The specified flag is not set.
+ *
  */
 IFX_INLINE boolean IfxHspdm_getFlagStatus(Ifx_HSPDM *hspdm, IfxHspdm_Flag flag);
 
-/** \brief Returns the SRC pointer for HSPDM buffer Interrupt
- * \return pointer to BFR interrupt node of HSPDM
+/**
+ * \brief Returns the SRC pointer for HSPDM buffer Interrupt.
+ * 
+ * \retval Ifx_SRC_SRCR* Pointer to the BFR interrupt node of HSPDM.
+ * 
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxHspdm_getSrcPointerBFR(void);
 
-/** \brief Returns the SRC pointer for HSPDM MUTE Interrupt.\n
+/**
+ * \brief Returns the SRC pointer for HSPDM MUTE Interrupt.
  * This is mentioned as RAMP in the SRC regdef file.
- * \return pointer to MUTE interrupt node of HSPDM
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to MUTE interrupt node of HSPDM.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxHspdm_getSrcPointerMUTE(void);
 
-/** \brief Returns the SRC pointer for HSPDM error Interrupt.
- * \return pointer to ERR interrupt node of HSPDM
+/**
+ * \brief Returns the SRC pointer for HSPDM error Interrupt.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the ERR interrupt node of HSPDM.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxHspdm_getSrcPointerERR(void);
 
@@ -545,7 +805,7 @@ IFX_INLINE void IfxHspdm_setAdcTriggerOffset(Ifx_HSPDM *hspdm, uint32 offsetCoun
 
 IFX_INLINE void IfxHspdm_setAdcTriggerPeriod(Ifx_HSPDM *hspdm, uint32 periodCount)
 {
-    IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, periodCount >= 9);  /* for period < 9; we have to assert an error */
+    IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, periodCount >= 9);  /* For period < 9; we have to assert an error */
     hspdm->ADCTG.B.PERIOD = periodCount;
 }
 
@@ -674,17 +934,23 @@ IFX_INLINE void IfxHspdm_disableHwRun(Ifx_HSPDM *hspdm)
 IFX_INLINE void IfxHspdm_enableModule(Ifx_HSPDM *hspdm)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); /* clears the endinit protection*/
-    hspdm->CLC.B.DISR = (uint32)0;  /* enables the module*/
-    IfxScuWdt_setCpuEndinit(psw);   /* sets the endinit protection back on*/
+    /* Clears the endinit protection*/
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Enables the module*/
+    hspdm->CLC.B.DISR = (uint32)0;
+    /* Sets the endinit protection back on*/
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 
 IFX_INLINE void IfxHspdm_disableModule(Ifx_HSPDM *hspdm)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); /* clears the endinit protection*/
-    hspdm->CLC.B.DISR = (uint32)1;  /* disables the module*/
+    /* Clears the endinit protection*/
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Disables the module*/
+    hspdm->CLC.B.DISR = (uint32)1;
+    /* Sets the endinit protection back on*/
     IfxScuWdt_setCpuEndinit(psw);
 }
 
@@ -694,15 +960,18 @@ IFX_INLINE void IfxHspdm_resetModule(Ifx_HSPDM *hspdm)
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
     IfxScuWdt_clearCpuEndinit(passwd);
 
-    hspdm->KRST0.B.RST = 1;         /* Only if both Kernel reset bits are set a reset is executed */
+    /* Only if both Kernel reset bits are set a reset is executed */
+    hspdm->KRST0.B.RST = 1;
     hspdm->KRST1.B.RST = 1;
     IfxScuWdt_setCpuEndinit(passwd);
 
-    while (0 == hspdm->KRST0.B.RSTSTAT)     /* Wait until reset is executed */
+    /* Wait until reset is executed */
+    while (0 == hspdm->KRST0.B.RSTSTAT)
     {}
 
     IfxScuWdt_clearCpuEndinit(passwd);
-    hspdm->KRSTCLR.B.CLR = 1;           /* Clear Kernel reset status bit */
+    /* Clear Kernel reset status bit */
+    hspdm->KRSTCLR.B.CLR = 1;
 
     IfxScuWdt_setCpuEndinit(passwd);
 }
@@ -712,7 +981,7 @@ IFX_INLINE void IfxHspdm_setSuspendMode(Ifx_HSPDM *hspdm, IfxHspdm_SuspendMode m
 {
     Ifx_HSPDM_OCS ocs;
 
-    // remove protection and configure the suspend mode.
+    /* Remove protection and configure the suspend mode. */
     ocs.B.SUS_P  = 1;
     ocs.B.SUS    = mode;
     hspdm->OCS.U = ocs.U;

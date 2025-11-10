@@ -2,7 +2,7 @@
  * \file IfxRif_Rif.c
  * \brief RIF RIF details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -58,14 +58,15 @@
 
 void IfxRif_Rif_initModule(IfxRif_Rif *rif, IfxRif_Rif_Config *config)
 {
-    Ifx_RIF *rifSFR = config->rif; /* pointer to RIF registers */
-    rif->rif           = rifSFR;   /* take over register pointer to module handler */
+    Ifx_RIF *rifSFR = config->rif; /* Pointer to RIF registers */
+    rif->rif           = rifSFR;   /* Take over register pointer to module handler */
 
     rif->numOfChannels = config->numOfChannels;
 
     /* enable module if it hasn't been enabled already */
     if (IfxRif_isModuleEnabled(rifSFR) == FALSE)
     {
+    	/* Enable the module  */
         IfxRif_enableModule(rifSFR);
     }
 
@@ -86,6 +87,7 @@ void IfxRif_Rif_initModule(IfxRif_Rif *rif, IfxRif_Rif_Config *config)
 
         if (config->deserializer.calibrationEnable != FALSE)
         {
+        	/* Enable the Calibration  */
             IfxRif_enableCalibration(rifSFR);
         }
     }
@@ -106,7 +108,7 @@ void IfxRif_Rif_initModule(IfxRif_Rif *rif, IfxRif_Rif_Config *config)
     /* --- Radar State Machine Configuration --- */
 
     if (config->connectedAdc == IfxRif_Adc_external)
-    {     /* if External ADCs are selected */
+    {     /* If External ADCs are selected */
         /*   --- [RIF_TC.004] External ramp feature not reliable ---   */
         IfxRif_enableExternalAdc(rifSFR);
         IfxRif_setValidDataSamplesNumber(rifSFR, config->rsm.numOfValidSamples);
@@ -117,7 +119,7 @@ void IfxRif_Rif_initModule(IfxRif_Rif *rif, IfxRif_Rif_Config *config)
         }
     }
     else
-    {    /* if Internal ADCs are selected */
+    {    /* If Internal ADCs are selected */
         IfxRif_enableInternalAdc(rifSFR);
         /*   --- Ramp1 only applicable for External ADC ---   */
 
@@ -158,26 +160,31 @@ void IfxRif_Rif_initModule(IfxRif_Rif *rif, IfxRif_Rif_Config *config)
 
         if (config->interrupt.calibrationEndEnable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_calibrationEnd);
         }
 
         if (config->interrupt.frameWatchdogOverflowEnable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_frameWatchdogOverflow);
         }
 
         if (config->interrupt.rampEndEnable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_rampEnd);
         }
 
         if (config->interrupt.chirpEndEnable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_chirpEnd);
         }
 
         if (config->interrupt.ramp1StartEnable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_ramp1Start);
         }
 
@@ -192,26 +199,31 @@ void IfxRif_Rif_initModule(IfxRif_Rif *rif, IfxRif_Rif_Config *config)
 
         if (config->interrupt.crcErrorOnLine0Enable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_crcErrorOnLine0);
         }
 
         if (config->interrupt.crcErrorOnLine1Enable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_crcErrorOnLine1);
         }
 
         if (config->interrupt.crcErrorOnLine2Enable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_crcErrorOnLine2);
         }
 
         if (config->interrupt.crcErrorOnLine3Enable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_crcErrorOnLine3);
         }
 
         if (config->interrupt.ramp1ErrorEnable)
         {
+        	/* Enable the interrupt */
             IfxRif_enableInterrupt(rifSFR, IfxRif_Interrupt_ramp1Error);
         }
 
@@ -228,6 +240,7 @@ void IfxRif_Rif_initModuleConfig(IfxRif_Rif_Config *config, Ifx_RIF *rif)
     const IfxRif_Rif_Config defaultConfig = {
         .connectedAdc  = IfxRif_Adc_internal,
         .numOfChannels = 4,
+		/* Default values for deserializer */
         .deserializer  = {
             .clockPolarity     = IfxRif_ClockPolarity_default,
             .framePolarity     = IfxRif_FramePolarity_default,
@@ -237,6 +250,7 @@ void IfxRif_Rif_initModuleConfig(IfxRif_Rif_Config *config, Ifx_RIF *rif)
             .dataPolarity3     = IfxRif_DataPolarity_default,
             .calibrationEnable = FALSE
         },
+		/* Default values for data formating unit */
         .data                             = {
             .length         = IfxRif_DataLength_16bit,
             .format         = IfxRif_DataFormat_unsigned,
@@ -246,9 +260,11 @@ void IfxRif_Rif_initModuleConfig(IfxRif_Rif_Config *config, Ifx_RIF *rif)
             .fullSwapMode   = IfxRif_FullSwapMode_direct,
             .crcEnable      = FALSE
         },
+		/* Default values for frame watchdog */
         .fwdg                             = {
             .threshold                    = 0
         },
+		/* Default values for radar state machine */
         .rsm                              = {
             .ramp1SignalEnable   = FALSE,
             .ramp1SignalInput    = IfxRif_Ramp1SignalInput_0,
@@ -257,6 +273,7 @@ void IfxRif_Rif_initModuleConfig(IfxRif_Rif_Config *config, Ifx_RIF *rif)
             .numOfValidSamples   = 128,
             .lockstepEnable      = FALSE
         },
+		/* Default values for LVDS PAD control */
         .lvds                             = {
             .frameControl                 = IfxRif_LvdsPadControl_frameClock | IfxRif_LvdsPadControl_rterm,
             .clockControl                 = IfxRif_LvdsPadControl_frameClock | IfxRif_LvdsPadControl_rterm,
@@ -269,6 +286,7 @@ void IfxRif_Rif_initModuleConfig(IfxRif_Rif_Config *config, Ifx_RIF *rif)
             .biasDistributorPowerDownMode = IfxRif_LvdsBiasDistributorMode_active,
             .biasDistributor5VMode        = TRUE
         },
+		/* Default values for interrupt */
         .interrupt                        = {
             .calibrationEndEnable        = FALSE,
             .frameWatchdogOverflowEnable = FALSE,
@@ -290,7 +308,7 @@ void IfxRif_Rif_initModuleConfig(IfxRif_Rif_Config *config, Ifx_RIF *rif)
     /* Default Configuration */
     *config = defaultConfig;
 
-    /* take over module pointer */
+    /* Take over module pointer */
     config->rif = rif;
 }
 
@@ -398,7 +416,7 @@ void IfxRif_Rif_startDeserializers(IfxRif_Rif *rif)
         IfxRif_enableDeserializer(rifSFR, IfxRif_DeserializerId_3);
         break;
     default:
-        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* wrong selection  */
+        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* Wrong selection  */
         break;
     }
 }
@@ -425,7 +443,7 @@ void IfxRif_Rif_stopDeserializers(IfxRif_Rif *rif)
         IfxRif_disableDeserializer(rifSFR, IfxRif_DeserializerId_3);
         break;
     default:
-        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* wrong selection  */
+        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* Wrong selection  */
         break;
     }
 }

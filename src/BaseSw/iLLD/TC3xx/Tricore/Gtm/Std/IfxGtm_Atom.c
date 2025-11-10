@@ -2,7 +2,7 @@
  * \file IfxGtm_Atom.c
  * \brief GTM  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -570,6 +570,14 @@ void IfxGtm_Atom_Ch_setTriggerOutput(Ifx_GTM_ATOM *atom, IfxGtm_Atom_Ch channel,
     Ifx_GTM_ATOM_CH *atomCh = IfxGtm_Atom_Ch_getChannelPointer(atom, channel);
 
     atomCh->CTRL.B.TRIGOUT = trigger;
+}
+
+
+void IfxGtm_Atom_Ch_setAcb(Ifx_GTM_ATOM *atom, IfxGtm_Atom_Ch channel, uint8 acbConfig)
+{
+    Ifx_GTM_ATOM_CH *atomCh = IfxGtm_Atom_Ch_getChannelPointer(atom, channel);
+
+    atomCh->CTRL.B.ACB = (acbConfig & IFX_GTM_ATOM_CH_CTRL_ACB_MSK);
 }
 
 

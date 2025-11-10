@@ -2,7 +2,7 @@
  * \file IfxIom.c
  * \brief IOM  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -77,17 +77,23 @@ void IfxIom_resetModule(Ifx_IOM *iom)
 {
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    iom->KRST1.B.RST = 1;      /* Only if both Kernel reset bits are set a reset is executed */
+    /* Only if both Kernel reset bits are set a reset is executed */
+    iom->KRST1.B.RST = 1;
     iom->KRST0.B.RST = 1;
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
-    while (iom->KRST0.B.RSTSTAT == 0)  /* Wait until reset is executed */
-
+    /* Wait until reset is executed */
+    while (iom->KRST0.B.RSTSTAT == 0)
     {}
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
-    iom->KRSTCLR.B.CLR = 1;    /* Clear Kernel reset status bit */
+    /* Clear Kernel reset status bit */
+    iom->KRSTCLR.B.CLR = 1;
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 }
 #endif

@@ -3,7 +3,7 @@
  * \brief DTS  basic functionality
  * \ingroup IfxLld_Dts
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -66,13 +66,18 @@
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Gets the Interrupt request source.
- * \return Address of interrupt request source
+/**
+ * \brief Retrieves the address of the interrupt request source register.
+ *
+ * \retval Ifx_SRC_SRCR Pointer to the interrupt source control register.
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxDts_getSrcPointer(void);
 
-/** \brief Read the temperature measurement result
- * \return Temperature measurement result
+/**
+ * \brief Reads the temperature measurement result.
+ * 
+ * \retval uint16 The temperature measurement result as returned by the DTS.
+ *         		  Range: 0 to 0xFFF
  */
 IFX_INLINE uint16 IfxDts_getTemperatureValue(void);
 

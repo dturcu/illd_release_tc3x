@@ -3,7 +3,7 @@
  * \brief GTM TIMER details
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -76,9 +76,9 @@ typedef struct
     IfxGtm_Tim                   timIndex;                         /**< \brief Specifies the TIM instance number */
     IfxGtm_Tim_Ch                channel;                          /**< \brief Tim channel no */
     IfxGtm_Tim_ChannelControl    channelControl;                   /**< \brief Control configuration */
-    uint32                       raisingEdgeFilterTime;            /**< \brief Filter Raising Edge parameter */
-    uint32                       fallingEdgeFilterTime;            /**< \brief Filter Falling Edge parameter */
-    uint32                       shadowCounter;                    /**< \brief Shadow counter value */
+    uint32                       raisingEdgeFilterTime;            /**< \brief Filter Raising Edge parameter. Range: 0 to 0xFFFFFF */
+    uint32                       fallingEdgeFilterTime;            /**< \brief Filter Falling Edge parameter. Range: 0 to 0xFFFFFF */
+    uint32                       shadowCounter;                    /**< \brief Shadow counter value. Range: 0 to 0xFFFFFF */
     boolean                      irqEnable;                        /**< \brief enable interrupt notification */
     IfxGtm_IrqMode               irqMode;                          /**< \brief interrupt mode (level/pulse/pulse notify/single pulse) */
     IfxGtm_Tim_IrqType           irqType;                          /**< \brief interrupt type (new value/ ecnt overflow/ gpr overflow/ cnt overflow / TO detect / glitch detect) */

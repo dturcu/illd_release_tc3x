@@ -3,7 +3,7 @@
  * \brief IOM IOM details
  * \ingroup IfxLld_Iom
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -157,26 +157,26 @@
  */
 typedef struct
 {
-    uint32 eventCombinerSelection0 : 1;            /**< \brief Determines the inclusion of the channel0 event in the generation of the global event */
-    uint32 eventCombinerSelection1 : 1;            /**< \brief Determines the inclusion of the channel1 event in the generation of the global event */
-    uint32 eventCombinerSelection2 : 1;            /**< \brief Determines the inclusion of the channel2 event in the generation of the global event */
-    uint32 eventCombinerSelection3 : 1;            /**< \brief Determines the inclusion of the channel3 event in the generation of the global event */
-    uint32 eventCombinerSelection4 : 1;            /**< \brief Determines the inclusion of the channel4 event in the generation of the global event */
-    uint32 eventCombinerSelection5 : 1;            /**< \brief Determines the inclusion of the channel5 event in the generation of the global event */
-    uint32 eventCombinerSelection6 : 1;            /**< \brief Determines the inclusion of the channel6 event in the generation of the global event */
-    uint32 eventCombinerSelection7 : 1;            /**< \brief Determines the inclusion of the channel7 event in the generation of the global event */
-    uint32 eventCombinerSelection8 : 1;            /**< \brief Determines the inclusion of the channel8 event in the generation of the global event */
-    uint32 eventCombinerSelection9 : 1;            /**< \brief Determines the inclusion of the channel9 event in the generation of the global event */
-    uint32 eventCombinerSelection10 : 1;           /**< \brief Determines the inclusion of the channel10 event in the generation of the global event */
-    uint32 eventCombinerSelection11 : 1;           /**< \brief Determines the inclusion of the channel11 event in the generation of the global event */
-    uint32 eventCombinerSelection12 : 1;           /**< \brief Determines the inclusion of the channel12 event in the generation of the global event */
-    uint32 eventCombinerSelection13 : 1;           /**< \brief Determines the inclusion of the channel13 event in the generation of the global event */
-    uint32 eventCombinerSelection14 : 1;           /**< \brief Determines the inclusion of the channel14 event in the generation of the global event */
-    uint32 eventCombinerSelection15 : 1;           /**< \brief Determines the inclusion of the channel15 event in the generation of the global event */
-    uint32 countedEventCombinerSelection0 : 1;     /**< \brief Determines the inclusion of the respective channel event counter output (1 of 4) in the generation of the global event (AND function). */
-    uint32 countedEventCombinerSelection1 : 1;     /**< \brief Determines the inclusion of the respective channel event counter output (1 of 4) in the generation of the global event (AND function). */
-    uint32 countedEventCombinerSelection2 : 1;     /**< \brief Determines the inclusion of the respective channel event counter output (1 of 4) in the generation of the global event (AND function). */
-    uint32 countedEventCombinerSelection3 : 1;     /**< \brief Determines the inclusion of the respective channel event counter output (1 of 4) in the generation of the global event (AND function). */
+    uint32 eventCombinerSelection0 : 1;            /**< \brief Determines the inclusion of the channel0 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection1 : 1;            /**< \brief Determines the inclusion of the channel1 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection2 : 1;            /**< \brief Determines the inclusion of the channel2 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection3 : 1;            /**< \brief Determines the inclusion of the channel3 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection4 : 1;            /**< \brief Determines the inclusion of the channel4 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection5 : 1;            /**< \brief Determines the inclusion of the channel5 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection6 : 1;            /**< \brief Determines the inclusion of the channel6 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection7 : 1;            /**< \brief Determines the inclusion of the channel7 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection8 : 1;            /**< \brief Determines the inclusion of the channel8 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection9 : 1;            /**< \brief Determines the inclusion of the channel9 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection10 : 1;           /**< \brief Determines the inclusion of the channel10 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection11 : 1;           /**< \brief Determines the inclusion of the channel11 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection12 : 1;           /**< \brief Determines the inclusion of the channel12 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection13 : 1;           /**< \brief Determines the inclusion of the channel13 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection14 : 1;           /**< \brief Determines the inclusion of the channel14 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 eventCombinerSelection15 : 1;           /**< \brief Determines the inclusion of the channel15 event in the generation of the global event. Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 countedEventCombinerSelection0 : 1;     /**< \brief Determines the inclusion of the respective channel event counter output (1 of 4) in the generation of the global event (AND function). Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 countedEventCombinerSelection1 : 1;     /**< \brief Determines the inclusion of the respective channel event counter output (1 of 4) in the generation of the global event (AND function). Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 countedEventCombinerSelection2 : 1;     /**< \brief Determines the inclusion of the respective channel event counter output (1 of 4) in the generation of the global event (AND function). Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
+    uint32 countedEventCombinerSelection3 : 1;     /**< \brief Determines the inclusion of the respective channel event counter output (1 of 4) in the generation of the global event (AND function). Range : 1 if include channel event/event counter output, 0 if don’t include channel event/event counter output */
     uint32 reserved : 12;                          /**< \brief reserved */
 } IfxIom_Iom_EcmGlobalEventSelectionBits;
 
@@ -221,14 +221,14 @@ typedef struct
  */
 typedef struct
 {
-    uint16                 comparatorThreshold;       /**< \brief Specifies the threshold value that is compared with timer */
-    boolean                timerReset;                /**< \brief Specifies the timer reset bit */
+    uint16                 comparatorThreshold;       /**< \brief Specifies the threshold value that is compared with timer. Range: 0 to 0xFFFF. */
+    boolean                timerReset;                /**< \brief Specifies the timer reset bit. Range: TRUE if the timer is cleared on glitch, FALSE if it is decremented on glitch. */
     IfxIom_MonitorSignal   monitorSignal;             /**< \brief Specifies the monitor signal input for Filter & Prescaler cell */
     IfxIom_ReferenceSignal referenceSignal;           /**< \brief Specifies the reference signal input for Filter & Prescaler cell */
     IfxIom_FilterMode      filterMode;                /**< \brief Specifies the Filter & Prescaler Cell mode */
     IfxIom_FpcChannelId    channelId;                 /**< \brief Specifies the number of Filter & Prescaler Cell channel */
     IfxIom_EdgeClearType   edgeType;                  /**< \brief Specifies the edge type which need to be cleared. */
-    boolean                exorInputEnable[8];        /**< \brief Specifies the EXOR GTM input signal enable array (8 GTM inputs can be selected by enabling them). */
+    boolean                exorInputEnable[8];        /**< \brief Specifies the EXOR GTM input signal enable array (8 GTM inputs can be selected by enabling them). Range: TRUE enable EXOR GTM input signal array, FALSE disable EXOR GTM input signal array. */
 } IfxIom_Iom_FpcConfig;
 
 /** \brief Specifies Logic Analyser Module configuration.
@@ -236,16 +236,15 @@ typedef struct
 typedef struct
 {
     IfxIom_LamId                    lamId;                          /**< \brief Specifies Id of Logic Analyser Module */
-    uint32                          eventWindowThreshold;           /**< \brief This bit field determines the threshold value for the event window
-                                                                     * counter from which an event is generated. */
-    boolean                         monitorSignalInverted;          /**< \brief Specifies whether the monitor signal from the FPC channel to LAM is inverted or not. */
-    boolean                         referenceSignalInverted;        /**< \brief Specifies whether the reference signal from the FPC channel to LAM is inverted or not. */
+    uint32                          eventWindowThreshold;           /**< \brief This bit field determines the threshold value for the event window counter from which an event is generated. Range: 0 to 0xFFFFFF. */
+    boolean                         monitorSignalInverted;          /**< \brief Specifies whether the monitor signal from the FPC channel to LAM is inverted or not. Range: TRUE if the monitor signal is inverted, FALSE if the monitor signal is not inverted. */
+    boolean                         referenceSignalInverted;        /**< \brief Specifies whether the reference signal from the FPC channel to LAM is inverted or not. Range: TRUE if the reference signal is inverted, FALSE if the reference signal is not inverted. */
     IfxIom_EventSource              eventSource;                    /**< \brief Specifies whether the event window generation is from the monitor or reference signal. */
     IfxIom_LamMonitorInputChannel   lamMonitorInputChannel;         /**< \brief Specifies which FPC/mux block monitor output signal is to be used for LAM block */
     IfxIom_LamReferenceInputChannel lamReferenceInputChannel;       /**< \brief Specifies which FPC/mux block reference output signal is to be used for LAM block */
     IfxIom_LamMonitorSource         lamMonitorSource;               /**< \brief Specifies whether the monitor signal from the FPC monitor channel is sourced directly or compared with the reference signal from the FPC reference channel for the event compare. */
     IfxIom_LamRunMode               lamMode;                        /**< \brief Specifies whether the event window generation is free-running or gated with the monitor or reference. */
-    boolean                         eventWindowInverted;            /**< \brief Specifies whether the event window polarity is inverted or not. */
+    boolean                         eventWindowInverted;            /**< \brief Specifies whether the event window polarity is inverted or not. Range: TRUE if the event window signal is inverted, FALSE if the event window signal is not inverted. */
     IfxIom_EventActiveEdgeSelection eventActiveEdgeSelection;       /**< \brief Specifies which active edges of the monitor and reference signals are used for the event window generation. */
 } IfxIom_Iom_LamConfig;
 
@@ -258,83 +257,115 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Reset the IOM module
- * \param iom Specifies handle to IOM module.
- * \return None
+/**
+ * \brief De-initializes the IOM module, resetting it to its default state.
+ *
+ * \param[inout] iom Pointer to the IOM module handle.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxIom_Iom_deInitModule(IfxIom_Iom *iom);
 
-/** \brief Initializes the Logic Analyser Module for internal event generation
- * \param iom Specifies handle to IOM module.
- * \param lamConfig Specifies Logic Analyser Module configuration.
- * \return Return TRUE if valid initialization otherwise FALSE
+/**
+ * \brief Initializes the Logic Analyser Module (LAM) for internal event generation.
+ * 
+ * \param[inout] iom       Pointer to the IOM module handle.
+ * \param[in]    lamConfig Pointer to the LAM configuration structure.
+ *
+ * \retval TRUE If the initialization is successful.
+ *         FALSE If the initialization fails.
  *
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
- *
+ * 
  */
 IFX_EXTERN boolean IfxIom_Iom_initAnalyser(IfxIom_Iom *iom, const IfxIom_Iom_LamConfig *lamConfig);
 
-/** \brief Initializes the default Logic Analyser Module buffer
- * \param lamConfig Specifies Logic Analyser Module configuration.
- * \return None
+/**
+ * \brief Initializes the default Logic Analyser Module buffer configuration.
+ *
+ * \param[inout] lamConfig Pointer to the LAM configuration structure to be initialized.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
  *
  */
 IFX_EXTERN void IfxIom_Iom_initAnalyserConfig(IfxIom_Iom_LamConfig *lamConfig);
 
-/** \brief Initializes the Event Combiner Module for Global event
- * \param iom Specifies handle to IOM module.
- * \param ecmConfig Specifies the ECM block configuration structure
- * \return Return TRUE if valid initialization otherwise FALSE
+/**
+ * \brief Initializes the Event Combiner Module (ECM) for global event handling.
+ *
+ * \param[inout] iom       Pointer to the IOM module handle.
+ * \param[in]    ecmConfig Pointer to the IfxIom_Iom_EcmConfig structure.
+ *
+ * \retval TRUE If the initialization is successful.
+ *         FALSE If the initialization fails.
  *
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
- *
+ * 
  */
 IFX_EXTERN boolean IfxIom_Iom_initCombiner(IfxIom_Iom *iom, const IfxIom_Iom_EcmConfig *ecmConfig);
 
-/** \brief Initializes the default Event Combiner Module buffer
- * \param ecmConfig Specifies the ECM block configuration structure
- * \return None
+/**
+ * \brief Initializes the default Event Combiner Module configuration.
+ *
+ * \param[inout] ecmConfig Pointer to the IfxIom_Iom_EcmConfig structure that will be initialized.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
  *
  */
 IFX_EXTERN void IfxIom_Iom_initCombinerConfig(IfxIom_Iom_EcmConfig *ecmConfig);
 
-/** \brief Initializes the Filter & Prescaler Cell for filtering the signals.
- * \param iom Specifies handle to IOM module.
- * \param fpcConfig Specifies Filter and Prescaler Cell configuration.
- * \return Return TRUE if valid initialization otherwise FALSE
- *
+/**
+ * \brief Initializes the Filter & Prescaler Cell (FPC) for signal filtering and processing.
+ * 
+ * \param[inout] iom       Pointer to the IOM module handle.
+ * \param[in]    fpcConfig Pointer to the IfxIom_Iom_FpcConfig structure that defines the Filter and Prescaler Cell configuration.
+ * 
+ * \retval TRUE Initialization was successful.
+ *         FALSE Initialization failed (invalid configuration or parameters).
+ * 
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
  *
  */
 IFX_EXTERN boolean IfxIom_Iom_initFpcChannel(IfxIom_Iom *iom, const IfxIom_Iom_FpcConfig *fpcConfig);
 
-/** \brief Initializes the default Filter & Prescaler Cell buffer
- * \param fpcConfig Specifies Filter and Prescaler Cell configuration.
- * \return None
+/**
+ * \brief Initializes the default configuration for the Filter & Prescaler Cell (FPC) channel.
+ *
+ * \param[inout] fpcConfig Pointer to the IfxIom_Iom_FpcConfig structure that defines the Filter and Prescaler Cell configuration.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
  *
  */
 IFX_EXTERN void IfxIom_Iom_initFpcChannelConfig(IfxIom_Iom_FpcConfig *fpcConfig);
 
-/** \brief Initialize the IOM module with supplied configuration.
- * \param iom Specifies handle to IOM module.
- * \return Return TRUE if valid module initialization otherwise FALSE.
+/**
+ * \brief Initializes the IOM module with the supplied configuration.
+ *
+ * \param[inout] iom Pointer to the IOM module handle.
+ *
+ * \retval TRUE If the module was successfully initialized.
+ *         FALSE If the initialization failed.
  *
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
  *
  */
 IFX_EXTERN boolean IfxIom_Iom_initModule(IfxIom_Iom *iom);
 
-/** \brief Initializes the Module default configuration buffer.
- * \param iom Specifies the IOM configuration structure
- * \param module Specifies handle to IOM module.
- * \return None
+/**
+ * \brief Initializes the Module default configuration buffer.
  *
+ * \param[inout] iom    Pointer to the IOM module handle.
+ * \param[in]    module Handle to the IOM module to be initialized.
+ *
+ * \retval None
+ * 
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
  *
  */
@@ -349,10 +380,13 @@ IFX_EXTERN void IfxIom_Iom_initModuleConfig(IfxIom_Iom *iom, Ifx_IOM *module);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief clear the falling and rising edges which are detected.
- * \param fpcConfig Specifies Filter and Prescaler Cell configuration.
- * \param iom Specifies handle to IOM module.
- * \return None
+/**
+ * \brief Clears the detected falling and rising edges for the specified FPC configuration.
+ *
+ * \param[in]    fpcConfig Pointer to the IfxIom_Iom_FpcConfig structure that defines the Filter and Prescaler Cell configuration.
+ * \param[inout] iom       Pointer to the IOM module handle.
+ *
+ * \retval None
  *
  * Usage example: see \ref IfxLld_Iom_Iom_Usage
  *

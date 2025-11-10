@@ -3,7 +3,7 @@
  * \brief EBU BFLASHST details
  * \ingroup IfxLld_Ebu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -125,62 +125,72 @@
 
 /** \addtogroup IfxLld_Ebu_BFlashSt_DataStructures
  * \{ */
+/** \brief Bit Fields of BFlashSt burst configuration bits
+ */
 typedef struct
 {
-    uint16 burstLength : 3;
-    uint16 wrapping : 1;
-    uint16 reserved_2 : 2;
-    uint16 validClockEdge : 1;
-    uint16 burstType : 1;
-    uint16 validDataReady : 1;
-    uint16 ylat : 1;
-    uint16 reserved_1 : 1;
-    uint16 xlat : 3;
-    uint16 reserved : 1;
-    uint16 readSelect : 1;
+    uint16 burstLength : 3;		/**< \brief Burst length */
+    uint16 wrapping : 1;        /**< \brief Wrapping */
+    uint16 reserved_2 : 2;		/**< \brief Reserved */
+    uint16 validClockEdge : 1;	/**< \brief Valid clock edge */
+    uint16 burstType : 1;		/**< \brief Burst type */
+    uint16 validDataReady : 1;	/**< \brief Reserved */
+    uint16 ylat : 1;			/**< \brief Y-Latency */
+    uint16 reserved_1 : 1;		/**< \brief Burst length */
+    uint16 xlat : 3;			/**< \brief X-Latency */
+    uint16 reserved : 1;		/**< \brief Reserved */
+    uint16 readSelect : 1;		/**< \brief Read select */
 } IfxEbu_BFlashSt_BurstCfgBits;
 
 /** \} */
 
 /** \addtogroup IfxLld_Ebu_BFlashSt_DataStructures
  * \{ */
+/** \brief BFlashSt burst configuration
+ */
 typedef union
 {
-    uint16                       U;
-    IfxEbu_BFlashSt_BurstCfgBits B;
+    uint16                       U;		/**< \brief Unsigned access */
+    IfxEbu_BFlashSt_BurstCfgBits B;		/**< \brief Bitfield access */
 } IfxEbu_BFlashSt_BurstCfg;
 
 /** \} */
 
 /** \addtogroup IfxLld_Ebu_BFlashSt_DataStructures
  * \{ */
+/** \brief Structure containing the BFlashSt configuration
+ */
 typedef struct
 {
-    Ifx_EBU          *ebu;
-    IfxEbu_ChipSelect chipSelect;
-    uint32            baseAddress;
-    uint32            passwordLower;
-    uint32            passwordUpper;
-    boolean           hasTuningProtection;
+    Ifx_EBU          *ebu;						/**< \brief Pointer to the base of EBU registers */
+    IfxEbu_ChipSelect chipSelect;				/**< \brief Chip select control */
+    uint32            baseAddress;				/**< \brief EBU base address. Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+                                                                                     0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+                                                                                     0xF8400000 to 0xF840FFFF For sri slave interface */
+    uint32            passwordLower;			/**< \brief Lower password for block protection. Range: 0 to 0xFFFFFFFF */
+    uint32            passwordUpper;			/**< \brief Upper password for block protection. Range: 0 to 0xFFFFFFFF */
+    boolean           hasTuningProtection;		/**< \brief Tuning Protection Status. Range: when '1' Tuning Protection enabled, when '0' Tuning Protection Disabled */
 } IfxEbu_BFlashSt;
 
+/** \brief BFlashSt configuration
+ */
 typedef struct
 {
-    Ifx_EBU                    *module;
-    IfxEbu_ExternalClockRatio   externalClockRatio;
-    IfxEbu_ChipSelect           chipSelect;
-    IfxEbu_ReadConfig           syncReadConfig;
-    IfxEbu_WriteConfig          asyncWriteConfig;
-    IfxEbu_ReadAccessParameter  syncReadAccessParameter;
-    IfxEbu_WriteAccessParameter asyncWriteAccessParameter;
-    IfxEbu_ModuleConfig         moduleConfig;
-    IfxEbu_MemoryRegionConfig   memoryRegionConfig;
-    IfxEbu_ReadConfig           asyncReadConfig;
-    IfxEbu_ReadAccessParameter  asyncReadAccessParameter;
-    IfxEbu_BFlashSt_BurstCfg    burstCfg;
-    uint32                      passwordLower;
-    uint32                      passwordUpper;
-    boolean                     hasTuningProtection;
+    Ifx_EBU                    *module;							/**< \brief Pointer to the base of EBU registers */
+    IfxEbu_ExternalClockRatio   externalClockRatio;				/**< \brief External clock ratio configuration */
+    IfxEbu_ChipSelect           chipSelect;						/**< \brief Chip select control configuration */
+    IfxEbu_ReadConfig           syncReadConfig;					/**< \brief Synchronous read configuration */
+    IfxEbu_WriteConfig          asyncWriteConfig;				/**< \brief Asynchronous write configuration */
+    IfxEbu_ReadAccessParameter  syncReadAccessParameter;		/**< \brief Synchronous read access parameter configuration */
+    IfxEbu_WriteAccessParameter asyncWriteAccessParameter;		/**< \brief Asynchronous write access parameter configuration */
+    IfxEbu_ModuleConfig         moduleConfig;					/**< \brief Module configuration settings */
+    IfxEbu_MemoryRegionConfig   memoryRegionConfig;				/**< \brief Memory region configuration settings */
+    IfxEbu_ReadConfig           asyncReadConfig;				/**< \brief Asynchronous read configuration */
+    IfxEbu_ReadAccessParameter  asyncReadAccessParameter;		/**< \brief Asynchronous read access parameter structure configuration */
+    IfxEbu_BFlashSt_BurstCfg    burstCfg;						/**< \brief BFlashSt burst configuration structure */
+    uint32                      passwordLower;					/**< \brief Lower password for block protection. Range: 0 to 0xFFFFFFFF */
+    uint32                      passwordUpper;					/**< \brief Upper password for block protection. Range: 0 to 0xFFFFFFFF */
+    boolean                     hasTuningProtection;			/**< \brief Tuning Protection Status. Range: when '1' Tuning Protection enabled, when '0' Tuning Protection Disabled */
 } IfxEbu_BFlashSt_Config;
 
 /** \} */
@@ -193,16 +203,22 @@ typedef struct
 /******************************************************************************/
 
 /**
- * \param bflash burst flash handle
- * \param config EBU memory configuration
- * \return None
+ * \brief Initializes the burst flash memory with the specified configuration.
+ *
+ * \param[inout] bflash  Pointer to the burst flash handle structure.
+ * \param[in]    config  Pointer to the configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_initMemory(IfxEbu_BFlashSt *bflash, const IfxEbu_BFlashSt_Config *config);
 
 /**
- * \param config EBU memory configuration
- * \param ebu pointer to the base of EBU registers
- * \return None
+ * \brief Initializes the EBU BFlash memory configuration.
+ *
+ * \param[inout] config Pointer to the EBU memory configuration structure.
+ * \param[in]    ebu    Pointer to the base of EBU registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_initMemoryConfig(IfxEbu_BFlashSt_Config *config, Ifx_EBU *ebu);
 
@@ -216,23 +232,40 @@ IFX_EXTERN void IfxEbu_BFlashSt_initMemoryConfig(IfxEbu_BFlashSt_Config *config,
 /******************************************************************************/
 
 /**
- * \param bflash burst flash handle
- * \param blockAddress the block address which should be erased
- * \return None
+ * \brief Erases a specified block in the burst flash memory.
+ *
+ * \param[in] bflash        Pointer to the burst flash handle structure.
+ * \param[in] blockAddress  The address of the block to be erased.
+ *                          Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+ *                                 0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+ *                                 0xF8400000 to 0xF840FFFF For sri slave interface
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_eraseBlock(const IfxEbu_BFlashSt *bflash, uint32 blockAddress);
 
 /**
- * \param bflash burst flash handle
- * \param address the address which should be programmed
- * \param data the data word which should be programmed
- * \return None
+ * \brief Programs a 32-bit word into the burst flash memory at the specified address.
+ *
+ * \param[in] bflash   Pointer to the burst flash handle structure.
+ * \param[in] address  The 32-bit memory address where the data will be programmed.
+ *                     Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+ *                            0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+ *                            0xF8400000 to 0xF840FFFF For sri slave interface
+ * \param[in] data     The 32-bit data value to be written to the flash memory.
+ *                     Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_programWord(const void *bflash, uint32 address, uint32 data);
 
 /**
- * \param bflash burst flash handle
- * \return TRUE if ready was notified, (planned, not implemented) FALSE on timeout: device not ready
+ * \brief Waits for the burst flash module to become ready.
+ *
+ * \param[in] bflash  Pointer to the burst flash handle structure.
+ *
+ * \retval TRUE   The burst flash module is ready.
+ *         FALSE  Timeout occurred; the module is not ready.
  */
 IFX_EXTERN boolean IfxEbu_BFlashSt_waitForReady(const IfxEbu_BFlashSt *bflash);
 
@@ -246,99 +279,160 @@ IFX_EXTERN boolean IfxEbu_BFlashSt_waitForReady(const IfxEbu_BFlashSt *bflash);
 /******************************************************************************/
 
 /**
- * \param bflash burst flash handle
- * \param blockAddress the base address of the block which should be erased
- * \return None
+ * \brief Erases a specified block in the burst flash memory.
+ *
+ * \param[in] bflash        Pointer to the burst flash handle structure.
+ * \param[in] blockAddress  The base address of the block to be erased.
+ *                          Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+ *                                 0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+ *                                 0xF8400000 to 0xF840FFFF For sri slave interface
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdBlockErase(const IfxEbu_BFlashSt *bflash, uint32 blockAddress);
 
 /**
- * \param bflash burst flash handle
- * \param blockAddress the base address of the block which should be unprotected
- * \return None
+ * \brief Clears the block protection for a specified block in the flash memory.
+ *
+ * \param[in] bflash       Pointer to the burst flash handle structure.
+ * \param[in] blockAddress The base address of the block which should be unprotected.
+ *                         Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+ *                                0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+ *                                0xF8400000 to 0xF840FFFF For sri slave interface
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdClearBlockProtection(const IfxEbu_BFlashSt *bflash, uint32 blockAddress);
 
 /**
- * \param bflash burst flash handle
- * \return None
+ * \brief Clears the status register of the burst flash module.
+ *
+ * \param[in] bflash  Pointer to the burst flash handle structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdClearStatusRegister(const IfxEbu_BFlashSt *bflash);
 
 /**
- * \param bflash burst flash handle
- * \return None
+ * \brief Erases all main blocks in the burst flash memory.
+ *
+ * \param[in] bflash  Pointer to the burst flash handle structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdEraseAllMainBlocks(const IfxEbu_BFlashSt *bflash);
 
 /**
- * \param bflash burst flash handle
- * \return None
+ * \brief Resumes the program/erase operation for the specified burst flash handle.
+ *
+ * \param[in] bflash  Pointer to the burst flash handle structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdProgramEraseResume(const IfxEbu_BFlashSt *bflash);
 
 /**
- * \param bflash burst flash handle
- * \return None
+ * \brief Suspends an ongoing program or erase operation in the burst flash module.
+ *
+ * \param[in] bflash  Pointer to the burst flash handle structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdProgramEraseSuspend(const IfxEbu_BFlashSt *bflash);
 
 /**
- * \param bflash burst flash handle
- * \return None
+ * \brief Programs the tuning protection for the flash module.
+ *
+ * \param[in] bflash  Pointer to the burst flash configuration structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdProgramTuningProtection(const IfxEbu_BFlashSt *bflash);
 
 /**
- * \param bflash burst flash handle
- * \param address the address which should be programmed
- * \param data the data word which should be programmed
- * \return None
+ * \brief Programs a 32-bit word at the specified address in the burst flash memory.
+ *
+ * \param[in] bflash  Pointer to the burst flash handle structure.
+ * \param[in] address Memory address to program the data.
+ *                    Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+ *                           0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+ *                           0xF8400000 to 0xF840FFFF For sri slave interface
+ * \param[in] data    The data word which should be programmed
+ *                    Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdProgramWord(const IfxEbu_BFlashSt *bflash, uint32 address, uint32 data);
 
 /**
- * \param bflash burst flash handle
- * \param signatureOffset Signature offset
- * \return the signature at the given signatureOffset
+ * \brief Reads the electronic signature from the burst flash module at the specified offset.
+ *
+ * \param[in] bflash           Pointer to the burst flash handle structure.
+ * \param[in] signatureOffset  Offset within the electronic signature area where the signature is located.
+ *                             Range: 0 to 0xFFFFFFFF
+ *
+ * \retval uint32 The signature at the given signatureOffset
+ *         Range: 0 to 0xFFFFFFFF
  */
 IFX_EXTERN uint32 IfxEbu_BFlashSt_cmdReadElectronicSignature(const IfxEbu_BFlashSt *bflash, uint32 signatureOffset);
 
 /**
- * \param bflash burst flash handle
- * \return None
+ * \brief Reads memory arrays from the burst flash memory.
+ *
+ * \param[in] bflash Pointer to the burst flash handle structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdReadMemoryArray(const IfxEbu_BFlashSt *bflash);
 
 /**
- * \param bflash burst flash handle
- * \return None
+ * \brief Reads or queries data from the burst flash memory.
+ *
+ * \param[in] bflash Pointer to the burst flash handle structure.
+ *
+ * \retval void
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdReadQuery(const IfxEbu_BFlashSt *bflash);
 
 /**
- * \param bflash burst flash handle
- * \return the current status word
+ * \brief Reads the current status word from the burst flash.
+ *
+ * \param[in] bflash Pointer to the burst flash handle structure.
+ *
+ * \retval uint32 The current status word of the burst flash.
+ *         Range: 0 to 0xFFFFFFFF
  */
 IFX_EXTERN uint32 IfxEbu_BFlashSt_cmdReadStatus(const IfxEbu_BFlashSt *bflash);
 
 /**
- * \param bflash burst flash handle
- * \param blockAddress the base address of the block which should be protected
- * \return None
+ * \brief Sets protection for a specified block in the burst flash memory.
+ *
+ * \param[in] bflash        Pointer to the burst flash handle structure.
+ * \param[in] blockAddress  The base address of the block to be protected.
+ *                          Range: Range: 0x82000000 to 0x87FFFFFF For Access to External Memory via cached address range\n
+ *                                        0xA2000000 to 0xA7FFFFFF For Access to external memory via non-cached address range\n
+ *                                        0xF8400000 to 0xF840FFFF For sri slave interface
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdSetBlockProtection(const IfxEbu_BFlashSt *bflash, uint32 blockAddress);
 
 /**
- * \param bflash burst flash handle
- * \param burstCfg the burst configuration which will be passed to the ST device
+ * \brief Sets burst configuration for a specified flash memory.
+ *
+ * \param[in] bflash   Pointer to the burst flash handle structure.
+ * \param[in] burstCfg The burst configuration which will be passed to the ST device.
+ *
  * \return None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdSetBurstConfig(const IfxEbu_BFlashSt *bflash, IfxEbu_BFlashSt_BurstCfg burstCfg);
 
 /**
- * \param bflash burst flash handle
- * \return None
+ * \brief Unlocks the tuning protection for the specified burst flash handle.
+ *
+ * \param[in] bflash  Pointer to the burst flash handle structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxEbu_BFlashSt_cmdUnlockTuningProtection(const IfxEbu_BFlashSt *bflash);
 

@@ -3,7 +3,7 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -117,7 +117,8 @@ typedef enum
     IfxGtm_Dtm_DeadTimePath_enable        /**< \brief Dead Time Path enabled */
 } IfxGtm_Dtm_DeadTimePath;
 
-/** \brief Polarity on output
+/** \brief Polarity on output\n
+ * Definition in IfxGTM.DTM[i].CH.CTRL2.B.POLxy ( i = 0 to 35; x = 0 , 1; and y = 0 to 4)
  */
 typedef enum
 {
@@ -125,7 +126,8 @@ typedef enum
     IfxGtm_Dtm_OutputPolarity_inverted          /**< \brief Output signal inverted */
 } IfxGtm_Dtm_OutputPolarity;
 
-/** \brief Input Selection
+/** \brief Input Selection\n
+ * Definition in IfxGTM.DTM.CH.CTRL3.B.TSEL
  */
 typedef enum
 {

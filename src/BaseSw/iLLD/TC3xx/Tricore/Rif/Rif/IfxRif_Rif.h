@@ -3,7 +3,7 @@
  * \brief RIF RIF details
  * \ingroup IfxLld_Rif
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -252,8 +252,8 @@ typedef struct
     boolean    ramp1ErrorEnable;                  /**< \brief Ramp1 Error interrupt enable / disable choice */
     boolean    chirp1ErrorEnable;                 /**< \brief Chirp1 Error interrupt enable / disable choice */
     boolean    ramp1StartEnable;                  /**< \brief Ramp1 Start interrupt enable / disable choice */
-    uint16     intPriority;                       /**< \brief Interrupt priority of the RIF module */
-    uint16     errPriority;                       /**< \brief Error interrupt priority of the RIF module */
+    uint16     intPriority;                       /**< \brief Interrupt priority of the RIF module. Range: 0 to 0xFFFF */
+    uint16     errPriority;                       /**< \brief Error interrupt priority of the RIF module. Range: 0 to 0xFFFF */
     IfxSrc_Tos typeOfService;                     /**< \brief Type of interrupt service */
 } IfxRif_Rif_InterruptConfig;
 
@@ -261,14 +261,14 @@ typedef struct
  */
 typedef struct
 {
-    uint8                          frameControl;                       /**< \brief Frame LVDS Pad Control */
-    uint8                          clockControl;                       /**< \brief Clock LVDS Pad Control */
-    uint8                          data0Control;                       /**< \brief DATA0 LVDS Pad Control */
-    uint8                          data1Control;                       /**< \brief DATA1 LVDS Pad Control */
-    uint8                          data2Control;                       /**< \brief DATA2 LVDS Pad Control */
-    uint8                          data3Control;                       /**< \brief DATA3 LVDS Pad Control */
+    uint8                          frameControl;                       /**< \brief Frame LVDS Pad Control. Range: 0 to 0xFF */
+    uint8                          clockControl;                       /**< \brief Clock LVDS Pad Control. Range: 0 to 0xFF */
+    uint8                          data0Control;                       /**< \brief DATA0 LVDS Pad Control. Range: 0 to 0xFF */
+    uint8                          data1Control;                       /**< \brief DATA1 LVDS Pad Control. Range: 0 to 0xFF */
+    uint8                          data2Control;                       /**< \brief DATA2 LVDS Pad Control. Range: 0 to 0xFF */
+    uint8                          data3Control;                       /**< \brief DATA3 LVDS Pad Control. Range: 0 to 0xFF */
     IfxRif_CommonLvdsPadControl    commonControl;                      /**< \brief Miscellaneous Common LVDS Pad Control */
-    uint8                          rtermTrimmingValue;                 /**< \brief Termination Resistor Trimming value */
+    uint8                          rtermTrimmingValue;                 /**< \brief Termination Resistor Trimming value. Range: 0 to 0x7 */
     IfxRif_LvdsBiasDistributorMode biasDistributorPowerDownMode;       /**< \brief LVDS Bias Distributor Power Down mode */
     boolean                        biasDistributor5VMode;              /**< \brief Enable / Disable 5V Mode for LVDS Bias Distributor */
 } IfxRif_Rif_LvdsConfig;
@@ -280,8 +280,8 @@ typedef struct
     boolean                    ramp1SignalEnable;         /**< \brief RAMP1 Signal enable /disable choice. */
     IfxRif_Ramp1SignalInput    ramp1SignalInput;          /**< \brief RAMP1 Signal input selection. */
     IfxRif_Ramp1SignalPolarity ramp1SignalPolarity;       /**< \brief RAMP1 Signal polarity. */
-    uint16                     rampsPerChirp;             /**< \brief Number of ramps per chirp, in the range of 1 to 2048 */
-    uint16                     numOfValidSamples;         /**< \brief Number of valid samples, in the range of 1 to 2048 samples */
+    uint16                     rampsPerChirp;             /**< \brief Number of ramps per chirp. Range: 0 to 0x7FF */
+    uint16                     numOfValidSamples;         /**< \brief Number of valid samples. Range: 0 to 0x7FF */
     boolean                    lockstepEnable;            /**< \brief Lockstep enable /disable choice, synchronous delivery of ADC samples from two RIFs */
 } IfxRif_Rif_RadarStateMachineConfig;
 
@@ -289,24 +289,24 @@ typedef struct
  */
 typedef struct
 {
-    boolean calibrationEnd;        /**< \brief Calibration End state info */
-    boolean chirpEnd;              /**< \brief End of the chirp status info */
-    boolean crcErrorOnLine0;       /**< \brief CRC error status info on Line 0 */
-    boolean crcErrorOnLine1;       /**< \brief CRC error status info on Line 1 */
-    boolean crcErrorOnLine2;       /**< \brief CRC error status info on Line 2 */
-    boolean crcErrorOnLine3;       /**< \brief CRC error status info on Line 3 */
-    boolean crcNoError;            /**< \brief CRC no error status info on all lines */
-    uint16  numOfRamps;            /**< \brief Number of ramps info */
-    uint16  numOfChirps;           /**< \brief Number of chirps info */
-    boolean ramp1Error;            /**< \brief RAMP1 Error status */
-    boolean chirp1Error;           /**< \brief CHIRP1 Error status */
+    boolean calibrationEnd;        /**< \brief Calibration End state info. Range: TRUE Interrupt occurred at Calibration End state, FALSE Interrupt not occurred at Calibration End state */
+    boolean chirpEnd;              /**< \brief End of the chirp status info. Range: TRUE Interrupt occurred at End of the chirp, FALSE Interrupt not occurred at End of the chirp */
+    boolean crcErrorOnLine0;       /**< \brief CRC error status info on Line 0. Range: TRUE CRC error on Line 0, FALSE No CRC error on Line 0 */
+    boolean crcErrorOnLine1;       /**< \brief CRC error status info on Line 1. Range: TRUE CRC error on Line 1, FALSE No CRC error on Line 1 */
+    boolean crcErrorOnLine2;       /**< \brief CRC error status info on Line 2. Range: TRUE CRC error on Line 2, FALSE No CRC error on Line 2 */
+    boolean crcErrorOnLine3;       /**< \brief CRC error status info on Line 3. Range: TRUE CRC error on Line 3, FALSE No CRC error on Line 3 */
+    boolean crcNoError;            /**< \brief CRC no error status info on all lines. Range: TRUE no errors on all lines, FALSE errors on all lines  */
+    uint16  numOfRamps;            /**< \brief Number of ramps info. Range: 0 to 0xFFFF */
+    uint16  numOfChirps;           /**< \brief Number of chirps info. Range: 0 to 0xFFFF */
+    boolean ramp1Error;            /**< \brief RAMP1 Error status. Range: TRUE Error occurred, FALSE Error did not occurred */
+    boolean chirp1Error;           /**< \brief CHIRP1 Error status. Range: TRUE Error occurred, FALSE Error did not occurred */
 } IfxRif_Rif_Status;
 
 /** \brief Structure for frame watchdog configuration
  */
 typedef struct
 {
-    uint16 threshold;       /**< \brief Threshold value of the frame watchdog timer */
+    uint16 threshold;       /**< \brief Threshold value of the frame watchdog timer. Range: 0 to 0x3FF */
 } IfxRif_Rif_frameWatchdogConfig;
 
 /** \} */
@@ -319,7 +319,7 @@ typedef struct
 {
     Ifx_RIF                           *rif;                 /**< \brief Specifies the pointer to the base of RIF registers */
     IfxRif_Adc                         connectedAdc;        /**< \brief ADC used, internal / external */
-    uint8                              numOfChannels;       /**< \brief Number of ADC channels used, Internal or External ADCs */
+    uint8                              numOfChannels;       /**< \brief Number of ADC channels used, Internal or External ADCs. Range: 0 to 0xFF */
     IfxRif_Rif_DeserializerConfig      deserializer;        /**< \brief Structure for deserializer configuration */
     IfxRif_Rif_DataConfig              data;                /**< \brief Structure for data formating unit configuration */
     IfxRif_Rif_frameWatchdogConfig     fwdg;                /**< \brief Structure for frame watchdog configuration */
@@ -336,7 +336,7 @@ typedef struct
 {
     Ifx_RIF          *rif;                 /**< \brief Specifies the pointer to the base of RIF registers */
     IfxRif_Adc        connectedAdc;        /**< \brief ADC used, internal / external */
-    uint8             numOfChannels;       /**< \brief Number of ADC channels used, Internal or External ADCs */
+    uint8             numOfChannels;       /**< \brief Number of ADC channels used, Internal or External ADCs. Range: 0 to 0xFF */
     IfxRif_Rif_Status status;              /**< \brief Structure for necessary status information */
 } IfxRif_Rif;
 
@@ -347,10 +347,13 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the module with default configuration
- * \param rif Module handle
- * \param config Configuration structure of the module, will be filled with default values
- * \return None
+/**
+ * \brief Initializes the RIF module with the provided configuration.
+ *
+ * \param[inout] rif     Pointer to the RIF module instance.
+ * \param[in]    config  Configuration Structure for the Module initialization.
+ *
+ * \retval None
  *
  * \code
  *     // create configuration
@@ -386,13 +389,13 @@ typedef struct
  */
 IFX_EXTERN void IfxRif_Rif_initModule(IfxRif_Rif *rif, IfxRif_Rif_Config *config);
 
-/** \brief Fills the config structure with default values
- * \param config Configuration structure of the module, will be filled with default values
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+/**
+ * \brief Initializes the RIF module configuration structure with default values.
  *
- * A coding example can be found in \ref IfxRif_Rif_initModule
+ * \param[inout] config Pointer to configuration structure to be initialized.
+ * \param[in]    rif    Pointer to the base of RIF registers.
  *
+ * \retval None
  */
 IFX_EXTERN void IfxRif_Rif_initModuleConfig(IfxRif_Rif_Config *config, Ifx_RIF *rif);
 
@@ -405,16 +408,19 @@ IFX_EXTERN void IfxRif_Rif_initModuleConfig(IfxRif_Rif_Config *config, Ifx_RIF *
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the status of the latest timing calibration sequence
- * \param rif Module handle
- * \return Calibration status (fail / success)
+/**
+ * \brief Returns the status of the latest timing calibration sequence.
+ *
+ * \param[in] rif Pointer to the RIF module instance.
+ *
+ * \retval IfxRif_CalibrationStatus The calibration status, which can indicate success or failure of the calibration sequence.
+ *         Range: \ref IfxRif_CalibrationStatus
  *
  * \code
  *     \\IfxRif_Rif rif0; //defined globally
  *
  *     IfxRif_Rif_getCalibrationStatus(&rif0);
  * \endcode
- *
  */
 IFX_INLINE IfxRif_CalibrationStatus IfxRif_Rif_getCalibrationStatus(IfxRif_Rif *rif);
 
@@ -422,22 +428,27 @@ IFX_INLINE IfxRif_CalibrationStatus IfxRif_Rif_getCalibrationStatus(IfxRif_Rif *
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Starts the quad deserializer, enables the individual deseralizers per selected ADC channels
- * \param rif Module handle
- * \return None
+/**
+ * \brief Starts the quad deserializer and enables individual deserializers based on the selected ADC channels.
+ *
+ * \param[in] rif Pointer to the RIF module instance.
+ *
+ * \retval None
  *
  * \code
  *     \\IfxRif_Rif rif0; //defined globally
  *
  *     IfxRif_Rif_startDeserializers(&rif0);
  * \endcode
- *
  */
 IFX_EXTERN void IfxRif_Rif_startDeserializers(IfxRif_Rif *rif);
 
-/** \brief Stops the quad deserializer, disables the individual deseralizers per selected ADC channels
- * \param rif Module handle
- * \return None
+/**
+ * \brief Interrupt Service Routine (ISR) for handling RIF module interrupts.
+ *
+ * \param[in] rif  Pointer to the RIF module instance.
+ *
+ * \retval None
  *
  * \code
  *     \\IfxRif_Rif rif0; //defined globally
@@ -457,9 +468,12 @@ IFX_EXTERN void IfxRif_Rif_stopDeserializers(IfxRif_Rif *rif);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief ISR error routine
- * \param rif Module handle
- * \return None
+/**
+ * \brief Interrupt service routine for handling RIF errors.
+ *
+ * \param[inout] rif Pointer to the RIF module instance.
+ *
+ * \retval None
  *
  * \code
  *     //define priorities for the Interrrupt handler
@@ -479,9 +493,12 @@ IFX_EXTERN void IfxRif_Rif_stopDeserializers(IfxRif_Rif *rif);
  */
 IFX_EXTERN void IfxRif_Rif_isrError(IfxRif_Rif *rif);
 
-/** \brief ISR interrupt routine
- * \param rif Module handle
- * \return None
+/**
+ * \brief Interrupt Service Routine (ISR) for handling RIF module interrupts.
+ *
+ * \param[inout] rif  Pointer to the RIF module instance.
+ *
+ * \retval None
  *
  * \code
  *     //define priorities for the Interrrupt handler

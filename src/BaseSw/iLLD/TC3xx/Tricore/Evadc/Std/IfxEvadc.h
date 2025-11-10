@@ -3,7 +3,7 @@
  * \brief EVADC  basic functionality
  * \ingroup IfxLld_Evadc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -198,8 +198,8 @@ typedef enum
                                                         * associated channel for EMUX control */
 } IfxEvadc_ChannelSelectionStyle;
 
-/** \brief Specifies the External Coding scheme(binary/gray)
- * defined in Ifx_EVADC.G[x].EMUXCTR.B.EMXCOD
+/** \brief Specifies the External Coding scheme(binary/gray).
+ * Defined in Ifx_EVADC.G[x].EMUXCTR.B.EMXCOD
  */
 typedef enum
 {
@@ -207,7 +207,8 @@ typedef enum
     IfxEvadc_EmuxCodingScheme_gray   = 1   /**< \brief Output the channel number in gray code */
 } IfxEvadc_EmuxCodingScheme;
 
-/** \brief Specifies the Emux interface
+/** \brief Specifies the Emux interface.
+ * Defined in Ifx_EVADC.G[x].EMUXSEL.B.EMUXGRP0
  */
 typedef enum
 {
@@ -215,8 +216,8 @@ typedef enum
     IfxEvadc_EmuxInterface_1 = 1   /**< \brief Emux Interface 1 */
 } IfxEvadc_EmuxInterface;
 
-/** \brief External Multiplexer sample time control
- * defined in Ifx_EVADC.G[x].EMUXCTR.B.EMXST
+/** \brief External Multiplexer sample time control.
+ * Defined in Ifx_EVADC.G[x].EMUXCTR.B.EMXST
  */
 typedef enum
 {
@@ -224,8 +225,8 @@ typedef enum
     IfxEvadc_EmuxSampleTimeControl_always         = 1   /**< \brief Use STCE for each conversion of an external channel */
 } IfxEvadc_EmuxSampleTimeControl;
 
-/** \brief specifies the External Channel Start select value
- * defined in Ifx_EVADC.G[x].EMUXCTR.B.EMUXSET
+/** \brief specifies the External Channel Start select value.
+ * Defined in Ifx_EVADC.G[x].EMUXCTR.B.EMUXSET
  */
 typedef enum
 {
@@ -239,8 +240,8 @@ typedef enum
     IfxEvadc_EmuxSelectValue_7           /**< \brief Start Selection Value 7  */
 } IfxEvadc_EmuxSelectValue;
 
-/** \brief Specifies External Multiplexer Mode
- * define in Ifx_EVADC.G[x].EMUXCTR.B.EMUXMODE
+/** \brief Specifies External Multiplexer Mode.
+ * Define in Ifx_EVADC.G[x].EMUXCTR.B.EMUXMODE
  */
 typedef enum
 {
@@ -250,7 +251,8 @@ typedef enum
     IfxEvadc_ExternalMultiplexerMode_sequence        = 3   /**< \brief Select Sequence Mode */
 } IfxEvadc_ExternalMultiplexerMode;
 
-/** \brief FIFO mode enable
+/** \brief FIFO mode enable.
+ * Defined in Ifx_EVADC.G[x].RCR[x].B.FEN
  */
 typedef enum
 {
@@ -415,7 +417,8 @@ typedef enum
     IfxEvadc_RequestSlotStartMode_cancelInjectRepeat = 1  /**< \brief Cancel-Inject-Repeat */
 } IfxEvadc_RequestSlotStartMode;
 
-/** \brief Request sources
+/** \brief Request sources.
+ * Defined in Ifx_EVADC.G[x].ARBPR.B.PRIOx(x=0, 1, 2)
  */
 typedef enum
 {
@@ -461,7 +464,8 @@ typedef enum
     IfxEvadc_Status_channelsStillPending = 6  /**< \brief Conversion for some of the channels are still pending */
 } IfxEvadc_Status;
 
-/** \brief OCDS Suspend Control (OCDS.SUS)
+/** \brief OCDS Suspend Control.
+ * Defined in Ifx_EVADC_OCS.B.SUS
  */
 typedef enum
 {
@@ -469,6 +473,28 @@ typedef enum
     IfxEvadc_SuspendMode_hard = 1,  /**< \brief Hard Suspend */
     IfxEvadc_SuspendMode_soft = 2   /**< \brief Soft Suspend */
 } IfxEvadc_SuspendMode;
+
+/** \brief External Trigger Input Selection defined in Ifx_EVADC.FC[x].FCCTRL.XTSEL(y=0,1,..,3)
+ */
+typedef enum
+{
+    IfxEvadc_ExternalTriggerInputSelection_0 = 0,   /**< \brief CCU60 service request output 3 */
+	IfxEvadc_ExternalTriggerInputSelection_1,       /**< \brief CCU61 service request output 3 */
+	IfxEvadc_ExternalTriggerInputSelection_2,       /**< \brief Trigger input C, group x */
+	IfxEvadc_ExternalTriggerInputSelection_3,       /**< \brief Trigger input D, group x */
+	IfxEvadc_ExternalTriggerInputSelection_4,		/**< \brief Trigger input E, group x */
+	IfxEvadc_ExternalTriggerInputSelection_5,		/**< \brief Trigger input F, group x */
+	IfxEvadc_ExternalTriggerInputSelection_6,		/**< \brief GTM ADC trigger 4 */
+	IfxEvadc_ExternalTriggerInputSelection_7,		/**< \brief ERU interrupt output x */
+	IfxEvadc_ExternalTriggerInputSelection_8,		/**< \brief GTM ADC trigger 0 */
+	IfxEvadc_ExternalTriggerInputSelection_9,		/**< \brief GTM ADC trigger 1 */
+	IfxEvadc_ExternalTriggerInputSelection_10,		/**< \brief GTM ADC trigger 2 */
+	IfxEvadc_ExternalTriggerInputSelection_11,		/**< \brief GTM ADC trigger 3 */
+	IfxEvadc_ExternalTriggerInputSelection_12,		/**< \brief Service request 1, group x */
+	IfxEvadc_ExternalTriggerInputSelection_13,		/**< \brief Service request 1, common group 0 */
+	IfxEvadc_ExternalTriggerInputSelection_14,		/**< \brief Service request 1, common group 1 */
+	IfxEvadc_ExternalTriggerInputSelection_15		/**< \brief Extend triggers to selected gating input of the respective source */
+} IfxEvadc_ExternalTriggerInputSelection;
 
 /** \brief trigger definition defined in MODULE_EVADC.G[x].QCTRL0.XTMODE(x=0,1,..,11)
  */
@@ -607,6 +633,7 @@ typedef enum
     IfxEvadc_ExternalTriggerPolarity_inverted = 1  /**< \brief Invert selected input signal */
 } IfxEvadc_ExternalTriggerPolarity;
 
+/**< \brief Defines the delay of the analog clock in clocks after the sync signal in FCM.B.ACSD */
 typedef enum
 {
     IfxEvadc_FastCompareAnalogClockSynchronizationDelay_0 = 0,  /**< \brief No delay */
@@ -703,6 +730,7 @@ typedef enum
 /** \} */
 
 /** \brief Defines the way the analog clock is generated.
+ * Defined in Ifx_EVADC_GLOBCFG.B.USC
  */
 typedef enum
 {
@@ -710,6 +738,9 @@ typedef enum
     IfxEvadc_AnalogClockGenerationMode_unsynchronized = 1  /**< \brief Unsynchronized mode: The analog clock is generated independently. */
 } IfxEvadc_AnalogClockGenerationMode;
 
+/** \brief Defines the delay of the analog clock in clocks after the sync signal.
+ * Defined in Ifx_EVADC_G[x].ANCFG.B.ACSD
+ */
 typedef enum
 {
     IfxEvadc_AnalogClockSynchronizationDelay_0 = 0,  /**< \brief No Delay */
@@ -722,7 +753,8 @@ typedef enum
     IfxEvadc_AnalogClockSynchronizationDelay_7 = 7   /**< \brief 7 clock cycles delay */
 } IfxEvadc_AnalogClockSynchronizationDelay;
 
-/** \brief Analog Input Precharge Control for Standard Conversions
+/** \brief Analog Input Precharge Control for Standard Conversions.
+ * Defined in Ifx_EVADC_G[x].ICLASS[x].B.AIPS
  */
 typedef enum
 {
@@ -732,12 +764,17 @@ typedef enum
     IfxEvadc_AnalogInputPrechargeControl_32cycles    = 3   /**< \brief Precharge for 32 clock cycles */
 } IfxEvadc_AnalogInputPrechargeControl;
 
+/** \brief Arbitration Mode selection.
+ */
 typedef enum
 {
-    IfxEvadc_ArbitrationMode_0 = 0,
-    IfxEvadc_ArbitrationMode_1 = 1
+    IfxEvadc_ArbitrationMode_0 = 0,  /**< \brief Arbitration mode 0 */
+    IfxEvadc_ArbitrationMode_1 = 1   /**< \brief Arbitration mode 1 */
 } IfxEvadc_ArbitrationMode;
 
+/** \brief Calibration Sample Time Control.
+ * Defined in Ifx_EVADC_G[1x].ANCFG.B.CALSTC
+ */
 typedef enum
 {
     IfxEvadc_CalibrationSampleTimeControl_2 = 0,  /**< \brief 2*t_ADCI */
@@ -757,7 +794,8 @@ typedef enum
     IfxEvadc_ChannelNoiseReduction_level3             = 3   /**< \brief Noise reduction conversion level 3 */
 } IfxEvadc_ChannelNoiseReduction;
 
-/** \brief Conversion Mode for EMUX Conversions
+/** \brief Conversion Mode for EMUX Conversions.
+ * Defined in Ifx_EVADC_G[x].ICLASS[y].B.CME((x=0,1,...,11;y=0,1))
  */
 typedef enum
 {
@@ -767,7 +805,8 @@ typedef enum
     IfxEvadc_ChannelNoiseReductionEMUX_level3             = 3   /**< \brief Noise reduction conversion level 3, 7 additional conversion steps */
 } IfxEvadc_ChannelNoiseReductionEMUX;
 
-/** \brief Data Modification Mode
+/** \brief Data Modification Mode.
+ * Defined in Ifx_EVADC_G[x].RCR[y].B.DRCTR(x=0,1,...,11;y=0,1....15)
  */
 typedef enum
 {
@@ -776,6 +815,9 @@ typedef enum
     IfxEvadc_DataModificationMode_differenceMode        = 2   /**< \brief Difference Mode */
 } IfxEvadc_DataModificationMode;
 
+/** \brief Data Reduction Control.
+ * Defined Ifx_EVADC_G[x].RCR[y].B.DRCTR(x=0,1,...,11;y=1,2...16)
+ */
 typedef enum
 {
     IfxEvadc_DataReductionControlMode_0  = 0,   /**< \brief If DMM=0b00, Data reduction disabled,if DMM=0b01, FIR:a=2,b=1,c=0 */
@@ -796,7 +838,8 @@ typedef enum
     IfxEvadc_DataReductionControlMode_15 = 15   /**< \brief If DMM=0b00, Accumulate 16 result values,if DMM=0b01, IIR:a=3,b=4 */
 } IfxEvadc_DataReductionControlMode;
 
-/** \brief Contains options for Idle Precharge levels
+/** \brief Contains options for Idle Precharge levels.
+ * Defined in Ifx_EVADC_G[x].ANCFG.B.IPE(x=0,1,...,11)
  */
 typedef enum
 {
@@ -804,7 +847,8 @@ typedef enum
     IfxEvadc_IdlePrecharge_referenceBy2 = 1   /**< \brief ThSampling capacitor is precharged to approx. half the reference when idle */
 } IfxEvadc_IdlePrecharge;
 
-/** \brief Selects the MSB conversion time(in terms of t_ADC)
+/** \brief Selects the MSB conversion time(in terms of t_ADC).
+ * Defined in Ifx_EVADC_G[x].ANCFG.B.DCMSB(x=0,1,...,11)
  */
 typedef enum
 {
@@ -812,7 +856,8 @@ typedef enum
     IfxEvadc_MsbConversionTime_doubleClockCycle = 1   /**< \brief 2 clock cycle for the MSB */
 } IfxEvadc_MsbConversionTime;
 
-/** \brief Reference Precharge Control
+/** \brief Reference Precharge Control.
+ * Defined in Ifx_EVADC_G[x].B.RPE(x=0,1,...,11)
  */
 typedef enum
 {
@@ -820,13 +865,17 @@ typedef enum
     IfxEvadc_ReferencePrechargeControl_singleClockPeriod = 1  /**< \brief Precharge the reference input for 1 clock period */
 } IfxEvadc_ReferencePrechargeControl;
 
+/** \brief Spread Early Sample Point for EMUX Conversions.
+ * Defined in Ifx_EVADC_G[x].ICLASS[y].B.SESPE(x=0,1,...,11;y=0,1)
+ */
 typedef enum
 {
     IfxEvadc_SpreadEarlySamplePointEMUXConversionsMode_nominal = 0,  /**< \brief Nominal sample timing */
     IfxEvadc_SpreadEarlySamplePointEMUXConversionsMode_spread  = 1   /**< \brief Spread sample timing, end of sample phase is varied */
 } IfxEvadc_SpreadEarlySamplePointEMUXConversionsMode;
 
-/** \brief Spread Early Sample Point for Standard Conversions
+/** \brief Spread Early Sample Point for Standard Conversions.
+ * Defined in Ifx_EVADC_G[x].ICLASS[y].B.SESPS(x=0,1,...,11;y=0,1)
  */
 typedef enum
 {
@@ -836,6 +885,7 @@ typedef enum
 
 /** \brief The 0-1 transition of bit SUCAL initiates the start-up calibrationphase of
  * all analog converters (except for the fast compare channels).
+ * Defined in Ifx_EVADC.GLOBCFG.B.SUCAL.
  * Note: The start-up calibration will abort any running conversion
  * and cannot be stopped before it is complete.
  */
@@ -848,6 +898,7 @@ typedef enum
 
 /** \brief Adjusts the analog circuitry to the supply voltage used in the application
  * system. Make sure to keep SUPLEV = 0b00 or 0b01 in the case of a 5 V supply.
+ * Defined in Ifx_EVADC_GLOBCFG.B.SUPLEV
  */
 typedef enum
 {
@@ -856,7 +907,8 @@ typedef enum
     IfxEvadc_SupplyVoltageLevelControl_lowerVoltage     = 2   /**< \brief Lower voltage range: assume a 3.3 V power supply is connected */
 } IfxEvadc_SupplyVoltageLevelControl;
 
-/** \brief Wait-for-Read Mode Enable
+/** \brief Wait-for-Read Mode Enable.
+ * Defined in Ifx_EVADC_G[x].RCR[y].B.WFR(x=0,1,...,11;y=0,1..15)
  */
 typedef enum
 {
@@ -2458,6 +2510,24 @@ IFX_INLINE void IfxEvadc_setFastCompareBoundaryFlagInversion(Ifx_EVADC_FC *evadc
 IFX_INLINE void IfxEvadc_disableFastCompareBoundaryFlag(Ifx_EVADC_FC *evadcFC);
 
 /**
+ * \brief Set the boundary flag for the specified EVADC instance.
+ *
+ * \param[inout] evadcFC Pointer to the EVADC register set for Fast Compare operation.
+ *
+ * \retval None
+ */
+IFX_INLINE void IfxEvadc_setBoundaryFlag(Ifx_EVADC_FC *evadcFC);
+
+/**
+ * \brief Clear the boundary flag for the specified EVADC instance.
+ *
+ * \param[inout] evadcFC Pointer to the EVADC register set for Fast Compare operation.
+ *
+ * \retval None
+ */
+IFX_INLINE void IfxEvadc_clearBoundaryFlag(Ifx_EVADC_FC *evadcFC);
+
+/**
  * \brief Enables the Fast Compare Boundary Flag for the specified EVADC Fast Compare instance.
  *
  * \param[inout] evadcFC Pointer to the EVADC register set for Fast Compare operation.
@@ -2995,6 +3065,18 @@ IFX_INLINE void IfxEvadc_setFastCompareBoundaryFlagInversion(Ifx_EVADC_FC *evadc
 IFX_INLINE void IfxEvadc_disableFastCompareBoundaryFlag(Ifx_EVADC_FC *evadcFC)
 {
     evadcFC->FCBFL.B.BFM = 0;
+}
+
+
+IFX_INLINE void IfxEvadc_setBoundaryFlag(Ifx_EVADC_FC *evadcFC)
+{
+	evadcFC->FCBFL.B.BFV = 1u;
+}
+
+
+IFX_INLINE void IfxEvadc_clearBoundaryFlag(Ifx_EVADC_FC *evadcFC)
+{
+	evadcFC->FCBFL.B.BFV = 0;
 }
 #endif /*#if !defined(DEVICE_TC33XED) && !defined(DEVICE_TC33X) && !defined (DEVICE_TC35X)*/
 

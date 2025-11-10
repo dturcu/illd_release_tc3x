@@ -3,7 +3,7 @@
  * \brief ASCLIN LIN details
  * \ingroup IfxLld_Asclin
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -345,21 +345,21 @@ typedef enum
  */
 typedef struct
 {
-    uint16 rxReceivedHeader : 1;                /**< \brief Received Header */
-    uint16 rxReceivedResponse : 1;              /**< \brief Received Response */
-    uint16 txTransmittedHeader : 1;             /**< \brief Transmitted Header */
-    uint16 txTransmittedResponse : 1;           /**< \brief Transmitted Response */
-    uint16 exBreakDetected : 1;                 /**< \brief Break Detected */
-    uint16 exTransmissionCompleted : 1;         /**< \brief Transmission Completed */
-    uint16 exHeaderTimeout : 1;                 /**< \brief Header Timeout */
-    uint16 exResponseTimeout : 1;               /**< \brief Response Timeout */
-    uint16 exLinParityError : 1;                /**< \brief Lin Parity Error */
-    uint16 exLinAutobaudDetectionError : 1;     /**< \brief Lin Autobaud Detection Error */
-    uint16 exLinChecksumError : 1;              /**< \brief Lin Checksum Error */
-    uint16 exFramingError : 1;                  /**< \brief Framing Error */
-    uint16 exCollisionDetectionError : 1;       /**< \brief Collision Detection Error */
-    uint16 exReceiveFIFOOverflow : 1;           /**< \brief Receive FIFO Overflow */
-    uint16 exTransmitFIFOOverflow : 1;          /**< \brief Transmit FIFO Overflow */
+    uint16 rxReceivedHeader : 1;                /**< \brief Received Header. Range: 0 - Disabled, 1 - Enabled */
+    uint16 rxReceivedResponse : 1;              /**< \brief Received Response. Range: 0 - Disabled, 1 - Enabled */
+    uint16 txTransmittedHeader : 1;             /**< \brief Transmitted Header. Range: 0 - Disabled, 1 - Enabled */
+    uint16 txTransmittedResponse : 1;           /**< \brief Transmitted Response. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exBreakDetected : 1;                 /**< \brief Break Detected. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exTransmissionCompleted : 1;         /**< \brief Transmission Completed. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exHeaderTimeout : 1;                 /**< \brief Header Timeout. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exResponseTimeout : 1;               /**< \brief Response Timeout. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exLinParityError : 1;                /**< \brief Lin Parity Error. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exLinAutobaudDetectionError : 1;     /**< \brief Lin Autobaud Detection Error. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exLinChecksumError : 1;              /**< \brief Lin Checksum Error. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exFramingError : 1;                  /**< \brief Framing Error. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exCollisionDetectionError : 1;       /**< \brief Collision Detection Error. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exReceiveFIFOOverflow : 1;           /**< \brief Receive FIFO Overflow. Range: 0 - Disabled, 1 - Enabled */
+    uint16 exTransmitFIFOOverflow : 1;          /**< \brief Transmit FIFO Overflow. Range: 0 - Disabled, 1 - Enabled */
 } IfxAsclin_Lin_EnabledInterrupts;
 
 /** \brief Structure for Lin Frame Control flags
@@ -386,11 +386,11 @@ typedef struct
  */
 typedef struct
 {
-    uint8 txHeaderEnd : 1;       /**< \brief transmit header end */
-    uint8 txResponseEnd : 1;     /**< \brief transmit response end */
-    uint8 rxHeaderEnd : 1;       /**< \brief receive header end */
-    uint8 rxResponseEnd : 1;     /**< \brief receive response end */
-    uint8 txCompleted : 1;       /**< \brief transmission completed */
+    uint8 txHeaderEnd : 1;       /**< \brief Transmit header end. Range: 0 - No HEADER_TX_END event, 1 - New HEADER_TX_END event */
+    uint8 txResponseEnd : 1;     /**< \brief Transmit response end. Range: 0 - No RESPONSE_TX_END event, 1 - New RESPONSE_TX_END event */
+    uint8 rxHeaderEnd : 1;       /**< \brief Receive header end. Range: 0 - No HEADER_RX_END event, 1 - New HEADER_RX_END event */
+    uint8 rxResponseEnd : 1;     /**< \brief Receive response end. Range: 0 - No RESPONSE_RX_END event, 1 - New RESPONSE_RX_END event */
+    uint8 txCompleted : 1;       /**< \brief Transmission completed. Range: 0 - No end of frame event occurred, 1 - End of frame event occurred */
 } IfxAsclin_Lin_AcknowledgementFlags;
 
 /** \brief Structure for Baudrate Detection
@@ -398,26 +398,26 @@ typedef struct
 typedef struct
 {
     boolean abd;              /**< \brief LINCON.ABD, autobaud detection enable */
-    uint8   lowerLimit;       /**< \brief BRD.LOWERLIMIT, auto baudrate detection lowerlimit */
-    uint8   upperLimit;       /**< \brief BRD.UPPERLIMIT, auto baudrate detection upperlimit */
+    uint8   lowerLimit;       /**< \brief BRD.LOWERLIMIT, auto baudrate detection lowerlimit. Range: 0 to 255 */
+    uint8   upperLimit;       /**< \brief BRD.UPPERLIMIT, auto baudrate detection upperlimit. Range: 0 to 255 */
     uint8   measured;         /**< \brief BRD.MEASURED, measured time interval between the
-                               * first and the fifth falling edge of the sync byte */
+                               * first and the fifth falling edge of the sync byte. Range: 0 to 4095 */
 } IfxAsclin_Lin_BaudrateDetection;
 
 /** \brief Structure for Baudrate Generation
  */
 typedef struct
 {
-    float32 baudrate;          /**< \brief value of the required baudrate */
-    uint16  numerator;         /**< \brief BRG.NUMERATOR, defines the numerator of fractional divider */
-    uint16  denominator;       /**< \brief BRG.DENOMINATOR, defines the denominator of fractional divider */
+    float32 baudrate;          /**< \brief value of the required baudrate. Range: 1 kbit/s to 20 kbit/s */
+    uint16  numerator;         /**< \brief BRG.NUMERATOR, defines the numerator of fractional divider. Range: 0 to 4095 */
+    uint16  denominator;       /**< \brief BRG.DENOMINATOR, defines the denominator of fractional divider. Range: 0 to 4095 */
 } IfxAsclin_Lin_BaudrateGeneration;
 
 /** \brief Structure for Bit Sampling
  */
 typedef struct
 {
-    uint8                         filterDepth;               /**< \brief IOCR.DEPTH, digital glitch filter depth */
+    uint8                         filterDepth;               /**< \brief IOCR.DEPTH, digital glitch filter depth. Range: 0 to 63 */
     IfxAsclin_SamplesPerBit       medianFilter;              /**< \brief BITCON.SM, no. of samples per bit 1 or 3 */
     IfxAsclin_SamplePointPosition samplePointPosition;       /**< \brief BITCON.SAMPLEPOINT, sample point position */
 } IfxAsclin_Lin_BitSamplingControl;
@@ -426,7 +426,7 @@ typedef struct
  */
 typedef struct
 {
-    uint16                       prescaler;          /**< \brief BITCON.PRESCALER, predivider to generate the baud rate */
+    uint16                       prescaler;          /**< \brief BITCON.PRESCALER, predivider to generate the baud rate. Range: 0 to 4095 */
     IfxAsclin_OversamplingFactor oversampling;       /**< \brief BITCON.OVERSAMPLING, postdivider, used for oversampling */
 } IfxAsclin_Lin_BitTimingControl;
 
@@ -438,23 +438,23 @@ typedef struct
     IfxAsclin_HeaderResponseSelect   headerOnly;                /**< \brief DATCON.HO, Lin frame with header and response or header only */
     IfxAsclin_LinResponseTimeoutMode responseTimeoutMode;       /**< \brief DATCON.RM, response mode (response or frame timeout threshold) */
     IfxAsclin_Checksum               checksum;                  /**< \brief DATCON.CSM, checksum mode (classic or enhanced) */
-    uint16                           responseTimeout;           /**< \brief DATCON.RESPONSE, timeout limit */
+    uint16                           responseTimeout;           /**< \brief DATCON.RESPONSE, timeout limit. Range: 0 to 255 */
 } IfxAsclin_Lin_DataControl;
 
 /** \brief Structure for Error Flags
  */
 typedef struct
 {
-    uint8 frameError : 1;                    /**< \brief frame error */
-    uint8 headerTimeout : 1;                 /**< \brief header timeout */
-    uint8 responseTimeout : 1;               /**< \brief response timeout */
-    uint8 breakDetected : 1;                 /**< \brief break detected */
-    uint8 linParityError : 1;                /**< \brief lin parity error */
-    uint8 linAutobaudDetectionError : 1;     /**< \brief lin autobaud detection error */
-    uint8 linChecksumError : 1;              /**< \brief lin checksum error */
-    uint8 collisionDetectionError : 1;       /**< \brief collision detection error */
-    uint8 rxFifoOverflow : 1;                /**< \brief receive FIFO overflow error */
-    uint8 txFifoOverflow : 1;                /**< \brief transmit FIFO overflow error */
+    uint8 frameError : 1;                    /**< \brief Frame error. Range: 0 - No error, 1 - Error occurred */
+    uint8 headerTimeout : 1;                 /**< \brief Header timeout. Range: 0 - No HEADER_OVERFLOW event, 1 - New HEADER_OVERFLOW event */
+    uint8 responseTimeout : 1;               /**< \brief Response timeout. Range: 0 - No timeout event, 1 - New timeout event */
+    uint8 breakDetected : 1;                 /**< \brief Break detected. Range: 0 - No Break/Wake/Stuck event, 1 - New  Break/Wake/Stuck event */
+    uint8 linParityError : 1;                /**< \brief Lin parity error. Range: 0 - Last ID received error free , 1 - Last ID received with parity error */
+    uint8 linAutobaudDetectionError : 1;     /**< \brief Lin autobaud detection error. Range: 0 - No autobaud detection error, 1 - Autobaud detection error  */
+    uint8 linChecksumError : 1;              /**< \brief Lin checksum error. Range: 0 - Last checksum error free , 1 - Last checksum shows an error */
+    uint8 collisionDetectionError : 1;       /**< \brief Collision detection error. Range: 0 - No mismatch, 1 - Mismatch detected  */
+    uint8 rxFifoOverflow : 1;                /**< \brief Receive FIFO overflow error. Range: 0 - No overflow error occurred, 1 - Overflow error occurred */
+    uint8 txFifoOverflow : 1;                /**< \brief Transmit FIFO overflow error. Range: 0 - No overflow error occurred, 1 - Overflow error occurred */
 } IfxAsclin_Lin_ErrorFlags;
 
 /** \brief Structure for FIFO Control
@@ -483,10 +483,10 @@ typedef struct
  */
 typedef struct
 {
-    uint8                           rxResponseData[8];       /**< \brief Array to store received response data */
-    uint8                           headerID;                /**< \brief header ID */
-    uint8                           txResponseLength;        /**< \brief Length of transmitted response */
-    uint8                           rxResponseLength;        /**< \brief Length of received response */
+    uint8                           rxResponseData[8];       /**< \brief Array to store received response data. Range 0 to 0xFF */
+    uint8                           headerID;                /**< \brief header ID. Range 0 to 0xFF */
+    uint8                           txResponseLength;        /**< \brief Length of transmitted response. Range: 1 to 8 */
+    uint8                           rxResponseLength;        /**< \brief Length of received response. Range: 1 to 8 */
     IfxAsclin_Lin_FrameControlFlags flags;                   /**< \brief LIN frame control flags */
 } IfxAsclin_Lin_FrameDataControl;
 
@@ -494,10 +494,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16                          txPriority;             /**< \brief transmit interrupt priority */
-    uint16                          rxPriority;             /**< \brief receive interrupt priority */
-    uint16                          exPriority;             /**< \brief error interrupt priority */
-    IfxSrc_Tos                      typeOfService;          /**< \brief type of interrupt service */
+    uint16                          txPriority;             /**< \brief Transmit interrupt priority. Range: 0 to 255 */
+    uint16                          rxPriority;             /**< \brief Receive interrupt priority. Range: 0 to 255 */
+    uint16                          exPriority;             /**< \brief Error interrupt priority. Range: 0 to 255 */
+    IfxSrc_Tos                      typeOfService;          /**< \brief Type of interrupt service */
     IfxAsclin_Lin_EnabledInterrupts enabledInterrupt;       /**< \brief Interrupts which have to be enabled during initialisation as configured by application. Does not reflect current status of FLAGSENABLE register. */
 } IfxAsclin_Lin_InterruptConfig;
 
@@ -505,10 +505,10 @@ typedef struct
  */
 typedef struct
 {
-    boolean                     csEnable;            /**< \brief LINCON.CSEN, hardware checksum generation and checking */
+    boolean                     csEnable;            /**< \brief LINCON.CSEN, hardware checksum generation and checking enable/disable */
     IfxAsclin_ChecksumInjection csi;                 /**< \brief LINCON.CSI, checksum injection (not written or written) into RxFIFO */
-    uint8                       breakLength;         /**< \brief LINBTIMER.BREAK, break pulse generation and detection length */
-    uint8                       headerTimeout;       /**< \brief LINHTIMER.HEADER, header timeout threshold value */
+    uint8                       breakLength;         /**< \brief LINBTIMER.BREAK, break pulse generation and detection length. Range: 0 to 63 */
+    uint8                       headerTimeout;       /**< \brief LINHTIMER.HEADER, header timeout threshold value. Range: 0 to 255 */
 } IfxAsclin_Lin_LinControl;
 
 /** \brief Structure for LIN pin configuration
@@ -528,12 +528,12 @@ typedef struct
  * \{ */
 typedef struct
 {
-    Ifx_ASCLIN                        *asclin;                    /**< \brief pointer to ASCLIN registers */
+    Ifx_ASCLIN                        *asclin;                    /**< \brief Pointer to ASCLIN registers */
     IfxAsclin_Lin_FrameDataControl     linFrameData;              /**< \brief Structure for Lin Frame Data and Control */
     IfxAsclin_LinMode                  linMode;                   /**< \brief LINCON.MS, lin mode of operation (master or slave) */
-    IfxAsclin_Lin_AcknowledgementFlags acknowledgmentFlags;       /**< \brief structure for acknowledgement flags */
-    IfxAsclin_Lin_ErrorFlags           errorFlagsStatus;          /**< \brief structure for error flags status */
-    boolean                            receiveIdEnable;           /**< \brief setting to receive Id in Rx Fifo after sending it */
+    IfxAsclin_Lin_AcknowledgementFlags acknowledgmentFlags;       /**< \brief Structure for acknowledgement flags */
+    IfxAsclin_Lin_ErrorFlags           errorFlagsStatus;          /**< \brief Structure for error flags status */
+    boolean                            receiveIdEnable;           /**< \brief Setting to receive Id in Rx Fifo after sending it enable/disable */
     boolean                            isInterruptMode;           /**< \brief Value to indicate if APIs work in Polling mode or Interrupt mode */
 } IfxAsclin_Lin;
 
@@ -541,31 +541,31 @@ typedef struct
  */
 typedef struct
 {
-    Ifx_ASCLIN                      *asclin;                /**< \brief pointer to ASCLIN registers */
+    Ifx_ASCLIN                      *asclin;                /**< \brief Pointer to ASCLIN registers */
     IfxAsclin_FrameMode              frameMode;             /**< \brief FRAMECON.MODE, mode of operation of the module (ASC, SPI, LIN) */
     IfxAsclin_LinMode                linMode;               /**< \brief LINCON.MS, lin mode of operation (master or slave) */
-    IfxAsclin_Lin_BaudrateGeneration brg;                   /**< \brief structure for baudrate generation */
-    IfxAsclin_Lin_BaudrateDetection  brd;                   /**< \brief structure for baudrate detection */
-    IfxAsclin_Lin_BitTimingControl   btc;                   /**< \brief structure for bit timings */
-    IfxAsclin_Lin_BitSamplingControl bsc;                   /**< \brief structure for bit sampling */
-    IfxAsclin_Lin_FrameControl       frame;                 /**< \brief structure for frame control */
-    IfxAsclin_Lin_FifoControl        fifo;                  /**< \brief structure for FIFO control */
-    IfxAsclin_Lin_DataControl        data;                  /**< \brief structure for data control */
-    IfxAsclin_Lin_LinControl         lin;                   /**< \brief structure for lin control */
-    IFX_CONST IfxAsclin_Lin_Pins    *pins;                  /**< \brief structure for LIN pins */
+    IfxAsclin_Lin_BaudrateGeneration brg;                   /**< \brief Structure for baudrate generation */
+    IfxAsclin_Lin_BaudrateDetection  brd;                   /**< \brief Structure for baudrate detection */
+    IfxAsclin_Lin_BitTimingControl   btc;                   /**< \brief Structure for bit timings */
+    IfxAsclin_Lin_BitSamplingControl bsc;                   /**< \brief Structure for bit sampling */
+    IfxAsclin_Lin_FrameControl       frame;                 /**< \brief Structure for frame control */
+    IfxAsclin_Lin_FifoControl        fifo;                  /**< \brief Structure for FIFO control */
+    IfxAsclin_Lin_DataControl        data;                  /**< \brief Structure for data control */
+    IfxAsclin_Lin_LinControl         lin;                   /**< \brief Structure for lin control */
+    IFX_CONST IfxAsclin_Lin_Pins    *pins;                  /**< \brief Structure for LIN pins */
     IfxAsclin_ClockSource            clockSource;           /**< \brief CSR.CLKSEL, clock source selection */
     IfxAsclin_RxInputSelect          alti;                  /**< \brief IOCR.ALTI, Rx input (alternate input) pin selection */
-    IfxAsclin_Lin_InterruptConfig    interrupt;             /**< \brief structure for lin interrupt configuration */
-    boolean                          isInterruptMode;       /**< \brief flag to indicate Interrupt Mode (TRUE) or Polling Mode (FALSE) */
-    boolean                          receiveIdEnable;       /**< \brief setting to receive Id in Rx Fifo after sending it */
+    IfxAsclin_Lin_InterruptConfig    interrupt;             /**< \brief Structure for lin interrupt configuration */
+    boolean                          isInterruptMode;       /**< \brief Flag to indicate Interrupt Mode (TRUE) or Polling Mode (FALSE) */
+    boolean                          receiveIdEnable;       /**< \brief Setting to receive Id in Rx Fifo after sending it enable/disable*/
 } IfxAsclin_Lin_Config;
 
 /** \brief Structure to hold Lin Pdu data
  */
 typedef struct
 {
-    uint8                   pid;                /**< \brief PID of LIN Header */
-    uint8                   dataLength;         /**< \brief Length of LIN Response */
+    uint8                   pid;                /**< \brief PID of LIN Header. Range 0 to 0xFF */
+    uint8                   dataLength;         /**< \brief Length of LIN Response. Range: 1 to 8 */
     uint8                  *dataPtr;            /**< \brief Pointer for LIN Response data */
     IfxAsclin_Lin_Direction direction;          /**< \brief Direction Control (Tx Header only, Tx both Header and Response, Tx Header and Rx Response) */
     IfxAsclin_Checksum      checksumMode;       /**< \brief LIN Checksum Mode */

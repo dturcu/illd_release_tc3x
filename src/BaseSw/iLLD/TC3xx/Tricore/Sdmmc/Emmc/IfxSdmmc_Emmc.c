@@ -2,7 +2,7 @@
  * \file IfxSdmmc_Emmc.c
  * \brief SDMMC EMMC details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -66,14 +66,14 @@ IfxSdmmc_Status IfxSdmmc_Emmc_initCard(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_CardCo
     /* Local pointer for emmc->sdmmcSFR*/
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR;
 
-    /* set up the SD card interface, power up the card */
-    /* power on bus */
+    /* Set up the SD card interface, power up the card */
+    /* Power on bus */
     emmcPtr->PWR_CTRL.B.SD_BUS_PWR_VDD1 = 1;
 
     /* Enable the SD clock */
     emmcPtr->CLK_CTRL.B.SD_CLK_EN = 1;
 
-    /* according to SD Card spec we've to wait for 74 cycles with CMD and DAT high */
+    /* According to SD Card spec we've to wait for 74 cycles with CMD and DAT high */
     {
         uint32 loopCount = (IFXSDMMC_DELAY_74CYCLE_US * IFXSDMMC_1KMULTIPLIER) / IFXSDMMC_1KLOOPDELAY_US;
         uint32 index;
@@ -116,7 +116,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_identifyCard(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_Ca
 
     if (status == IfxSdmmc_Status_success)
     {
-        /* validate Access Mode (MMC_CMD1) */
+        /* Validate Access Mode (MMC_CMD1) */
         status = IfxSdmmc_Emmc_validateAccessMode(emmc);
     }
 
@@ -155,7 +155,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_configureSpeedAndBusWidth(IfxSdmmc_Emmc *emmc, Ifx
 
     if (status == IfxSdmmc_Status_success)
     {
-        /* switch Bus Width if selected */
+        /* Switch Bus Width if selected */
         if (cardConfig->dataWidth > IfxSdmmc_EmmcDataTransferWidth_1Bit)
         {
             status = IfxSdmmc_Emmc_switchBusWidth(emmc, cardConfig->dataWidth);
@@ -168,13 +168,13 @@ IfxSdmmc_Status IfxSdmmc_Emmc_configureSpeedAndBusWidth(IfxSdmmc_Emmc *emmc, Ifx
 
             if (status == IfxSdmmc_Status_success)
             {
-                /* Configure clock parameters to 50MHz*/
+                /* Configure clock parameters to 50MHz */
                 IfxSdmmc_configureClock(emmcPtr, IFXSDMMC_FREQUENCY_50MHZ);
             }
         }
         else
         {
-            /* Configure clock parameters to 26 MHz*/
+            /* Configure clock parameters to 26 MHz */
             IfxSdmmc_configureClock(emmcPtr, emmc->userFrequency);
         }
     }
@@ -187,27 +187,27 @@ IfxSdmmc_Status IfxSdmmc_Emmc_initHostController(IfxSdmmc_Emmc *emmc, IfxSdmmc_E
 {
     IfxSdmmc_Status status = IfxSdmmc_Status_success;
 
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
-    /* set the bus voltage */
+    /* Set the bus voltage */
     emmcPtr->PWR_CTRL.B.SD_BUS_VOL_VDD1 = IFXSDMMC_BUS_VOLTAGE_SELECT_VDD;
 
-    /* set the data line timeout value */
+    /* Set the data line timeout value */
     emmcPtr->TOUT_CTRL.B.TOUT_CNT = hostConfig->timeoutValue;
 
-    /* set card type as eMMC */
+    /* Set card type as eMMC */
     emmcPtr->EMMC_CTRL.B.CARD_IS_EMMC = 1;
 
     /* Configure clock parameters */
-    /* set up clock for 400KHz now; we will change later */
+    /* Set up clock for 400KHz now; we will change later */
     IfxSdmmc_configureClock(emmcPtr, IFXSDMMC_INIT_FREQUENCY);
     emmc->userFrequency = hostConfig->frequency;
 
-    /* enable internal clock */
+    /* Enable internal clock */
     status = IfxSdmmc_setUpInternalClock(emmcPtr);
 
-    /* enable Host version 4 */
+    /* Enable Host version 4 */
     IfxSdmmc_enableHostControllerVersion4(emmcPtr);
     emmcPtr->HOST_CTRL2.B.HOST_VER4_ENABLE = 1;
 
@@ -227,15 +227,15 @@ IfxSdmmc_Status IfxSdmmc_Emmc_initModule(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_Conf
     emmc->dmaUsed  = config->useDma;
     emmc->dmaType  = config->dmaConfig.dmaType;
 
-    /* enable module */
+    /* Enable module */
     IfxSdmmc_enableModule(config->sdmmcSFR);
 
     config->sdmmcSFR->SW_RST.U |= 1;
 
-    /* initialize the host controller for the card type */
+    /* Initialize the host controller for the card type */
     IfxSdmmc_Emmc_initHostController(emmc, &config->hostConfig);
 
-    /* set DMA type if DMA is used for transfers */
+    /* Set DMA type if DMA is used for transfers */
     if (config->useDma)
     {
         emmc->sdmmcSFR->HOST_CTRL1.B.DMA_SEL = config->dmaConfig.dmaType;
@@ -243,13 +243,13 @@ IfxSdmmc_Status IfxSdmmc_Emmc_initModule(IfxSdmmc_Emmc *emmc, IfxSdmmc_Emmc_Conf
 
     IfxSdmmc_Emmc_configureInterrupt(emmc, &config->interruptConfig);
 
-    /* setup pins */
+    /* Setup pins */
     if (config->pins != NULL_PTR)
     {
         IfxSdmmc_Emmc_setupPins(emmc, config->pins);
     }
 
-    /* set up, initialize and identify the card  */
+    /* Set up, initialize and identify the card  */
     status = IfxSdmmc_Emmc_initCard(emmc, &config->cardConfig);
 
     return status;
@@ -260,16 +260,16 @@ void IfxSdmmc_Emmc_configureInterrupt(IfxSdmmc_Emmc *emmc, IfxSdmmc_InterruptCon
 {
     Ifx_SDMMC *sdmmcSFR = emmc->sdmmcSFR;
 
-    /* enable the necessary normal interrupt status flags*/
+    /* Enable the necessary normal interrupt status flags */
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_commandComplete);
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_transferComplete);
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_dma);
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_bufferWriteReady);
     IfxSdmmc_enableNormalInterruptStatus(sdmmcSFR, IfxSdmmc_NormalInterrupt_bufferReadReady);
-    /* enable all the error interrupt status flags */
+    /* Enable all the error interrupt status flags */
     IfxSdmmc_enableAllErrorInterruptStatus(sdmmcSFR);
 
-    /* initialize the normal interrupts */
+    /* Initialize the normal interrupts */
     if (interruptConfig->priority > 0)
     {
         if (interruptConfig->commandCompleteInterruptEnable)
@@ -297,7 +297,7 @@ void IfxSdmmc_Emmc_configureInterrupt(IfxSdmmc_Emmc *emmc, IfxSdmmc_InterruptCon
             IfxSdmmc_enableErrorInterrupt(sdmmcSFR, IfxSdmmc_ErrorInterrupt_dataTimeout);
         }
 
-        /* initialize service request node */
+        /* Initialize service request node */
         volatile Ifx_SRC_SRCR *srcSFR;
         srcSFR = IfxSdmmc_getSrcPointer(sdmmcSFR, IfxSdmmc_InterruptType_normal);
         IfxSrc_init(srcSFR, interruptConfig->provider, interruptConfig->priority);
@@ -338,7 +338,7 @@ void IfxSdmmc_Emmc_initModuleConfig(IfxSdmmc_Emmc_Config *config, Ifx_SDMMC *sdm
     /* Default Configuration */
     *config = defaultConfig;
 
-    /* take over module pointer */
+    /* Take over module pointer */
     config->sdmmcSFR = sdmmcSFR;
 }
 
@@ -348,7 +348,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_readBlock(IfxSdmmc_Emmc *emmc, uint32 address, uin
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -384,7 +384,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_readBlock(IfxSdmmc_Emmc *emmc, uint32 address, uin
     }
 
     /* Wait for until the command OR data lines aren't busy */
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6;
 
     while ((emmcPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || emmcPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))
@@ -425,7 +425,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_readCsd(IfxSdmmc_Emmc *emmc)
     IfxSdmmc_Response response;
     uint32            argument = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     argument              = (uint32)(emmc->cardInfo.rca << IFXSDMMC_BITSHIFT_POS16);
@@ -443,7 +443,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_setRca(IfxSdmmc_Emmc *emmc, uint16 rca)
     IfxSdmmc_Status   status   = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     uint32            argument = (IFXSDMMC_ARG_NONE | (uint32)(rca << IFXSDMMC_BITSHIFT_POS16));
@@ -547,10 +547,10 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockAdma2Transfer(IfxSdmmc_Emmc *emmc, IfxS
     IfxSdmmc_Response response;
     uint32            timeout = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
-    /* set the system address */
+    /* Set the system address */
     IfxSdmmc_setSystemAddressForDma(emmcPtr, (uint32)descrAddress);
 
     emmcPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
@@ -563,7 +563,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockAdma2Transfer(IfxSdmmc_Emmc *emmc, IfxS
     /* Enable DMA transfers */
     emmcPtr->XFER_MODE.B.DMA_ENABLE = 1;
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     emmcPtr->XFER_MODE.B.DATA_XFER_DIR = direction;
 
     status = IfxSdmmc_sendCommand(emmcPtr, command, address, IfxSdmmc_ResponseType_r1, &response);
@@ -572,7 +572,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockAdma2Transfer(IfxSdmmc_Emmc *emmc, IfxS
     {
         timeout = IFXSDMMC_TIMEOUT_1E5; 
 
-        /* wait until transfer complete or ADMA error flags are set */
+        /* Wait until transfer complete or ADMA error flags are set */
         while ((IfxSdmmc_isNormalInterruptOccured(emmcPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0)
                && (IfxSdmmc_isErrorInterruptOccured(emmcPtr, IfxSdmmc_ErrorInterrupt_adma) == 0)
                && (timeout > 0))
@@ -606,10 +606,10 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockDmaTransfer(IfxSdmmc_Emmc *emmc, IfxSdm
     IfxSdmmc_Response response;
     uint32            timeout = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
-    /* set the system address */
+    /* Set the system address */
     IfxSdmmc_setSystemAddressForDma(emmcPtr, (uint32)data);
 
     emmcPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
@@ -623,7 +623,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockDmaTransfer(IfxSdmmc_Emmc *emmc, IfxSdm
     /* Enable DMA transfers */
     emmcPtr->XFER_MODE.B.DMA_ENABLE = 1;
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     emmcPtr->XFER_MODE.B.DATA_XFER_DIR = direction;
 
     status = IfxSdmmc_sendCommand(emmcPtr, command, address, IfxSdmmc_ResponseType_r1, &response);
@@ -632,7 +632,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockDmaTransfer(IfxSdmmc_Emmc *emmc, IfxSdm
     {
         timeout = IFXSDMMC_TIMEOUT_1E6; 
 
-        /* wait until transfer complete flag is set */
+        /* Wait until transfer complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(emmcPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -659,7 +659,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_
     IfxSdmmc_Response     response;
     IfxSdmmc_ResponseType responseType = IfxSdmmc_ResponseType_r1;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     uint32                loopIndex    = 0;
@@ -673,7 +673,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_
     /* Disable block count in transfer mode */
     emmcPtr->XFER_MODE.B.BLOCK_COUNT_ENABLE = 0;
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     emmcPtr->XFER_MODE.B.DATA_XFER_DIR = direction;
 
     status = IfxSdmmc_sendCommand(emmcPtr, command, address, responseType, &response);
@@ -684,7 +684,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_
         {
             timeout = IFXSDMMC_TIMEOUT_1E6; 
 
-            /* wait until Read ready flag is set */
+            /* Wait until Read ready flag is set */
             while ((IfxSdmmc_isNormalInterruptOccured(emmcPtr, IfxSdmmc_NormalInterrupt_bufferReadReady) == 0) && (timeout > 0))
             {
                 timeout--;
@@ -722,7 +722,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_singleBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_
 
         timeout = IFXSDMMC_TIMEOUT_1E6; 
 
-        /* wait until transfer complete flag is set */
+        /* Wait until transfer complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(emmcPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -748,7 +748,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_switchBusWidth(IfxSdmmc_Emmc *emmc, IfxSdmmc_EmmcD
     IfxSdmmc_Response response;
     uint32            argument = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     if (busWidth == IfxSdmmc_EmmcDataTransferWidth_4Bit)
@@ -761,13 +761,13 @@ IfxSdmmc_Status IfxSdmmc_Emmc_switchBusWidth(IfxSdmmc_Emmc *emmc, IfxSdmmc_EmmcD
         argument = IFXSDMMC_ARG_MMC_BUSWIDTH_8;
     }
 
-    /* set the bus width on the host controller */
+    /* Set the bus width on the host controller */
     IfxSdmmc_setEmmcDataTransferWidth(emmcPtr, busWidth);
 
     /* Switch card to desired bus width (CMD6) */
     status = IfxSdmmc_sendCommand(emmcPtr, IfxSdmmc_Command_mmcSwitchFunction, argument, IfxSdmmc_ResponseType_r1b, &response);
 
-    /* if switch failed, change the bus width back to 1 bit */
+    /* If switch failed, change the bus width back to 1 bit */
     if (status != IfxSdmmc_Status_success)
     {
         IfxSdmmc_setEmmcDataTransferWidth(emmcPtr, IfxSdmmc_EmmcDataTransferWidth_1Bit);
@@ -782,7 +782,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_switchToHighSpeed(IfxSdmmc_Emmc *emmc)
     IfxSdmmc_Status   status = IfxSdmmc_Status_success;
     IfxSdmmc_Response response;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     /* Switch card to high speed (CMD6) */
@@ -798,17 +798,17 @@ IfxSdmmc_Status IfxSdmmc_Emmc_switchToTransferState(IfxSdmmc_Emmc *emmc)
     IfxSdmmc_Response response;
     uint32            argument = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     argument |= (uint32)(emmc->cardInfo.rca << IFXSDMMC_BITSHIFT_POS16);
 
-    /* read card status CMD13 */
+    /* Read card status CMD13 */
     status = IfxSdmmc_sendCommand(emmcPtr, IfxSdmmc_Command_sendStatus, argument, IfxSdmmc_ResponseType_r1, &response);
 
     if (status == IfxSdmmc_Status_success)
     {
-        /* if the card is not in transfer state already Switch to transfer state (CMD7)*/
+        /* If the card is not in transfer state already Switch to transfer state (CMD7) */
         if (response.cardStatus.B.currentState != 4)
         {
             status = IfxSdmmc_sendCommand(emmcPtr, IfxSdmmc_Command_selectDeselectCard, argument, IfxSdmmc_ResponseType_r1b, &response);
@@ -825,12 +825,12 @@ IfxSdmmc_Status IfxSdmmc_Emmc_validateAccessMode(IfxSdmmc_Emmc *emmc)
     IfxSdmmc_Response response;
     uint32            timeout = (uint32)0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     timeout = (uint32)IFXSDMMC_TIMEOUT_1E6; 
 
-    /* validate access mode (MMC_CMD1) */
+    /* Validate access mode (MMC_CMD1) */
     do
     {
         status = IfxSdmmc_sendCommand(emmcPtr, IfxSdmmc_Command_mmcSendOpCond, IFXSDMMC_ARG_MMCCMD1, IfxSdmmc_ResponseType_r3, &response);
@@ -848,9 +848,9 @@ IfxSdmmc_Status IfxSdmmc_Emmc_validateAccessMode(IfxSdmmc_Emmc *emmc)
         {
             emmc->cardCapacity = (uint8)IfxSdmmc_EmmcCardCapacity_sectorAddressing;
         }
-        else /*((response.resp01 != 0x80FF8080) && (response.resp01 != 0xC0FF8080)) */
+        else /* ((response.resp01 != 0x80FF8080) && (response.resp01 != 0xC0FF8080)) */
         {
-            status = IfxSdmmc_Status_badResponse; /* device i s not compliant */
+            status = IfxSdmmc_Status_badResponse; /* Device is not compliant */
             emmcPtr->PWR_CTRL.B.SD_BUS_PWR_VDD1 = 0; /* Set bus power off */
             /* Update card initialization status */
             emmc->cardState &= (uint8)~((uint8)IfxSdmmc_CardState_notInitialised | (uint8)IfxSdmmc_CardState_noCard);
@@ -866,7 +866,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_writeBlock(IfxSdmmc_Emmc *emmc, uint32 address, ui
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -911,7 +911,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_writeBlock(IfxSdmmc_Emmc *emmc, uint32 address, ui
     }
 
     /* Wait for until the command OR data lines aren't busy */
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6; 
 
     while ((emmcPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || emmcPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))
@@ -934,7 +934,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_eraseBlocks(IfxSdmmc_Emmc *emmc, uint32 startAddre
     uint32            argument = (uint32)0;
     IfxSdmmc_Response response;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -958,13 +958,13 @@ IfxSdmmc_Status IfxSdmmc_Emmc_eraseBlocks(IfxSdmmc_Emmc *emmc, uint32 startAddre
 
         if (status == IfxSdmmc_Status_success)
         {
-            /* set the end Address */
+            /* Set the end Address */
             argument = endAddress;
             status   = IfxSdmmc_sendCommand(emmcPtr, IfxSdmmc_Command_mmcEraseGroupEnd, argument, IfxSdmmc_ResponseType_r1, &response);
 
             if (status == IfxSdmmc_Status_success)
             {
-                /* send the TRIM command to erase */
+                /* Send the TRIM command to erase */
                 argument = IFXSDMMC_ARG_CMD38_TRIM;
                 status   = IfxSdmmc_sendCommand(emmcPtr, IfxSdmmc_Command_erase, argument, IfxSdmmc_ResponseType_r1b, &response);
             }
@@ -980,7 +980,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_readMultiBlock(IfxSdmmc_Emmc *emmc, uint32 address
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -1004,7 +1004,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_readMultiBlock(IfxSdmmc_Emmc *emmc, uint32 address
             }
             else
             {
-                status = IfxSdmmc_Status_failure;  /* only ADMA2 support currently */
+                status = IfxSdmmc_Status_failure;  /* Only ADMA2 support currently */
             }
         }
         else
@@ -1015,7 +1015,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_readMultiBlock(IfxSdmmc_Emmc *emmc, uint32 address
     }
 
     /* Wait for until the command OR data lines aren't busy */
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6; 
 
     while ((emmcPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || emmcPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))
@@ -1037,7 +1037,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_writeMultiBlock(IfxSdmmc_Emmc *emmc, uint32 addres
     IfxSdmmc_Status status  = IfxSdmmc_Status_success;
     uint32          timeout = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     /* If the card is not initialized */
@@ -1061,7 +1061,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_writeMultiBlock(IfxSdmmc_Emmc *emmc, uint32 addres
             }
             else
             {
-                status = IfxSdmmc_Status_failure;  /* only ADMA2 support currently */
+                status = IfxSdmmc_Status_failure;  /* Only ADMA2 support currently */
             }
         }
         else
@@ -1081,7 +1081,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_writeMultiBlock(IfxSdmmc_Emmc *emmc, uint32 addres
     }
 
     /* Wait for until the command OR data lines aren't busy */
-    /* check if command and data lines are free */
+    /* Check if command and data lines are free */
     timeout = IFXSDMMC_TIMEOUT_1E6; 
 
     while ((emmcPtr->PSTATE_REG.B.CMD_INHIBIT_DAT || emmcPtr->PSTATE_REG.B.CMD_INHIBIT) && (timeout > 0))
@@ -1109,7 +1109,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_C
     uint32                numWords     = (uint32)((blockSize + 3) >> IFXSDMMC_BITSHIFT_POS2);
     uint32                blockIndex   = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
     emmcPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
@@ -1117,15 +1117,15 @@ IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_C
     if (numBlocks > 1)
     {
         IfxSdmmc_setBlockCount(emmcPtr, numBlocks);
-        emmcPtr->XFER_MODE.B.MULTI_BLK_SEL = TRUE; /* Set multi-block select */
+        emmcPtr->XFER_MODE.B.MULTI_BLK_SEL = TRUE;   /* Set multi-block select */
         emmcPtr->XFER_MODE.B.BLOCK_COUNT_ENABLE = 1; /* Enable block count */
     }
     else
     {
-        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* use Single block API!! */
+        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* Use Single block API!! */
     }
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     emmcPtr->XFER_MODE.B.DATA_XFER_DIR = direction;
 
     emmcPtr->XFER_MODE.B.AUTO_CMD_ENABLE = IfxSdmmc_AutoCmdSelect_cmd23; /* Set auto command enable */
@@ -1138,12 +1138,12 @@ IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_C
         {
         case IfxSdmmc_TransferDirection_read:
         {
-            /* read each block as buffer gets ready */
+            /* Read each block as buffer gets ready */
             for (blockIndex = 0; blockIndex < numBlocks; blockIndex++)
             {
                 timeout = IFXSDMMC_TIMEOUT_1E6;
 
-                /* wait until Read ready flag is set */
+                /* Wait until Read ready flag is set */
                 while ((IfxSdmmc_isNormalInterruptOccured(emmcPtr, IfxSdmmc_NormalInterrupt_bufferReadReady) == 0) && (timeout > 0))
                 {
                     timeout--;
@@ -1173,12 +1173,12 @@ IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_C
         case IfxSdmmc_TransferDirection_write:
         {
             {
-                /* write each block as buffer gets ready */
+                /* Write each block as buffer gets ready */
                 for (blockIndex = 0; blockIndex < numBlocks; blockIndex++)
                 {
                     timeout = IFXSDMMC_TIMEOUT_1E6; 
 
-                    /* wait until Read ready flag is set */
+                    /* Wait until Read ready flag is set */
                     while ((IfxSdmmc_isNormalInterruptOccured(emmcPtr, IfxSdmmc_NormalInterrupt_bufferWriteReady) == 0) && (timeout > 0))
                     {
                         timeout--;
@@ -1217,7 +1217,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockTransfer(IfxSdmmc_Emmc *emmc, IfxSdmmc_C
     {
         timeout = IFXSDMMC_TIMEOUT_1E6;
 
-        /* wait until transfer complete flag is set */
+        /* Wait until transfer complete flag is set */
         while ((IfxSdmmc_isNormalInterruptOccured(emmcPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0) && (timeout > 0))
         {
             timeout--;
@@ -1244,10 +1244,10 @@ IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockAdma2Transfer(IfxSdmmc_Emmc *emmc, IfxSd
     IfxSdmmc_Response response;
     uint32            timeout = 0;
     
-    /* Local pointer for emmc->sdmmcSFR*/
+    /* Local pointer for emmc->sdmmcSFR */
     Ifx_SDMMC *emmcPtr = emmc->sdmmcSFR; 
 
-    /* set the system address */
+    /* Set the system address */
     IfxSdmmc_setSystemAddressForDma(emmcPtr, (uint32)descrAddress);
 
     emmcPtr->BLOCKSIZE.B.XFER_BLOCK_SIZE = blockSize;
@@ -1260,12 +1260,12 @@ IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockAdma2Transfer(IfxSdmmc_Emmc *emmc, IfxSd
     }
     else
     {
-        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* use Single block API!! */
+        IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* Use Single block API!! */
     }
 
     emmcPtr->XFER_MODE.B.DMA_ENABLE = 1; /* Enable DMA transfers */
 
-    /* set transfer direction in host controller */
+    /* Set transfer direction in host controller */
     emmcPtr->XFER_MODE.B.DATA_XFER_DIR = direction;
 
     emmcPtr->XFER_MODE.B.AUTO_CMD_ENABLE = IfxSdmmc_AutoCmdSelect_cmd23; /* Set auto command enable */
@@ -1276,7 +1276,7 @@ IfxSdmmc_Status IfxSdmmc_Emmc_multiBlockAdma2Transfer(IfxSdmmc_Emmc *emmc, IfxSd
     {
         timeout = IFXSDMMC_TIMEOUT_1E5;
 
-        /* wait until transfer complete or adma error flags are set */
+        /* Wait until transfer complete or adma error flags are set */
         while ((IfxSdmmc_isNormalInterruptOccured(emmcPtr, IfxSdmmc_NormalInterrupt_transferComplete) == 0)
                && (IfxSdmmc_isErrorInterruptOccured(emmcPtr, IfxSdmmc_ErrorInterrupt_adma) == 0)
                && (timeout > 0))

@@ -3,7 +3,7 @@
  * \brief SMU  basic functionality
  * \ingroup IfxLld_Smu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -127,81 +127,137 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief This function clears the TSTEN, TSTRUN, TSTDONE, TSTOK, SMUERR and PMSERR flags
- * \return None
+/**
+ * \brief Clears the TSTEN, TSTRUN, TSTDONE, TSTOK, SMUERR, and PMSERR flags.
+ * This function resets the status flags related to the SMU standby monitoring and BIST operations.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSmuStdby_clearSmuStdbyMonBistFlags(void);
 
-/** \brief This function enable / disables he Alarm status clear in the Smu Standby command register .
- * This controls if a status flag set in an AGx register upon detection of the alarm event can be cleared by software or not. When ASCE is enabled, software shall write a 1 to bit position in AGx to clear the bit
- * (W1C). When a W1C action takes place the ASCE bit is automatically cleared to 0 by hardware and software shall set the ASCE bit again.
- * \return None
+/**
+ * \brief Enables or disables the alarm status clear functionality in the SMU Standby command register.
+ * This controls if a status flag set in an AGx register upon detection of the alarm event can be cleared by software or not.
+ * When ASCE is enabled, software shall write a 1 to bit position in AGx to clear the bit (W1C). When a W1C action takes
+ * place the ASCE bit is automatically cleared to 0 by hardware and software shall set the ASCE bit again.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSmuStdby_enableAlarmStatusClear(void);
 
-/** \brief This function enables the Smu Standby module
- * \param enable SMU standby enable/disable Module
- * \return None
+/**
+ * \brief Enables or disables the SMU Standby module.
+ * 
+ * \param[in] SMU standby enable/disable Module. Range: \ref IfxSmuStdby_SmuStdbyModuleState.
+ * 
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSmuStdby_enableSmuStdby(IfxSmuStdby_SmuStdbyModuleState enable);
 
-/** \brief This function enables the Smu standby Built-in Self test
- * \return None
+/**
+ * \brief Enables the SMU standby mode Built-in Self Test (BIST).
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmuStdby_enableSmuStdbyMonBist(void);
 
-/** \brief Funtion returns Smu Standby Alarm Group status
- * \param alarmGroup Smu standby Alarm group
- * \return Smu standby status
+/**
+ * \brief Retrieves the status of a specific SMU standby alarm group.
+ *
+ * \param[in] alarmGroup The identifier of the SMU standby alarm group to query. Range: 20 or 21.
+ *
+ * \retval uint32 The current status of the specified SMU standby alarm group. Range: 0 to 0x4000 FFF0.
+ *
  */
 IFX_INLINE uint32 IfxSmuStdby_getSmuStdbyAlarmGroupStatus(uint8 alarmGroup);
 
-/** \brief Funtion returns Smu Standby Alarm status
- * \param alarmGroup Smu standby Alarm group
- * \param alarmNum alarm number
- * \return Smu standby status
+/**
+ * \brief Retrieves the status of a specific SMU standby alarm.
+ *
+ * \param[in] alarmGroup The SMU standby alarm group to query. Range: 20 or 21.
+ * \param[in] alarmNum   The specific alarm number within the group. Range: 0 to 31.
+ *
+ * \retval uint32 The current status of the specified SMU standby alarm. Range: 0 to 0x4000 FFF0.
+ *
  */
 IFX_INLINE uint32 IfxSmuStdby_getSmuStdbyAlarmStatus(uint8 alarmGroup, uint8 alarmNum);
 
-/** \brief This function returns the SMU standby module status (enabled/disabled).
- * \return Smu standby status
+/**
+ * \brief Retrieves the current status of the SMU standby module, indicating whether it is enabled or disabled.
+ * 
+ * \retval The current state of the SMU standby module. Range: \ref IfxSmuStdby_SmuStdbyModuleState.
+ *
  */
 IFX_INLINE IfxSmuStdby_SmuStdbyModuleState IfxSmuStdby_getSmuStdbyModuleStatus(void);
 
-/** \brief This function returns the Smu Stdby BIST PMSERR flag
- * \return Smu Stdby BIST PMSERR flag
+/**
+ * \brief Retrieves the BIST PMS error flag status for the SMU standby monitoring.
+ *
+ * \retval TRUE If PMS error flag is set (error occurred).
+ *         FALSE If PMS error flag is not set (no error).
+ *
  */
 IFX_INLINE boolean IfxSmuStdby_getSmuStdbyMonBistPmsErrorFlag(void);
 
-/** \brief This function returns the Smu Stdby BIST SMUERR flag
- * \return Smu Stdby BIST SMUERR flag
+/**
+ * \brief This function retrieves the status of the Smu Stdby BIST SMUERR flag.
+ * 
+ * \retval  TRUE If the Smu Stdby BIST SMUERR flag is set, indicating an error condition.
+ *          FALSE If the Smu Stdby BIST SMUERR flag is not set, indicating no error condition.
+ *
  */
 IFX_INLINE boolean IfxSmuStdby_getSmuStdbyMonBistSmuErrorFlag(void);
 
-/** \brief This function returns the Smu Stdby BIST TSTDONE flag
- * \return Smu Stdby BIST TSTDONE flag
+/**
+ * \brief This function returns the status of the Smu Stdby BIST test done flag.
+ *
+ * \retval TRUE The BIST test has completed.
+ *         FALSE The BIST test has not completed.
+ * 
  */
 IFX_INLINE boolean IfxSmuStdby_getSmuStdbyMonBistTestDoneFlag(void);
 
-/** \brief This function returns the Smu Stdby BIST TSTOK flag
- * \return Smu Stdby BIST TSTOK flag
+/**
+ * \brief Returns the status of the Smu Stdby BIST TSTOK flag.
+ *
+ * \retval TRUE The BIST test has completed successfully.
+ *         FALSE The BIST test has not completed successfully or an error occurred.
+ * 
  */
 IFX_INLINE boolean IfxSmuStdby_getSmuStdbyMonBistTestOkFlag(void);
 
-/** \brief This function returns the Smu Stdby BIST TSTRUN flag
- * \return Smu Stdby BIST TSTRUN flag
+/**
+ * \brief This function returns the status of the Smu Stdby BIST test run flag.
+ *
+ * \retval TRUE The BIST test run flag is set.
+ *         FALSE The BIST test run flag is not set.
+ *
  */
 IFX_INLINE boolean IfxSmuStdby_getSmuStdbyMonBistTestRunFlag(void);
 
-/** \brief This function sets FSP0 Error pin fault indication function .
- * \param active Set FSP0 Error pin fault indication function to active / inactive
- * \return None
+/**
+ * \brief Sets the FSP0 Error pin fault indication function to active or inactive.
+ *
+ * \param[in] active The state to which the FSP0 Error pin fault indication function is to be set.
+ *                   Range: \ref IfxSmuStdby_FspErrorPinState.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmuStdby_setFsp0ErrorPinActive(IfxSmuStdby_FspErrorPinState active);
 
-/** \brief This function sets FSP1 Error pin fault indication function.
- * \param active Set FSP1 Error pin fault indication function to active / inactive
- * \return None
+/**
+ * \brief Sets the FSP1 Error pin fault indication to either active or inactive.
+ *
+ * \param[in] active The state to which the FSP1 Error pin fault indication is to be set.
+ *                   Range: \ref IfxSmuStdby_FspErrorPinState.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmuStdby_setFsp1ErrorPinActive(IfxSmuStdby_FspErrorPinState active);
 
@@ -209,31 +265,47 @@ IFX_INLINE void IfxSmuStdby_setFsp1ErrorPinActive(IfxSmuStdby_FspErrorPinState a
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Function to configure FSP Alarm group functionality
- * \param alarmGroup alarm group
- * \param flags Fault Signal Alarm Group config event flags
- * \return None
+/**
+ * \brief Sets the event flags for the fault signal configuration of a specific alarm group.
+ *
+ * \param[in] alarmGroup The identifier of the alarm group to configure. Range: 20 or 21.
+ * \param[in] flags      The event flags to set for the specified alarm group. Range: 0 to 0xFFFF FFFF.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSmuStdby_setFaultSignalAGConfigEventFlags(uint8 alarmGroup, uint32 flags);
 
-/** \brief Function to configure FSP functionality , FaultSignalAlarmConfigEventFlag (AG2iFSP_STDBY.B.FEz)
- * \param alarmGroup alarm group
- * \param alarmNum alarm number
- * \param enable enable/disable Fault Signal Alarm config event flag
- * \return None
+/**
+ * \brief Configures the Fault Signal Alarm configuration event flag for a specified alarm group and number.
+ *
+ * \param[in] alarmGroup The alarm group to configure. Range: 20 or 21.
+ * \param[in] alarmNum   The alarm number within the group. Range: 0 to 31.
+ * \param[in] enable     The flag to enable or disable the Fault Signal Alarm configuration event.
+ *                       Range: \ref IfxSmuStdby_FaultSignalAlarmConfigFlagEvent.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSmuStdby_setFaultSignalAlarmConfigEventFlag(uint8 alarmGroup, uint8 alarmNum, IfxSmuStdby_FaultSignalAlarmConfigFlagEvent enable);
 
-/** \brief Function to configure alarm status. (AG2i_STDBY.B.SFz)
- * \param alarmGroup alarm group
- * \param alarmNum alarm number
- * \param status enable/disable Alarm status flag
- * \return None
+/**
+ * \brief Sets the status flag for a specific alarm in the SMU standby module.
+ *
+ * \param[in] alarmGroup The alarm group to configure. Range: 20 or 21.
+ * \param[in] alarmNum   The alarm number within the alarm group. Range: 0 to 31.
+ * \param[in] status     The status flag to set for the alarm. Range: \ref IfxSmuStdby_AlarmStatusFlag.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSmuStdby_setSmuStdbyAlarmStatusFlag(uint8 alarmGroup, uint8 alarmNum, IfxSmuStdby_AlarmStatusFlag status);
 
-/** \brief This function enables the Smu standby Built-in Self test
- * \return None
+/**
+ * \brief Enables the SMU standby Built-in Self Test (BIST) to monitor and test the SMU functionality while in standby mode.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSmuStdby_startSmuStdbyMonBist(void);
 
@@ -248,7 +320,7 @@ IFX_INLINE void IfxSmuStdby_clearSmuStdbyMonBistFlags(void)
     Ifx_PMS_MONBISTCTRL monBistCtrl;
     uint16              passwd = IfxScuWdt_getSafetyWatchdogPassword();
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     monBistCtrl.U         = PMS_MONBISTCTRL.U;
@@ -265,7 +337,7 @@ IFX_INLINE void IfxSmuStdby_enableAlarmStatusClear(void)
 {
     Ifx_PMS_CMD_STDBY cmdStdby;
     uint16            passwd = IfxScuWdt_getSafetyWatchdogPassword();
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
     cmdStdby.U         = PMS_CMD_STDBY.U;
     cmdStdby.B.ASCE    = 1;
@@ -280,7 +352,7 @@ IFX_INLINE void IfxSmuStdby_enableSmuStdby(IfxSmuStdby_SmuStdbyModuleState enabl
 {
     Ifx_PMS_CMD_STDBY cmdStdby;
     uint16            passwd = IfxScuWdt_getSafetyWatchdogPassword();
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     cmdStdby.U         = PMS_CMD_STDBY.U;
@@ -297,7 +369,7 @@ IFX_INLINE void IfxSmuStdby_enableSmuStdbyMonBist(void)
 {
     Ifx_PMS_MONBISTCTRL monBistCtrl;
     uint16              passwd = IfxScuWdt_getSafetyWatchdogPassword();
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     monBistCtrl.U         = PMS_MONBISTCTRL.U;
@@ -392,7 +464,7 @@ IFX_INLINE void IfxSmuStdby_setFsp0ErrorPinActive(IfxSmuStdby_FspErrorPinState a
 {
     Ifx_PMS_CMD_STDBY cmdStdby;
     uint16            passwd = IfxScuWdt_getSafetyWatchdogPassword();
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     cmdStdby.U         = PMS_CMD_STDBY.U;
@@ -408,7 +480,7 @@ IFX_INLINE void IfxSmuStdby_setFsp1ErrorPinActive(IfxSmuStdby_FspErrorPinState a
 {
     Ifx_PMS_CMD_STDBY cmdStdby;
     uint16            passwd = IfxScuWdt_getSafetyWatchdogPassword();
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     cmdStdby.U         = PMS_CMD_STDBY.U;

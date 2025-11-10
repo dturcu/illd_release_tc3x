@@ -2,7 +2,7 @@
  * \file IfxEbu_BFlashSt.c
  * \brief EBU BFLASHST details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -121,13 +121,16 @@ void IfxEbu_BFlashSt_cmdProgramTuningProtection(const IfxEbu_BFlashSt *bflash)
     *addr1 = 0x48;
     *addr2 = bflash->passwordLower;
 
+    /* Waits for the burst flash module to become ready */
     IfxEbu_BFlashSt_waitForReady(bflash);
 
     *addr1 = 0x48;
     *addr3 = bflash->passwordUpper;
 
+    /* Waits for the burst flash module to become ready */
     IfxEbu_BFlashSt_waitForReady(bflash);
 
+    /* Reads memory arrays from the burst flash memory */
     IfxEbu_BFlashSt_cmdReadMemoryArray(bflash);
 }
 
@@ -213,31 +216,44 @@ void IfxEbu_BFlashSt_cmdUnlockTuningProtection(const IfxEbu_BFlashSt *bflash)
     *addr1 = 0x78;
     *addr1 = bflash->passwordLower;
 
+    /* Waits for the burst flash module to become ready */
     IfxEbu_BFlashSt_waitForReady(bflash);
 
     *addr1 = 0x78;
     *addr2 = bflash->passwordUpper;
 
+    /* Waits for the burst flash module to become ready */
     IfxEbu_BFlashSt_waitForReady(bflash);
 
+    /* Reads memory arrays from the burst flash memory */
     IfxEbu_BFlashSt_cmdReadMemoryArray(bflash);
 }
 
 
 void IfxEbu_BFlashSt_eraseBlock(const IfxEbu_BFlashSt *bflash, uint32 blockAddress)
 {
+	/* Clears the block protection  */
     IfxEbu_BFlashSt_cmdClearBlockProtection(bflash, blockAddress);
+
+    /* Waits for the burst flash module to become ready */
     IfxEbu_BFlashSt_waitForReady(bflash);
 
     if (bflash->hasTuningProtection != FALSE)
     {
+    	/* Unlocks the tuning protection */
         IfxEbu_BFlashSt_cmdUnlockTuningProtection(bflash);
+
+        /* Waits for the burst flash module to become ready */
         IfxEbu_BFlashSt_waitForReady(bflash);
     }
 
+    /* Erases a specified block */
     IfxEbu_BFlashSt_cmdBlockErase(bflash, blockAddress);
+
+    /* Waits for the burst flash module to become ready */
     IfxEbu_BFlashSt_waitForReady(bflash);
 
+    /* Reads memory arrays from the burst flash memory */
     IfxEbu_BFlashSt_cmdReadMemoryArray(bflash);
 }
 
@@ -254,10 +270,11 @@ void IfxEbu_BFlashSt_initMemory(IfxEbu_BFlashSt *bflash, const IfxEbu_BFlashSt_C
 
     {
         uint16 password = IfxScuWdt_getCpuWatchdogPassword();
+        /* Clearing the endinit protection */
         IfxScuWdt_clearCpuEndinit(password);
-
+        /* Set the EBU external clock ratio for synchronous operation */
         IfxEbu_setExternalClockRatio(ebu, config->externalClockRatio);
-
+        /* Setting the endinit protection back on */
         IfxScuWdt_setCpuEndinit(password);
     }
 
@@ -281,6 +298,7 @@ void IfxEbu_BFlashSt_initMemory(IfxEbu_BFlashSt *bflash, const IfxEbu_BFlashSt_C
 
     if (config->syncReadAccessParameter.externalClock == 0)
     {
+    	/* Asynchronous Read Configuration */
         {
             Ifx_EBU_BUS_RCON busrcon;
             busrcon.U                           = 0;
@@ -291,6 +309,7 @@ void IfxEbu_BFlashSt_initMemory(IfxEbu_BFlashSt *bflash, const IfxEbu_BFlashSt_C
             ebu->BUS[config->chipSelect].RCON.U = busrcon.U;
         }
 
+        /* Asynchronous Read access parameter */
         {
             Ifx_EBU_BUS_RAP busrap;
             busrap.U                           = 0;
@@ -307,6 +326,7 @@ void IfxEbu_BFlashSt_initMemory(IfxEbu_BFlashSt *bflash, const IfxEbu_BFlashSt_C
     }
     else
     {
+    	/* Synchronous Read Configuration */
         {
             Ifx_EBU_BUS_RCON busrcon;
             busrcon.U                           = 0;
@@ -339,6 +359,7 @@ void IfxEbu_BFlashSt_initMemory(IfxEbu_BFlashSt *bflash, const IfxEbu_BFlashSt_C
 
     /* Burst Flash is written in ASync mode */
     {
+    	/* Asynchronous Write Configuration */
         {
             Ifx_EBU_BUS_WCON buswcon;
             buswcon.U                           = 0;
@@ -348,6 +369,7 @@ void IfxEbu_BFlashSt_initMemory(IfxEbu_BFlashSt *bflash, const IfxEbu_BFlashSt_C
             ebu->BUS[config->chipSelect].WCON.U = buswcon.U;
         }
 
+        /* Asynchronous Write Access Parameters */
         {
             Ifx_EBU_BUS_WAP buswap;
             buswap.U                           = 0;
@@ -471,11 +493,16 @@ void IfxEbu_BFlashSt_initMemoryConfig(IfxEbu_BFlashSt_Config *config, Ifx_EBU *e
 
 void IfxEbu_BFlashSt_programWord(const void *bflash, uint32 address, uint32 data)
 {
+	/* Clear the status register */
     IfxEbu_BFlashSt_cmdClearStatusRegister(bflash);
 
+    /* Programs a word at the specified address */
     IfxEbu_BFlashSt_cmdProgramWord(bflash, address, data);
+
+    /* Waits for the burst flash module to become ready */
     IfxEbu_BFlashSt_waitForReady(bflash);
 
+    /* Reads memory arrays from the burst flash memory */
     IfxEbu_BFlashSt_cmdReadMemoryArray(bflash);
 }
 

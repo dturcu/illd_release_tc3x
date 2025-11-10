@@ -3,7 +3,7 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -141,6 +141,7 @@ typedef enum
 } IfxGtm_Spe_ControlCommand;
 
 /** \brief Describes the rotation direction of the input signal patterns.
+ * Definition in Ifx_GTM_SPE_CTRL_STAT.B.ADIR and Ifx_GTM_SPE_CTRL_STAT.B.PDIR
  */
 typedef enum
 {
@@ -159,6 +160,7 @@ typedef enum
 } IfxGtm_Spe_InputSignal;
 
 /** \brief mode of interrupt - used to specify the IRQ_MODE register.
+ * Definition in Ifx_GTM_SPE_IRQ_MODE.B.IRQ_MODE
  */
 typedef enum
 {

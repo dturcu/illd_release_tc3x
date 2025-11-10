@@ -3,7 +3,7 @@
  * \brief SCU  basic functionality
  * \ingroup IfxLld_Scu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -307,7 +307,8 @@ typedef enum
     IfxScuCcu_Fsource_2           /**< \brief fSource2  */
 } IfxScuCcu_Fsource;
 
-/** \brief MODULE_SCU.PLLCON1.B.K2DIV, specifies the K2-Divider
+/** \brief Specifies the K2-Divider
+ * Definition in MODULE_SCU.PLLCON1.B.K2DIV
  */
 typedef enum
 {
@@ -321,7 +322,8 @@ typedef enum
     IfxScuCcu_K2divider_8           /**< \brief K2-Divider 8  */
 } IfxScuCcu_K2divider;
 
-/** \brief MODULE_SCU.PLLCON1.B.K3DIV, specifies the K3-Divider
+/** \brief Specifies the K3-Divider
+ * Definition in MODULE_SCU.PLLCON1.B.K3DIV
  */
 typedef enum
 {
@@ -335,8 +337,8 @@ typedef enum
     IfxScuCcu_K3divider_8           /**< \brief K3-Divider 8  */
 } IfxScuCcu_K3divider;
 
-/** \brief Low Power Division Ratios.
- * Corresponds to values of LPDIV in CCUCON0.
+/** \brief Low Power Division Ratios. Corresponds to values of LPDIV in CCUCON0.
+ * Definition in Ifx_SCU_CCUCON0.B.LPDIV
  */
 typedef enum
 {
@@ -359,7 +361,8 @@ typedef enum
     IfxScuCcu_ModulationAmplitude_count,        /**< \brief range  */
 } IfxScuCcu_ModulationAmplitude;
 
-/** \brief MODULE_SCU.PLLCON0.B.NDIV, specifies the N-Divider
+/** \brief Specifies the N-Divider
+ * Definition in MODULE_SCU.PLLCON0.B.NDIV
  */
 typedef enum
 {
@@ -493,7 +496,8 @@ typedef enum
     IfxScuCcu_Ndivider_128         /**< \brief  N-divider 128  */
 } IfxScuCcu_Ndivider;
 
-/** \brief MODULE_SCU.PLLCON0.B.PDIV, specifies the P-Divider
+/** \brief Specifies the P-Divider
+ * Definition in MODULE_SCU.PLLCON0.B.PDIV
  */
 typedef enum
 {
@@ -508,7 +512,7 @@ typedef enum
 } IfxScuCcu_Pdivider;
 
 /** \brief SysPll & Per Pll input clock selection.
- * SYSPLLCON0.B.INSEL
+ * Definition in SYSPLLCON0.B.INSEL
  */
 typedef enum
 {
@@ -518,6 +522,7 @@ typedef enum
 } IfxScuCcu_PllInputClockSelection;
 
 /** \brief trap request type
+ * Definition in SCU_TRAPCLR.U, SCU_TRAPDIS0.U, SCU_TRAPDIS1.U, SCU_TRAPSTAT.U, SCU_TRAPSET.U
  */
 typedef enum
 {
@@ -538,6 +543,7 @@ typedef enum
 } IfxScuCcu_Clk0Mode;
 
 /** \brief clock line negation selection for EXTCLK1
+ * Definition in SCU_EXTCON.B.NSEL
  */
 typedef enum
 {
@@ -546,6 +552,7 @@ typedef enum
 } IfxScuCcu_Clk1Negation;
 
 /** \brief External Clock Selection for EXTCLK0
+ * Definition in SCU_EXTCON.B.SEL0
  */
 typedef enum
 {
@@ -566,6 +573,7 @@ typedef enum
 } IfxScuCcu_ClkSel0;
 
 /** \brief External Clock Selection for EXTCLK1
+ * Definition in SCU_EXTCON.B.SEL1
  */
 typedef enum
 {
@@ -587,12 +595,24 @@ typedef enum
 } IfxScuCcu_ClkSel1;
 
 /** \brief modulation enable
+ * Definition in Ifx_SCU_SYSPLLCON0.B.MODEN
  */
 typedef enum
 {
     IfxScuCcu_ModEn_disabled = 0,  /**< \brief disable modulation */
     IfxScuCcu_ModEn_enabled  = 1   /**< \brief enable modulation */
 } IfxScuCcu_ModEn;
+
+/** \brief Oscillator mode selection.
+ * Definition in Ifx_SCU_OSCCON.B.MODE
+ */
+typedef enum
+{
+	IfxScuCcu_OscModeSelection_extCrystal                       = 0, /**< \brief External Crystal/Ceramic Resonator Mode. The oscillator Power-Saving Mode is not entered. */
+    IfxScuCcu_OscModeSelection_oscDisabledPowerSavingNotEntered = 1, /**< \brief OSC is disabled. The oscillator Power-Saving Mode is not entered. */
+    IfxScuCcu_OscModeSelection_extInputClk                      = 2, /**< \brief External Input Clock Mode and the oscillator Power-Saving Mode is entered. */
+	IfxScuCcu_OscModeSelection_oscDisabledPowerSavingEntered    = 3  /**< \brief OSC is disabled. The oscillator Power-Saving Mode is entered. */
+} IfxScuCcu_OscModeSelection;
 
 /******************************************************************************/
 /*-----------------------------Data Structures--------------------------------*/
@@ -605,13 +625,13 @@ typedef enum
  */
 typedef struct
 {
-    uint8 pDivider;              /**< \brief P divider value for basic (initial) step */
-    uint8 nDivider;              /**< \brief N divider value for basic (initial) step */
-    uint8 k2Divider;             /**< \brief K2 divider value */
-    uint8 k3Divider;             /**< \brief K3 divider value */
+    uint8 pDivider;              /**< \brief P divider value for basic (initial) step. Range: 0 to 0x7 */
+    uint8 nDivider;              /**< \brief N divider value for basic (initial) step. Range: 0 to 0x7F */
+    uint8 k2Divider;             /**< \brief K2 divider value. Range: 0 to 0x7 */
+    uint8 k3Divider;             /**< \brief K3 divider value. Range: 0 to 0x7 */
     uint8 k3DividerBypass;       /**< \brief Divider Bypass
-                                  * 0 - The divide by block in front of the K3-Divider is not bypassed.
-                                  * 1-  The divide by block in front of the K3-Divider is bypassed. */
+                                  * - Range: 0 : The divide by block in front of the K3-Divider is not bypassed.
+                                  * - 1 : The divide by block in front of the K3-Divider is bypassed. */
 } IfxScuCcu_PerPllConfig;
 
 /** \brief Configuration structure type for the Pll initial step.
@@ -619,9 +639,9 @@ typedef struct
  */
 typedef struct
 {
-    uint8 pDivider;        /**< \brief P divider value */
-    uint8 nDivider;        /**< \brief N divider value */
-    uint8 k2Divider;       /**< \brief K2 divider value */
+    uint8 pDivider;        /**< \brief P divider value. Range: 0 to 0x7 */
+    uint8 nDivider;        /**< \brief N divider value. Range: 0 to 0x7F */
+    uint8 k2Divider;       /**< \brief K2 divider value. Range: 0 to 0x7 */
 } IfxScuCcu_SysPllConfig;
 
 /** \} */
@@ -632,15 +652,15 @@ typedef struct
  */
 typedef struct
 {
-    uint32 value;       /**< \brief CCUCON Register value to be updated. */
-    uint32 mask;        /**< \brief CCUCON Mask to select the bit fields to be updated. */
+    uint32 value;       /**< \brief CCUCON Register value to be updated. Range: 0 to 0xFFFF7FFF */
+    uint32 mask;        /**< \brief CCUCON Mask to select the bit fields to be updated. Range: 0 to 0xFFFF7FFF */
 } IfxScuCcu_CcuconRegConfig;
 
 /** \brief Configuration structure type for the Pll Steps for current jump control.
  */
 typedef struct
 {
-    uint8   k2Step;         /**< \brief K2 divider value for this step. */
+    uint8   k2Step;         /**< \brief K2 divider value for this step. Range: 0 to 0x7 */
     float32 waitTime;       /**< \brief Wait time for for this step. */
 } IfxScuCcu_PllStepConfig;
 
@@ -648,10 +668,11 @@ typedef struct
  */
 typedef struct
 {
-    uint32                           xtalFrequency;                /**< \brief Xtal frequency */
+    uint32                           xtalFrequency;                /**< \brief Xtal frequency. Range: 16MHz to 40MHz */
     IfxScuCcu_PllInputClockSelection pllInputClockSelection;       /**< \brief Pll input clock selection */
     IfxScuCcu_SysPllConfig           sysPllConfig;                 /**< \brief System PLL Configurations */
     IfxScuCcu_PerPllConfig           perPllConfig;                 /**< \brief Peripheral PLL Configurations */
+    IfxScuCcu_OscModeSelection       oscConModeVal;                /**< \brief Oscillator mode selection */
 } IfxScuCcu_pllsParameterConfig;
 
 /** \} */
@@ -662,8 +683,8 @@ typedef struct
  */
 typedef struct
 {
-    uint32 value;       /**< \brief FLASH.FCON Register value to be updated. */
-    uint32 mask;        /**< \brief FLASH.FCON Mask to select the bit fields to be updated. */
+    uint32 value;       /**< \brief PFLASH Wait Cycle Register value to be updated. Range: 0 to 0x73F073F  */
+    uint32 mask;        /**< \brief PFLASH Wait Cycle Mask to select the bit fields to be updated. Range: 0 to 0x73F073F */
 } IfxScuCcu_FlashWaitstateConfig;
 
 /** \} */
@@ -706,7 +727,7 @@ typedef struct
  */
 typedef struct
 {
-    uint8                              numOfSteps;       /**< \brief Number of PLL divider steps during clock throttling */
+    uint8                              numOfSteps;       /**< \brief Number of PLL divider steps during clock throttling. Range: 0 to 0xFF */
     IFX_CONST IfxScuCcu_PllStepConfig *pllSteps;         /**< \brief Pointer to the array of Pll divider step configuration. */
 } IfxScuCcu_PllThrottleConfig;
 
@@ -740,7 +761,7 @@ typedef struct
 typedef struct
 {
     float32 RGainNom;       /**< \brief RGain Nominal value */
-    uint16  RGainHex;       /**< \brief RGain Hex value */
+    uint16  RGainHex;       /**< \brief RGain Hex value. Range: 0xF400 to 0xF7FF (Bits MODCFG[15:10] have to be configured with 0x111101B). */
 } IfxScuCcu_RGain_Values;
 
 /** \addtogroup IfxLld_Scu_Std_Ccu_Ccu
@@ -1746,7 +1767,7 @@ IFX_INLINE boolean IfxScuCcu_configureCcuInitialStep(const IfxScuCcu_InitialStep
 #if (IFX_CFG_SCU_EXT_CLOCK == 1)
         scuOsccon.B.MODE = 2U;   /* external clock selected */
 #else
-        scuOsccon.B.MODE = 0U;
+        scuOsccon.B.MODE = pllsParamCfg->oscConModeVal;
 #endif
 
         scuOsccon.B.OSCVAL = (uint32)(pllsParamCfg->xtalFrequency / 1000000U) - 15; /*XTAL range 16MHz to 40MHz*/

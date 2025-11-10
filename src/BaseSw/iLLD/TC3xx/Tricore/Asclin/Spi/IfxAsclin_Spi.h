@@ -3,7 +3,7 @@
  * \brief ASCLIN SPI details
  * \ingroup IfxLld_Asclin
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -245,8 +245,10 @@ typedef enum
  */
 typedef struct
 {
-    float32                      baudrate;           /**< \brief value of the required baudrate */
-    uint16                       prescaler;          /**< \brief BITCON.PRESCALER, predivider to generate the baud rate */
+    float32                      baudrate;           /**< \brief Value of the required baudrate.
+                                                      * Range: Min baud rate fA/ 268435456 MBaud(= 0.37 Baud @ 100 MHz fA module clock)
+                                                      *        Max baud rate fA/ 4 MBaud (= 25 MBaud @ 100 MHz fA module clock) */
+    uint16                       prescaler;          /**< \brief BITCON.PRESCALER, predivider to generate the baud rate. Range: 0 to 4095 */
     IfxAsclin_OversamplingFactor oversampling;       /**< \brief BITCON.OVERSAMPLING, postdivider, used for oversampling */
 } IfxAsclin_Spi_Baudrate;
 
@@ -261,10 +263,10 @@ typedef struct
  */
 typedef struct
 {
-    uint8 frameError : 1;          /**< \brief frame error */
-    uint8 rxFifoOverflow : 1;      /**< \brief receive FIFO overflow error */
-    uint8 rxFifoUnderflow : 1;     /**< \brief receive FIFO underflow error */
-    uint8 txFifoOverflow : 1;      /**< \brief transmit FIFO overflow error */
+    uint8 frameError : 1;          /**< \brief Frame error. Range: 0 - Last message received error free, 1 - Last message received with framing error */
+    uint8 rxFifoOverflow : 1;      /**< \brief Receive FIFO overflow error. Range: 0 - No overflow error occurred, 1 - Overflow error occurred */
+    uint8 rxFifoUnderflow : 1;     /**< \brief Receive FIFO underflow error. Range: 0 - No underflow error occurred, 1 - Underflow error occurred */
+    uint8 txFifoOverflow : 1;      /**< \brief Transmit FIFO overflow error.Range: 0 - No overflow error occurred, 1 - Overflow error occurred */
 } IfxAsclin_Spi_ErrorFlags;
 
 /** \brief Structure for FIFO Control
@@ -304,18 +306,18 @@ typedef struct
  */
 typedef struct
 {
-    uint16     txPriority;          /**< \brief transmit interrupt priority */
-    uint16     rxPriority;          /**< \brief receive interrupt priority */
-    uint16     erPriority;          /**< \brief error interrupt priority */
-    IfxSrc_Tos typeOfService;       /**< \brief type of interrupt service */
+    uint16     txPriority;          /**< \brief Transmit interrupt priority. Range: 0 to 255 */
+    uint16     rxPriority;          /**< \brief Receive interrupt priority. Range: 0 to 255 */
+    uint16     erPriority;          /**< \brief Error interrupt priority. Range: 0 to 255 */
+    IfxSrc_Tos typeOfService;       /**< \brief Type of interrupt service */
 } IfxAsclin_Spi_InterruptConfig;
 
 /** \brief Structure for data transfer jobs
  */
 typedef struct
 {
-    void  *data;          /**< \brief pointer to user data */
-    uint32 pending;       /**< \brief job remaining (count of the data) */
+    void  *data;          /**< \brief Pointer to user data */
+    uint32 pending;       /**< \brief Job remaining (count of the data). Range: 0 to FIFO size */
 } IfxAsclin_Spi_Job;
 
 /** \brief Structure for SPI pin configuration
@@ -341,13 +343,13 @@ typedef struct
  */
 typedef struct
 {
-    Ifx_ASCLIN              *asclin;                   /**< \brief pointer to ASCLIN registers */
-    IfxAsclin_Spi_Job        txJob;                    /**< \brief structure for Tx job */
-    IfxAsclin_Spi_Job        rxJob;                    /**< \brief structure for Rx job */
-    uint32                   sending;                  /**< \brief sending in progress status */
-    IfxAsclin_Spi_ErrorFlags errorFlags;               /**< \brief structure for error flags status */
-    uint8                    dataWidth;                /**< \brief width of the data in bytes */
-    boolean                  transferInProgress;       /**< \brief status of the transfer In progress */
+    Ifx_ASCLIN              *asclin;                   /**< \brief Pointer to ASCLIN registers */
+    IfxAsclin_Spi_Job        txJob;                    /**< \brief Structure for Tx job */
+    IfxAsclin_Spi_Job        rxJob;                    /**< \brief Structure for Rx job */
+    uint32                   sending;                  /**< \brief Sending in progress status. Range: 1 - sending in progress, 0 - sending not in progress */
+    IfxAsclin_Spi_ErrorFlags errorFlags;               /**< \brief Structure for error flags status */
+    uint8                    dataWidth;                /**< \brief Width of the data in bytes. Range: 1 in case of 8 bit wide, 2 in case of 16 bit wide */
+    boolean                  transferInProgress;       /**< \brief Status of the transfer in progress. Range: TRUE if transfer in-progress, FALSE if transfer not in-progress. */
 } IfxAsclin_Spi;
 
 /** \brief Configuration structure of the module

@@ -2,7 +2,7 @@
  * \file IfxPort.c
  * \brief PORT  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -318,10 +318,20 @@ void IfxPort_setPinMode(Ifx_P *port, uint8 pinIndex, IfxPort_Mode mode)
 
 void IfxPort_setPinModeLVDS(Ifx_P *port, uint8 pinIndex, IfxPort_Mode pinMode, IfxPort_LvdsConfig *lvds)
 {
-    uint32               lpcrOffset = (pinIndex / 2);
+    uint32               lpcrOffset;
 
     volatile Ifx_P_LPCR *lpcr       = &(port->LPCR[0]);
     uint16               passwd     = IfxScuWdt_getCpuWatchdogPassword();
+
+    if((port == &MODULE_P14) && (pinIndex == 9 || pinIndex == 10))
+	{
+		/* Pad pair P14.9 and P14.10 is controlled by P14_LPCR5 */
+		lpcrOffset = 5;
+	}
+	else
+	{
+		lpcrOffset = (pinIndex / 2);
+	}
 
     /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);

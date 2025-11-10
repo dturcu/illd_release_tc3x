@@ -3,7 +3,7 @@
  * \brief RIF  basic functionality
  * \ingroup IfxLld_Rif
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -323,35 +323,54 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the selected deserializer
- * \param rif Specifies the pointer to the base of RIF registers
- * \param deserializerId Deserializer number
- * \return None
+/**
+ * \brief Disables the selected deserializer, shutting down its operation and stopping further data processing.
+ *
+ * \param[inout] rif             Pointer to the base of RIF registers.
+ * \param[in]    deserializerId  The identifier of the deserializer to disable.
+ *                               Range: \ref IfxRif_DeserializerId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_disableDeserializer(Ifx_RIF *rif, IfxRif_DeserializerId deserializerId);
 
-/** \brief Enables the calibration mode of the deserializer
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+/**
+ * \brief Enables the calibration mode of the deserializer.
+ *
+ * \param[inout] rif Pointer to the base of RIF registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableCalibration(Ifx_RIF *rif);
 
-/** \brief Enables the selected deserializer
- * \param rif Specifies the pointer to the base of RIF registers
- * \param deserializerId Deserializer number
- * \return None
+/**
+ * \brief Enables the selected deserializer for the RIF module.
+ *
+ * \param[inout] rif             Pointer to the base of RIF registers.
+ * \param[in]    deserializerId  The identifier of the deserializer to be enabled.
+ *                               Range: \ref IfxRif_DeserializerId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableDeserializer(Ifx_RIF *rif, IfxRif_DeserializerId deserializerId);
 
-/** \brief Returns the current state of the deserializer
- * \param rif Specifies the pointer to the base of RIF registers
- * \return Calibration state (done / on going)
+/**
+ * \brief Returns the current calibration state of the deserializer.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval IfxRif_CalibrationState The current calibration state.
+ *         Range: \ref IfxRif_CalibrationState
  */
 IFX_INLINE IfxRif_CalibrationState IfxRif_getCalibrationState(Ifx_RIF *rif);
 
-/** \brief Returns the status of the latest timing calibration sequence
- * \param rif Specifies the pointer to the base of RIF registers
- * \return Calibration status (fail / success)
+/**
+ * \brief Returns the status of the latest timing calibration sequence.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval IfxRif_CalibrationStatus The calibration status.
+ *         Range: \ref IfxRif_CalibrationStatus.
  */
 IFX_INLINE IfxRif_CalibrationStatus IfxRif_getCalibrationStatus(Ifx_RIF *rif);
 
@@ -364,35 +383,50 @@ IFX_INLINE IfxRif_CalibrationStatus IfxRif_getCalibrationStatus(Ifx_RIF *rif);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enables the selected FIFO
- * \param rif Specifies the pointer to the base of RIF registers
- * \param fifoId FIFO number
- * \return None
+/**
+ * \brief Enables the specified FIFO buffer for the RIF peripheral.
+ *
+ * \param[inout] rif     Pointer to the base of RIF registers.
+ * \param[in]    fifoId  The identifier of the FIFO buffer to enable.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableFifo(Ifx_RIF *rif, IfxRif_FifoId fifoId);
 
-/** \brief Sets the FLM mode of operation
- * \param rif Specifies the pointer to the base of RIF registers
- * \param mode FLM mode of operation
- * \return None
+/**
+ * \brief Configures the FLM mode of operation for the RIF module.
+ *
+ * \param[inout] rif  Pointer to the base of RIF registers.
+ * \param[in]    mode Specifies the FLM mode of operation.
+ *                    Range: \ref IfxRif_FlmMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setFlmMode(Ifx_RIF *rif, IfxRif_FlmMode mode);
 
-/** \brief Sets the Full Swap Mode of FLM unit
- * \param rif Specifies the pointer to the base of RIF registers
- * \param swapMode Full Swap Mod eof FLM unit
- * \return None
+/**
+ * \brief Sets the Full Swap Mode of the FLM unit.
+ *
+ * \param[inout] rif       Pointer to the base of RIF registers.
+ * \param[in]    swapMode  Full Swap Mode of the FLM unit.
+ *                         Range: \ref IfxRif_FullSwapMode
+ *
+ * \retval None
  */
-IFX_INLINE void IfxRif_setFullSwapMode(Ifx_RIF *rif, IfxRif_FullSwapMode swapMode);
+IFX_INLINE void IfxRif_setFullSwapMode(Ifx_RIF *rif, IfxRif_FullSwapMode swapMode); 
 
 /******************************************************************************/
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enables the number of FIFOs based on number of ADC channels used
- * \param rif Specifies the pointer to the base of RIF registers
- * \param count Number of ADC channels used
- * \return None
+/**
+ * \brief Enables the specified number of FIFOs for the given RIF instance based on the number of ADC channels used.
+ *
+ * \param[inout] rif   Pointer to the RIF instance to be configured.
+ * \param[in]    count Number of FIFOs to enable, corresponding to the number of ADC channels used.
+ *                     Range: 0 to 3.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxRif_enableFifos(Ifx_RIF *rif, uint8 count);
 
@@ -405,87 +439,133 @@ IFX_EXTERN void IfxRif_enableFifos(Ifx_RIF *rif, uint8 count);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the data length of the frame signal
- * \param rif Specifies the pointer to the base of RIF registers
- * \return Data length of the frame signal
+/**
+ * \brief Returns the data length of the frame signal for the specified RIF instance.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval IfxRif_DataLength The data length of the frame signal, represented as an IfxRif_DataLength type.
  */
 IFX_INLINE IfxRif_DataLength IfxRif_getDataLength(Ifx_RIF *rif);
 
-/** \brief Sets the polarity of the clock signal on the clock input pins
- * \param rif Specifies the pointer to the base of RIF registers
- * \param polarity Polarity of the clock signal
- * \return None
+/**
+ * \brief Sets the polarity of the clock signal on the clock input pins.
+ *
+ * \param[inout] rif       Pointer to the base of RIF registers.
+ * \param[in]    polarity  Polarity of the data signal.
+ *                         Range: \ref IfxRif_ClockPolarity
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setClockPolarity(Ifx_RIF *rif, IfxRif_ClockPolarity polarity);
 
-/** \brief Sets the alignment of the data delivered to the SPU
- * \param rif Specifies the pointer to the base of RIF registers
- * \param alignment Alignment of the data delivered to the SPU
- * \return None
+/**
+ * \brief Sets the alignment of the data delivered to the SPU.
+ *
+ * \param[inout] rif       Pointer to the base of RIF registers.
+ * \param[in]    alignment Specifies the alignment of the data delivered to the SPU.
+ *                         Range: \ref IfxRif_DataAlignment
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setDataAlignment(Ifx_RIF *rif, IfxRif_DataAlignment alignment);
 
-/** \brief Sets the format of the data delivered to the SPU
- * \param rif Specifies the pointer to the base of RIF registers
- * \param format format of the data delivered to the SPU
- * \return None
+/**
+ * \brief Sets the format of the data delivered to the SPU.
+ *
+ * \param[inout] rif    Specifies the pointer to the base of RIF registers.
+ * \param[in]    format Format of the data delivered to the SPU.
+ *                      Range: \ref IfxRif_DataFormat
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setDataFormat(Ifx_RIF *rif, IfxRif_DataFormat format);
 
-/** \brief Sets the data length of the frame signal
- * \param rif Specifies the pointer to the base of RIF registers
- * \param length Data length of the frame signal
- * \return None
+/**
+ * \brief Sets the data length of the frame signal.
+ *
+ * \param[inout] rif    Specifies the pointer to the base of RIF registers.
+ * \param[in]    length Data length of the frame signal.
+ *                      Range: \ref IfxRif_DataLength.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setDataLength(Ifx_RIF *rif, IfxRif_DataLength length);
 
-/** \brief Sets the polarity of the data signal 0 on the data input pins
- * \param rif Specifies the pointer to the base of RIF registers
- * \param polarity Polarity of the data signal
- * \return None
+/**
+ * \brief Sets the polarity of the data signal 0 on the data input pins.
+ *
+ * \param[inout] rif      Pointer to the base of RIF registers.
+ * \param[in]    polarity Polarity of the data signal.
+ *                        Range: \ref IfxRif_DataPolarity
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setDataPolarity0(Ifx_RIF *rif, IfxRif_DataPolarity polarity);
 
-/** \brief Sets the polarity of the data signal 1 on the data input pins
- * \param rif Specifies the pointer to the base of RIF registers
- * \param polarity Polarity of the data signal
- * \return None
+/**
+ * \brief Configures the polarity of data signal 1 on the data input pins.
+ *
+ * \param[inout] rif       Pointer to the RIF (Radar Interface) registers.
+ * \param[in]    polarity  Polarity of the data signal.
+ *                         Range: \ref IfxRif_DataPolarity
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setDataPolarity1(Ifx_RIF *rif, IfxRif_DataPolarity polarity);
 
-/** \brief Sets the polarity of the data signal 2 on the data input pins
- * \param rif Specifies the pointer to the base of RIF registers
- * \param polarity Polarity of the data signal
- * \return None
+/**
+ * \brief Sets the polarity of the data signal 2 on the data input pins.
+ *
+ * \param[inout] rif      Pointer to the RIF register structure.
+ * \param[in]    polarity Polarity of the data signal.
+ *                        Range: \ref IfxRif_DataPolarity
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setDataPolarity2(Ifx_RIF *rif, IfxRif_DataPolarity polarity);
 
-/** \brief Sets the polarity of the data signal 3 on the data input pins
- * \param rif Specifies the pointer to the base of RIF registers
- * \param polarity Polarity of the data signal
- * \return None
+/**
+ * \brief Sets the polarity of the data signal 3 on the data input pins.
+ *
+ * \param[inout] rif      Pointer to the base of RIF registers.
+ * \param[in]    polarity Polarity of the data signal.
+ *                        Range: \ref IfxRif_DataPolarity
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setDataPolarity3(Ifx_RIF *rif, IfxRif_DataPolarity polarity);
 
-/** \brief Sets the polarity of the frame signal on the frame input pins
- * \param rif Specifies the pointer to the base of RIF registers
- * \param polarity Polarity of the frame signal
- * \return None
+/**
+ * \brief Sets the polarity of the frame signal on the frame input pins.
+ *
+ * \param[inout] rif       Pointer to the base of RIF registers.
+ * \param[in]    polarity  Polarity of the frame signal.
+ *                         Range: \ref IfxRif_FramePolarity
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setFramePolarity(Ifx_RIF *rif, IfxRif_FramePolarity polarity);
 
-/** \brief Sets the polarity of the RAMP1 signal
- * \param rif Specifies the pointer to the base of RIF registers
- * \param polarity Polarity of the RAMP1 signal
- * \return None
+/**
+ * \brief Sets the polarity of the RAMP1 signal, determining whether it is active high or low.
+ *
+ * \param[inout] rif      Pointer to the base of RIF registers.
+ * \param[in]    polarity Polarity of the RAMP1 signal.
+ *                        Range: \ref IfxRif_Ramp1SignalPolarity
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setRamp1SignalPolarity(Ifx_RIF *rif, IfxRif_Ramp1SignalPolarity polarity);
 
-/** \brief Sets the the shift direction of the serial data, corresponding to the data bit on
- * the lsb position in the delivered parallel data
- * \param rif Specifies the pointer to the base of RIF registers
- * \param direction Shift direction
- * \return None
+/**
+ * \brief Configures the shift direction for serial data alignment in parallel data.
+ *
+ * \param[inout] rif       Pointer to the base of RIF registers.
+ * \param[in]   direction  Shift direction to be set.
+ *                         Rang: \ref IfxRif_ShiftDirection.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setShiftDirection(Ifx_RIF *rif, IfxRif_ShiftDirection direction);
 
@@ -498,63 +578,95 @@ IFX_INLINE void IfxRif_setShiftDirection(Ifx_RIF *rif, IfxRif_ShiftDirection dir
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enables the external ADCs, the radar interface to accepts input from the external ADCs.
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+/**
+ * \brief Enables the external ADCs, allowing the radar interface to accept input from external ADCs.
+ *
+ * \param[inout] rif Pointer to the base of RIF registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableExternalAdc(Ifx_RIF *rif);
 
-/** \brief Enables the internal ADCs, the radar interface to accepts input from the internal ADCs.
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+/**
+ * \brief Enables the internal ADCs, allowing the radar interface to accept input from the internal ADCs.
+ *
+ * \param[inout] rif Pointer to the base of RIF registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableInternalAdc(Ifx_RIF *rif);
 
-/** \brief Enables lockstep, synchronous delivery of ADC samples from two RIFs to two SPUs\n
- * (in case two RIF instances are available and used)
- * \param rif Specifies the pointer to the base of RIF registers
- * \param enabled Choise (enable / disable)
- * \return None
+/**
+ * \brief Enables or disables lockstep mode for synchronous delivery of ADC samples from two RIFs to two SPUs (in case two RIF instances are available and used).
+ *
+ * \param[inout] rif      Pointer to the base of RIF registers.
+ * \param[in]    enabled  Boolean flag to enable (true) or disable (false) lockstep mode.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableLockstep(Ifx_RIF *rif, boolean enabled);
 
-/** \brief Enables the RAMP1 signal and disables the Frame Watchdog Timer\n
- * \param rif Specifies the pointer to the base of RIF registers
- * \param enabled Choise (enable / disable)
- * \return None
+/**
+ * \brief Enables or disables the RAMP1 signal and controls the Frame Watchdog Timer accordingly.
+ *        When RAMP1 is enabled, the Frame Watchdog Timer is disabled.
+ *
+ * \param[inout] rif       Pointer to the base of RIF registers.
+ * \param[in]    enabled   Boolean flag to enable (TRUE) or disable (FALSE) the RAMP1 signal.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableRamp1Signal(Ifx_RIF *rif, boolean enabled);
 
-/** \brief Returns the current ramp number of the chirp
- * \param rif Specifies the pointer to the base of RIF registers
- * \return Current ramp number of the chirp
+/**
+ * \brief Returns the current ramp number of the chirp.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ * 
+ * \return uint16 The current ramp number of the chirp.
+ *         Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxRif_getCurrentRampNumber(Ifx_RIF *rif);
 
-/** \brief Returns the current valid data sample number of the chirp
- * \param rif Specifies the pointer to the base of RIF registers
- * \return Current valid data sample number of the chirp
+/**
+ * \brief Retrieves the current valid data sample number of the chirp.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ * 
+ * \retval uint16 The current valid data sample number of the chirp.
+ *         Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxRif_getCurrentValidDataSampleNumber(Ifx_RIF *rif);
 
-/** \brief Sets the number of ramps per chirp in the range of 1 to 2048 ramps
- * \param rif Specifies the pointer to the base of RIF registers
- * \param rampsNum Number of ramps
- * \return None
+/**
+ * \brief Sets the number of ramps per chirp in the range of 1 to 2048.
+ *
+ * \param[inout] rif      Pointer to the base of RIF registers.
+ * \param[in]    rampsNum Number of ramps.
+ *                        Range: 0 to 0x7FF.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setChirpLength(Ifx_RIF *rif, uint16 rampsNum);
 
-/** \brief Sets the source for the RAMP1 signal multiplexer
- * \param rif Specifies the pointer to the base of RIF registers
- * \param signal Source for the RAMP1 signal multiplexer
- * \return None
+/**
+ * \brief Sets the source for the RAMP1 signal multiplexer.
+ *
+ * \param[inout] rif     Pointer to the base of RIF registers.
+ * \param[in]    signal  Source for the RAMP1 signal multiplexer.
+ *                       Range: \ref IfxRif_Ramp1SignalInput
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setRamp1SignalInput(Ifx_RIF *rif, IfxRif_Ramp1SignalInput signal);
 
-/** \brief Sets the number of valid data samples per chirp in the range of 1 to 2048 samples
- * \param rif Specifies the pointer to the base of RIF registers
- * \param samplesNum Number of valid data samples
- * \return None
+/**
+ * \brief Sets the number of valid data samples per chirp in the range of 1 to 2048 samples
+ *
+ * \param[inout] rif        Pointer to the base of RIF registers.
+ * \param[in]    samplesNum Number of valid data samples.
+ *                          Range: 0 to 0x7FF.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setValidDataSamplesNumber(Ifx_RIF *rif, uint16 samplesNum);
 
@@ -567,38 +679,58 @@ IFX_INLINE void IfxRif_setValidDataSamplesNumber(Ifx_RIF *rif, uint16 samplesNum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears the selected interrupt flag status
- * \param rif Specifies the pointer to the base of RIF registers
- * \param interrupt Type of interrupt
- * \return None
+/**
+ * \brief Clears the specified interrupt flag status for the RIF module.
+ *
+ * \param[inout] rif        Pointer to the base of RIF registers.
+ * \param[in]    interrupt  Type of interrupt to be cleared.
+ *                          Range: \ref IfxRif_Interrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_clearInterruptFlag(Ifx_RIF *rif, IfxRif_Interrupt interrupt);
 
-/** \brief Disables the selected interrupt
- * \param rif Specifies the pointer to the base of RIF registers
- * \param interrupt Type of interrupt
- * \return None
+/**
+ * \brief Disables the selected interrupt.
+ *
+ * \param[inout] rif        Pointer to the base of RIF registers.
+ * \param[in]    interrupt  Type of interrupt to disable.
+ *                          Range: \ref IfxRif_Interrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_disableInterrupt(Ifx_RIF *rif, IfxRif_Interrupt interrupt);
 
-/** \brief Enables the selected interrupt
- * \param rif Specifies the pointer to the base of RIF registers
- * \param interrupt Type of interrupt
- * \return None
+/**
+ * \brief Enables the specified interrupt source for the RIF module.
+ *
+ * \param[inout] rif       Pointer to the base of RIF registers.
+ * \param[in]    interrupt Type of interrupt to enable.
+ *                         Range: \ref IfxRif_Interrupt
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableInterrupt(Ifx_RIF *rif, IfxRif_Interrupt interrupt);
 
-/** \brief Returns the selected interrupt flag status
- * \param rif Specifies the pointer to the base of RIF registers
- * \param interrupt Type of interrupt
- * \return Status
+/**
+ * \brief Returns the status of the selected interrupt flag.
+ *
+ * \param[inout] rif        Pointer to the base of RIF registers.
+ * \param[in]    interrupt  Type of interrupt to check.
+ *
+ * \retval uint8  The status of the interrupt flag.
+ *         Range: 0 = not set, 1 = set
  */
 IFX_INLINE uint8 IfxRif_getInterruptFlagStatus(Ifx_RIF *rif, IfxRif_Interrupt interrupt);
 
-/** \brief Sets the selected interrupt flag status
- * \param rif Specifies the pointer to the base of RIF registers
- * \param interrupt Type of interrupt
- * \return None
+/**
+ * \brief Sets the specified interrupt flag for the RIF module.
+ *
+ * \param[in] rif        Pointer to the base of RIF registers.
+ * \param[in] interrupt  Type of interrupt to be set.
+ *                       Range: \ref IfxRif_Interrupt.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setInterruptFlag(Ifx_RIF *rif, IfxRif_Interrupt interrupt);
 
@@ -606,15 +738,21 @@ IFX_INLINE void IfxRif_setInterruptFlag(Ifx_RIF *rif, IfxRif_Interrupt interrupt
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the SRC pointer of RIF module ERR interrupt
- * \param rif Specifies the pointer to the base of RIF registers
- * \return SRC pointer of RIF module ERR interrupt
+/**
+ * \brief Returns the SRC pointer of RIF module ERR interrupt.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval Ifx_SRC_SRCR * Pointer to the SRC register for the RIF module ERR interrupt.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxRif_getSrcPointerErr(Ifx_RIF *rif);
 
-/** \brief Returns the SRC pointer of RIF module INT interrupt
- * \param rif Specifies the pointer to the base of RIF registers
- * \return SRC pointer of RIF module INT interrupt
+/**
+ * \brief Returns the SRC pointer of RIF module INT interrupt.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the SRC register of the RIF module INT interrupt.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxRif_getSrcPointerInt(Ifx_RIF *rif);
 
@@ -627,22 +765,32 @@ IFX_EXTERN volatile Ifx_SRC_SRCR *IfxRif_getSrcPointerInt(Ifx_RIF *rif);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the CRC.
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+/**
+ * \brief Disables the CRC functionality for the specified RIF instance.
+ *
+ * \param[inout] rif Pointer to the base of RIF registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_disableCrc(Ifx_RIF *rif);
 
-/** \brief Enables the CRC.
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+/**
+ * \brief Enables the CRC feature for the RIF module.
+ *
+ * \param[inout] rif Pointer to the base of RIF registers.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_enableCrc(Ifx_RIF *rif);
 
-/** \brief Sets the frame watchdog threshold, (the reload value for the watchdog timer) in the range of 0-255.
- * \param rif Specifies the pointer to the base of RIF registers
- * \param value Threshold value
- * \return None
+/**
+ * \brief Sets the frame watchdog threshold, which is the reload value for the watchdog timer.
+ *
+ * \param[inout] rif   Pointer to the base of RIF registers.
+ * \param[in]    value Threshold value.
+ *                     Range: 0 to 0x3FF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setFrameWatchdogThreshold(Ifx_RIF *rif, uint16 value);
 
@@ -655,25 +803,36 @@ IFX_INLINE void IfxRif_setFrameWatchdogThreshold(Ifx_RIF *rif, uint16 value);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the status of module, enabled or disabled
- * \param rif Specifies the pointer to the base of RIF registers
- * \return Status (TRUE / FALSE)
+/**
+ * \brief Checks if the RIF module is enabled or disabled.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval TRUE  Module is enabled.
+ *         FALSE Module is disabled.
  */
 IFX_INLINE boolean IfxRif_isModuleEnabled(Ifx_RIF *rif);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param rif Pointer to RIF module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the RIF module is currently suspended.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval TRUE  If the module is suspended.
+ *         FALSE If the module is not suspended.
  */
 IFX_INLINE boolean IfxRif_isModuleSuspended(Ifx_RIF *rif);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param rif Pointer to RIF module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Configures the RIF module to operate in the specified suspend mode.
+ * 
+ * \note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
+ *
+ * \param[inout] rif  Pointer to the RIF module registers.
+ * \param[in]    mode The suspend mode to be configured.
+ *                    Range: \ref IfxRif_SuspendMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setSuspendMode(Ifx_RIF *rif, IfxRif_SuspendMode mode);
 
@@ -681,27 +840,39 @@ IFX_INLINE void IfxRif_setSuspendMode(Ifx_RIF *rif, IfxRif_SuspendMode mode);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the module (clears the disable request)
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+/**
+ * \brief Disables the RIF module by clearing the disable request.
+ *
+ * \param[inout] rif Pointer to the base of RIF registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxRif_disableModule(Ifx_RIF *rif);
 
-/** \brief Enables the module (clears the disable request)
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+/**
+ * \brief Enables the RIF module by clearing the disable request.
+ *
+ * \param[inout] rif Pointer to the base of RIF registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxRif_enableModule(Ifx_RIF *rif);
 
-/** \brief Returns the module index of the selected RIF module
- * \param rif Pointer to RIF module registers
- * \return RIF module register address
+/**
+ * \brief Returns the register address of the selected RIF module.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval Ifx_RIF* The base address of the RIF module registers.
  */
 IFX_EXTERN Ifx_RIF *IfxRif_getAddress(IfxRif_Index rif);
 
-/** \brief Returns the module index of the selected RIF module
- * \param rif Specifies the pointer to the base of RIF registers
- * \return Module index
+/**
+ * \brief Retrieves the module index of the selected RIF module instance.
+ *
+ * \param[in] rif Pointer to the base of RIF registers.
+ *
+ * \retval IfxRif_Index The module index of the selected RIF module.
  */
 IFX_EXTERN IfxRif_Index IfxRif_getIndex(Ifx_RIF *rif);
 
@@ -714,73 +885,112 @@ IFX_EXTERN IfxRif_Index IfxRif_getIndex(Ifx_RIF *rif);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Sets the Clock LVDS PAD control mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param value Clock LVDS PAD control
- * \return None
+/**
+ * \brief Configures the LVDS pad control mode for the clock signal.
+ *
+ * \param[inout] rif   Pointer to the base of RIF registers.
+ * \param[in]    value Clock LVDS PAD control value.
+ *                     Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setClockLvdsPadControl(Ifx_RIF *rif, uint8 value);
 
-/** \brief Sets the Miscellaneous Common LVDS PAD control mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param mode Miscellaneous Common LVDS PAD control
- * \return None
+/**
+ * \brief Configures the Common LVDS PAD control mode for the RIF module.
+ *
+ * \param[inout] rif  Pointer to the base of RIF registers.
+ * \param[in]    mode Miscellaneous Common LVDS PAD control mode.
+ *                    Range: \ref IfxRif_CommonLvdsPadControl
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setCommonLvdsPadControl(Ifx_RIF *rif, IfxRif_CommonLvdsPadControl mode);
 
-/** \brief Sets the DATA0 LVDS PAD control mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param value DATA0 LVDS PAD control
- * \return None
+/**
+ * \brief Sets the DATA0 LVDS PAD control mode.
+ *
+ * \param[inout] rif  Pointer to the base of RIF registers.
+ * \param[in]   value The control value for DATA0 LVDS pad configuration.
+ *                    Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setData0LvdsPadControl(Ifx_RIF *rif, uint8 value);
 
-/** \brief Sets the DATA1 LVDS PAD control mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param value DATA1 LVDS PAD control
- * \return None
+/**
+ * \brief Sets the DATA1 LVDS PAD control mode.
+ *
+ * \param[inout] rif   Pointer to the base of RIF registers.
+ * \param[in]    value DATA1 LVDS PAD control value.
+ *                     Range:0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setData1LvdsPadControl(Ifx_RIF *rif, uint8 value);
 
-/** \brief Sets the DATA2 LVDS PAD control mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param value DATA2 LVDS PAD control
- * \return None
+/**
+ * \brief Configures the control mode for the DATA2 LVDS pad.
+ *
+ * \param[inout] rif   Pointer to the base of RIF registers.
+ * \param[in]    value DATA2 LVDS PAD control value.
+ *                     Range: 0 to 0xFF.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setData2LvdsPadControl(Ifx_RIF *rif, uint8 value);
 
-/** \brief Sets the DATA3 LVDS PAD control mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param value DATA3 LVDS PAD control
- * \return None
+/**
+ * \brief Configures the DATA3 LVDS pad control mode for the RIF module.
+ *
+ * \param[inout] rif   Pointer to the base of RIF registers.
+ * \param[in]    value DATA3 LVDS pad control value.
+ *                     Range: 0 to 0xFF.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setData3LvdsPadControl(Ifx_RIF *rif, uint8 value);
 
-/** \brief Sets the Frame LVDS PAD control mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param value Frame LVDS PAD control
- * \return None
+/**
+ * \brief Sets the Frame LVDS PAD control mode.
+ *
+ * \param[inout] rif   Pointer to the base of RIF registers.
+ * \param[in]    value Frame LVDS PAD control value to be set.
+ *                     Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setFrameLvdsPadControl(Ifx_RIF *rif, uint8 value);
 
-/** \brief enbales / disables the Lvds Bias Distributor 5V Mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param enabled enable / disable choise for LVDS Bias Distributor 5V mode
- * \return None
+/**
+ * \brief Enables or disables the LVDS Bias Distributor 5V Mode.
+ *
+ * \param[inout] rif     Specifies the pointer to the base of registers.
+ * \param[in]    enabled Boolean flag to enable (true) or disable (false) the LVDS Bias Distributor 5V Mode.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setLvdsBiasDistributor5VMode(Ifx_RIF *rif, boolean enabled);
 
-/** \brief Sets the Lvds Bias Distributor Mode
- * \param rif Specifies the pointer to the base of RIF registers
- * \param mode LVDS Bias Distributor Power Down mode
- * \return None
+/**
+ * \brief Sets the LVDS Bias Distributor Power-Down Mode.
+ *
+ * \param[inout] rif  Pointer to the base of RIF registers.
+ * \param[in]    mode LVDS Bias Distributor Power-Down mode.
+ *                    Range: \ref IfxRif_LvdsBiasDistributorMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setLvdsBiasDistributorPowerDownMode(Ifx_RIF *rif, IfxRif_LvdsBiasDistributorMode mode);
 
-/** \brief Sets the Termination Resistor Trimming value
- * \param rif Specifies the pointer to the base of RIF registers
- * \param value Termination Resistor Trimming value
- * \return None
+/**
+ * \brief Configures the termination resistor trimming value for the RIF module.
+ *
+ * \param[inout] rif   Pointer to the base of RIF registers.
+ * \param[in]   value  Termination Resistor Trimming value to be set.
+ *                     Range: 0 to 6.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxRif_setRtermTrimmingValue(Ifx_RIF *rif, uint8 value);
 
@@ -791,15 +1001,22 @@ IFX_INLINE void IfxRif_setRtermTrimmingValue(Ifx_RIF *rif, uint8 value);
 /******************************************************************************/
 
 /**
- * \param rif Specifies the pointer to the base of RIF registers
- * \param fifoId FIFO number
- * \return None
+ * \brief Disables the specified FIFO channel of the RIF module.
+ *
+ * \param[inout] rif    Pointer to the base of RIF registers.
+ * \param[in]    fifoId FIFO channel number to disable.
+ *               Range: \ref IfxRif_FifoId
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxRif_disableFifo(Ifx_RIF *rif, IfxRif_FifoId fifoId);
 
 /**
- * \param rif Specifies the pointer to the base of RIF registers
- * \return None
+ * \brief Disables all FIFOs for the specified RIF instance.
+ *
+ * \param[inout] rif Pointer to the base of RIF registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxRif_disableAllFifos(Ifx_RIF *rif);
 

@@ -2,7 +2,7 @@
  * \file IfxSmu.c
  * \brief SMU  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -81,7 +81,7 @@ boolean IfxSmu_clearAlarmStatus(IfxSmu_Alarm alarm)
     /* Write SMU_ASCE(0) in CMD register */
     MODULE_SMU.CMD.U = IfxSmu_Command_alarmStatusClear;
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     /* Write 1 in AG bit to clear alarm */
@@ -101,7 +101,7 @@ void IfxSmu_configAlarmActionPES(uint8 pesAction)
 
     {
         passwd = IfxScuWdt_getSafetyWatchdogPassword();
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
         /*
@@ -130,10 +130,10 @@ void IfxSmu_enableFaultToRunState(boolean enable)
 
     {
         passwd = IfxScuWdt_getSafetyWatchdogPassword();
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
-        /*Enable FAULT to RUN State Transition in Alarm Global Configuration . */
+        /* Enable FAULT to RUN State Transition in Alarm Global Configuration */
         MODULE_SMU.AGC.B.EFRST = enable;
 
         /* Restore back the write-protection for registers */
@@ -148,10 +148,10 @@ void IfxSmu_enablePortEmergencyStop(boolean enable)
 
     {
         passwd = IfxScuWdt_getSafetyWatchdogPassword();
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
-        /*Configure FSP (fault Signalling Protocol) Port Emergency Stop. */
+        /* Configure FSP (fault Signalling Protocol) Port Emergency Stop */
         MODULE_SMU.FSP.B.PES = enable;
 
         /* Restore back the write-protection for registers */
@@ -237,7 +237,7 @@ void IfxSmu_lockConfigRegisters(void)
     if (MODULE_SMU.KEYS.B.PERLCK != 0xFFU)
     {
         passwd = IfxScuWdt_getSafetyWatchdogPassword();
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
         /* Write the key reg to lock config registers */
@@ -258,8 +258,7 @@ boolean IfxSmu_releaseFSP(void)
     /* Release FSP to Fault Free state */
     MODULE_SMU.CMD.U = IfxSmu_Command_releaseFSP;
 
-    /* Check if Release FSP command is accepted by reading the Status reg
-     */
+    /* Check if Release FSP command is accepted by reading the Status reg */
     IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, (MODULE_SMU.STS.B.RES == 0));
 
     return MODULE_SMU.STS.B.RES;
@@ -326,7 +325,7 @@ boolean IfxSmu_setAlarmStatus(IfxSmu_Alarm alarm)
         /* SMU is in START state */
         /* All SMU Groups are allowed to set alarm status */
 
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
         /* Write 1 in AG bit to set alarm */
@@ -356,10 +355,10 @@ void IfxSmu_setFspMode(IfxSmu_FspMode mode)
     uint16 passwd;
     {
         passwd = IfxScuWdt_getSafetyWatchdogPassword();
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
-        /*Write Config key to configure the SMU registers. */
+        /* Write Config key to configure the SMU registers. */
         MODULE_SMU.FSP.B.MODE = mode;
 
         /* Restore back the write-protection for registers */
@@ -390,10 +389,10 @@ boolean IfxSmu_unlockConfigRegisters(void)
     if (MODULE_SMU.KEYS.B.PERLCK != 0xFFU)
     {
         passwd = IfxScuWdt_getSafetyWatchdogPassword();
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
-        /*Write Config key to configure the SMU registers. */
+        /* Write Config key to configure the SMU registers */
         MODULE_SMU.KEYS.U = (uint32)0x000000bc;
 
         /* Restore back the write-protection for registers */
@@ -423,10 +422,10 @@ void IfxSmu_ConfigureInterruptGeneration(IfxSmu_InterruptGenerationConfiguration
 
     passwd = IfxScuWdt_getSafetyWatchdogPassword();
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
-    /*Write Config key to configure the SMU registers. */
+    /* Write Config key to configure the SMU registers */
     MODULE_SMU.KEYS.U = (uint32)0x000000bc;
 
     /* Clear the specific bits */
@@ -450,10 +449,10 @@ void IfxSmu_temporaryLockConfigRegisters(void)
 
     {
         passwd = IfxScuWdt_getSafetyWatchdogPassword();
-        /* disable the write-protection for registers */
+        /* Disable the write-protection for registers */
         IfxScuWdt_clearSafetyEndinit(passwd);
 
-        /*Write Config key to configure temporary lock of the SMU registers. */
+        /* Write Config key to configure temporary lock of the SMU registers */
         MODULE_SMU.KEYS.U = 0U;
 
         /* Restore back the write-protection for registers */

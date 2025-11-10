@@ -3,7 +3,7 @@
  * \brief CCU6 PWMBC details
  * \ingroup IfxLld_Ccu6
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -275,7 +275,7 @@ typedef struct
 {
     IfxCcu6_InterruptSource source;               /**< \brief Interrupt source selection */
     IfxCcu6_ServiceRequest  serviceRequest;       /**< \brief Selection of service request outputs */
-    uint16                  priority;             /**< \brief Interrupt priority */
+    uint16                  priority;             /**< \brief Interrupt priority. Range: 0 to 0xFF */
     IfxSrc_Tos              typeOfService;        /**< \brief type of interrupt service */
 } IfxCcu6_PwmBc_InterruptConfig;
 
@@ -314,15 +314,15 @@ typedef struct
 typedef struct
 {
     IfxCcu6_T12CountMode countMode;          /**< \brief Operating mode of Timer 12 */
-    uint16               counterValue;       /**< \brief 16-bit counter value of Timer12 */
+    uint16               counterValue;       /**< \brief 16-bit counter value of Timer12. Range: 0 to 0xFFFF */
 } IfxCcu6_PwmBc_Timer12;
 
 /** \brief Structure for Timer 13
  */
 typedef struct
 {
-    uint16                      counterValue;           /**< \brief 16-bit counter value of Timer13 */
-    uint16                      compareValue;           /**< \brief 16-bit comapre value of Timer12 */
+    uint16                      counterValue;           /**< \brief 16-bit counter value of Timer13. Range: 0 to 0xFFFF */
+    uint16                      compareValue;           /**< \brief 16-bit comapre value of Timer12. Range: 0 to 0xFFFF */
     IfxCcu6_T13TriggerEvent     t12SyncEvent;           /**< \brief T12 sync trigger event to start T13 */
     IfxCcu6_T13TriggerDirection t12SyncDirection;       /**< \brief Additional information to control trigger event selection */
 } IfxCcu6_PwmBc_Timer13;
@@ -335,7 +335,7 @@ typedef struct
     IfxCcu6_ExternalTriggerMode t12ExtInputTriggerMode;       /**< \brief Event of signal T12HR that can set the run bit T12R by HW */
     IfxCcu6_T13hr_In           *t13ExtInputTrigger;           /**< \brief External input signal selection for timer 13 */
     IfxCcu6_ExternalTriggerMode t13ExtInputTriggerMode;       /**< \brief Event of signal T13HR that can set the run bit T13R by HW */
-    boolean                     t13InSyncWithT12;             /**< \brief Selection of Timer 13 start in sync with T12 */
+    boolean                     t13InSyncWithT12;             /**< \brief Selection of Timer 13 start in sync with T12. Range: TRUE Timer 13 start in sync with T12, FALSE Timer 13 stop in sync with T12 */
     boolean                     outputTriggerEnabled;         /**< \brief Output trigger connection to VADC enable / disable choice */
     IfxCcu6_TrigOut             outputLine;                   /**< \brief Trigger out selection */
     IfxCcu6_TrigSel             outputTrigger;                /**< \brief Trigger selection */
@@ -352,7 +352,7 @@ typedef struct
     PwmHl                       base;                   /**< \brief Base PWMHL object */
     Ifx_CCU6                   *ccu6;                   /**< \brief Pointer to the base of CCU6 registers */
     IfxCcu6_PwmBc_TriggerConfig trigger;                /**< \brief Structure for trigger configuration */
-    uint8                       hallPatternIndex;       /**< \brief Hall pattern index of motor control table */
+    uint8                       hallPatternIndex;       /**< \brief Hall pattern index of motor control table Range: 0 to 0xFF */
 } IfxCcu6_PwmBc;
 
 /** \brief Configuration structure of the module
@@ -363,7 +363,7 @@ typedef struct
     Ifx_CCU6                         *ccu6;                      /**< \brief Pointer to the base of CCU6 registers */
     IfxCcu6_PwmBc_Timer12             timer12;                   /**< \brief Structure for Timer 12 */
     IfxCcu6_PwmBc_Timer13             timer13;                   /**< \brief Structure for Timer 13 */
-    uint8                             hallPatternIndex;          /**< \brief Hall pattern index of motor control table */
+    uint8                             hallPatternIndex;          /**< \brief Hall pattern index of motor control table. Range: 0 to 0xFF */
     IfxCcu6_HallSensorTriggerMode     hallSyncEvent;             /**< \brief Hall pattern evaluation trigger selection (HSYNC) */
     IfxCcu6_PwmBc_MultiChannelControl multiChannelControl;       /**< \brief Structure for multichannel mode control */
     IfxCcu6_PwmBc_Pins               *pins;                      /**< \brief Structure for CCU6 output pin configuration */

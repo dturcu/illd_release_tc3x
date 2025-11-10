@@ -3,7 +3,7 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -95,7 +95,8 @@
 
 /** \addtogroup IfxLld_Gtm_Std_Tom_Enumerations
  * \{ */
-/** \brief Clock source for the TOM channels
+/** \brief Clock source for the TOM channels.
+ * Definition in Ifx_GTM_TOM_CH_CTRL.B.CLK_SRC_SR
  */
 typedef enum
 {
@@ -107,7 +108,8 @@ typedef enum
     IfxGtm_Tom_Ch_ClkSrc_noClock   = 5   /**< \brief no clock */
 } IfxGtm_Tom_Ch_ClkSrc;
 
-/** \brief Reset source for channel counter CN0
+/** \brief Trigger output selection.
+ * Definition in Ifx_GTM_TOM_CH_CTRL.B.TRIGOUT
  */
 typedef enum
 {
@@ -115,7 +117,8 @@ typedef enum
     IfxGtm_Tom_Ch_OutputTrigger_generate = 1  /**< \brief Generate the trigger from the current channel */
 } IfxGtm_Tom_Ch_OutputTrigger;
 
-/** \brief Reset event for channel counter CN0
+/** \brief Reset event for channel counter CN0.
+ * Definition in Ifx_GTM_TOM_CH_CTRL.B.RST_CCU0
  */
 typedef enum
 {
@@ -123,7 +126,8 @@ typedef enum
     IfxGtm_Tom_Ch_ResetEvent_onTrigger = 1
 } IfxGtm_Tom_Ch_ResetEvent;
 
-/** \brief Trigger output pulse length
+/** \brief Trigger output pulse length.
+ * Definition in Ifx_GTM_TOM_CH_CTRL.B.TRIG_PULSE
  */
 typedef enum
 {
@@ -131,7 +135,8 @@ typedef enum
 	IfxGtm_Tom_Ch_TriggerOutputPulseLength_sysCLK = 1  /**< \brief Pulse Length is only one SYS_CLK period if CN0=SR0 */
 } IfxGtm_Tom_Ch_TriggerOutputPulseLength;
 
-/** \brief Up-down counter mode for TOM channels
+/** \brief Up-down counter mode for TOM channels.
+ * Definition in Ifx_GTM_TOM_CH_CTRL.B.UDMODE
  */
 typedef enum
 {
@@ -141,7 +146,8 @@ typedef enum
 	IfxGtm_Tom_Ch_CounterMode_bothUpAndDown = 3  /**< \brief Up-down counter mode enabled: CN0 counts up and down, CM0,CM1 are updated if CN0 reaches 0 or CM0 (i.e. changes direction) */
 } IfxGtm_Tom_Ch_CounterMode;
 
-/** \brief Trigger source for trigger signals
+/** \brief Trigger source for trigger signals.
+ * Definition in Ifx_GTM_TOM_CH_CTRL.B.EXT_TRIG and Ifx_GTM_TOM_CH_CTRL.B.EXTTRIGOUT
  */
 typedef enum
 {
@@ -786,7 +792,7 @@ IFX_INLINE void IfxGtm_Tom_Tgc_trigger(Ifx_GTM_TOM_TGC *tgc);
  * \brief Sets the tgc global control value.
  *
  * \param[inout] tgc     Pointer to the TGC object.
- * \param[in]    control Global control value to be written to the TGC module. Range: 0 to 0xFFFFFF01.
+ * \param[in]    control Global control value to be written to the TGC module. Range: 0 to 0xFFFF0000.
  *
  * \retval None
  */

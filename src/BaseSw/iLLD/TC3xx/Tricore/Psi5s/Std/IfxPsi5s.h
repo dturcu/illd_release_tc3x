@@ -3,8 +3,8 @@
  * \brief PSI5S  basic functionality
  * \ingroup IfxLld_Psi5s
  *
- * \version iLLD_1_20_0
- * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
+ * \version iLLD_1_21_0
+ * \copyright Copyright (c) 2025 Infineon Technologies AG. All rights reserved.
  *
  *
  *
@@ -323,7 +323,7 @@ typedef enum
     IfxPsi5s_TriggerOutput_7           /**< \brief Triggered output line is TRIGO_7  */
 } IfxPsi5s_TriggerOutput;
 
-/** \brief Trigger type defined in
+/** \brief Trigger type external / periodic
  */
 typedef enum
 {
@@ -370,16 +370,22 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief fill data into tx buffer for direct transmission(in ASC mode)
- * \param psi5s pointer to the PSI5S register space
- * \param data Pointer to data
- * \return None
+/**
+ * \brief Fills data into the transmit buffer for direct transmission in ASC mode.
+ *
+ * \param[inout] psi5s    Pointer to the PSI5S register space structure.
+ * \param[in]    data     Pointer to the data to be filled into the transmit buffer.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_fillAscTransmitBuffer(Ifx_PSI5S *psi5s, uint32 *data);
 
-/** \brief received buffer in ASC mode
- * \param psi5s Pointer to PSI5s register space
- * \return recieved buffer value in asc mode
+/**
+ * \brief Retrieves the received buffer value in ASC mode for the PSI5S module.
+ *
+ * \param[in]    psi5s    Pointer to the PSI5S register space structure.
+ * 
+ * \retval uint32 The received buffer value in ASC mode. Range 0 to 0x1FF
  */
 IFX_INLINE uint32 IfxPsi5s_getReceiveBuffer(Ifx_PSI5S *psi5s);
 
@@ -387,52 +393,75 @@ IFX_INLINE uint32 IfxPsi5s_getReceiveBuffer(Ifx_PSI5S *psi5s);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Asc receiver is disabled
- * \param psi5s Pointer to PSI5S module registers
- * \return None
+/**
+ * \brief Disables the ASC receiver module of the PSI5S interface.
+ *
+ * \param[inout] psi5s    Pointer to the PSI5S module registers structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5s_disableAscReceiver(Ifx_PSI5S *psi5s);
 
-/** \brief Enable ASC receiver
- * \param psi5s pointer to the PSI5S register space
- * \return None
+/**
+ * \brief Enables the ASC receiver module.
+ *
+ * \param[inout] psi5s    Pointer to the PSI5S peripheral's register space.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5s_enableAscReceiver(Ifx_PSI5S *psi5s);
 
-/** \brief Enable/disable any combination of channel trigger counters selected by mask parameter
- * \param psi5s pointer to the PSI5S register space
- * \param channels specifies the channel trigger counters which should be enabled/disabled
- * \param mask specifies the channel trigger counters which should be modified
- * \return None
+/**
+ * \brief Enables or disables specified channel trigger counters based on the provided mask.
+ *
+ * \param[inout] psi5s     Pointer to the PSI5S register space.
+ * \param[in]    channels  Bitmask specifying the channel trigger counters to enable or disable. Range: \ref IfxPsi5s_ChannelId
+ * \param[in]    mask      Bitmask indicating which channel trigger counters should be modified. Range: \ref IfxPsi5s_ChannelId
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5s_enableDisableChannelTriggerCounters(Ifx_PSI5S *psi5s, uint32 channels, uint32 mask);
 
-/** \brief Enable/disable any combination of channels selected by mask parameter
- * \param psi5s pointer to the PSI5S register space
- * \param channels specifies the channels which should be enabled/disabled
- * \param mask specifies the channels which should be modified
- * \return None
+/**
+ * \brief Enable/disable any combination of channels selected by mask parameter
+ *
+ * \param[inout] psi5s     Pointer to the PSI5S register space.
+ * \param[in]    channels  Specifies which channels should be enabled or disabled. Use bitwise OR to combine
+ *                         multiple channels. Range: \ref IfxPsi5s_ChannelId
+ * \param[in]    mask      Specifies which channels should be modified. Use bitwise OR to combine multiple
+ *                         channels. Range: \ref IfxPsi5s_ChannelId
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5s_enableDisableChannels(Ifx_PSI5S *psi5s, uint32 channels, uint32 mask);
 
-/** \brief Baudrate frequency in HZ
- * \param psi5s Pointer to PSI5s Register space
- * \param synchMode Pointer to the configuration structure of ASC
- * \param divMode specifies fractional/normal divider mode
- * \param baudrateSelection select sbaudrate prescaler
- * \return baudrate in HZ
+/** 
+ * \brief Function to get the baudrate frequency in HZ
+ * 
+ * \param[in]    psi5s              Pointer to PSI5s Register space
+ * \param[in]    synchMode          Synchnous mode. Range 0: Asynchronous mode, 1: Synchronous mode
+ * \param[in]    divMode            Specifies fractional/normal divider mode. Range 0: Fractional divider mode, 1: Normal divider mode
+ * \param[in]    baudrateSelection  Select sbaudrate prescaler. \ref IfxPsi5s_AscBaudratePrescalar
+ * 
+ * \retval baudrate in HZ
  */
 IFX_EXTERN float32 IfxPsi5s_getBaudrate(Ifx_PSI5S *psi5s, boolean synchMode, boolean divMode, IfxPsi5s_AscBaudratePrescalar baudrateSelection);
 
-/** \brief Start ASC transactions
- * \param psi5s pointer to the PSI5S register space
- * \return None
+/**
+ * \brief Starts ASC transactions on the PSI5S peripheral
+ *
+ * \param[inout] psi5s    Pointer to the PSI5S register space structure
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5s_startAscTransactions(Ifx_PSI5S *psi5s);
 
 /**
- * \param psi5s Pointer to PSI5S module registers
- * \return None
+ * \brief Stops all ongoing ASC transactions and resets the ASC state machine.
+ *
+ * \param[inout] psi5s    Pointer to the PSI5S module registers.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5s_stopAscTransactions(Ifx_PSI5S *psi5s);
 
@@ -445,34 +474,46 @@ IFX_EXTERN void IfxPsi5s_stopAscTransactions(Ifx_PSI5S *psi5s);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initializes a CLK output
- * \param clk the CLK Pin which should be configured
- * \param outputMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a CLK output pin with specified output mode and pad driver settings.
+ *
+ * \param[in]    clk         Pointer to the CLK pin configuration structure to be initialized.
+ * \param[in]    outputMode  The output mode to be configured. \ref IfxPort_OutputMode
+ * \param[in]    padDriver   The pad driver mode to be configured. \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_initClkPin(const IfxPsi5s_Clk_Out *clk, IfxPort_OutputMode outputMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a RX input
- * \param rx the RX Pin which should be configured
- * \param inputMode the pin input mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a RX input pin with specified input mode and pad driver settings.
+ *
+ * \param[in]    rx          Pointer to the RX pin configuration 
+ * \param[in]    inputMode   The input mode to be configured for the RX pin. \ref IfxPort_InputMode
+ * \param[in]    padDriver   The pad driver mode to be configured for the RX pin. \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_initRxPin(const IfxPsi5s_Rx_In *rx, IfxPort_InputMode inputMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a TX output
- * \param tx the TX Pin which should be configured
- * \param outputMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes a TX output pin with specified output mode and pad driver settings.
+ *
+ * \param[in]    tx          Pointer to the TX pin configuration structure to be initialized.
+ * \param[in]    outputMode  The output mode to be configured for the TX pin. \ref IfxPort_OutputMode
+ * \param[in]    padDriver   The pad driver mode to be configured for the TX pin. \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_initTxPin(const IfxPsi5s_Tx_Out *tx, IfxPort_OutputMode outputMode, IfxPort_PadDriver padDriver);
 
-/** \brief Selects the alternate input for Rx signal
- * \param psi5s pointer to PSI5S registers
- * \param alti alternate input selection of Rx signal
- * \return None
+/**
+ * \brief Selects the alternate input for the Rx signal.
+ *
+ * \param[inout] psi5s       Pointer to the PSI5S registers structure.
+ * \param[in]    alti        Alternate input selection for the Rx signal. \ref IfxPsi5s_AlternateInput
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_setRxInput(Ifx_PSI5S *psi5s, IfxPsi5s_AlternateInput alti);
 
@@ -485,49 +526,69 @@ IFX_INLINE void IfxPsi5s_setRxInput(Ifx_PSI5S *psi5s, IfxPsi5s_AlternateInput al
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Enable /Disable Global Interrupt Source
- * \param psi5s Pointer to PSI5S Module space
- * \param interruptSource specifies Global Interrupt Source
- * \param enabled enable /disable Interrupt
- * \return None
+/**
+ * \brief Enables or disables the specified global interrupt source for the PSI5S module.
+ *
+ * \param[inout] psi5s             Pointer to the Ifx_PSI5S module space.
+ * \param[in]    interruptSource   Specifies the global interrupt source to be enabled or disabled. \ref IfxPsi5s_GlobalInterruptSource
+ * \param[in]    enabled           Boolean value indicating whether to enable (true) or disable (false) the interrupt source. \ref IfxPsi5s_InterruptRequest
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_enableGlobalInterrupt(Ifx_PSI5S *psi5s, IfxPsi5s_GlobalInterruptSource interruptSource, IfxPsi5s_InterruptRequest enabled);
 
-/** \brief enable / disable interrupt source
- * \param psi5s pointer to psi5s register space
- * \param channel specifies channel number
- * \param interruptSource specifies interrupt source
- * \param enabled Enable / Disable the interrupt
- * \return None
+/**
+ * \brief Enables or disables a specific interrupt source for the given PSI5S channel.
+ *
+ * \param[inout] psi5s             Pointer to the PSI5S register space.
+ * \param[in]    channel           Specifies the channel number to configure. \ref IfxPsi5s_ChannelId
+ * \param[in]    interruptSource   Specifies the interrupt source to enable or disable.\ref IfxPsi5s_InterruptSource
+ * \param[in]    enabled           Enable or disable the interrupt request. This is an enumeration of type. \ref IfxPsi5s_InterruptRequest.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_enableInterrupt(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channel, IfxPsi5s_InterruptSource interruptSource, IfxPsi5s_InterruptRequest enabled);
 
-/** \brief Get  Receive Interrupt status
- * \param psi5s Pointer to PSI5S Register space
- * \return Receive Interrupt status
+/**
+ * \brief Get the receive interrupt status of the PSI5S module.
+ *
+ * \param[in]    psi5s             Pointer to the PSI5S register space.
+ *
+ * \retval TRUE If a receive interrupt is pending.
+ *         FALSE If no receive interrupt is pending.
  */
 IFX_INLINE boolean IfxPsi5s_getReceiveInterruptStatus(Ifx_PSI5S *psi5s);
 
-/** \brief get Transmit Interrupt status
- * \param psi5s Pointer to PSI5S Module space
- * \return Transmit Interrupt status
+/**
+ * \brief Gets the transmit interrupt status of the PSI5S module.
+ *
+ * \param[in]    psi5s             Pointer to the PSI5S module instance.
+ * 
+ * \retval TRUE If a transmit interrupt is pending.
+ *         FALSE If no transmit interrupt is pending.
  */
 IFX_INLINE boolean IfxPsi5s_getTransmitInterruptStatus(Ifx_PSI5S *psi5s);
 
-/** \brief Sets the node pointers of PSI5-S ASC and for XCRCI and FOI
- * \param psi5s Pointer to PSI5S Register Space
- * \param nodePointer specifies node pointer source
- * \param triggerOutputLine select trigger Output Line
- * \return None
+/**
+ * \brief Configures the global interrupt node pointers for the PSI5-S module's ASC, XCRCI, and FOI
+ * 
+ * \param[inout] psi5s             Pointer to the PSI5S register space.
+ * \param[in]    nodePointer       Specifies the global interrupt source node pointer to be configured. \ref IfxPsi5s_GlobalInterruptSource
+ * \param[in]    triggerOutputLine Selects the trigger output line for the global interrupt. \ref IfxPsi5s_TriggerOutput
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_setGlobalInterruptNodePointer(Ifx_PSI5S *psi5s, IfxPsi5s_GlobalInterruptSource nodePointer, IfxPsi5s_Trigger triggerOutputLine);
 
-/** \brief set interrupt node pointer
- * \param psi5s specifies the pointer to PSI5S Module register space
- * \param channel specifies channel number
- * \param nodePointer specifies node pointer source
- * \param triggerOutputLine select service request line
- * \return None
+/**
+ * \brief Sets the interrupt node pointer for a specified channel in the PSI5S module.
+ *
+ * \param[inout] psi5s             Pointer to the PSI5S module register space.
+ * \param[in]    channel           Specifies the channel number to configure. \ref IfxPsi5s_ChannelId
+ * \param[in]    nodePointer       Specifies the interrupt node pointer source. \ref IfxPsi5s_InterruptSource
+ * \param[in]    triggerOutputLine Selects the service request line. \ref IfxPsi5s_TriggerOutput
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_setInterruptNodePointer(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channel, IfxPsi5s_InterruptSource nodePointer, IfxPsi5s_Trigger triggerOutputLine);
 
@@ -540,61 +601,85 @@ IFX_INLINE void IfxPsi5s_setInterruptNodePointer(Ifx_PSI5S *psi5s, IfxPsi5s_Chan
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief clear time stamp counter A
- * \param psi5s Pointer to PSI5S Module space
- * \param clearTimeStampCounter clear time stamp counter A
- * \return None
+/**
+ * \brief Clears the timestamp counter A of the PSI5S module.
+ *
+ * \param[inout] psi5s                 Pointer to the PSI5S module instance.
+ * \param[in]    clearTimeStampCounter Boolean flag to clear the timestamp counter A by writing 1.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_clearTimeStampCounterA(Ifx_PSI5S *psi5s, boolean clearTimeStampCounter);
 
-/** \brief Clear Time Stamp Counter B
- * \param psi5s Pointer to PSI5S Module space
- * \param clearTimeStampCounter clear Time Stamp Counter B
- * \return None
+/**
+ * \brief Clears the Time Stamp Counter B of the PSI5S module.
+ *
+ * \param[inout] psi5s                 Pointer to the PSI5S module instance.
+ * \param[in]    clearTimeStampCounter Boolean flag to clear the timestamp counter B by writing 1.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_clearTimeStampCounterB(Ifx_PSI5S *psi5s, boolean clearTimeStampCounter);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param psi5s Pointer to PSI5S module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the PSI5S module is in a suspended state.
+ *
+ * \param[in]    psi5s                 Pointer to the PSI5S module registers.
+ *
+ * \retval TRUE  The module is currently suspended.
+ *         FALSE The module is not suspended and is operational.
  */
 IFX_INLINE boolean IfxPsi5s_isModuleSuspended(Ifx_PSI5S *psi5s);
 
-/** \brief enable /disable loop back mode
- * \param psi5s pointer to PSI5S Register space
- * \param enabled enable/disable loop back mode
- * \return None
+/**
+ * \brief Enables or disables the loopback mode for the PSI5S module.
+ * 
+ * \param[inout] psi5s                 Pointer to the PSI5S register space.
+ * \param[in]    enabled               Enable/disable loop back mode. \ref IfxPsi5s_LoopBackMode
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_setLoopBackMode(Ifx_PSI5S *psi5s, IfxPsi5s_LoopBackMode enabled);
 
-/** \brief enable / disable sleep mode
- * \param psi5s Pointer to PSI5S register
- * \param mode sleep mode (enable/disable)
- * \return None
+/**
+ * \brief Enables or disables the sleep mode of the PSI5S module.
+ *
+ * \param[inout] psi5s                 Pointer to the PSI5S register structure.
+ * \param[in]    mode                  Sleep mode configuration. \ref IfxPsi5s_SleepMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_setSleepMode(Ifx_PSI5S *psi5s, IfxPsi5s_SleepMode mode);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param psi5s Pointer to PSI5S module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Configure the Module to Hard/Soft suspend mode.
+ * 
+ * \note The function will not work as expected if OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
+ *
+ * \param[inout] psi5s                 Pointer to the PSI5S module registers.
+ * \param[in]    mode                  Suspend mode to be configured. \ref IfxPsi5s_SuspendMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_setSuspendMode(Ifx_PSI5S *psi5s, IfxPsi5s_SuspendMode mode);
 
-/** \brief start time stamp counter A
- * \param psi5s Pointer to PSI5S Module space
- * \param startTimeStamp Start/stop current time stamp count
- * \return None
+/**
+ * \brief Starts or stops the timestamp counter A.
+ *
+ * \param[inout] psi5s                 Pointer to the PSI5S module space.
+ * \param[in]    startTimeStamp        Start/stop the current timestamp count. \ref IfxPsi5s_TimeStampCount
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_setTimeStampCounterA(Ifx_PSI5S *psi5s, IfxPsi5s_TimeStampCount startTimeStamp);
 
-/** \brief Start Time Stamp Counter B
- * \param psi5s Pointer to PSI5S Module Space
- * \param startTimeStamp start time stamp
- * \return None
+/**
+ * \brief Starts or stops the Time Stamp Counter B.
+ *
+ * \param[inout] psi5s                 Pointer to the PSI5S module space.
+ * \param[in]    startTimeStamp        The state of the time stamp counter. \ref IfxPsi5s_TimeStampCount
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_setTimeStampCounterB(Ifx_PSI5S *psi5s, IfxPsi5s_TimeStampCount startTimeStamp);
 
@@ -602,28 +687,43 @@ IFX_INLINE void IfxPsi5s_setTimeStampCounterB(Ifx_PSI5S *psi5s, IfxPsi5s_TimeSta
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disable PSI5S kernel
- * \param psi5s pointer to the base of PSI5S register space
- * \return None
+/**
+ * \brief Disables the PSI5S kernel
+ *
+ * \param[inout] psi5s                 Pointer to the base of PSI5S register space
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5s_disableModule(Ifx_PSI5S *psi5s);
 
-/** \brief Get the received psi5s frame for the channel
- * \param psi5s Pointer to PSI5S Module
- * \param channelId channel ID
- * \return Frame Status
+/**
+ * \brief Get the received psi5s frame status for the specified channel.
+ *
+ * \param[in]    psi5s                 Pointer to the PSI5S module instance.
+ * \param[in]    channelId             Channel ID of the PSI5S channel. \ref IfxPsi5s_ChannelId
+ *
+ * \retval TRUE   A frame is available for reading.
+ *         FALSE  No frame is available for reading.
  */
 IFX_EXTERN boolean IfxPsi5s_getReadFrameStatus(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channelId);
 
-/** \brief Indicates the successful reception of a frame.
- * \param psi5s Pointer to PSI5S module registers
- * \param channelId Channel Number
+/**
+ * \brief Indicates whether a frame was successfully received on the specified channel.
+ *
+ * \param[in]    psi5s                 Pointer to PSI5S module registers
+ * \param[in]    channelId             Channel Number. \ref IfxPsi5s_ChannelId
+ *
+ * \retval TRUE Frame was successfully received
+ *         FALSE Frame was not successfully received
  */
 IFX_EXTERN boolean IfxPsi5s_getSuccessfullyReceivedFrameStatus(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channelId);
 
-/** \brief resets PSI5S kernel
- * \param psi5s pointer to PSI5S registers
- * \return None
+/**
+ * \brief Resets the PSI5S module to its initial state
+ *
+ * \param[inout] psi5s                 Pointer to the PSI5S registers structure.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5s_resetModule(Ifx_PSI5S *psi5s);
 
@@ -633,32 +733,47 @@ IFX_EXTERN void IfxPsi5s_resetModule(Ifx_PSI5S *psi5s);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Shows status of any interrupt in any channell in PSI5S.
- * \param psi5s Pointer to PSI5S SFR's base address
- * \param channel Channel ID of channel whose interrupt status is required
- * \param interruptSource Interrupt Source to be cleared
+/**
+ * \brief Retrieves the interrupt status for a specific channel and interrupt source in PSI5S.
+ *
+ * \param[in]    psi5s                 Pointer to the PSI5S SFR's base address.
+ * \param[in]    channel               Channel ID of the channel whose interrupt status is to be retrieved. \ref IfxPsi5s_ChannelId
+ * \param[in]    interruptSource       Interrupt source to check. \ref IfxPsi5s_InterruptSource
+ *
+ * \retval TRUE The interrupt is active for the specified channel and source.
+ *         FALSE The interrupt is not active for the specified channel and source.
  */
 IFX_INLINE boolean IfxPsi5s_getInterruptStatus(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channel, IfxPsi5s_InterruptSource interruptSource);
 
-/** \brief Clears the status of any interrupt of any  PSI5-S channel
- * \param psi5s Pointer to PSI5S SFR's base address
- * \param channel Channel ID of channel whose interrupt needs to be cleared
- * \param interruptSource Interrupt Source to be cleared
- * \return None
+/**
+ * \brief Clears the interrupt status for a specified source within a given PSI5-S channel.
+ *
+ * \param[inout] psi5s                 Pointer to the base address of the PSI5-S module's SFR.
+ * \param[in]    channel               Channel ID of the PSI5-S channel whose interrupt status needs to be cleared. \ref IfxPsi5s_ChannelId
+ * \param[in]    interruptSource       The specific interrupt source to be cleared. \ref IfxPsi5s_InterruptSource
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_clearInterruptStatus(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channel, IfxPsi5s_InterruptSource interruptSource);
 
-/** \brief Show the status of any global interrupt, i.e. of the ASC inside PSI5-S and XCRCI indicating a non recoverable message is received.
- * \param psi5s Pointer to PSI5S SFR's base address
- * \param interruptSource Interrupt source under consideration
+/**
+ * \brief Checks the status of a specified global interrupt source for the PSI5-S module.
+ *
+ * \param[in]    psi5s                 Pointer to the base address of the PSI5-S module's SFR registers.
+ * \param[in]    interruptSource       The global interrupt source to check. \ref IfxPsi5s_GlobalInterruptSource
+ *
+ * \retval TRUE The specified global interrupt source is active.
+ *         FALSE The specified global interrupt source is not active.
  */
 IFX_INLINE boolean IfxPsi5s_getGlobalInterruptStatus(Ifx_PSI5S *psi5s, IfxPsi5s_GlobalInterruptSource interruptSource);
 
-/** \brief Clears the status of any interrupt of the ASC
- * integrated in PSI5-S and for XCRCI and FOI
- * \param psi5s Pointer to PSI5S SFR's base address
- * \param interruptSource Interrupt source under consideration
- * \return None
+/**
+ * \brief Clears the status of any interrupt of the ASC
+ * 
+ * \param[inout] psi5s                 Pointer to the base address of the PSI5-S SFR.
+ * \param[in]    interruptSource       The global interrupt source to be cleared. \ref IfxPsi5s_GlobalInterruptSource
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5s_clearGlobalInterruptStatus(Ifx_PSI5S *psi5s, IfxPsi5s_GlobalInterruptSource interruptSource);
 
@@ -666,9 +781,13 @@ IFX_INLINE void IfxPsi5s_clearGlobalInterruptStatus(Ifx_PSI5S *psi5s, IfxPsi5s_G
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Get address of the SRC register
- * \param psi5s Pointer to PSI5S SFR's base address
- * \param channel Channel ID of the channel to get the corresponding SRC pointer
+/**
+ * \brief Get the address of the SRC register for a specific channel.
+ *
+ * \param[in]    psi5s                 Pointer to the base address of the PSI5S SFR .
+ * \param[in]    channel               Channel ID of the channel for which to get the SRC register address. \ref IfxPsi5s_ChannelId
+ * 
+ * \retval Ifx_SRC_SRCR* Pointer to the SRC register address.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxPsi5s_getSrcAddress(Ifx_PSI5S *psi5s, IfxPsi5s_ChannelId channel);
 
@@ -759,10 +878,10 @@ IFX_INLINE boolean IfxPsi5s_isModuleSuspended(Ifx_PSI5S *psi5s)
 {
     Ifx_PSI5S_OCS ocs;
 
-    // read the status
+    /* Read the status */
     ocs.U = psi5s->OCS.U;
 
-    // return the status
+    /* Return the status */
     return ocs.B.SUSSTA;
 }
 
@@ -804,7 +923,7 @@ IFX_INLINE void IfxPsi5s_setSuspendMode(Ifx_PSI5S *psi5s, IfxPsi5s_SuspendMode m
 {
     Ifx_PSI5S_OCS ocs;
 
-    // remove protection and configure the suspend mode.
+    /* Remove protection and configure the suspend mode. */
     ocs.B.SUS_P  = 1;
     ocs.B.SUS    = mode;
     psi5s->OCS.U = ocs.U;

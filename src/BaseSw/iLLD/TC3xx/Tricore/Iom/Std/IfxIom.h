@@ -3,7 +3,7 @@
  * \brief IOM  basic functionality
  * \ingroup IfxLld_Iom
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -343,8 +343,7 @@ typedef enum
 typedef enum
 {
     IfxIom_LamRunMode_freeRunning = 0,  /**< \brief Specifies event window generation is free-running. */
-    IfxIom_LamRunMode_gated       = 1   /**< \brief Specifies event window generation is gated with the monitor or
-                                         * reference signal. */
+    IfxIom_LamRunMode_gated       = 1   /**< \brief Specifies event window generation is gated with the monitor or reference signal. */
 } IfxIom_LamRunMode;
 
 /** \brief FPCCTR[channelId].ISM, Specifies the monitor signal input for Filter & Prescaler cell
@@ -377,31 +376,47 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables the IOM module .
- * \param iom Pointer to IOM module registers
- * \return None
+/**
+ * \brief Disables the specified IOM module, halting its operation.
+ *
+ * \param[inout] iom Pointer to the IOM module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxIom_disableModule(Ifx_IOM *iom);
 
-/** \brief Enable the IOM module control.
- * \param iom Pointer to IOM module registers
- * \param clockDivider IOM clock divider. Set to 1 for max clock.
- * \return None
+/**
+ * \brief Enables the IOM module control and sets the clock divider for the module.
+ *
+ * \param[inout] iom          Pointer to the IOM module registers.
+ * \param[in]    clockDivider IOM clock divider. The divider value determines the clock speed for the module. A value of 1 sets the maximum clock speed. Range: 0 to 255.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxIom_enableModule(Ifx_IOM *iom, uint8 clockDivider);
 
-/** \brief Enable/disable the sensitivity of the module to sleep signal
- * \param iom Pointer to IOM registers
- * \param mode Mode selection (enable/disable)
- * \return None
+/**
+ * \brief Enables or disables the module's sensitivity to sleep signals.
+ *
+ * \param[inout] iom  Pointer to the IOM module registers.
+ * \param[in]    mode The mode of operation. Range: \ref IfxIom_SleepMode.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxIom_setSleepMode(Ifx_IOM *iom, IfxIom_SleepMode mode);
 
-/** \brief Enable/disable the sensitivity of the module to sleep signal
- * \param iom Pointer to IOM registers
- * \param channelId FPC channel ID
- * \param value Prescaler Value
- * \return None
+/**
+ * \brief Sets the timer value for the specified Filter & Prescaler Cell channel.
+ *
+ * \param[inout] iom       Pointer to the IOM module registers.
+ * \param[in]    channelId FPC channel ID. Range: \ref IfxIom_FpcChannelId.
+ * \param[in]    value     Prescaler value. Range: 0 to 0xFFFF.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxIom_setTimerValueOfFilterAndPrescalerCell(Ifx_IOM *iom, IfxIom_FpcChannelId channelId, uint16 value);
 
@@ -409,14 +424,23 @@ IFX_INLINE void IfxIom_setTimerValueOfFilterAndPrescalerCell(Ifx_IOM *iom, IfxIo
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Return the frequency used for the filter and timers clock
- * \param iom Pointer to IOM module registers
+/**
+ * \brief Returns the frequency used for the filter and timers clock
+ * 
+ * \param[in] iom Pointer to the IOM module registers.
+ * 
+ * \retval float32 The clock frequency in Hz.
+ *
  */
 IFX_EXTERN float32 IfxIom_getFrequency(Ifx_IOM *iom);
 
-/** \brief Reset the IOM module
- * \param iom Pointer to IOM module registers
- * \return None
+/**
+ * \brief Resets the IOM module to its initial state.
+ *
+ * \param[inout] iom Pointer to the IOM module registers.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxIom_resetModule(Ifx_IOM *iom);
 
@@ -430,8 +454,12 @@ IFX_EXTERN void IfxIom_resetModule(Ifx_IOM *iom);
 /******************************************************************************/
 
 /**
- * \param iom pointer to IOM register space
- * \return the last generated event
+ * \brief Retrieves the history of event triggers from the IOM module.
+ *
+ * \param[in] iom Pointer to the IOM module register.
+ *
+ * \retval uint16 The last generated event trigger history. Range: 0 to 0xFFFF.
+ * 
  */
 IFX_INLINE uint16 IfxIom_eventTriggerHistory(Ifx_IOM *iom);
 

@@ -3,7 +3,7 @@
  * \brief I2C I2C details
  * \ingroup IfxLld_I2c
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -291,7 +291,7 @@ typedef struct
     Ifx_I2C          *i2c;             /**< \brief Module Pointer */
     IfxI2c_BusStatus  busStatus;       /**< \brief Status of the bus */
     IfxI2c_I2c_Status status;          /**< \brief Status of the last bus operation */
-    float32           baudrate;        /**< \brief Baudrate */
+    float32           baudrate;        /**< \brief Baudrate. Range: Standard Mode: 20 kbit/s - 100 kbit/s, Fast Mode: 100 kbit/s - 400 kbit/s, High-Speed Mode: 500 kbit/s - 3.4 Mbit/s. */
 } IfxI2c_I2c;
 
 /** \brief Structure to configure the Module
@@ -299,7 +299,7 @@ typedef struct
 typedef struct
 {
     Ifx_I2C               *i2c;                  /**< \brief Module Pointer */
-    float32                baudrate;             /**< \brief Baudrate */
+    float32                baudrate;             /**< \brief Baudrate. Range: Standard Mode: 20 kbit/s - 100 kbit/s, Fast Mode: 100 kbit/s - 400 kbit/s, High-Speed Mode: 500 kbit/s - 3.4 Mbit/s. */
     IFX_CONST IfxI2c_Pins *pins;                 /**< \brief Pins */
     IfxI2c_Mode            mode;                 /**< \brief Speed Mode */
     IfxI2c_MasterNotSlave  peripheralMode;       /**< \brief master/not slave */
@@ -312,10 +312,10 @@ typedef struct
 typedef struct
 {
     IfxI2c_I2c        *i2c;                       /**< \brief Module Pionter */
-    uint16             deviceAddress;             /**< \brief the slave device's address */
+    uint16             deviceAddress;             /**< \brief the slave device's address. Range: 0x1 to 0x7F (7-bit address), 0 to 0x3FF (10-bit address). */
     IfxI2c_AddressMode addressMode;               /**< \brief slave device's address (7 or 10 bits) */
     IfxI2c_Mode        speedMode;                 /**< \brief slave device in Standard/Fast or High Speed mode. */
-    boolean            enableRepeatedStart;       /**< \brief TRUE: Stop is not generated FALSE: Default (Stop is generated at the end of read/write) */
+    boolean            enableRepeatedStart;       /**< \brief Range: TRUE - Stop is not generated, FALSE - Default (Stop is generated at the end of read/write). */
 } IfxI2c_I2c_Device;
 
 /** \brief Structure to configure the device's data structure
@@ -323,10 +323,10 @@ typedef struct
 typedef struct
 {
     IfxI2c_I2c        *i2c;                 /**< \brief Module Pointer */
-    uint16             deviceAddress;       /**< \brief the slave device's address */
+    uint16             deviceAddress;       /**< \brief the slave device's address. Range: 0x1 to 0x7F (7-bit address), 0 to 0x3FF (10-bit address). */
     IfxI2c_AddressMode addressMode;         /**< \brief slave device's address (7 or 10 bits) */
     IfxI2c_Mode        speedMode;           /**< \brief slave device in Standard/Fast or High Speed mode. */
-    boolean            enableRepeatedStart; /**< \brief TRUE: Stop is not generated FALSE: Default (Stop is generated at the end of read/write) */
+    boolean            enableRepeatedStart; /**< \brief Range: TRUE - Stop is not generated, FALSE - Default (Stop is generated at the end of read/write). */
 } IfxI2c_I2c_deviceConfig;
 
 /** \} */

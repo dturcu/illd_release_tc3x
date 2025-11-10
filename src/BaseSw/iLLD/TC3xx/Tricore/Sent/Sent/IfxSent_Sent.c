@@ -2,7 +2,7 @@
  * \file IfxSent_Sent.c
  * \brief SENT SENT details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -63,8 +63,11 @@ void IfxSent_Sent_deInitModule(IfxSent_Sent *driver)
 {
     Ifx_SENT *sentSFR = driver->sent;
     uint16    passwd  = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
+    /* Reset the SENT module to its default state */
     IfxSent_resetModule(sentSFR);
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 }
 
@@ -87,6 +90,7 @@ boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Se
     tempWDT.B.WDL = config->watchDogTimerLimit;
     sentCh->WDT.U = tempWDT.U;
 
+    /* Initialize the receive control settings for the channel */
     Ifx_SENT_CH_RCR tempRCR;
     tempRCR.U       = 0;
     tempRCR.B.IEP   = config->receiveControl.endPulseIgnored;
@@ -104,8 +108,10 @@ boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Se
     tempRCR.B.FDFL  = config->receiveControl.frequencyDriftCheckEnabled;
     sentCh->RCR.U   = tempRCR.U;
 
+    /* Enable the specified SENT channel after configuration */
     IfxSent_enableChannel(sentSFR, config->channelId);
 
+    /* Initialize the nibble control settings for the channel */
     Ifx_SENT_CH_VIEW tempVIEW;
     tempVIEW.U       = 0;
     tempVIEW.B.RDNP0 = config->nibbleControl.nibblePointer0;
@@ -118,6 +124,7 @@ boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Se
     tempVIEW.B.RDNP7 = config->nibbleControl.nibblePointer7;
     sentCh->VIEW.U   = tempVIEW.U;
 
+    /* Initialize the input/output control settings for the channel */
     Ifx_SENT_CH_IOCR tempIOCR;
     tempIOCR.U       = 0;
     tempIOCR.B.DEPTH = config->inputOutputControl.digitalGlitchFilterDepth;
@@ -130,6 +137,7 @@ boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Se
     tempIOCR.B.CTR   = config->inputOutputControl.triggerMonitorCleared;
     sentCh->IOCR.U   = tempIOCR.U;
 
+    /* Initialize the interrupt node control settings for the channel */
     Ifx_SENT_CH_INP tempINP;
     tempINP.U       = 0;
     tempINP.B.RSI   = config->interuptNodeControl.receiveSuccessInterruptNode;
@@ -142,6 +150,7 @@ boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Se
     tempINP.B.WDI   = config->interuptNodeControl.watchdogErrorInterruptNode;
     sentCh->INP.U   = tempINP.U;
 
+    /* Enable the specified interrupts for the channel */
     sentCh->INTEN.U = config->enabledInterrupts.ALL;
 
     if (config->receiveControl.frameLength > 8)
@@ -151,18 +160,20 @@ boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Se
         sentCh->INTEN.B.RDI = 1;
     }
 
+    /* Check if SPC mode is enabled */
     if (config->spcModeOn == TRUE)
     {
         uint16 timeOut = IFXSENT_CFG_TIMEOUT_VALUE;
         uint8  error   = 0;
 
-        /* check if Transaction is in progress, before proceeding !!! */
+        /* Check if Transaction is in progress, before proceeding !!! */
         while ((sentCh->SCR.B.TRQ == 1) && (timeOut > 0))
         {
             /* Wait for Transaction to be completed */
             timeOut--;
         }
 
+        /* Check if the timeout expired */
         if (timeOut == 0U)
         {
             error = 1U;
@@ -188,6 +199,7 @@ boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Se
 
     const IfxSent_Sent_Pins *pinsConfig = (const IfxSent_Sent_Pins *)config->pins;
 
+    /* Pins initialization */
     if (pinsConfig != NULL_PTR)
     {
         const IfxSent_Sent_In *sentIn = pinsConfig->in;
@@ -222,6 +234,7 @@ boolean IfxSent_Sent_initChannel(IfxSent_Sent_Channel *channel, const IfxSent_Se
 
 void IfxSent_Sent_initChannelConfig(IfxSent_Sent_ChannelConfig *config, IfxSent_Sent *driver)
 {
+	/* Define the default configuration for the SENT channel */
     const IfxSent_Sent_ChannelConfig defaultChannelConfig = {
         .driver             = NULL_PTR,
         .channelId          = IfxSent_ChannelId_none,
@@ -229,6 +242,7 @@ void IfxSent_Sent_initChannelConfig(IfxSent_Sent_ChannelConfig *config, IfxSent_
 
         .watchDogTimerLimit = 0,
 
+		 /* Initialize the default receive control settings */
         .receiveControl     = {
             .endPulseIgnored               = FALSE,
             .alternateCrcSelected          = FALSE,
@@ -245,6 +259,7 @@ void IfxSent_Sent_initChannelConfig(IfxSent_Sent_ChannelConfig *config, IfxSent_
             .frequencyDriftCheckEnabled    = FALSE,
         },
 
+		 /* Initialize the default nibble control settings */
         .nibbleControl                            = {
             .nibblePointer0 = IfxSent_Nibble_0,
             .nibblePointer1 = IfxSent_Nibble_1,
@@ -256,6 +271,7 @@ void IfxSent_Sent_initChannelConfig(IfxSent_Sent_ChannelConfig *config, IfxSent_
             .nibblePointer7 = IfxSent_Nibble_7,
         },
 
+		 /* Initialize the default inputoutput control settings */
         .inputOutputControl                       = {
             .digitalGlitchFilterDepth = IfxSent_DigitalGlitchesLength_2,
             .outputPulsePolarityHigh  = FALSE,
@@ -267,7 +283,9 @@ void IfxSent_Sent_initChannelConfig(IfxSent_Sent_ChannelConfig *config, IfxSent_
             .triggerMonitorCleared    = FALSE,
         },
 
+		 /* Enable default interrupts for the channel */
         .enabledInterrupts.ALL = IFXSENT_CFG_CHANNEL_INTEN,
+		 /* Initialize the default interrupt node control settings */
         .interuptNodeControl   = {
             .receiveDataInterruptNode             = IfxSent_InterruptNodePointer_trigo0,
             .receiveSuccessInterruptNode          = IfxSent_InterruptNodePointer_trigo0,
@@ -281,7 +299,7 @@ void IfxSent_Sent_initChannelConfig(IfxSent_Sent_ChannelConfig *config, IfxSent_
 
         .pins                                     = NULL_PTR,
 
-        /* SPC mode enable/disable   */
+        /* SPC mode enable/disable */
         .spcModeOn                                = FALSE,
     };
     *config        = defaultChannelConfig;
@@ -302,12 +320,15 @@ boolean IfxSent_Sent_initModule(IfxSent_Sent *driver, const IfxSent_Sent_Config 
         IfxSent_enableModule(sentSFR);
     }
 
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
+    /* Set the sleep mode enable/disable based on the configuration */
     sentSFR->CLC.B.EDIS = (config->sleepModeEnabled != FALSE) ? 0 : 1;
 
     IfxSent_initializeModuleClock(sentSFR, IfxSent_ClockDividerMode_normal, 1023); /* Fractional divider not required, pass 1:1*/
     IfxSent_setTimeStampPredivider(sentSFR, config->timeStampPreDivider);
 
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
     return result;
@@ -316,7 +337,7 @@ boolean IfxSent_Sent_initModule(IfxSent_Sent *driver, const IfxSent_Sent_Config 
 
 void IfxSent_Sent_initModuleConfig(IfxSent_Sent_Config *config, Ifx_SENT *sent)
 {
-    /* Default module initialization    */
+    /* Default module initialization */
     const IfxSent_Sent_Config defaultModuleConfig = {
         .module              = NULL_PTR,
         .sleepModeEnabled    = TRUE,
@@ -367,7 +388,7 @@ void IfxSent_Sent_spcPulseUpdate(IfxSent_Sent_Channel *channel, uint8 pulseLengt
     regSCR.B.DEL  = delay;
     regSCR.B.PLEN = pulseLength;
 
-    /* For IfxSent_TriggerSource_immediate mode  */
+    /* For IfxSent_TriggerSource_immediate mode */
     if (regSCR.B.TRIG == IfxSent_TriggerSource_immediate)
     {
         regSCR.B.TRIG = IfxSent_TriggerSource_off;

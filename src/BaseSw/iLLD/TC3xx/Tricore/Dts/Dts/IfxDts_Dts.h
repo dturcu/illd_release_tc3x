@@ -3,7 +3,7 @@
  * \brief DTS DTS details
  * \ingroup IfxLld_Dts
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -169,14 +169,13 @@
  */
 typedef struct
 {
-    boolean sensorControlDisabled;          /**< \brief MODULE_SCU.DTSCON.SCLK, specifies the control register lock except MODULE_SCU.DTSCON.START. */
-    float32 lowerTemperatureLimit;          /**< \brief Specifies the lower temperature limit compared against die temperature in Celsius
-                                             *
-                                             * A SMU will be triggered if the measurement result is below this limit */
-    float32 upperTemperatureLimit;          /**< \brief Specifies the upper temperature limit compared against die temperature in Celsius.
-                                             *
+    boolean sensorControlDisabled;          /**< \brief MODULE_SCU.DTSCON.SCLK, specifies the control register lock except MODULE_SCU.DTSCON.START
+   	   	   	   	   	   	   	   	   	   	   	 * Range: TRUE Sensor control is disabled, FALSE Sensor control is enabled */
+    float32 lowerTemperatureLimit;          /**< \brief Specifies the lower temperature limit compared against die temperature in Celsius. Lower Temperature Limit value: -40.0°C
+                                             * A SMU will be triggered if the measurement result is below this limit. */
+    float32 upperTemperatureLimit;          /**< \brief Specifies the upper temperature limit compared against die temperature in Celsius. Range: -40.0°C to 125.0°C
                                              * A SMU will be triggered if the measurement result is above this limit */
-    uint16     isrPriority;                 /**< \brief interrupt priority */
+    uint16     isrPriority;                 /**< \brief interrupt priority. Range: 0 to 0xFF */
     IfxSrc_Tos isrTypeOfService;            /**< \brief type of interrupt service */
 } IfxDts_Dts_Config;
 
@@ -189,20 +188,26 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialise the DTS with supplied configuration.
- * \param config pointer to module configuration structure
- * \return None
+/**
+ * \brief Intialises the DTS module with the provided configuration.
  *
- * Usage Example : \ref IfxLld_Dts_Dts_Usage
+ * \param[in] config Pointer to the DTS module configuration structure.
+ *
+ * \retval None
+ *
+ * Usage Example: \ref IfxLld_Dts_Dts_Usage
  *
  */
 IFX_EXTERN void IfxDts_Dts_initModule(const IfxDts_Dts_Config *config);
 
-/** \brief Intialises the module configuration buffer with default configuration.
- * \param config pointer to module configuration structure
- * \return None
+/**
+ * \brief Intialises the DTS module configuration structure with default values.
  *
- * Usage Example : \ref IfxLld_Dts_Dts_Usage
+ * \param[inout] config Pointer to the DTS module configuration structure to be initialized.
+ *
+ * \retval None
+ *
+ * Usage Example: \ref IfxLld_Dts_Dts_Usage
  *
  */
 IFX_EXTERN void IfxDts_Dts_initModuleConfig(IfxDts_Dts_Config *config);
@@ -216,18 +221,24 @@ IFX_EXTERN void IfxDts_Dts_initModuleConfig(IfxDts_Dts_Config *config);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the converted temperature in Celsius
- * \return The temperature based on the DTS temperature value
+/**
+ * \brief Retrieves the converted temperature in Celsius.
  *
- * Usage Example : \ref IfxLld_Dts_Dts_Usage
+ * \retval float32 The temperature in Celsius.
+ * 				   Range: -273.15°C to 272.54°C
+ *
+ * Usage Example: \ref IfxLld_Dts_Dts_Usage
  *
  */
 IFX_INLINE float32 IfxDts_Dts_getTemperatureCelsius(void);
 
-/** \brief Returns the unconverted temperature measurement result
- * \return current sensor measured result.
+/**
+ * \brief Retrieves the current unconverted temperature measurement value from the sensor.
  *
- * Usage Example : \ref IfxLld_Dts_Dts_Usage
+ * \retval uint16 The current unconverted temperature measurement result.
+ * 				  Range: 0 to 0xFFF
+ *
+ * Usage Example: \ref IfxLld_Dts_Dts_Usage
  *
  */
 IFX_INLINE uint16 IfxDts_Dts_getTemperatureValue(void);
@@ -241,15 +252,24 @@ IFX_INLINE uint16 IfxDts_Dts_getTemperatureValue(void);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Converts a temperature value in Celsius to DTS value
- * \param temperatureValue the temperature in Celsius
- * \return the appr. DTS value
+/**
+ * \brief Converts a temperature value from Celsius to an approximate DTS value.
+ *
+ * \param[in] temperatureValue The temperature value in Celsius to be converted.
+ *
+ * \retval uint16 The approximated DTS value calculated from the input temperature.
+ * 				  Range: 0x6D6 to 0xCFE
  */
 IFX_EXTERN uint16 IfxDts_Dts_convertFromCelsius(float32 temperatureValue);
 
-/** \brief Converts the measurement value returned from DTS to Celsius
- * \param dtsValue measurement value returned from DTS
- * \return temperature in Celsius
+/**
+ * \brief Converts a raw DTS measurement value into a temperature in Celsius.
+ *
+ * \param[in] dtsValue The raw measurement value returned from the DTS.
+ * 					   Range: 0 to 0xFFFF
+ *
+ * \retval float32 The converted temperature in Celsius derived from the provided DTS value.
+ * 				   Range: -273.15°C to 272.54°C
  */
 IFX_EXTERN float32 IfxDts_Dts_convertToCelsius(uint16 dtsValue);
 

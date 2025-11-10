@@ -3,7 +3,7 @@
  * \brief MSC MSC details
  * \ingroup IfxLld_Msc
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -208,52 +208,68 @@ typedef enum
 
 /** \addtogroup IfxLld_Msc_Msc_Data_Structures
  * \{ */
+/** \brief En pin Configuration Structure
+ */
 typedef struct
 {
-    IfxMsc_En_Out     *pin;
-    IfxPort_OutputMode mode;
+    IfxMsc_En_Out     *pin;		/**< \brief Pointer to the En Out pinmap structure */
+    IfxPort_OutputMode mode;	/**< \brief Specifies the pin output mode */
 } IfxMsc_Msc_en;
 
+/** \brief Fcln pin Configuration Structure
+ */
 typedef struct
 {
-    IfxMsc_Fcln_Out   *pin;
-    IfxPort_OutputMode mode;
+    IfxMsc_Fcln_Out   *pin;		/**< \brief Pointer to the Fcln Out pinmap structure */
+    IfxPort_OutputMode mode;	/**< \brief Specifies the pin output mode */
 } IfxMsc_Msc_fcln;
 
+/** \brief Fclp pin Configuration Structure
+ */
 typedef struct
 {
-    IfxMsc_Fclp_Out   *pin;
-    IfxPort_OutputMode mode;
+    IfxMsc_Fclp_Out   *pin;		/**< \brief Pointer to the Fclp Out pinmap structure */
+    IfxPort_OutputMode mode;	/**< \brief Specifies the pin output mode */
 } IfxMsc_Msc_fclp;
 
+/** \brief Inj0 Configuration Structure
+ */
 typedef struct
 {
-    IfxMsc_Inj_In    *pin;
-    IfxPort_InputMode mode;
+    IfxMsc_Inj_In    *pin;		/**< \brief Pointer to the Inj In pinmap structure */
+    IfxPort_InputMode mode;		/**< \brief Specifies the pin input mode */
 } IfxMsc_Msc_inj0;
 
+/** \brief Inj1 Configuration Structure
+ */
 typedef struct
 {
-    IfxMsc_Inj_In    *pin;
-    IfxPort_InputMode mode;
+    IfxMsc_Inj_In    *pin;		/**< \brief Pointer to the Inj In pinmap structure */
+    IfxPort_InputMode mode;		/**< \brief Specifies the pin input mode */
 } IfxMsc_Msc_inj1;
 
+/** \brief Sdi Configuration Structure
+ */
 typedef struct
 {
-    IfxMsc_Sdi_In    *pin;
-    IfxPort_InputMode mode;
+    IfxMsc_Sdi_In    *pin;		/**< \brief Pointer to the Sdi In pinmap structure */
+    IfxPort_InputMode mode;		/**< \brief Specifies the pin input mode */
 } IfxMsc_Msc_sdi;
 
+/** \brief Son Configuration Structure
+ */
 typedef struct
 {
-    IfxMsc_Son_Out    *pin;
-    IfxPort_OutputMode mode;
+    IfxMsc_Son_Out    *pin;		/**< \brief Pointer to the Son Out pinmap structure */
+    IfxPort_OutputMode mode;	/**< \brief Specifies the pin output mode */
 } IfxMsc_Msc_son;
 
+/** \brief Sop Configuration Structure
+ */
 typedef struct
 {
-    IfxMsc_Sop_Out    *pin;
-    IfxPort_OutputMode mode;
+    IfxMsc_Sop_Out    *pin;		/**< \brief Pointer to the Sop Out pinmap structure */
+    IfxPort_OutputMode mode;	/**< \brief Specifies the pin output mode */
 } IfxMsc_Msc_sop;
 
 /** \} */
@@ -264,7 +280,7 @@ typedef struct
  */
 typedef struct
 {
-    uint32                         abraDownstreamBlockBaudrate;       /**< \brief Specifies ABRA downstream block baud */
+    uint32                         abraDownstreamBlockBaudrate;       /**< \brief Specifies ABRA downstream block baud. Range: 0x5F5E1 (0.39 Mbaud) to 0x17D7840 (25 Mbaud) */
     IfxMsc_ShiftClockPhaseDuration lowPhaseOfShiftClock;              /**< \brief Specifies Low phase of shift clock */
     IfxMsc_ShiftClockPhaseDuration highPhaseOfShiftClock;             /**< \brief Specifies High phase of shift clock */
     IfxMsc_ClockSelect             clockSelectAbra;                   /**< \brief Specifies the clock select for ABRA */
@@ -276,9 +292,9 @@ typedef struct
  */
 typedef struct
 {
-    uint32             baudrate;          /**< \brief Specifies the baud rate */
+    uint32             baudrate;          /**< \brief Specifies the baud rate. Range: 0x5F5E1 (0.39 Mbaud) to 0x17D7840 (25 Mbaud) */
     IfxMsc_DividerMode dividerMode;       /**< \brief Specifies divided clock properties */
-    uint16             step;              /**< \brief Specifies the step value */
+    uint16             step;              /**< \brief Specifies the step value. Range: 0 to 0x3FF */
 } IfxMsc_Msc_Clock;
 
 /** \brief Configuration Settings for CX mode
@@ -315,9 +331,13 @@ typedef struct
     IfxMsc_ExternalSignalInjection          externalSignalInjectionPin1;           /**< \brief Specifies the Injection Enable Pin 1 */
     IfxMsc_ExternalBitInjectionPosition     injectionPositionPin1;                 /**< \brief Specifies the Injection Position Pin 1 */
     IfxMsc_CommandDataCommandRepetitionMode commandDataCommandReceptionMode;       /**< \brief Specifies the Command-Data-Command in Data Repetition Mode */
-    uint32                                  downstreamDataSourcesLow;              /**< \brief Specifies the Downstream Data Source selections Low */
-    uint32                                  downstreamDataSourcesHigh;             /**< \brief Specifies the Downstream Data Source selections High */
-    uint32                                  emergencyStopEnableBits;               /**< \brief Emergency Stop */
+    uint32                                  downstreamDataSourcesLow;              /**< \brief Specifies the Downstream Data Source selections Low. Range: 0 to 0xFFFFFFFF
+    																				* Bifield: SLx (x=0-15) SLx Range: 0 -> SRL[x] is taken from data register DD.DDL[x], 2 -> SRL[x] is taken from the ALTINL input line x, 3 -> SRL[x] is taken from the ALTINL input line x in inverted state. */
+    uint32                                  downstreamDataSourcesHigh;             /**< \brief Specifies the Downstream Data Source selections High. Range: 0 to 0xFFFFFFFF
+    																				* Bifield: SHx (x=0-15) SHx Range: 0 -> SRH[x] is taken from data register DD.DDH[x]), 2 -> SRH[x] is taken from the ALTINH input line x, 3 -> SRH[x] is taken from the ALTINH input line x in inverted state. */
+    uint32                                  emergencyStopEnableBits;               /**< \brief Emergency Stop. Range: 0 to 0xFFFFFFFF
+    																				* ENLx Bifield: ENLx (x=0-15) TRUE The emergency stop feature for bit SRL[x] is enabled, FALSE Emergency stop feature for bit SRL[x] is disabled.
+    																			    * ENHx Bifield: ENHx (x=0-15) TRUE The emergency stop feature for bit SRH[x] is enabled, FALSE Emergency stop feature for bit SRH[x] is disabled */
 } IfxMsc_Msc_DownstreamControlConfig;
 
 /** \brief Downstream Control Extension Configuration Structure
@@ -327,9 +347,13 @@ typedef struct
     IfxMsc_Extension                               extension;                                     /**< \brief Specifies the Extension Enable */
     IfxMsc_MsbBitDataExtension                     srlBitsShiftedAtDataFramesExtension;           /**< \brief Specifies the Number of SRLE bits shifted at Data Frames */
     IfxMsc_MsbBitDataExtension                     srhBitsShiftedAtDataFramesExtension;           /**< \brief Specifies the Number of SRHE bits shifted at Data Frames */
-    uint32                                         downstreamExtensionDataSourcesLow;             /**< \brief Specifies the Downstream Select Data Source Low Extension */
-    uint32                                         downstreamExtensionDataSourcesHigh;            /**< \brief Specifies the Downstream Select Data Source High Extension */
-    uint32                                         emergencyStopExtensionEnableBits;              /**< \brief Emergency Stop Extension */
+    uint32                                         downstreamExtensionDataSourcesLow;             /**< \brief Specifies the Downstream Select Data Source Low Extension. Range: 0 to 0xFFFFFFFF
+    																							   * Bifield: SLx (x=0-15) SLx Range: 0 -> SRL[x] is taken from data register DD.DDL[x], 2 -> SRL[x] is taken from the ALTINL input line x, 3 -> SRL[x] is taken from the ALTINL input line x in inverted state. */
+    uint32                                         downstreamExtensionDataSourcesHigh;            /**< \brief Specifies the Downstream Select Data Source High Extension. Range: 0 to 0xFFFFFFFF
+    																							   * Bifield: SHx (x=0-15) SHx Range: 0 -> SRH[x] is taken from data register DD.DDH[x], 2 -> SRH[x] is taken from the ALTINH input line x, 3 -> SRH[x] is taken from the ALTINH input line x in inverted state. */
+    uint32                                         emergencyStopExtensionEnableBits;              /**< \brief Emergency Stop Extension. Range: 0 to 0xFFFFFFFF
+    																							   * Bifield: ENLx (x=0-15) TRUE The emergency stop feature for bit SRL[x] is enabled, FALSE Emergency stop feature for bit SRL[x] is disabled.
+    																						   	   * Bifield: ENHx (x=0-15) TRUE The emergency stop feature for bit SRH[x] is enabled, FALSE Emergency stop feature for bit SRH[x] is disabled. */
     IfxMsc_DataFrameExtensionPassivePhaseLength    dataFrameExtensionPassivePhaseLength;          /**< \brief Specifies the Passive Phase Length at Data Frames Extension */
     IfxMsc_ControlFrameExtensionPassivePhaseLength controlFrameExtensionPassivePhaseLength;       /**< \brief Specifies the Passive Phase Length at Control Frames Extension */
     IfxMsc_NDividerDownstream                      nDividerDownstream;                            /**< \brief Specifies the division ratio for downstream generator clock */
@@ -359,18 +383,18 @@ typedef struct
  */
 typedef struct
 {
-    IfxMsc_Msc_fclp   fclp;
-    IfxMsc_Msc_fcln   fcln;
-    IfxMsc_Msc_sop    sop;
-    IfxMsc_Msc_son    son;
-    IfxMsc_Msc_en     en0;
-    IfxMsc_Msc_en     en1;
-    IfxMsc_Msc_en     en2;
-    IfxMsc_Msc_en     en3;
-    IfxMsc_Msc_sdi    sdi;
-    IfxMsc_Msc_inj0   inj0;
-    IfxMsc_Msc_inj1   inj1;
-    IfxPort_PadDriver pinDriver;
+    IfxMsc_Msc_fclp   fclp;				/**< \brief Specifies configuration for the MSC FCLP output pin */
+    IfxMsc_Msc_fcln   fcln;				/**< \brief Specifies configuration for the MSC FCLN output pin */
+    IfxMsc_Msc_sop    sop;				/**< \brief Specifies configuration for the MSC SOP output pin */
+    IfxMsc_Msc_son    son;				/**< \brief Specifies configuration for the MSC SON output pin */
+    IfxMsc_Msc_en     en0;				/**< \brief Specifies configuration for the MSC EN0 output pin */
+    IfxMsc_Msc_en     en1;				/**< \brief Specifies configuration for the MSC en1 output pin */
+    IfxMsc_Msc_en     en2;				/**< \brief Specifies configuration for the MSC en2 output pin */
+    IfxMsc_Msc_en     en3;				/**< \brief Specifies configuration for the MSC en3 output pin */
+    IfxMsc_Msc_sdi    sdi;				/**< \brief Specifies configuration for the MSC SDI input pin */
+    IfxMsc_Msc_inj0   inj0;		 		/**< \brief Specifies configuration for the MSC INJ0 input pin */
+    IfxMsc_Msc_inj1   inj1;				/**< \brief Specifies configuration for the MSC INJ1 input pin */
+    IfxPort_PadDriver pinDriver;		/**< \brief Specifies pad driver configuration for all MSC pins */
 } IfxMsc_Msc_Io;
 
 /** \brief Output Control Configuration Structure
@@ -434,55 +458,96 @@ typedef struct
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief de-initialize MSC module
- * \param msc pointer to the MSC module handle
- * \return None
+/**
+ * \brief De-initializes the MSC module, releasing any allocated resources and resetting the module to its initial state.
+ *
+ * \param[inout] msc Pointer to the MSC module handle.
+ *
+ * \retval None
  *
  * \code
  *     IfxMsc_Msc_deInitModule(&msc);
  * \endcode
- *
  */
 IFX_EXTERN void IfxMsc_Msc_deInitModule(IfxMsc_Msc *msc);
 
-/** \brief initialize the MSC module
- * \param msc pointer to the MSC module handle
- * \param config pointer to the MSC module configuration
- * \return None
+/**
+ * \brief Initializes the MSC module with the provided configuration.
+ *
+ * \param[inout] msc    Pointer to the MSC module handle.
+ * \param[in]    config Pointer to the MSC module configuration structure.
+ *                      This structure contains various configuration parameters such as clock settings,
+ *                      interrupt & Output Control configurations, and upstream/downstream settings,
+ *                      IO Pin & ABRA settings, downstream targets, and command extension configurations.
+ *                      The configuration is used to tailor the MSC module's behavior to the application's requirements.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Msc_Msc_Usage
- *
  */
 IFX_EXTERN void IfxMsc_Msc_initModule(IfxMsc_Msc *msc, const IfxMsc_Msc_Config *config);
 
-/** \brief initialize the MSC module configuration
- * \param config pointer to the MSC configuration
- * \param msc pointer to the MSC registers
- * \return None
+/**
+ * \brief Initializes the MSC module configuration structure with default or user-provided settings.
+ *
+ * \param[inout] config Pointer to the MSC module configuration structure.
+ *                      This structure contains various configuration parameters such as clock settings,
+ *                      interrupt & Output Control configurations, and upstream/downstream settings,
+ *                      IO Pin & ABRA settings, downstream targets, and command extension configurations.
+ *                      The configuration is used to tailor the MSC module's behavior
+ *                      to the application's requirements.
+ * \param[in]    msc    Pointer to the base address of MSC registers.
+ *
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Msc_Msc_Usage
- *
  */
 IFX_EXTERN void IfxMsc_Msc_initModuleConfig(IfxMsc_Msc_Config *config, Ifx_MSC *msc);
 
-/** \brief initialize the ABRA block
- * \param msc pointer to the MSC module handle
- * \param config pointer to the MSC module configuration
- * \return None
+/**
+ * \brief Initializes the ABRA (Asynchronous Baud Rate Adjustment Block) of the MSC module with the specified configuration.
+ *
+ * \param[inout] msc    Pointer to the MSC module handle.
+ * \param[in] 	 config Pointer to the MSC module configuration structure.
+ *                   	This structure contains various configuration parameters such as clock settings,
+ *                   	interrupt & Output Control configurations, and upstream/downstream settings,
+ *                   	IO Pin & ABRA settings, downstream targets, and command extension configurations.
+ *                   	The configuration is used to tailor the MSC module's behavior
+ *                   	to the application's requirements.
+ *
+ * \retval None
+ *
+ * A coding example can be found in \ref IfxLld_Msc_Msc_Usage
  */
 IFX_EXTERN void IfxMsc_Msc_initializeAbra(IfxMsc_Msc *msc, const IfxMsc_Msc_Config *config);
 
-/** \brief initialize the MSC data extension block for 64bit operation
- * \param msc pointer to the MSC module handle
- * \param config pointer to the MSC module configuration
- * \return None
+/**
+ * \brief Initializes the MSC data extension block for 64-bit operation.
+ *
+ * \param[inout] msc    Pointer to the MSC module handle.
+ * \param[in] 	 config Pointer to the MSC module configuration.
+ *                   	This structure contains various configuration parameters such as clock settings,
+ *                   	interrupt & Output Control configurations, and upstream/downstream settings,
+ *                   	IO Pin & ABRA settings, downstream targets, and command extension configurations.
+ *                   	The configuration is used to tailor the MSC module's behavior
+ *                   	to the application's requirements.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_Msc_initializeDataExtension(IfxMsc_Msc *msc, const IfxMsc_Msc_Config *config);
 
 /**
- * \param msc MSC handle
- * \param config configuration
- * \return None
+ * \brief Initializes the command extension for the MSC module.
+ *
+ * \param[inout] msc    Pointer to the MSC module handle.
+ * \param[in]    config Pointer to the MSC module configuration.
+ *                   	This structure contains various configuration parameters such as clock settings,
+ *                   	interrupt & Output Control configurations, and upstream/downstream settings,
+ *                   	IO Pin & ABRA settings, downstream targets, and command extension configurations.
+ *                   	The configuration is used to tailor the MSC module's behavior
+ *                   	to the application's requirements.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_Msc_initializeCommandExtension(IfxMsc_Msc *msc, const IfxMsc_Msc_Config *config);
 
@@ -495,43 +560,61 @@ IFX_EXTERN void IfxMsc_Msc_initializeCommandExtension(IfxMsc_Msc *msc, const Ifx
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief send downstream command
- * \param msc pointer to the MSC module handle
- * \param command transmit command
- * \return None
+/**
+ * \brief Send downstream command during command frames.
+ *
+ * \param[inout] msc 	Pointer to the MSC module handle.
+ * \param[in] 	command Command to be transmitted.
+ * 				      	Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_Msc_sendCommand(IfxMsc_Msc *msc, uint32 command);
 
-/** \brief send complete downstream data, both high and low
- * \param msc pointer to the MSC module handle
- * \param dataLow low data to be transmitted
- * \param dataHigh high data to be transmitted
- * \return None
+/**
+ * \brief Sends complete downstream data, combining high and low parts.
+ *
+ * \param[inout] msc      Pointer to the MSC module handle.
+ * \param[in]    dataLow  Low 16-bit part of the data to be transmitted.
+ * 					      Range: 0 to 0xFFFF
+ * \param[in]    dataHigh High 16-bit part of the data to be transmitted.
+ * 					      Range: 0 to 0xFFFF
+ * \retval None
  *
  * A coding example can be found in \ref IfxLld_Msc_Msc_Usage
- *
  */
 IFX_EXTERN void IfxMsc_Msc_sendData(IfxMsc_Msc *msc, uint16 dataLow, uint16 dataHigh);
 
-/** \brief Send downstream data extension (64bit)
- * \param msc pointer to the MSC module handle
- * \param data Data to send
- * \param dataExtension Data extension to send
- * \return None
+/**
+ * \brief Sends a 64-bit downstream data extension using the specified MSC module handle.
+ *
+ * \param[inout] msc           Pointer to the MSC module handle.
+ * \param[in]    data          The 32 bits of the 64-bit downstream data extension to be transmitted during data frames.
+ * 					           Range: 0 to 0xFFFFFFFF
+ * \param[in]    dataExtension The 32 bits of the 64-bit downstream data mirror to be transmitted.
+ * 							   Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_Msc_sendDataExtension(IfxMsc_Msc *msc, uint32 data, uint32 dataExtension);
 
-/** \brief send high downstream data
- * \param msc pointer to the MSC module handle
- * \param data high downstream data to be transmitted
- * \return None
+/**
+ * \brief Sends high downstream data through the MSC module.
+ *
+ * \param[inout] msc  Pointer to the MSC module handle.
+ * \param[in]    data High downstream data to be transmitted.
+* 				      Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_Msc_sendDataHigh(IfxMsc_Msc *msc, uint16 data);
 
-/** \brief send high downstream data
- * \param msc pointer to the MSC module handle
- * \param data low downstream data to be transmitted
- * \return None
+/**
+ * \brief Sends low downstream data through the MSC module.
+ *
+ * \param[inout] msc  Pointer to the MSC module handle.
+ * \param[in] 	 data Low downstream data to be transmitted.
+ * 				      Range: 0 to 0xFFFF
  */
 IFX_EXTERN void IfxMsc_Msc_sendDataLow(IfxMsc_Msc *msc, uint16 data);
 
@@ -544,11 +627,16 @@ IFX_EXTERN void IfxMsc_Msc_sendDataLow(IfxMsc_Msc *msc, uint16 data);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief receive upstream data
- * \param msc pointer to the MSC module handle
- * \param upstreamIdx index of the upstream data register
- * \return data
- */
+/**
+* \brief Receive upstream data.
+*
+* \param[inout] msc 		Pointer to the MSC module handle.
+* \param[in] 	upstreamIdx The index of the upstream data register ID for which the data is to be retrieved.
+* 			 			 	Range : 0 to 0x3
+*
+* \retval uint32 Upstream data received.
+* 		         Range: 0 to 0xFF
+*/
 IFX_EXTERN uint32 IfxMsc_Msc_receiveData(IfxMsc_Msc *msc, uint8 upstreamIdx);
 
 /** \} */
@@ -560,25 +648,39 @@ IFX_EXTERN uint32 IfxMsc_Msc_receiveData(IfxMsc_Msc *msc, uint8 upstreamIdx);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief get the target during high and low phase
- * \param msc pointer to the MSC module handle
- * \param target low phase target or high phase target
- * \return selected target
+/**
+ * \brief Retrieves the target value for the specified phase (high or low).
+ *
+ * \param[in] msc    Pointer to the MSC module handle.
+ * \param[in] target Specifies the phase for which to get the target.
+ * 					 Range: \ref IfxMsc_Msc_Target
+ *
+ * \retval IfxMsc_Target The selected target value based on the input phase.
+ *						 Range: \ref IfxMsc_Target
  */
 IFX_EXTERN IfxMsc_Target IfxMsc_Msc_getTarget(IfxMsc_Msc *msc, IfxMsc_Msc_Target target);
 
-/** \brief set the command for target
- * \param msc pointer to the MSC module handle
- * \param enX enX target to be selected
- * \return None
+/**
+ * \brief Set the command for target.
+ *
+ * \param[inout] msc pointer to the MSC module handle.
+ * \param[in]    enX enX target to be selected.
+ * 				     Range: \ref IfxMsc_Target
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_Msc_setCommandTarget(IfxMsc_Msc *msc, IfxMsc_Target enX);
 
-/** \brief set the target data to be transmitted during low and high phase
- * \param msc pointer to the MSC module handle
- * \param enXHigh high target to be selected
- * \param enXLow low target to be selected
- * \return None
+/**
+ * \brief Sets the target data to be transmitted during the high and low phases of the MSC module.
+ *
+ * \param[inout] msc     Pointer to the MSC module handle.
+ * \param[in]    enXHigh Specifies the target to be selected during the high phase.
+ * 					     Range: \ref IfxMsc_Target
+ * \param[in]    enXLow  Specifies the target to be selected during the low phase.
+ * 					     Range: \ref IfxMsc_Target
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxMsc_Msc_setDataTarget(IfxMsc_Msc *msc, IfxMsc_Target enXHigh, IfxMsc_Target enXLow);
 
@@ -589,20 +691,31 @@ IFX_EXTERN void IfxMsc_Msc_setDataTarget(IfxMsc_Msc *msc, IfxMsc_Target enXHigh,
 /******************************************************************************/
 
 /**
- * \param msc pointer to the MSC module handle
- * \return None
+ * \brief Clears the data frame interrupt status for the specified MSC module.
+ *
+ * \param[inout] msc Pointer to the MSC module handle.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxMsc_Msc_clearDataFrameInterrupt(IfxMsc_Msc *msc);
 
 /**
- * \param msc pointer to the MSC module handle
- * \return status of the active data frame
+ * \brief Gets the status of the active data frame for the specified MSC module.
+ *
+ * \param[in] msc Pointer to the MSC module handle.
+ *
+ * \retval boolean TRUE  If there is an active data frame.
+ * 		           FALSE If there is no active data frame.
  */
 IFX_INLINE boolean IfxMsc_Msc_getActiveDataFrameStatus(IfxMsc_Msc *msc);
 
 /**
- * \param msc pointer to the MSC module handle
- * \return status of the data frame interrupt
+ * \brief Checks the status of the data frame interrupt for the MSC module.
+ *
+ * \param[in] msc Pointer to the MSC module handle.
+ *
+ * \retval boolean TRUE  If the data frame interrupt is currently active.
+ *                 FALSE If the data frame interrupt is not active.
  */
 IFX_INLINE boolean IfxMsc_Msc_getDataFrameInterruptStatus(IfxMsc_Msc *msc);
 

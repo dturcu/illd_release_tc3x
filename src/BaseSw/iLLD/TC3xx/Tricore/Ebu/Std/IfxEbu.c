@@ -2,7 +2,7 @@
  * \file IfxEbu.c
  * \brief EBU  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -89,12 +89,14 @@ void IfxEbu_setExternalClockRatio(Ifx_EBU *ebu, IfxEbu_ExternalClockRatio ratio)
         break;
     }
 
+    /* Write updated clock configuration back to the CLC register */
     ebu->CLC.U = clc.U;
 }
 
 
 void IfxEbu_setByteControlEnable(Ifx_EBU *ebu, IfxEbu_ByteControlEnable byteControlEnable)
 {
+	/* Configuring byte control */
     ebu->USERCON.B.BCEN = byteControlEnable;
 }
 
@@ -102,9 +104,12 @@ void IfxEbu_setByteControlEnable(Ifx_EBU *ebu, IfxEbu_ByteControlEnable byteCont
 void IfxEbu_disableModule(Ifx_EBU *ebu)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); /* clears the endinit protection*/
+    /* Clears the endinit protection*/
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Disable the module */
     ebu->CLC.B.DISR = 1;
-    IfxScuWdt_setCpuEndinit(psw);   /* sets the endinit protection back on*/
+    /* Sets the endinit protection back on*/
+    IfxScuWdt_setCpuEndinit(psw);
 }
 #endif
 

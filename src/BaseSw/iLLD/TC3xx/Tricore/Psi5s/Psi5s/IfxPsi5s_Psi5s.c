@@ -2,8 +2,8 @@
  * \file IfxPsi5s_Psi5s.c
  * \brief PSI5S PSI5S details
  *
- * \version iLLD_1_20_0
- * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
+ * \version iLLD_1_21_0
+ * \copyright Copyright (c) 2025 Infineon Technologies AG. All rights reserved.
  *
  *
  *
@@ -62,24 +62,30 @@
 /*-----------------------Private Function Prototypes--------------------------*/
 /******************************************************************************/
 
-/** \brief get the fracDiv clock frequency
- * \param psi5s Pointer to the base of PSI5S register space
- * \return Returns the configured fracDiv psi5s clock frequency in Hz.
+/** \brief Get the fracDiv clock frequency
+ *
+ * \param[in]    psi5s Pointer to the base of PSI5S register space
+ * 
+ * \retval Returns the configured fracDiv psi5s clock frequency in Hz. Range 20 to 25MHz
  */
 IFX_STATIC uint32 IfxPsi5s_Psi5s_getFracDivClock(Ifx_PSI5S *psi5s);
 
 /** \brief Configure the fracDiv clock.
- * \param psi5s Pointer to the base of PSI5S register space
- * \param clock Specifies the required clock frequency in Hz.
- * \return Returns the configured clock frequency in Hz.
+ *
+ * \param[inout] psi5s Pointer to the base of PSI5S register space
+ * \param[in]    clock Specifies the required clock frequency in Hz. Range 0 to 200MHz
+ *
+ * \retval Returns the configured clock frequency in Hz. Range 0 to 25MHz
  */
 IFX_STATIC uint32 IfxPsi5s_Psi5s_initializeClock(Ifx_PSI5S *psi5s, const IfxPsi5s_Psi5s_Clock *clock);
 
 /** \brief Configure the baudrate at the ASC interface.
- * \param psi5s Pointer to the base of PSI5S register space
- * \param baudrate Frequency Specifies the required baudrate frequency in Hz.
- * \param ascConfig pointer to the configuration structure for ASC
- * \return Returns the configured baudrate frequency in Hz.
+ * 
+ * \param[inout] psi5s Pointer to the base of PSI5S register space
+ * \param[in]    baudrate Frequency Specifies the required baudrate Range: 0 to 12.5MBaud
+ * \param[in]    ascConfig pointer to the configuration structure for ASC
+ * 
+ * \retval Returns the configured baudrate. Range 0 to 12.5MBaud
  */
 IFX_STATIC uint32 IfxPsi5s_Psi5s_setBaudrate(Ifx_PSI5S *psi5s, uint32 baudrate, IfxPsi5s_Psi5s_AscConfig *ascConfig);
 
@@ -92,6 +98,7 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_setBaudrate(Ifx_PSI5S *psi5s, uint32 baudrate, 
 void IfxPsi5s_Psi5s_deInitModule(IfxPsi5s_Psi5s *psi5s)
 {
     Ifx_PSI5S *psi5sSFR = psi5s->psi5s;
+    /* Reset PSI5S kernel */
     IfxPsi5s_Psi5s_resetModule(psi5sSFR);
 }
 
@@ -106,8 +113,10 @@ float32 IfxPsi5s_Psi5s_getBaudrate(Ifx_PSI5S *psi5s, IfxPsi5s_Psi5s_AscConfig *a
 {
     boolean synchMode = (ascConfig->receiveMode == IfxPsi5s_AscMode_sync) || (ascConfig->transmitMode == IfxPsi5s_AscMode_sync);
     boolean divMode   = (ascConfig->fractionalDividerEnabled == FALSE);
+    /* Get the baudrate frequency in HZ*/
     float32 baudrate  = IfxPsi5s_getBaudrate(psi5s, synchMode, divMode, ascConfig->baudrateSelection);
-
+    
+    /* Return the baudrate value*/
     return baudrate;
 }
 
@@ -115,6 +124,7 @@ float32 IfxPsi5s_Psi5s_getBaudrate(Ifx_PSI5S *psi5s, IfxPsi5s_Psi5s_AscConfig *a
 IFX_STATIC uint32 IfxPsi5s_Psi5s_getFracDivClock(Ifx_PSI5S *psi5s)
 {
     uint32 result;
+    /* Retrieves the SPB divider frequency */
     uint32 fPsi5s = IfxScuCcu_getSpbFrequency();
 
     switch (psi5s->FDR.B.DM)
@@ -135,6 +145,7 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_getFracDivClock(Ifx_PSI5S *psi5s)
         result = 0;
     }
 
+    /* Returns the configured fracDiv psi5s clock frequency in Hz */
     return result;
 }
 
@@ -143,7 +154,9 @@ boolean IfxPsi5s_Psi5s_initChannel(IfxPsi5s_Psi5s_Channel *channel, const IfxPsi
 {
     boolean       status = TRUE;
 
+    /* Fetch the current password of the CPU Watchdog module*/
     uint16        passwd = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
 
     Ifx_PSI5S    *psi5s = config->module->psi5s;
@@ -223,14 +236,17 @@ boolean IfxPsi5s_Psi5s_initChannel(IfxPsi5s_Psi5s_Channel *channel, const IfxPsi
     tempSCR.B.STA                   = config->sendControl.startSequenceGenerationControl;
     psi5s->SCR[config->channelId].U = tempSCR.U;
 
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
+    /* Returns the configuration status*/
     return status;
 }
 
 
 void IfxPsi5s_Psi5s_initChannelConfig(IfxPsi5s_Psi5s_ChannelConfig *config, IfxPsi5s_Psi5s *psi5s)
 {
+    /* Initialise buffer with default channel configuration*/
     IfxPsi5s_Psi5s_ChannelConfig IfxPsi5s_Psi5s_defaultChannelConfig = {
         .channelId       = IfxPsi5s_ChannelId_0,
         .module          = NULL_PTR,
@@ -293,12 +309,17 @@ boolean IfxPsi5s_Psi5s_initModule(IfxPsi5s_Psi5s *psi5s, const IfxPsi5s_Psi5s_Co
     Ifx_PSI5S *psi5sSFR = config->module;
     psi5s->psi5s = psi5sSFR;
 
+    /* Fetch the current password of the CPU Watchdog module*/
     uint16     passwd = IfxScuWdt_getCpuWatchdogPassword();
+
+    /* Clearing the endinit protection */
     IfxScuWdt_clearCpuEndinit(passwd);
+    /* Enable the Psi5s module */
     IfxPsi5s_Psi5s_enableModule(psi5sSFR);
 
     if (IfxPsi5s_Psi5s_initializeClock(psi5sSFR, &config->fracDiv) == 0)
     {
+        /* Clock initialization failed*/
         status = FALSE;
         return status;
     }
@@ -307,6 +328,7 @@ boolean IfxPsi5s_Psi5s_initModule(IfxPsi5s_Psi5s *psi5s, const IfxPsi5s_Psi5s_Co
 
     if (IfxPsi5s_Psi5s_initializeClock(psi5sSFR, &config->timestampClock) == 0)
     {
+        /* Clock initialization failed*/
         status = FALSE;
         return status;
     }
@@ -371,9 +393,10 @@ boolean IfxPsi5s_Psi5s_initModule(IfxPsi5s_Psi5s *psi5s, const IfxPsi5s_Psi5s_Co
     tempGCR.B.ASC   = config->globalControlConfig.ascOnlyMode;
     psi5sSFR->GCR.U = tempGCR.U;
 
+    /* Setting the endinit protection back on */
     IfxScuWdt_setCpuEndinit(passwd);
 
-    // Pin mapping //
+    /* Pin mapping */
     const IfxPsi5s_Psi5s_Pins *pins = config->pins;
 
     if (pins != NULL_PTR)
@@ -382,6 +405,7 @@ boolean IfxPsi5s_Psi5s_initModule(IfxPsi5s_Psi5s *psi5s, const IfxPsi5s_Psi5s_Co
 
         if (rx != NULL_PTR)
         {
+            /* Initializes a RX input */
             IfxPsi5s_initRxPin(rx, pins->rxMode, pins->pinDriver);
         }
 
@@ -389,6 +413,7 @@ boolean IfxPsi5s_Psi5s_initModule(IfxPsi5s_Psi5s *psi5s, const IfxPsi5s_Psi5s_Co
 
         if (tx != NULL_PTR)
         {
+            /*  Initializes a TX output */
             IfxPsi5s_initTxPin(tx, pins->txMode, pins->pinDriver);
         }
 
@@ -396,17 +421,22 @@ boolean IfxPsi5s_Psi5s_initModule(IfxPsi5s_Psi5s *psi5s, const IfxPsi5s_Psi5s_Co
 
         if (clk != NULL_PTR)
         {
+            /* Initializes a CLK output */
             IfxPsi5s_initClkPin(clk, pins->clkMode, pins->pinDriver);
         }
     }
 
+    /* Returns the configuration status*/
     return status;
 }
 
 
 void IfxPsi5s_Psi5s_initModuleConfig(IfxPsi5s_Psi5s_Config *config, Ifx_PSI5S *psi5s)
 {
+    /* Retrieves the SPB divider frequency */
     uint32 spbFrequency = IfxScuCcu_getSpbFrequency();
+
+    /* Initialise buffer with default PSI5S configuration */
     config->module                                                 = psi5s;
     config->fracDiv.frequency                                      = spbFrequency;
     config->fracDiv.mode                                           = IfxPsi5s_DividerMode_normal;
@@ -462,15 +492,18 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_initializeClock(Ifx_PSI5S *psi5s, const IfxPsi5
 
     if (clockType == IfxPsi5s_ClockType_fracDiv)
     {
+        /* Retrieves the SPB divider frequency */
         fInput = IfxScuCcu_getSpbFrequency();
     }
     else if (clockType == IfxPsi5s_ClockType_ascOutput)
     {
-        fInput    = IfxScuCcu_getSpbFrequency(); // assumption here is that fBaud2 is equal to fSPB
+        /* Assumption here is that fBaud2 is equal to fSPB */
+        fInput    = IfxScuCcu_getSpbFrequency(); 
         stepRange = 2 * IFXPSI5S_STEP_RANGE;
     }
     else
     {
+        /* Get the fracDiv clock frequency */
         fInput = IfxPsi5s_Psi5s_getFracDivClock(psi5s);
 
         if (fInput == 0)
@@ -493,7 +526,7 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_initializeClock(Ifx_PSI5S *psi5s, const IfxPsi5
         }
         else
         {
-            /* do nothing */
+            /* Do nothing */
         }
 
         result = (uint32)(fInput / (stepRange - step));
@@ -508,7 +541,7 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_initializeClock(Ifx_PSI5S *psi5s, const IfxPsi5
         }
         else
         {
-            /* do nothing */
+            /* Do nothing */
         }
 
         result = (uint32)((uint64)((uint64)fInput * step)) / stepRange;
@@ -550,25 +583,34 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_initializeClock(Ifx_PSI5S *psi5s, const IfxPsi5
         }
     }
 
+    /* Returns the configured clock frequency in Hz */
     return result;
 }
 
 
 void IfxPsi5s_Psi5s_readFrame(IfxPsi5s_Psi5s_Channel *channel, IfxPsi5s_Psi5s_Frame *frame)
 {
+    /* Store the received data to the buffer */
     frame->data.rdr                                       = channel->module->psi5s->RDR.U;
+    /* Store the received data stsus to the buffer */
     frame->status.rds                                     = channel->module->psi5s->RDS.U;
+    /* Store the received data time stamp to the buffer */
     frame->timestamp.tsm                                  = channel->module->psi5s->TSM.U;
 
+    /* Clear the RSI and RDI Interrupts */
     channel->module->psi5s->INTCLR[channel->channelId].U |= (IFX_PSI5S_INTCLR_RDI_MSK << IFX_PSI5S_INTCLR_RDI_OFF) | (IFX_PSI5S_INTCLR_RSI_MSK << IFX_PSI5S_INTCLR_RSI_OFF);
 }
 
 
 void IfxPsi5s_Psi5s_resetModule(Ifx_PSI5S *psi5s)
 {
+    /* Fetch the current password of the CPU Watchdog module*/
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
+    /* Clearing the endinit protection */
     IfxScuWdt_clearSafetyEndinit(passwd);
-    psi5s->KRST1.B.RST = 1;     /* Only if both Kernel reset bits are set a reset is executed */
+    
+    /* Only if both Kernel reset bits are set a reset is executed */
+    psi5s->KRST1.B.RST = 1;     
     psi5s->KRST0.B.RST = 1;
 
     while (psi5s->KRST0.B.RSTSTAT == 0)
@@ -576,21 +618,27 @@ void IfxPsi5s_Psi5s_resetModule(Ifx_PSI5S *psi5s)
         /* Wait until reset is executed */
     }
 
-    psi5s->KRSTCLR.B.CLR = 1;   /* Clear Kernel reset status bit */
+    /* Clear Kernel reset status bit */
+    psi5s->KRSTCLR.B.CLR = 1;   
+
+    /* Setting the endinit protection back on */
     IfxScuWdt_setSafetyEndinit(passwd);
 }
 
 
 boolean IfxPsi5s_Psi5s_sendChannelData(IfxPsi5s_Psi5s_Channel *channel, uint32 data)
 {
+    /* Load to data to the SDR register*/
     channel->module->psi5s->SDR[channel->channelId].U = data & 0x00FFFFFF;
 
     if (channel->module->psi5s->INTSTAT[channel->channelId].B.TPOI)
     {
+        /* The Data didn't send successfully */
         return FALSE;
     }
     else
     {
+        /* The Data send successfully */
         return TRUE;
     }
 }
@@ -607,9 +655,10 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_setBaudrate(Ifx_PSI5S *psi5s, uint32 baudrate, 
     {
         if (ascConfig->transmitMode != IfxPsi5s_AscMode_sync)
         {
-            // sync modes must be set for both receive and transmit
+            /* Sync modes must be set for both receive and transmit */
         }
 
+        /* Retrieves the SPB divider frequency */
         fInput  = 2 * IfxScuCcu_getSpbFrequency();
         bgValue = (uint32)(fInput / ((ascConfig->baudrateSelection + 2) * 4 * (uint64)baudrate) - 1);
 
@@ -619,13 +668,14 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_setBaudrate(Ifx_PSI5S *psi5s, uint32 baudrate, 
         }
         else
         {
-            /* do nothing */
+            /* Do nothing */
         }
 
         result = fInput / ((ascConfig->baudrateSelection + 2) * 4 * (bgValue + 1));
     }
     else if (ascConfig->fractionalDividerEnabled == FALSE)
     {
+        /* Retrieves the SPB divider frequency */
         fInput  = 2 * IfxScuCcu_getSpbFrequency();
         bgValue = (uint32)(fInput / ((ascConfig->baudrateSelection + 2) * 16 * (uint64)baudrate) - 1);
 
@@ -635,13 +685,14 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_setBaudrate(Ifx_PSI5S *psi5s, uint32 baudrate, 
         }
         else
         {
-            /* do nothing */
+            /* Do nothing */
         }
 
         result = fInput / ((ascConfig->baudrateSelection + 2) * 16 * (bgValue + 1));
     }
     else
     {
+        /* Retrieves the SPB divider frequency */
         fInput  = 2 * IfxScuCcu_getSpbFrequency();
         fdValue = (((uint64)baudrate * IFXPSI5S_FDV_RANGE * 16)) / (float)fInput;
 
@@ -656,7 +707,7 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_setBaudrate(Ifx_PSI5S *psi5s, uint32 baudrate, 
             }
             else
             {
-                /* do nothing */
+                /* Do nothing */
             }
         }
         else
@@ -667,9 +718,12 @@ IFX_STATIC uint32 IfxPsi5s_Psi5s_setBaudrate(Ifx_PSI5S *psi5s, uint32 baudrate, 
         result = ((float)fdValue / IFXPSI5S_FDV_RANGE) * (fInput / (16 * (bgValue + 1)));
     }
 
+    /* Load the fractional divider value to FDV register */
     psi5s->FDV.U = fdValue;
+    /* Load the Baudrate value to the BG Register */
     psi5s->BG.U  = bgValue;
 
+    /* Returns the configured baudrate frequency in Hz */
     return result;
 }
 #endif

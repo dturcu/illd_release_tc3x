@@ -3,7 +3,7 @@
  * \brief SMU  basic functionality
  * \ingroup IfxLld_Smu
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -90,6 +90,7 @@ typedef enum
 } IfxSmu_Command;
 
 /** \brief Fault Signaling Protocol configuration
+ * Definition in MODULE_SMU.FSP.B.MODE
  */
 typedef enum
 {
@@ -99,6 +100,7 @@ typedef enum
 } IfxSmu_FspMode;
 
 /** \brief Dividing factor to apply to the reference clock fBACK. The divided clock is used as reference to generate the timing of the fault signaling protocol fault state.
+ * Definition in MODULE_SMU.FSP.B.PRE1
  */
 typedef enum
 {
@@ -113,6 +115,7 @@ typedef enum
 } IfxSmu_FspPrescalar1;
 
 /** \brief Dividing factor to apply to the reference clock fBACK in order to generate the timing of the fault free state for the time switching modes of the fault signaling protocol.
+ * Definition in MODULE_SMU.FSP.B.PRE2
  */
 typedef enum
 {
@@ -122,6 +125,8 @@ typedef enum
     IfxSmu_FspPrescalar2_referenceClockDiv4096 = 3   /**< \brief FSMU_FS = reference clock frequency divided by 4096 */
 } IfxSmu_FspPrescalar2;
 
+/** \brief Internal alarm Configuration
+ */
 typedef enum
 {
     IfxSmu_InternalAlarmAction_disabled = 0,  /**< \brief Alarm disabled. */
@@ -152,6 +157,7 @@ typedef enum
 } IfxSmu_InterruptRequest;
 
 /** \brief Enum for the FSP_DIR output port control direction
+ * Definition in MODULE_SMU.PCTL.B.HWDIR
  */
 typedef enum
 {
@@ -161,6 +167,7 @@ typedef enum
 } IfxSmu_PortControlHwDir;
 
 /** \brief Enum for the FSP_DIR output port control enable
+ * Definition in MODULE_SMU.PCTL.B.HWEN
  */
 typedef enum
 {
@@ -170,6 +177,7 @@ typedef enum
 } IfxSmu_PortControlHwEnable;
 
 /** \brief Running state of the SMU State Machine
+ * Definition in MODULE_SMU.DBG.B.SSM
  */
 typedef enum
 {
@@ -180,6 +188,7 @@ typedef enum
 } IfxSmu_SmuState;
 
 /** \brief OCDS Suspend Control (OCDS.SUS)
+ * Definition in Ifx_SMU.OCS.B.SUS
  */
 typedef enum
 {
@@ -191,6 +200,7 @@ typedef enum
 /** \} */
 
 /** \brief Alarm Executed Status
+ * Definition in MODULE_SMU.AEXCLR.U
  */
 typedef enum
 {
@@ -227,110 +237,171 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief This function clears SMU alarm exected status of the requested alarm mechanism
- * \param alarmEx alarm mechanism
- * \return None
+/**
+ * \brief Clears the executed status of a specified SMU alarm mechanism.
+ *
+ * \param[in] alarmEx The alarm mechanism whose executed status is to be cleared. Range: \ref IfxSmu_AlarmExecutionStatus.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmu_clearAlarmExecutedStatus(IfxSmu_AlarmExecutionStatus alarmEx);
 
-/** \brief Function clears the Register monitor test mode enable Flag.
- *
+/**
+ * \brief Clears the Register Monitor test mode enable flag.
  * The RMCTL register needs to be unlocked by using IfxSmu_unlockConfigRegisters() before calling this function.
- * \param testModeEnable Test Mode Flag
- * \return None
+ *
+ * \param[in] testModeEnable Test Mode Enable flag value to be cleared. Range: 0 to 31.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSmu_clearRegMonTestModeEnable(uint8 testModeEnable);
 
-/** \brief Function clears the Register Monitor Error Flag (RMEF.EFz).
- * \param errorFlag Error Flag
- * \return None
+/**
+ * \brief Clears the specified Register Monitor Error Flag (RMEF.EFz).
+ *
+ * \param[in] errorFlag Error flag to be cleared. Range: 0 to 31.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSmu_clearRegisterMonitorErrorFlag(uint8 errorFlag);
 
-/** \brief Function clears the Register Monitor status register.
- * \param statusFlag status Flag
- * \return None
+/**
+ * \brief Clears the specified status flag in the Register Monitor status register.
+ *
+ * \param[in] statusFlag The status flag to be cleared. The value of this parameter determines
+ *                       which status flag in the Register Monitor status register will be reset. Range: 0 to 31.
+ *
+ * \retval None
+ * 
  */
 IFX_INLINE void IfxSmu_clearRegisterMonitorStatus(uint8 statusFlag);
 
-/** \brief The function returns the alarm Executed status of requested alarm mechanism
- * \param alarmEx alarm mechanism
- * \return alarm executed status of requested alarm mechanism
+/**
+ * \brief The function returns the executed status of a requested alarm mechanism.
+ *
+ * \param[in] alarmEx The alarm mechanism for which the execution status is requested. Range: \ref IfxSmu_AlarmExecutionStatus.
+ *
+ * \retval TRUE The alarm mechanism has been executed.
+ *         FALSE The alarm mechanism has not been executed.
+ *
  */
 IFX_INLINE boolean IfxSmu_getAlarmExecutedStatus(IfxSmu_AlarmExecutionStatus alarmEx);
 
-/** \brief Function returns the Port control hardware direction.
- * \return port Conrol HW direction
+/**
+ * \brief Retrieves the current hardware direction of the port control.
+ *
+ * \retval The hardware direction state of the port control. Range: \ref IfxSmu_PortControlHwDir.
+ *
  */
 IFX_INLINE IfxSmu_PortControlHwDir IfxSmu_getPortControlHwDir(void);
 
-/** \brief Function returns the Port control hardware enable.
- * \return port Control HW enable
+/**
+ * \brief Function returns the Port control hardware enable.
+ *
+ * \retval port Control HW enable. Range: \ref IfxSmu_PortControlHwEnable.
+ *
  */
 IFX_INLINE IfxSmu_PortControlHwEnable IfxSmu_getPortControlHwEnable(void);
 
-/** \brief Function returns the value ofRegister Monitor Error Flags register.
- * \return Returns the  Register Monitor Error Flags register value.
+/**
+ * \brief Retrieves the current value of the Register Monitor Error Flags register.
+ *
+ * \retval uint32 A 32-bit unsigned integer representing the current value of the Register Monitor Error Flags register. Range: 0 to 0x07FF.
+ *
  */
 IFX_INLINE uint32 IfxSmu_getRegisterMonitorErrorFlag(void);
 
-/** \brief Function returns the value of Register Monitor Self Test Status register.
- * \return Returns the Register monitor self Test Status register value.
+/**
+ * \brief Retrieves the current status of the Register Monitor Self Test.
+ *
+ * \retval uint32 The current value of the Register Monitor Self Test Status register. Range: 0 to 0x07FF.
+ *
  */
 IFX_INLINE uint32 IfxSmu_getRegisterMonitorStatus(void);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param smu Pointer to SMU module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the SMU module is in a suspended state.
+ *
+ * \param[in] smu Pointer to the SMU module registers.
+ *
+ * \retval TRUE Module is suspended.
+ *         FALSE Module is not suspended.
+ *
  */
 IFX_INLINE boolean IfxSmu_isModuleSuspended(Ifx_SMU *smu);
 
-/** \brief Function sets the Port control hardware Enable and direction.
- *
+/**
+ * \brief Sets the Port control hardware Enable and direction.
  * The PCTL register needs to be unlocked by using IfxSmu_unlockConfigRegisters() before calling this function.
- * \param portEnable port enable
- * \param hwDir Hardware direction
- * \return None
+ *
+ * \param[in] portEnable The port enable configuration. Range: \ref IfxSmu_PortControlHwEnable.
+ * \param[in] hwDir      The hardware direction configuration. Range: \ref IfxSmu_PortControlHwDir.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmu_setPortControlHwEnableAndDir(IfxSmu_PortControlHwEnable portEnable, IfxSmu_PortControlHwDir hwDir);
 
-/** \brief Function sets the Register monitor test mode enable Flag.
+/**
+ * \brief Enables or disables the Register Monitor test mode.
+ * The RMCTL register must be unlocked using IfxSmu_unlockConfigRegisters() before calling this function.
  *
- * The RMCTL register needs to be unlocked by using IfxSmu_unlockConfigRegisters() before calling this function.
- * \param testModeEnable Test Mode Flag
- * \return None
+ * \param[in] testModeEnable Test mode enable flag. Range: 0 to 31.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmu_setRegMonTestModeEnable(uint8 testModeEnable);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param smu Pointer to SMU module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Configures the SMU module to the specified suspend mode (Hard, Soft, or None).
+ *
+ * \param[inout] smu  Pointer to the SMU module registers.
+ * \param[in]    mode The suspend mode to configure. Range: \ref IfxSmu_SuspendMode.
+ *
+ * \retval None
+ *
+ * \note This API works only when OCDS is enabled and the system is in Supervisor Mode. If OCDS is disabled, the suspend control will be ineffective.
+ *
  */
 IFX_INLINE void IfxSmu_setSuspendMode(Ifx_SMU *smu, IfxSmu_SuspendMode mode);
 
-/** \brief This function starts the SMU alive test
- * \return None
+/**
+ * \brief This function starts the SMU alive test.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmu_startAliveTest(void);
 
-/** \brief This function Stops the SMU alive test
- * \return None
+/**
+ * \brief This function Stops the SMU alive test.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmu_stopAliveTest(void);
 
-/** \brief This function waits for SMU alarm to be set and then clears it..
- * \param alarm smu alarm group and position
- * \return None
+/**
+ * \brief Waits for the specified SMU alarm to be set and then clears it.
+ *
+ * \param[in] alarm The SMU alarm group and position to wait for and clear. Range: \ref IfxSmu_Alarm.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxSmu_waitForAlarm(IfxSmu_Alarm alarm);
 
-/** \brief Returns The SRCR pointer for the selected Interrupt
- * \param intRequest Interrupt Request
- * \return Pointer to SRCR register
+/**
+ * \brief Returns the SRCR (Source Control Register) pointer for the specified interrupt request.
+ *
+ * \param[in] intRequest The interrupt request for which to retrieve the SRCR pointer. Range: \ref IfxSmu_InterruptRequest.
+ *
+ * \retval Ifx_SRC_SRCR* A pointer to the SRCR register for the specified interrupt request.
+ *
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxSmu_getSrcPointer(IfxSmu_InterruptRequest intRequest);
 
@@ -338,129 +409,222 @@ IFX_INLINE volatile Ifx_SRC_SRCR *IfxSmu_getSrcPointer(IfxSmu_InterruptRequest i
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief This function activates the FSP to indicate a FAULT state on the error pin to the safe state switching device.
- * \return Return 0 if successfull and 1 if failed.
+/**
+ * \brief Activates the FSP to indicate a FAULT state on the error pin to the safe state switching device.
+ * 
+ * \retval TRUE If FSP activation failed.
+ *         FALSE If FSP was successfully activated.
+ *
  */
 IFX_EXTERN boolean IfxSmu_activateFSP(void);
 
-/** \brief The function allows to switch the SMU peripheral into the  RUN fault-free state as requested by the caller.
- * \return Return 0 if successfull and 1 if failed.
+/**
+ * \brief Activates the RUN fault-free state of the SMU peripheral as required.
+ * 
+ * \retval TRUE The activation of the RUN fault-free state failed.
+ *         FALSE The SMU peripheral was successfully switched to the RUN fault-free state.
+ *
  */
 IFX_EXTERN boolean IfxSmu_activateRunState(void);
 
-/** \brief This function clears SMU alarm status of the requested alarm. It needs to be called after alarm status is read.
- * \param alarm smu alarm group and position
- * \return Return 0 if successfull and 1 if failed.
+/**
+ * \brief Clears the SMU alarm status for the specified alarm.
+ * 
+ * \param[in] alarm The SMU alarm group and position to clear. This parameter is of type IfxSmu_Alarm,
+ *                  which defines the specific alarm to be cleared. Range: \ref IfxSmu_Alarm.
+ *
+ * \retval TRUE The operation failed to clear the alarm status.
+ *         FALSE The alarm status was successfully cleared.
+ *
  */
 IFX_EXTERN boolean IfxSmu_clearAlarmStatus(IfxSmu_Alarm alarm);
 
-/** \brief This function configures the PES feature for internal action.
+/**
+ * \brief Configures the PES feature for internal actions based on the specified action bits.
  * Bit0/1/2/3 - SMU_IGCS0/SMU_IGCS1/SMU_IGCS2/SMU_NMI/SMU_CPU_RESET activates PES correspondingly.
  *
- * The AGC register needs to be unlocked by using IfxSmu_unlockConfigRegisters() before calling this function.
- * \param pesAction PES action bit0/1/2/3 - SMU_IGCS0/SMU_IGCS1/SMU_IGCS2/SMU_NMI/SMU_CPU_RESET activates PES correspondingly.
- * \return None
+ * \param[in] pesAction An 8-bit value where each bit corresponds to a specific action.
+ *                      Range:
+ *                      - 0x01(SMU_IGCS0),
+ *                      - 0x02(SMU_IGCS1),
+ *                      - 0x04(SMU_IGCS2),
+ *                      - 0x08(SMU_NMI),
+ *                      - 0x10(SMU_CPU_RESET).
+ *
+ * \retval None
+ *
+ * \note The AGC register must be unlocked using \ref IfxSmu_unlockConfigRegisters before calling this function.
+ *
  */
 IFX_EXTERN void IfxSmu_configAlarmActionPES(uint8 pesAction);
 
-/** \brief Enable FAULT to RUN State Transition.
- *
+/**
+ * \brief Enable or disable the FAULT to RUN state transition.
  * The AGC register needs to be unlocked by using IfxSmu_unlockConfigRegisters() before calling this function.
- * \param enable Enable / Disable Fault to Run Transition ( True - Enable, False - Disable)
- * \return None
+ * 
+ * \param[in] enable  Enable / Disable Fault to Run Transition (True - Enable, False - Disable)
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxSmu_enableFaultToRunState(boolean enable);
 
-/** \brief Configure FSP (fault Signalling Protocol) Port Emergency Stop.
- *
+/**
+ * \brief Configure FSP (Fault Signaling Protocol) Port Emergency Stop.
  * The FSP register needs to be unlocked by using IfxSmu_unlockConfigRegisters() before calling this function.
- * \param enable Enable / Disable PES ( True - Enable, False - Disable)
- * \return None
+ * 
+ * \param[in] enable Enable or disable the PES feature.
+ *                   - True: Enable PES.
+ *                   - False: Disable PES.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxSmu_enablePortEmergencyStop(boolean enable);
 
-/** \brief The function provides the FSP action currently configured for the requested alarm.
- * \param alarm smu alarm group and position
- * \param intAlarmAction internal alarm action
- * \return FSP enabled/disabled for the particular alarm
+/**
+ * \brief Retrieves the FSP action configured for the specified alarm.
+ *
+ * \param[in]    alarm          The SMU alarm group and position to query. Range: \ref IfxSmu_Alarm.
+ * \param[inout] intAlarmAction Pointer to the internal alarm action structure that will store the retrieved FSP action details.
+ *                              Range: \ref IfxSmu_InternalAlarmAction.
+ *
+ * \retval TRUE If FSP is enabled for the specified alarm.
+ *         FALSE If FSP is disabled for the specified alarm.
+ *
  */
 IFX_EXTERN boolean IfxSmu_getAlarmAction(IfxSmu_Alarm alarm, IfxSmu_InternalAlarmAction *intAlarmAction);
 
-/** \brief The function provides the alarm group status from the stored debug  registers
- * \param alarmGroup smu alarm group
- * \return alarm group status from the stored debug registers
+/**
+ * \brief Retrieves the debug status of a specified SMU alarm group from the stored debug registers.
+ *
+ * \param[in] alarmGroup The SMU alarm group for which to retrieve the debug status. Range: 0 to 11.
+ *
+ * \retval uint32 The debug status of the specified alarm group stored in the debug registers. Range: 0 to 0xFFFF FFFF.
+ *
  */
 IFX_EXTERN uint32 IfxSmu_getAlarmGroupDebugStatus(uint8 alarmGroup);
 
-/** \brief The function returns the alarm status of requested alarm.
- * \param alarm smu alarm group and position
- * \return alarm status of requested alarm.
+/**
+ * \brief Retrieves the status of a requested alarm.
+ *
+ * \param[in] alarm The identifier of the alarm to check. Range: \ref IfxSmu_Alarm.
+ *
+ * \retval TRUE The alarm is active.
+ *         FALSE The alarm is not active.
+ * 
  */
 IFX_EXTERN boolean IfxSmu_getAlarmStatus(IfxSmu_Alarm alarm);
 
-/** \brief The function returns if any alarms requiring the requested recovery timer was SET while the recovery timer was running.
- * \param timerNum Recovery Timer unit
- * \return returns status of missed event (0 - no missed event, 1 - missed event)
+/**
+ * \brief Checks if any alarms requiring the requested recovery timer were set while the recovery timer was running.
+ *
+ * \param[in] timerNum Recovery Timer unit to check for missed events. Range: 0 or 1.
+ *
+ * \retval TRUE A missed event occurred.
+ *         FALSE No missed event occurred.
+ * 
  */
 IFX_EXTERN boolean IfxSmu_getRTMissedEvent(uint8 timerNum);
 
-/** \brief The function provides the current state of the SMU.
- * \return return the current state of SMU
+/**
+ * \brief The function provides the current state of the SMU.
+ *
+ * \retval return the current state of SMU. Range: \ref IfxSmu_SmuState.
+ *
  */
 IFX_EXTERN IfxSmu_SmuState IfxSmu_getSmuState(void);
 
-/** \brief The function locks the SMU configuration registers to prevent any modification to configuration register content
- * \return None
+/**
+ * \brief Locks the SMU configuration registers to make them read-only and prevent any modification.
+ * This function ensures that the configuration registers of the SMU cannot be altered once locked.
+ *
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxSmu_lockConfigRegisters(void);
 
-/** \brief The function switches the SMU peripheral from the FAULT state to the RUN state.
- * \return Return 0 if successfull and 1 if failed.
+/**
+ * \brief Switches the SMU peripheral from the FAULT state to the RUN state.
+ * 
+ * \retval TRUE The SMU peripheral could not be switched to the RUN state.
+ *         FALSE The SMU peripheral was successfully switched to the RUN state.
+ *
  */
 IFX_EXTERN boolean IfxSmu_releaseFSP(void);
 
-/** \brief The function sets the alarm action for the desired alarm.
- * \param alarm smu alarm group and position
- * \param intAlarmAction internal alarm action
- * \return None
+/**
+ * \brief Sets the internal alarm action for the specified alarm.
+ *
+ * \param[in] alarm          The SMU alarm group and position to configure. Range: \ref IfxSmu_Alarm.
+ * \param[in] intAlarmAction The internal action to associate with the alarm. This is of type IfxSmu_InternalAlarmAction.
+ *                           Range: \ref IfxSmu_InternalAlarmAction.
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxSmu_setAlarmAction(IfxSmu_Alarm alarm, IfxSmu_InternalAlarmAction intAlarmAction);
 
-/** \brief The API sets the requested alarm.
- * This function can be used by the user software to trigger SW SMU alarm. During the START state of the SMU, it shall be possible to set any of the alarms. However,   during the RUN state, only the SW alarms shall be set
- * \param alarm smu alarm group and position
- * \return Return 0 if successfull and 1 if failed.
+/**
+ * \brief Sets the status of a specified SMU alarm.
+ * This function allows user software to trigger a SW SMU alarm. During the START state of the SMU,
+ * any alarm can be set. However, during the RUN state, only SW alarms can be set.
+ *
+ * \param[in] alarm The SMU alarm to be set. Range: \ref IfxSmu_Alarm.
+ *
+ * \retval TRUE The alarm setting failed.
+ *         FALSE The alarm was successfully set.
+ *
  */
 IFX_EXTERN boolean IfxSmu_setAlarmStatus(IfxSmu_Alarm alarm);
 
-/** \brief Configure FSP (fault Signalling Protocol) mode.
+/**
+ * \brief Configures the Fault Signaling Protocol (FSP) mode.
  *
- * The FSP register needs to be unlocked by using IfxSmu_unlockConfigRegisters() before calling this function.
- * \param mode FSP mode
- * \return None
+ * \param[in] mode The FSP mode to be configured. Range: \ref IfxSmu_FspMode.
+ *
+ * \note The FSP register must be unlocked using IfxSmu_unlockConfigRegisters() before calling this function.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSmu_setFspMode(IfxSmu_FspMode mode);
 
-/** \brief The API stops the requested recovery timer unit.
- * \param timerNum Recovery Timer unit to be stopped
- * \return Return 0 if successfull and 1 if failed.
+/**
+ * \brief Stops the requested recovery timer unit.
+ *
+ * \param[in] timerNum The recovery timer unit to be stopped. Range: 0 to 15.
+ *
+ * \retval TRUE Failure.
+ *         FALSE Success.
+ *
  */
 IFX_EXTERN boolean IfxSmu_stopRT(uint8 timerNum);
 
-/** \brief The function unlocks the SMU configuration registers for modification.
- * \return Return 0 if SMU configurations is locked permanently and unlock not possible, 1 if unlocked successfully.
+/**
+ * \brief Unlocks the SMU configuration registers for modification.
+ *
+ * \retval TRUE SMU configuration registers are unlocked successfully.
+ *         FALSE SMU configuration is locked permanently; unlock not possible.
+ *
  */
 IFX_EXTERN boolean IfxSmu_unlockConfigRegisters(void);
 
-/** \brief Configures The Interrupt Generation
- * \param config Configuration Selection
- * \param intRequest Interrupt Request
- * \return None
+/**
+ * \brief Configures the interrupt generation settings for the SMU module.
+ *
+ * \param[in] config     The configuration settings for interrupt generation. Range: \ref IfxSmu_InterruptGenerationConfiguration.
+ * \param[in] intRequest The interrupt request to be configured. Range: \ref IfxSmu_InterruptRequest.
+ *
+ * \retval None
+ *
  */
 IFX_EXTERN void IfxSmu_ConfigureInterruptGeneration(IfxSmu_InterruptGenerationConfiguration config, IfxSmu_InterruptRequest intRequest);
 
-/** \brief The function temporarily locks the SMU configuration registers for modification.
- * \return None
+/**
+ * \brief Temporarily locks the SMU configuration registers to prevent unintended modifications.
+ * 
+ * \retval None
+ * 
  */
 IFX_EXTERN void IfxSmu_temporaryLockConfigRegisters(void);
 
@@ -474,7 +638,7 @@ IFX_INLINE void IfxSmu_clearAlarmExecutedStatus(IfxSmu_AlarmExecutionStatus alar
 {
     uint16 passwd = IfxScuWdt_getSafetyWatchdogPassword();
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     /* Write 1 in AEX bit to clear alarm Executed mechanism */
@@ -489,7 +653,7 @@ IFX_INLINE void IfxSmu_clearRegMonTestModeEnable(uint8 testModeEnable)
 {
     uint16 passwd = IfxScuWdt_getSafetyWatchdogPassword();
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     MODULE_SMU.RMCTL.U &= ~(1U << testModeEnable);
@@ -502,7 +666,7 @@ IFX_INLINE void IfxSmu_clearRegisterMonitorErrorFlag(uint8 errorFlag)
 {
     uint16 passwd = IfxScuWdt_getSafetyWatchdogPassword();
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     MODULE_SMU.RMEF.U &= ~(1U << errorFlag);
@@ -516,7 +680,7 @@ IFX_INLINE void IfxSmu_clearRegisterMonitorStatus(uint8 statusFlag)
 {
     uint16 passwd = IfxScuWdt_getSafetyWatchdogPassword();
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     MODULE_SMU.RMSTS.U &= ~(1U << statusFlag);
@@ -565,10 +729,10 @@ IFX_INLINE boolean IfxSmu_isModuleSuspended(Ifx_SMU *smu)
 {
     Ifx_SMU_OCS ocs;
 
-    // read the status
+    /* Read the status */
     ocs.U = smu->OCS.U;
 
-    // return the status
+    /* Return the status */
     return ocs.B.SUSSTA;
 }
 
@@ -577,7 +741,7 @@ IFX_INLINE void IfxSmu_setPortControlHwEnableAndDir(IfxSmu_PortControlHwEnable p
 {
     uint16       passwd = IfxScuWdt_getSafetyWatchdogPassword();
     Ifx_SMU_PCTL pctl;
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     pctl.U            = MODULE_SMU.PCTL.U;
@@ -595,7 +759,7 @@ IFX_INLINE void IfxSmu_setRegMonTestModeEnable(uint8 testModeEnable)
 {
     uint16 passwd = IfxScuWdt_getSafetyWatchdogPassword();
 
-    /* disable the write-protection for registers */
+    /* Disable the write-protection for registers */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
     MODULE_SMU.RMCTL.U |= (1U << testModeEnable);
@@ -608,7 +772,7 @@ IFX_INLINE void IfxSmu_setSuspendMode(Ifx_SMU *smu, IfxSmu_SuspendMode mode)
 {
     Ifx_SMU_OCS ocs;
 
-    // remove protection and configure the suspend mode.
+    /* Remove protection and configure the suspend mode */
     ocs.B.SUS_P = 1;
     ocs.B.SUS   = mode;
     smu->OCS.U  = ocs.U;

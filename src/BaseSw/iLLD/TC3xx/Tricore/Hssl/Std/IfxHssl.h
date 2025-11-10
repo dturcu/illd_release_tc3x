@@ -3,7 +3,7 @@
  * \brief HSSL  basic functionality
  * \ingroup IfxLld_Hssl
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -216,6 +216,7 @@ typedef enum
 } IfxHssl_StreamingMode;
 
 /** \brief OCDS Suspend Control (OCDS.SUS)
+ * Definition in Ifx_HSSL_OCS.B.SUS
  */
 typedef enum
 {
@@ -271,7 +272,7 @@ typedef enum
 typedef struct
 {
     Ifx_HSCT *hsct;           /**< \brief pointer to HSCT registers */
-    boolean   loopBack;       /**< \brief loopc back selection */
+    boolean   loopBack;       /**< \brief loop back selection. Range: Enable(TRUE) or Disable(FALSE) */
 } IfxHssl_Hsct;
 
 /** \brief Configuration structure of the HSCT module
@@ -280,8 +281,8 @@ typedef struct
 {
     Ifx_HSCT             *hsct;                /**< \brief pointer to HSCT registers */
     IfxHssl_InterfaceMode interfaceMode;       /**< \brief interface mode (master IF /slave IF) */
-    boolean               highSpeedMode;       /**< \brief high speed mode selection */
-    boolean               loopBack;            /**< \brief loopc back selection */
+    boolean               highSpeedMode;       /**< \brief high speed mode selection. Range: TRUE if enable high speed mode;FALSE if disable high speed mode(FALSE) */
+    boolean               loopBack;            /**< \brief loop back selection. Range: Enable(TRUE) or Disable(FALSE) */
 } IfxHssl_Hsct_Config;
 
 /** \} */
@@ -293,103 +294,149 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears the HSCT interrupt flag
- * \param hsct pointer to HSCT registers
- * \param source HSCT interrupt source
- * \return None
+/**
+ * \brief Clears the specified HSCT interrupt flag
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ * \param[in]    source The interrupt source to clear. Range: \ref IfxHssl_Hsct_InterruptSource
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_clearHsctInterruptFlag(Ifx_HSCT *hsct, IfxHssl_Hsct_InterruptSource source);
 
-/** \brief Enables HSCT interrupt flag
- * \param hsct pointer to HSCT registers
- * \param source HSCT interrupt source
- * \return None
+/**
+ * \brief Disables the specified HSCT interrupt flag..
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ * \param[in]    source The HSCT interrupt source to disable. Range: \ref IfxHssl_Hsct_InterruptSource
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_disableHsctInterruptFlag(Ifx_HSCT *hsct, IfxHssl_Hsct_InterruptSource source);
 
-/** \brief Enables HSCT interrupt
- * \param hsct pointer to HSCT registers
- * \param typeOfService Type of Service (Cpu or DMA)
- * \param priority Priority of the interrupt
- * \return None
+/**
+ * \brief Enables the HSCT interrupt with the specified priority and type of service.
+ *
+ * \param[inout] hsct          Pointer to the HSCT object.
+ * \param[in]    typeOfService Specifies the type of service for the interrupt. This can be either CPU or DMA, depending on the application's requirements. Range: \ref IfxSrc_Tos
+ * \param[in]    priority      The priority level for the interrupt. The priority determines the precedence of the interrupt in the system. Range: 0 to 0xFF.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsctInterrupt(Ifx_HSCT *hsct, IfxSrc_Tos typeOfService, uint16 priority);
 
-/** \brief Enables HSCT interrupt flag
- * \param hsct pointer to HSCT registers
- * \param source HSCT interrupt source
- * \return None
+/**
+ * \brief Enables a specific HSCT interrupt source, allowing the generation of interrupts when the corresponding condition is met.
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ * \param[in]    source The interrupt source to enable. Range: \ref IfxHssl_Hsct_InterruptSource
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsctInterruptFlag(Ifx_HSCT *hsct, IfxHssl_Hsct_InterruptSource source);
 
-/** \brief Enables HSCT LVDS loopback
- * \param hsct pointer to HSCT registers
- * \return None
+/**
+ * \brief Enables HSCT LVDS loopback
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsctLvdsLoopback(Ifx_HSCT *hsct);
 
-/** \brief Returns the HSCT interrupt flag status
- * \param hsct pointer to HSCT registers
- * \param source HSCT interrupt source
- * \return Status (TRUE / FALSE)
+/**
+ * \brief Retrieves the status of a specific HSCT interrupt flag.
+ *
+ * \param[in] hsct   Pointer to the HSCT object.
+ * \param[in] source The interrupt source to query. Range: \ref IfxHssl_Hsct_InterruptSource
+ *
+ * \retval TRUE The interrupt flag for the specified source is set.
+ *         FALSE The interrupt flag for the specified source is not set.
  */
 IFX_INLINE boolean IfxHssl_getHsctInterruptFlagStatus(Ifx_HSCT *hsct, IfxHssl_Hsct_InterruptSource source);
 
-/** \brief Sets the sensitivity of the module to sleep signal
- * \param hsct pointer to HSCT registers
- * \param mode mode selection (enable/disable)
- * \return None
+/**
+ * \brief Sets the sensitivity of the module to the sleep signal.
+ * 
+ * \param[inout] hsct Pointer to the HSCT object.
+ * \param[in]    mode Mode selection for sleep signal sensitivity. Range: \ref IfxHssl_Hsct_SleepMode
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxHssl_setHsctSleepMode(Ifx_HSCT *hsct, IfxHssl_Hsct_SleepMode mode);
 
-/** \brief Get the last received unsolicited status message
- * \param hsct pointer to HSCT registers
- * \return Get the unsolicited status message.
+/**
+ * \brief Retrieves the last received unsolicited status message from the HSCT module.
+ *
+ * \param[in] hsct   Pointer to the HSCT object.
+ *
+ * \retval uint32 The unsolicited status message received by the HSCT module. Range: 0 to 0xFFFFFFFF
  */
 IFX_INLINE uint32 IfxHssl_getHsctUnsolicitedStatusMessage(Ifx_HSCT *hsct);
 
-/** \brief Send the unsolicited status message
- * \param hsct pointer to HSCT registers
- * \param message Unsolicited status message to be sent
- * \return None
+/**
+ * \brief Sends an unsolicited status message.
+ *
+ * \param[inout] hsct    Pointer to the HSCT object.
+ * \param[in]    message Unsolicited status message to be transmitted. Range: 0 to 0xFFFFFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_sendHsctUnsolicitedStatusMessage(Ifx_HSCT *hsct, uint32 message);
 
-/** \brief Set the HSCT RX link speed
- * \param hsct pointer to HSCT registers
- * \param rxSpeed Speed for Rx link
- * \return None
+/**
+ * \brief Set the HSCT RX link speed.
+ *
+ * \param[inout] hsct    Pointer to the HSCT object.
+ * \param[in]    rxSpeed Speed for Rx link. Range: \ref IfxHssl_MasterModeRxSpeed
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_setHsctRxLinkSpeed(Ifx_HSCT *hsct, IfxHssl_MasterModeRxSpeed rxSpeed);
 
-/** \brief Set the HSCT TX link speed
- * \param hsct pointer to HSCT registers
- * \param txSpeed Speed for Tx link
- * \return None
+/**
+ * \brief Set the HSCT TX link speed.
+ *
+ * \param[inout] hsct    Pointer to the HSCT object.
+ * \param[in]    txSpeed Speed for Tx link. Range: \ref IfxHssl_MasterModeTxSpeed
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_setHsctTxLinkSpeed(Ifx_HSCT *hsct, IfxHssl_MasterModeTxSpeed txSpeed);
 
-/** \brief Enable hsct transmit path in master interface
- * \param hsct pointer to HSCT registers
- * \return None
+/**
+ * \brief Enable the HSCT transmit path in the master interface.
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsctTransmitPath(Ifx_HSCT *hsct);
 
-/** \brief Enable hsct receive path in master interface
- * \param hsct pointer to HSCT registers
- * \return None
+/**
+ * \brief Enable HSCT receive path in the master interface.
+ * 
+ * \param[inout] hsct   Pointer to the HSCT object.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsctReceivePath(Ifx_HSCT *hsct);
 
-/** \brief Disable hsct transmit path in master interface
- * \param hsct pointer to HSCT registers
- * \return None
+/**
+ * \brief Disables the transmit path of the HSCT module in master interface.
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxHssl_disableHsctTransmitPath(Ifx_HSCT *hsct);
 
-/** \brief Disable hsct receive path in master interface
- * \param hsct pointer to HSCT registers
- * \return None
+/**
+ * \brief Disables the HSCT receive path in the master interface.
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_disableHsctReceivePath(Ifx_HSCT *hsct);
 
@@ -397,38 +444,57 @@ IFX_INLINE void IfxHssl_disableHsctReceivePath(Ifx_HSCT *hsct);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disables hsct module
- * \param hsct pointer to HSCT registers
- * \return None
+/**
+ * \brief Disables the HSCT module.
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_disableHsctModule(Ifx_HSCT *hsct);
 
-/** \brief Enables hsct module
- * \param hsct pointer to HSCT registers
- * \return None
+/**
+ * \brief Enables the HSCT module.
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_enableHsctModule(Ifx_HSCT *hsct);
 
 /**
- * \param hsct Resource index of the HSCT
- * \return HSCT module register address
+ * \brief Retrieves the base address of the HSCT module for a given HSCT index.
+ *
+ * \param[in] hsct   Resource index of the HSCT.
+ *
+ * \retval Ifx_HSCT* Base address of the HSCT module registers.
  */
 IFX_EXTERN Ifx_HSCT *IfxHssl_getHsctAddress(IfxHssl_hsctIndex hsct);
 
-/** \brief API to get the resource index of the HSCT specified.
- * \return Resource index of the HSCT
+/**
+ * \brief Retrieves the resource index associated with the specified HSCT instance.
+ *
+ * \param[in] hsct   Pointer to the HSCT object.
+ *
+ * \retval IfxHssl_hsctIndex The unique resource index of the HSCT instance. Range: \ref IfxHssl_hsctIndex
  */
 IFX_EXTERN IfxHssl_hsctIndex IfxHssl_getHsctIndex(Ifx_HSCT *hsct);
 
-/** \brief Returns the SRC pointer for HSCT
- * \param hsct pointer to HSCT registers
- * \return SRC pointer for HSCT
+/**
+ * \brief Returns the SRC pointer for HSCT.
+ *
+ * \param[in] hsct   Pointer to the HSCT object.
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the SRC registers for the HSCT module.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxHssl_getHsctSrcPointer(Ifx_HSCT *hsct);
 
-/** \brief resets HSCT kernel
- * \param hsct pointer to HSCT registers
- * \return None
+/**
+ * \brief Resets the HSCT kernel to its initial state.
+ *
+ * \param[inout] hsct   Pointer to the HSCT object.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_resetHsctKernel(Ifx_HSCT *hsct);
 
@@ -441,187 +507,267 @@ IFX_EXTERN void IfxHssl_resetHsctKernel(Ifx_HSCT *hsct);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears the HSSl channel error interrupt flag
- * \param hssl pointer to HSSl registers
- * \param source HSSL channel error interrupt source
- * \param channelId HSSL channel number
- * \return None
+/**
+ * \brief Clears the HSSl channel error interrupt flag
+ *
+ * \param[inout] hssl      Pointer to the HSSL object.
+ * \param[in]    source    HSSL channel error interrupt source to clear. Range: \ref IfxHssl_Hssl_ERRInterruptSource
+ * \param[in]    channelId HSSL channel number to clear the error interrupt flag for. Range: \ref IfxHssl_ChannelId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_clearHsslChannelErrorInterruptFlag(Ifx_HSSL *hssl, IfxHssl_Hssl_ERRInterruptSource source, IfxHssl_ChannelId channelId);
 
-/** \brief Clears the HSSl global error interrupt flag
- * \param hssl pointer to HSSl registers
- * \param source HSSL global error interrupt source
- * \return None
+/**
+ * \brief Clears the specified HSSL global error interrupt flag.
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ * \param[in]    source The HSSL global error interrupt source to clear. Range: \ref IfxHssl_Hssl_EXIInterruptSource
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_clearHsslGlobalErrorInterruptFlag(Ifx_HSSL *hssl, IfxHssl_Hssl_EXIInterruptSource source);
 
-/** \brief Clears the Initialise Mode Flag status
- * \param hssl pointer to HSSL registers
- * \return None
+/**
+ * \brief Clears the Initialise Mode Flag status
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_clearInitialiseModeFlag(Ifx_HSSL *hssl);
 
-/** \brief Enables the HSSl channel error interrupt flag, which trggers the ERR interrupt
- * \param hssl pointer to HSSl registers
- * \param source HSSL channel error interrupt source
- * \param channelId HSSL channel number
- * \return None
+/**
+ * \brief Disables the HSSL channel error interrupt flag, which triggers the ERR interrupt.
+ *
+ * \param[inout] hssl      Pointer to the HSSL object.
+ * \param[in]    source    HSSL channel error interrupt source to disable. Range: \ref IfxHssl_Hssl_ERRInterruptSource
+ * \param[in]    channelId HSSL channel number to disable the error interrupt for. Range: \ref IfxHssl_ChannelId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_disableHsslChannelErrorInterruptFlag(Ifx_HSSL *hssl, IfxHssl_Hssl_ERRInterruptSource source, IfxHssl_ChannelId channelId);
 
-/** \brief Disables the HSSl channel error interrupt flag, which trggers the EXI interrupt
- * \param hssl pointer to HSSl registers
- * \param source HSSL global error interrupt source
- * \return None
+/**
+ * \brief Disables the HSSL channel error interrupt flag, which triggers the EXI interrupt.
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ * \param[in]    source HSSL global error interrupt source to disable. Range: \ref IfxHssl_Hssl_EXIInterruptSource
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_disableHsslGlobalErrorInterruptFlag(Ifx_HSSL *hssl, IfxHssl_Hssl_EXIInterruptSource source);
 
-/** \brief Enables all error flags
- * \param hssl pointer to HSSL registers
- * \return None
+/**
+ * \brief Enables all error flags for the HSSL module.
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ * 
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableAllErrorFlags(Ifx_HSSL *hssl);
 
-/** \brief Enables HSSL COK interrupt of specified channel
- * \param hssl pointer to HSSl registers
- * \param channelId HSSL channel number
- * \param typeOfService Type of Service (Cpu or DMA)
- * \param priority Priority of the interrupt
- * \return None
+/**
+ * \brief Enables the HSSL COK interrupt for the specified channel.
+ *
+ * \param[inout] hssl       Pointer to the HSSL object.
+ * \param[in] channelId     The ID of the HSSL channel to enable the COK interrupt for. Range: \ref IfxHssl_ChannelId
+ * \param[in] typeOfService Specifies the type of service for the interrupt (Cpu or DMA). Range: \ref IfxSrc_Tos
+ * \param[in] priority      The priority level for the interrupt. Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsslCOKInterrupt(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId, IfxSrc_Tos typeOfService, uint16 priority);
 
-/** \brief Enables the HSSl channel error interrupt flag, which trggers the ERR interrupt
- * \param hssl pointer to HSSl registers
- * \param source HSSL channel error interrupt source
- * \param channelId HSSL channel number
- * \return None
+/**
+ * \brief Enables the HSSL channel error interrupt flag, which triggers the ERR interrupt for the specified channel and error source.
+ *
+ * \param[inout] hssl      Pointer to the HSSL object.
+ * \param[in]    source    Specifies the HSSL channel error interrupt source to enable. Range: \ref IfxHssl_Hssl_ERRInterruptSource
+ * \param[in]    channelId The HSSL channel number to enable the error interrupt for. Range: \ref IfxHssl_ChannelId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsslChannelErrorInterruptFlag(Ifx_HSSL *hssl, IfxHssl_Hssl_ERRInterruptSource source, IfxHssl_ChannelId channelId);
 
-/** \brief Enables HSSL ERR interrupt of specified channel
- * \param hssl pointer to HSSl registers
- * \param channelId HSSL channel number
- * \param typeOfService Type of Service (Cpu or DMA)
- * \param priority Priority of the interrupt
- * \return None
+/**
+ * \brief Enables the HSSL ERR interrupt for the specified channel.
+ *
+ * \param[inout] hssl       Pointer to the HSSL object.
+ * \param[in] channelId     The ID of the HSSL channel to enable the ERR interrupt for. Range: \ref IfxHssl_ChannelId
+ * \param[in] typeOfService The type of service for the interrupt (Cpu or DMA). Range: \ref IfxSrc_Tos
+ * \param[in] priority      The priority level for the interrupt. Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsslERRInterrupt(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId, IfxSrc_Tos typeOfService, uint16 priority);
 
-/** \brief Enables HSSL EXI interrupt of specified channel
- * \param hssl pointer to HSSl registers
- * \param typeOfService Type of Service (Cpu or DMA)
- * \param priority Priority of the interrupt
- * \return None
+/**
+ * \brief Enables the HSSL EXI interrupt for the specified channel.
+ *
+ * \param[inout] hssl       Pointer to the HSSL object.
+ * \param[in] typeOfService Specifies the type of service for the interrupt. Range: \ref IfxSrc_Tos
+ * \param[in] priority      The priority level for the interrupt. Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsslEXIInterrupt(Ifx_HSSL *hssl, IfxSrc_Tos typeOfService, uint16 priority);
 
-/** \brief Enables the HSSl global error interrupt flag, which trggers the EXI interrupt
- * \param hssl pointer to HSSl registers
- * \param source HSSL global error interrupt source
- * \return None
+/**
+ * \brief Enables the HSSL global error interrupt flag for the specified source, triggering the EXI interrupt.
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ * \param[in]    source HSSL global error interrupt source to enable. Range: \ref IfxHssl_Hssl_EXIInterruptSource
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsslGlobalErrorInterruptFlag(Ifx_HSSL *hssl, IfxHssl_Hssl_EXIInterruptSource source);
 
-/** \brief Enables HSSL RDI interrupt of specified channel
- * \param hssl pointer to HSSl registers
- * \param channelId HSSL channel number
- * \param typeOfService Type of Service (Cpu or DMA)
- * \param priority Priority of the interrupt
- * \return None
+/**
+ * \brief Enables the HSSL RDI interrupt for the specified channel.
+ *
+ * \param[inout] hssl          Pointer to the HSSL object.
+ * \param[in]    channelId     HSSL channel identifier. Range: \ref IfxHssl_ChannelId
+ * \param[in]    typeOfService Type of Service (Cpu or DMA) for the interrupt. Range: \ref IfxSrc_Tos
+ * \param[in]    priority      Priority level for the interrupt. Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsslRDIInterrupt(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId, IfxSrc_Tos typeOfService, uint16 priority);
 
-/** \brief Enables HSSL TRG interrupt of specified channel
- * \param hssl pointer to HSSl registers
- * \param channelId HSSL channel number
- * \param typeOfService Type of Service (Cpu or DMA)
- * \param priority Priority of the interrupt
- * \return None
+/**
+ * \brief Enables the HSSL TRG interrupt for the specified channel.
+ *
+ * \param[inout] hssl          Pointer to the HSSL object.
+ * \param[in]    channelId     The HSSL channel identifier. Range: \ref IfxHssl_ChannelId
+ * \param[in]    typeOfService Specifies the type of service for the interrupt. Range: \ref IfxSrc_Tos
+ * \param[in]    priority      The priority level for the interrupt. Range: 0 to 0xFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_enableHsslTRGInterrupt(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId, IfxSrc_Tos typeOfService, uint16 priority);
 
-/** \brief Returns the status of all MFLAGS status
- * \param hssl pointer to HSSL registers
- * \return MFLAGS status
+/**
+ * \brief Returns the status of all MFLAGS status.
+ * 
+ * \param[in] hssl   Pointer to the HSSL object.
+ *
+ * \retval uint32 Status of all MFLAGS. Range: 0 to 0xF3FCFFFF
  */
 IFX_INLINE uint32 IfxHssl_getAllMflagsStatus(Ifx_HSSL *hssl);
 
-/** \brief Returns the Current Count value
- * \param hssl pointer to HSSL registers
- * \return Current Count value
+/**
+ * \brief Retrieves the current count value from the HSSL module.
+ *
+ * \param[in] hssl   Pointer to the HSSL object.
+ *
+ * \retval uint16 The current count value. Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxHssl_getCurrentCount(Ifx_HSSL *hssl);
 
-/** \brief Clears the HSSl channel error interrupt flag
- * \param hssl pointer to HSSl registers
- * \param source HSSL channel error interrupt source
- * \param channelId HSSL channel number
- * \return Status (TRUE / FALSE)
+/**
+ * \brief Gets the status of the HSSL channel error interrupt flag.
+ *
+ * \param[in] hssl      Pointer to the HSSL object.
+ * \param[in] source    The HSSL channel error interrupt source. Range: \ref IfxHssl_Hssl_ERRInterruptSource
+ * \param[in] channelId The HSSL channel number. Range: \ref IfxHssl_ChannelId
+ *
+ * \retval TRUE The error interrupt flag is set.
+ *         FALSE The error interrupt flag is not set.
  */
 IFX_INLINE boolean IfxHssl_getHsslChannelErrorInterruptFlagStatus(Ifx_HSSL *hssl, IfxHssl_Hssl_ERRInterruptSource source, IfxHssl_ChannelId channelId);
 
-/** \brief Clears the HSSl global error interrupt flag
- * \param hssl pointer to HSSl registers
- * \param source HSSL global error interrupt source
- * \return Status (TRUE / FALSE)
+/**
+ * \brief Retrieves the status of the HSSL global error interrupt flag for a specified source.
+ *
+ * \param[in] hssl   Pointer to the HSSL object.
+ * \param[in] source The HSSL global error interrupt source. Range: \ref IfxHssl_Hssl_EXIInterruptSource
+ *
+ * \retval TRUE The global error interrupt flag is set for the specified source.
+ *         FALSE The global error interrupt flag is not set for the specified source.
+ *
  */
 IFX_INLINE boolean IfxHssl_getHsslGloabalErrorInterruptFlagStatus(Ifx_HSSL *hssl, IfxHssl_Hssl_EXIInterruptSource source);
 
-/** \brief Returns the Initialise Mode Flag status
- * \param hssl pointer to HSSL registers
- * \return status : TRUE/FALSE
+/**
+ * \brief Checks and returns the current status of the Initialise Mode Flag.
+ *
+ * \param[in] hssl   Pointer to the HSSL object.
+ *
+ * \retval TRUE If Initialise Mode.
+ *         FALSE If Run mode.
  */
 IFX_INLINE boolean IfxHssl_getInitialiseModeFlagStatus(Ifx_HSSL *hssl);
 
-/** \brief Returns the Reload Count value
- * \param hssl pointer to HSSL registers
- * \return Current Count value
+/**
+ * \brief Returns the current reload count value from the HSSL module.
+ *
+ * \param[in] hssl   Pointer to the HSSL object.
+ *
+ * \retval uint16 The current reload count value. Range: 0 to 0xFFFF
  */
 IFX_INLINE uint16 IfxHssl_getReloadCount(Ifx_HSSL *hssl);
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param hssl Pointer to HSSL module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the HSSL module is in a suspended state.
+ *
+ * \param[in] hssl   Pointer to the HSSL object.
+ *
+ * \retval TRUE If Module is suspended.
+ *         FALSE If Module is not yet suspended.
  */
 IFX_INLINE boolean IfxHssl_isModuleSuspended(Ifx_HSSL *hssl);
 
-/** \brief Sets the sensitivity of the module to sleep signal
- * \param hssl pointer to HSSL registers
- * \param mode mode selection (enable/disable)
- * \return None
+/**
+ * \brief Configures the module's sensitivity to the sleep signal by enabling or disabling it.
+ *
+ * \param[inout] hssl Pointer to the HSSL object.
+ * \param[in]    mode Mode selection for sleep signal sensitivity. Range: \ref IfxHssl_Hssl_SleepMode
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_setHsslSleepMode(Ifx_HSSL *hssl, IfxHssl_Hssl_SleepMode mode);
 
-/** \brief Sets the Initialise Mode Flag
- * \param hssl pointer to HSSL registers
- * \return None
+/**
+ * \brief Sets the Initialise Mode Flag for the HSSL module.
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_setInitialiseModeFlag(Ifx_HSSL *hssl);
 
-/** \brief Sets the reload Count
- * \param hssl pointer to HSSL registers
- * \param reloadValue Reload Value
- * \return None
+/**
+ * \brief Sets the reload count for the HSSL module.
+ *
+ * \param[inout] hssl        Pointer to the HSSL object.
+ * \param[in]    reloadValue The reload value to be set. Range: 0 to 0xFFFF
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_setReloadCount(Ifx_HSSL *hssl, uint16 reloadValue);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param hssl Pointer to HSSL module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Configure the Module to Hard/Soft suspend mode.
+ *
+ * \param[inout] hssl Pointer to the HSSL object.
+ * \param[in]    mode Module suspend mode. Range: \ref IfxHssl_SuspendMode
+ *
+ * \retval None
+ *
+ * \note The function will only take effect if OCDS is enabled and the system is in
+ * Supervisor Mode. If OCDS is disabled, the OCS suspend control is ineffective.
  */
 IFX_INLINE void IfxHssl_setSuspendMode(Ifx_HSSL *hssl, IfxHssl_SuspendMode mode);
 
-/** \brief Sets the Timeout Reload Value
- * \param hssl pointer to HSSL registers
- * \param channelId HSSL channel number
- * \param timeoutValue Timeout Value
- * \return None
+/**
+ * \brief Sets the timeout reload value for a specified HSSL channel.
+ *
+ * \param[inout] hssl         Pointer to the HSSL object.
+ * \param[in]    channelId    HSSL channel number. Range: \ref IfxHssl_ChannelId
+ * \param[in]    timeoutValue Timeout value to be set. Range: 0 to 255
+ *
+ * \retval None
  */
 IFX_INLINE void IfxHssl_setTimeoutReloadValue(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId, uint8 timeoutValue);
 
@@ -629,66 +775,98 @@ IFX_INLINE void IfxHssl_setTimeoutReloadValue(Ifx_HSSL *hssl, IfxHssl_ChannelId 
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief DIsables the hssl module
- * \param hssl pointer to HSSl registers
- * \return None
+/**
+ * \brief Disables the HSSL module.
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_disableHsslModule(Ifx_HSSL *hssl);
 
-/** \brief Enables the hssl module
- * \param hssl pointer to HSSl registers
- * \return None
+/**
+ * \brief Enables the HSSL module.
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_enableHsslModule(Ifx_HSSL *hssl);
 
 /**
- * \param hssl Resource index of the HSSL
- * \return HSSL module register address
+ * \brief Retrieves the base address of an HSSL module based on the provided index.
+ *
+ * \param[in] hssl The index of the HSSL module to retrieve the address for. Range: \ref IfxHssl_hsslIndex
+ *
+ * \retval Ifx_HSSL* Pointer to the base address of the HSSL module.
  */
 IFX_EXTERN Ifx_HSSL *IfxHssl_getHsslAddress(IfxHssl_hsslIndex hssl);
 
-/** \brief Returns the SRC pointer for HSSL COK of specified channel
- * \param hssl pointer to HSSl registers
- * \param channelId HSSL channel number
- * \return SRC pointer for HSSL COK interrupt of specific channel
+/**
+ * \brief Returns the SRC pointer for HSSL COK of specified channel
+ *
+ * \param[in] hssl      Pointer to the HSSL object.
+ * \param[in] channelId HSSL channel number. Range: \ref IfxHssl_ChannelId
+ *
+ * \retval Ifx_SRC_SRCR* SRC pointer for HSSL COK interrupt of specific channel.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxHssl_getHsslCOKSrcPointer(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId);
 
-/** \brief Returns the SRC pointer for HSSL ERR of specified channel
- * \param hssl pointer to HSSl registers
- * \param channelId HSSL channel number
- * \return SRC pointer for HSSL ERR interrupt of specific channel
+/**
+ * \brief Returns the SRC pointer for HSSL ERR of the specified channel
+ *
+ * \param[in] hssl      Pointer to the HSSL object.
+ * \param[in] channelId HSSL channel number. Range: \ref IfxHssl_ChannelId
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the SRC register for the HSSL ERR interrupt of the specified channel.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxHssl_getHsslERRSrcPointer(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId);
 
-/** \brief Returns the SRC pointer for HSSL EXI interrupt
- * \param hssl pointer to HSSl registers
- * \return SRC pointer for HSSL EXI interrupt
+/**
+ * \brief Returns SRC pointer for HSSL EXI interrupt.
+ *
+ * \param[in] hssl   Pointer to the HSSL object.
+ *
+ * \retval Ifx_SRC_SRCR* A pointer to the SRC register for the HSSL EXI interrupt.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxHssl_getHsslEXISrcPointer(Ifx_HSSL *hssl);
 
-/** \brief API to get the resource index of the HSSL specified.
- * \return Resource index of the HSSL
+
+/**
+ * \brief Retrieves the resource index of the specified HSSL instance.
+ *
+ * \param[in] hssl   Pointer to the HSSL object.
+ *
+ * \retval IfxHssl_hsslIndex Resource index of the HSSL instance. Range: \ref IfxHssl_hsslIndex
  */
 IFX_EXTERN IfxHssl_hsslIndex IfxHssl_getHsslIndex(Ifx_HSSL *hssl);
 
-/** \brief Returns the SRC pointer for HSSL COK of specified channel
- * \param hssl pointer to HSSl registers
- * \param channelId HSSL channel number
- * \return SRC pointer for HSSL RDI interrupt of specific channel
+/**
+ * \brief Returns the SRC pointer for HSSL RDI of a specified channel.
+ *
+ * \param[in] hssl      Pointer to the HSSL object.
+ * \param[in] channelId HSSL channel number. Range: \ref IfxHssl_ChannelId
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the SRC register for HSSL RDI interrupt of specified channel.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxHssl_getHsslRDISrcPointer(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId);
 
-/** \brief Returns the SRC pointer for HSSL TRG of specified channel
- * \param hssl pointer to HSSl registers
- * \param channelId HSSL channel number
- * \return SRC pointer for HSSL TRG interrupt of specific channel
+/**
+ * \brief Returns the SRC pointer for the HSSL TRG interrupt of a specified channel.
+ *
+ * \param[in] hssl      Pointer to the HSSL object.
+ * \param[in] channelId HSSL channel number. Range: \ref IfxHssl_ChannelId
+ *
+ * \retval Ifx_SRC_SRCR* Pointer to the SRC register for HSSL TRG interrupt of specified channel.
  */
 IFX_EXTERN volatile Ifx_SRC_SRCR *IfxHssl_getHsslTRGSrcPointer(Ifx_HSSL *hssl, IfxHssl_ChannelId channelId);
 
-/** \brief resets the HSSL kernel
- * \param hssl pointer to HSSL registers
- * \return None
+/**
+ * \brief Resets the HSSL kernel.
+ *
+ * \param[inout] hssl   Pointer to the HSSL object.
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxHssl_resetHsslKernel(Ifx_HSSL *hssl);
 
@@ -879,10 +1057,10 @@ IFX_INLINE boolean IfxHssl_isModuleSuspended(Ifx_HSSL *hssl)
 {
     Ifx_HSSL_OCS ocs;
 
-    /* read the status */
+    /* Read the status */
     ocs.U = hssl->OCS.U;
 
-    /* return the status */
+    /* Return the status */
     return ocs.B.SUSSTA;
 }
 
@@ -921,7 +1099,7 @@ IFX_INLINE void IfxHssl_setSuspendMode(Ifx_HSSL *hssl, IfxHssl_SuspendMode mode)
 {
     Ifx_HSSL_OCS ocs;
 
-    /* remove protection and configure the suspend mode. */
+    /* Remove protection and configure the suspend mode. */
     ocs.B.SUS_P = 1;
     ocs.B.SUS   = mode;
     hssl->OCS.U = ocs.U;

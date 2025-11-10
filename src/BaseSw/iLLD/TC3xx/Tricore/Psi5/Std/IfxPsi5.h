@@ -3,7 +3,7 @@
  * \brief PSI5  basic functionality
  * \ingroup IfxLld_Psi5
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -340,20 +340,22 @@ typedef enum
 
 typedef enum
 {
-    IfxPsi5_InterruptServiceRequest_0 = 0,
-    IfxPsi5_InterruptServiceRequest_1 = 1,
-    IfxPsi5_InterruptServiceRequest_2 = 2,
-    IfxPsi5_InterruptServiceRequest_3 = 3,
-    IfxPsi5_InterruptServiceRequest_4 = 4,
-    IfxPsi5_InterruptServiceRequest_5 = 5,
-    IfxPsi5_InterruptServiceRequest_6 = 6,
-    IfxPsi5_InterruptServiceRequest_7 = 7
+    IfxPsi5_InterruptServiceRequest_0 = 0,  /**< \brief Interrupt Service Request 0 */
+    IfxPsi5_InterruptServiceRequest_1 = 1,  /**< \brief Interrupt Service Request 1 */
+    IfxPsi5_InterruptServiceRequest_2 = 2,  /**< \brief Interrupt Service Request 2 */
+    IfxPsi5_InterruptServiceRequest_3 = 3,  /**< \brief Interrupt Service Request 3 */
+    IfxPsi5_InterruptServiceRequest_4 = 4,  /**< \brief Interrupt Service Request 4 */
+    IfxPsi5_InterruptServiceRequest_5 = 5,  /**< \brief Interrupt Service Request 5 */
+    IfxPsi5_InterruptServiceRequest_6 = 6,  /**< \brief Interrupt Service Request 6 */
+    IfxPsi5_InterruptServiceRequest_7 = 7   /**< \brief Interrupt Service Request 7 */
 } IfxPsi5_InterruptServiceRequest;
 
+/** \brief Optiond for different Interrupt Status Registers(ISRA,ISRB)
+ */
 typedef enum
 {
-    IfxPsi5_InterruptStatusRegister_a = 0,
-    IfxPsi5_InterruptStatusRegister_b = 1
+    IfxPsi5_InterruptStatusRegister_a = 0, /**< \brief Interrupt Status Register A */
+    IfxPsi5_InterruptStatusRegister_b = 1  /**< \brief Interrupt Status Register B */
 } IfxPsi5_InterruptStatusRegister;
 
 /** \brief Optiond for different Receive Control Registers(RCRA,RCRB,RCRC)
@@ -372,66 +374,93 @@ typedef enum
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief access function to get the CRCI status register contents for a channel
- * \param psi5 pointer to the PSI5 register space
- * \param channel channel Id
- * \return Crci status register contents
+/**
+ * \brief Access function to get the CRCI status register contents for a specific channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 register space.
+ * \param[in]    channel     Channel ID for which to retrieve the CRCI status.
+ *
+ * \retval uint32 The contents of the CRCI status register for the specified channel. Range 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getStatusCrci(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief access function to get the MEI status register contents for a channel
- * \param psi5 pointer to the PSI5 register space
- * \param channel channel Id
- * \return Mei status register contents
+/**
+ * \brief Retrieves the MEI status register contents for the specified channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 register space.
+ * \param[in]    channel     Channel ID to retrieve the MEI status for.
+ *
+ * \retval uint32 The contents of the MEI status register for the specified channel. Range 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getStatusMei(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief access function to get the NBI status register contents for a channel
- * \param psi5 pointer to the PSI5 register space
- * \param channel channel Id
- * \return Nbi status register contents
+/**
+ * \brief Access function to get the NBI status register contents for a specified channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 register space.
+ * \param[in]    channel     Channel ID to access the NBI status for.
+ * 
+ * \retval uint32 NBI status register contents for the specified channel. Range 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getStatusNbi(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief access function to get the NFI status register contents for a channel
- * \param psi5 pointer to the PSI5 register space
- * \param channel channel Id
- * \return Nfi status register contents
+/**
+ * \brief Retrieves the NFI status register contents for a specified channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 register space.
+ * \param[in]    channel     Channel ID to retrieve the NFI status
+ *
+ * \retval uint32 The contents of the NFI status register for the specified channel. Range 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getStatusNfi(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief access function to get the RDI status register contents for a channel
- * \param psi5 pointer to the PSI5 register space
- * \param channel channel Id
- * \return Rdi status register contents
+/**
+ * \brief Retrieves the RDI status register contents for a specified channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 register space.
+ * \param[in]    channel     Channel ID for which to retrieve the RDI status.
+ *
+ * \retval uint32 The contents of the RDI status register for the specified channel. Range 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getStatusRdi(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief access function to get the RMI status register contents for a channel
- * \param psi5 pointer to the PSI5 register space
- * \param channel channel Id
- * \return Rmi status register contents
+/**
+ * \brief Access function to get the RMI status register contents for a specific channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 register space. This parameter must not be NULL.
+ * \param[in]    channel     The channel ID for which the RMI status is to be retrieved. 
+ *
+ * \retval uint32 The contents of the RMI status register for the specified channel. Range 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getStatusRmi(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief access function to get the RSI status register contents for a channel
- * \param psi5 pointer to the PSI5 register space
- * \param channel channel Id
- * \return Rsi status register contents
+/**
+ * \brief Retrieves the RSI status register contents for the specified channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 register space.
+ * \param[in]    channel     Channel ID to query the RSI status for.
+ *
+ * \retval uint32 The contents of the RSI status register for the specified channel. Range 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getStatusRsi(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief access function to get the TEI status register contents for a channel
- * \param psi5 pointer to the PSI5 register space
- * \param channel channel Id
- * \return Tei status register contents
+/**
+ * \brief Retrieves the TEI status register contents for the specified channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 register space.
+ * \param[in]    channel     Channel ID to access the TEI status for.
+ *
+ * \retval uint32 The contents of the TEI status register for the specified channel. Range 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getStatusTei(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief Sets the sensitivity of the module to sleep signal
- * \param psi5 pointer to PSI5 registers
- * \param mode mode selection (enable / disable)
- * \return None
+/**
+ * \brief Configures the sensitivity of the PSI5 module to the sleep signal.
+ *
+ * \param[inout] psi5        Pointer to the PSI5 registers.
+ * \param[in]    mode        Mode selection for enabling or disabling sleep mode. Range \ref IfxPsi5_ChannelId
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_setSleepMode(Ifx_PSI5 *psi5, IfxPsi5_SleepMode mode);
 
@@ -439,9 +468,12 @@ IFX_INLINE void IfxPsi5_setSleepMode(Ifx_PSI5 *psi5, IfxPsi5_SleepMode mode);
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief resets PSI5 kernel
- * \param psi5 pointer to PSI5 registers
- * \return None
+/**
+ * \brief Resets the PSI5 module to its initial state
+ *
+ * \param[inout] psi5        Pointer to the PSI5 registers structure
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5_resetModule(Ifx_PSI5 *psi5);
 
@@ -454,26 +486,35 @@ IFX_EXTERN void IfxPsi5_resetModule(Ifx_PSI5 *psi5);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initializes a RX input
- * \param rx the RX Pin which should be configured
- * \param inputMode pin input mode which should be configured
- * \param padDriver Pad Driver Configuration
- * \return None
+/**
+ * \brief Initializes and configures a PSI5 receiver input pin with specified input mode and pad driver settings.
+ *
+ * \param[in]    rx          Pointer to the RX pin configuration structure to be initialized.
+ * \param[in]    inputMode   Input mode to be configured for the RX pin. Possible values: Range \ref IfxPort_InputMode
+ * \param[in]    padDriver   Pad driver configuration for the RX pin. Possible values: Range \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_initRxPin(const IfxPsi5_Rx_In *rx, IfxPort_InputMode inputMode, IfxPort_PadDriver padDriver);
 
-/** \brief Initializes a TX output
- * \param tx the TX Pin which should be configured
- * \param outputMode the pin output mode which should be configured
- * \param padDriver the pad driver mode which should be configured
- * \return None
+/**
+ * \brief Initializes and configures a TX output pin with specified mode and driver settings.
+ *
+ * \param[in]    tx          Pointer to the TX pin configuration structure to be initialized.
+ * \param[in]    outputMode  The output mode to be configured for the TX pin. Range: \ref IfxPort_OutputMode
+ * \param[in]    padDriver   The pad driver mode to be configured for the TX pin. Range: \ref IfxPort_PadDriver
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_initTxPin(const IfxPsi5_Tx_Out *tx, IfxPort_OutputMode outputMode, IfxPort_PadDriver padDriver);
 
-/** \brief Sets the alternate RX input
- * \param psi5Ch pointer to the PSI5 channel register space
- * \param alternateInput Alternate RX input selection
- * \return None
+/**
+ * \brief Sets the alternate RX input for the PSI5 channel
+ *
+ * \param[inout] psi5Ch            Pointer to the PSI5 channel register space
+ * \param[in]    alternateInput    Alternate RX input selection. Range: \ref IfxPsi5_AlternateInput
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_setRxInput(Ifx_PSI5_CH *psi5Ch, IfxPsi5_AlternateInput alternateInput);
 
@@ -486,12 +527,15 @@ IFX_INLINE void IfxPsi5_setRxInput(Ifx_PSI5_CH *psi5Ch, IfxPsi5_AlternateInput a
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief set respective service line for Interrupt source
- * \param psi5 Pointer to PSI5 module
- * \param channel specifies channel ID
- * \param nodePointer specifies node pointer for respective interrupt source
- * \param triggerOutputLine specifies trigger output line
- * \return None
+/**
+ * \brief Configures the specified interrupt node pointer for the selected channel and trigger output line.
+ *
+ * \param[inout] psi5              Pointer to the Ifx_PSI5 module instance
+ * \param[in]    channel           Channel ID to configure. Range: \ref IfxPsi5_ChannelId
+ * \param[in]    nodePointer       Pointer to the interrupt node structure. Range: \ref IfxPsi5_InterruptNodePointer
+ * \param[in]    triggerOutputLine Trigger output line selection. Range: \ref IfxPsi5_TriggerOutput
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_setInterruptNodePointer(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel, IfxPsi5_InterruptNodePointer nodePointer, IfxPsi5_TriggerOutput triggerOutputLine);
 
@@ -499,12 +543,13 @@ IFX_INLINE void IfxPsi5_setInterruptNodePointer(Ifx_PSI5 *psi5, IfxPsi5_ChannelI
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief enable/disable interrupt source
- * \param psi5 pointer to PSI5 module
- * \param channel specifies channel ID
- * \param interruptSource specifies the interrupt source
- * \param enabled Enable/Disable the respective source
- * \return None
+/**
+ * \brief Enables or disables the specified interrupt source for the given channel of the PSI5 module.
+ *
+ * \param[inout] psi5              Pointer to the PSI5 module instance.
+ * \param[in]    channel           Specifies the channel ID to configure the interrupt for. Range: \ref IfxPsi5_ChannelId
+ * \param[in]    interruptSource   Specifies the interrupt source to enable or disable. Ranage: \ref IfxPsi5_InterruptSource
+ * \param[in]    enabled           Specifies whether to enable or disable the interrupt source. Range: \ref IfxPsi5_InterruptRequest
  */
 IFX_EXTERN void IfxPsi5_enableInterrupt(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel, IfxPsi5_InterruptSource interruptSource, IfxPsi5_InterruptRequest enabled);
 
@@ -517,19 +562,26 @@ IFX_EXTERN void IfxPsi5_enableInterrupt(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channe
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Returns the module's suspend state.
- * TRUE :if module is suspended.
- * FALSE:if module is not yet suspended.
- * \param psi5 Pointer to PSI5 module registers
- * \return Suspend status (TRUE / FALSE)
+/**
+ * \brief Checks if the PSI5 module is currently suspended.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 module registers.
+ * 
+ * \retval TRUE If the module is suspended.
+ *         FALSE If the module is not suspended.
  */
 IFX_INLINE boolean IfxPsi5_isModuleSuspended(Ifx_PSI5 *psi5);
 
-/** \brief Configure the Module to Hard/Soft suspend mode.
- * Note: The api works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled the OCS suspend control is ineffective.
- * \param psi5 Pointer to PSI5 module registers
- * \param mode Module suspend mode
- * \return None
+/**
+ * \brief Sets the suspend mode for the PSI5 module.
+ *
+ * \note The API works only when the OCDS is enabled and in Supervisor Mode. When OCDS is disabled, the OCS suspend control is ineffective.
+ * 
+ * \param[inout] psi5        Pointer to the PSI5 module registers.
+ * \param[in]    mode        Suspend mode to be configured. Range: \ref IfxPsi5_SuspendMode
+ *
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_setSuspendMode(Ifx_PSI5 *psi5, IfxPsi5_SuspendMode mode);
 
@@ -537,9 +589,12 @@ IFX_INLINE void IfxPsi5_setSuspendMode(Ifx_PSI5 *psi5, IfxPsi5_SuspendMode mode)
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Disable PSI5 kernel
- * \param psi5 pointer to the base of PSI5 registers
- * \return None
+/**
+ * \brief Disables the PSI5 kernel
+ *
+ * \param[inout] psi5        Pointer to the base of PSI5 registers
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5_disableModule(Ifx_PSI5 *psi5);
 
@@ -550,97 +605,129 @@ IFX_EXTERN void IfxPsi5_disableModule(Ifx_PSI5 *psi5);
 /******************************************************************************/
 
 /**
- * \param psi5 Pointer to PSI5 SFR base register
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
+ * \brief Retrieves the lower part of the receive data register for the specified PSI5 channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 SFR base register.
+ * \param[in]    channel     Channel ID of the PSI5 channel whose receive data register is to be accessed.
+ *
+ * \retval uint32 The lower 32 bits of the received data for the specified channel. Range: 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_getReceiveDataRegisterLow(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief Clears interrupt flag for all sources
- * \param psi5 Pointer to PSI5 SFR base register
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
- * \param intStatusReg The register to be selected depending on the interrupt source to be probed(slot specific sources are in INTSTATB)
- * \param value
- * \return None
+/**
+ * \brief Clears all interrupt flags for the specified channel and interrupt status register.
+ *
+ * \param[inout] psi5        Pointer to the Ifx_PSI5 SFR base register. 
+ * \param[in]    channel     Channel ID of the PSI5 channel whose interrupt flags are to be cleared. Range: \ref IfxPsi5_ChannelId
+ * \param[in]    intStatusReg The register to be selected depending on the interrupt source to be probed. Range: \ref IfxPsi5_InterruptStatusRegister
+ * \param[in]    value       A bitmask representing the interrupt sources to be cleared. Range: 0 to 0xFFFFFF
+ *                  
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_clearAllInterrupt(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel, IfxPsi5_InterruptStatusRegister intStatusReg, uint32 value);
 
 /**
- * \param psi5 Pointer to PSI5 SFR base register
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
- * \param intStatusReg The interrupt status register being probed(depending on the interrupt source being probed)
- * \return Returns the register value encapsulating the status of different sources
+ * \brief Retrieves the interrupt status for a specified PSI5 channel and interrupt status register.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 SFR base register
+ * \param[in]    channel     Channel ID of the PSI5 channel to probe (depending on the interrupt source being probed). Range: \ref IfxPsi5_ChannelId
+ * \param[in]    intStatusReg The interrupt status register to probe. Range: \ref IfxPsi5_InterruptStatusRegister
+ *
+ * \retval uint32 The register value representing the status of the interrupt sources. Range: 0 to 0xFFFFFF
  */
 IFX_INLINE uint32 IfxPsi5_getInterruptStatus(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel, IfxPsi5_InterruptStatusRegister intStatusReg);
 
-/** \brief For a particular channel it gets the oldest data content of up to 32 received data frames. I.e.
- * RFCx.REP is pointing at the buffer presented.
- * \param psi5 Pointer to PSI5 SFR base register
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
- * \return Gives the oldest data content of up to 32 received data frames.
+/**
+ * \brief Reads the oldest data content of up to 32 received data frames for a specific PSI5 channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 SFR base register structure.
+ * \param[in]    channel     Channel ID of the PSI5 channel to read data from. Range: \ref IfxPsi5_ChannelId
+ * 
+ * \retval uint32 The oldest data content of up to 32 received data frames. Range: 0 to 0xFFFFFFFF.
  */
 IFX_INLINE uint32 IfxPsi5_readReceiveFifoData(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief Getting the FIFO write pointer for channel x
- * \param psi5 Pointer to PSI5 SFR base register
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
- * \return Gives the address of the buffer written last.So before write to the buffer this value is incremented by 1.
+/**
+ * \brief Gets the FIFO write pointer for the specified PSI5 channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 SFR base register.
+ * \param[in]    channel     Channel ID of the PSI5 channel. Range: \ref IfxPsi5_ChannelId
+ * 
+ * \retval uint16 The current FIFO write pointer value. Range: 0 to 0x3F.
  */
 IFX_INLINE uint16 IfxPsi5_getWriteFifoPointer(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief Getting the FIFO read pointer for channel x
- * \param psi5 Pointer to PSI5 SFR base register
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
- * \return Gives out pointer to the read buffer to be read next
+/**
+ * \brief Gets the current FIFO read pointer for the specified PSI5 channel.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 SFR base register structure.
+ * \param[in]    channel     The channel ID for which the FIFO read pointer is to be retrieved. Range: \ref IfxPsi5_ChannelId
+ *
+ * \retval uint16 The current read pointer value for the specified channel. Range: 0 to 0x3F.
  */
 IFX_INLINE uint16 IfxPsi5_getReadFifoPointer(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel);
 
-/** \brief Clears the flag for a given interrupt source
- * \param psi5 Pointer to PSI5 SFR base register
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
- * \param interruptSource Interrupt source to be cleared
- * \return None
+/**
+ * \brief Clears the interrupt flag for a specified source within a given PSI5 channel.
+ *
+ * \param[inout] psi5        Pointer to the PSI5 SFR base register. 
+ * \param[in]    channel     Channel ID of the PSI5 channel whose interrupt flag is to be cleared. Range: \ref IfxPsi5_ChannelId
+ * \param[in]    interruptSource Interrupt source to be cleared. Range: \ref IfxPsi5_InterruptSource
+ *
+ * \retval None 
  */
 IFX_INLINE void IfxPsi5_clearInterrupt(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel, IfxPsi5_InterruptSource interruptSource);
 
-/** \brief Gives the pointer to the SRC register for respective PSI5 interrupt source
- * \param psi5 Pointer to PSI5 SFR base register
- * \param intRequest Interrupt Source
- * \return Address of the required SRC register
+/**
+ * \brief Retrieves the pointer to the SRC register for the specified PSI5 interrupt source.
+ *
+ * \param[in]    psi5        Pointer to the PSI5 SFR base register. 
+ * \param[in]    intRequest  The interrupt service request to identify the specific interrupt source. Range: \ref IfxPsi5_InterruptServiceRequest
+ *                        
+ * \retval Ifx_SRC_SRCR*  The address of the SRC register corresponding to the specified interrupt service request.
  */
 IFX_INLINE volatile Ifx_SRC_SRCR *IfxPsi5_getSrcPointer(Ifx_PSI5 *psi5, IfxPsi5_InterruptServiceRequest intRequest);
 
-/** \brief Enabling all channels and error flags
- * \param psi5 Pointer to PSI5 SFR base register
- * \return None
+/**
+ * \brief Enables all channels and error flags for the PSI5 peripheral.
+ *
+ * \param[inout] psi5        Pointer to the Ifx_PSI5 SFR base register.
+ *
+ * \retval None 
  */
 IFX_INLINE void IfxPsi5_enableAllChannels(Ifx_PSI5 *psi5);
 
-/** \brief Configures FIFO and Ring Buffer operation
- * \param psi5 Pointer to PSI5 SFR's base address
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
- * \param value Values representing differnt settings for FIFO and Ring Buffer like FIFO Read Pointer,FIFO/Ring Buffer Write Pointer,FIFO Warning Level,Write Pointer WRAP Indicator and FIFO Flushing
- * \return None
+/**
+ * \brief Sets the receive FIFO warning level for the specified PSI5 channel.
+ *
+ * \param[inout] psi5        Pointer to the PSI5 SFR's base address.
+ * \param[in]    channel     Channel ID of the PSI5 channel to configure. Range: \ref IfxPsi5_ChannelId
+ * \param[in]    value       Warning level value to be set for the receive FIFO. Range: 0 to 0x1F.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_setReceiveFifoWarningLevel(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel, uint32 value);
 
 /**
- * \param psi5 Pointer to PSI5 SFR's base address
- * \param channel Channel Id of PSI5 channel whose receiver operation has to be configured
- * \param rcr The reciever control registers for setting up different parameters for PSI5 receiver operation.
- * Functionalities related to registers A, B and C can  be found in the IfxPsi5_ReceiverControlRegister enum.
- * \param value Value to be written into the RCRy(y = A,B,C) register.
- * \return None
+ * \brief Configures the receiver control register for a specified channel.
  *
- * Configures the payload length of the up to 6 frames in 6 slots.
+ * \param[inout] psi5        Pointer to PSI5 SFR's base address.
+ * \param[in]    channel     Channel ID of the PSI5 channel to configure. Range: \ref IfxPsi5_ChannelId
+ * \param[in]    rcr         Receiver control register to configure. Range: \ref IfxPsi5_ReceiverControlRegister
+ * \param[in]    value       Value to be written into the selected RCRy register. RCRA Range: 0 to 0xFFFFFFFF, RCRB Range: 0 to 0xFFFFFF, RCRC Range: 0 to 0x3F.
  *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_setReceiverControl(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channel, IfxPsi5_ReceiverControlRegister rcr, uint32 value);
 
 /**
- * \param psi5 Pointer to PSI5 SFR base register
- * \param fcd Select the appropriate divider register(see IfxPsi5_FractionalDividerRegister enum) for required functionality.
- * \param value Contains value including divider values for different divider registers(FDR,FDRL,FDRH,FDRT)
- * \return None
+ * \brief Configures the fractional divider for the specified PSI5 fractional divider register.
+ *
+ * \param[inout] psi5        Pointer to PSI5 SFR base register
+ * \param[in]    fcd         Select the appropriate divider register. Range: \ref IfxPsi5_FractionalDividerRegister
+ * \param[in]    value       Contains the divider value for the selected register. FDR Range: 0 to 0xC3FF, FDRL Range: 0 to 0xC3FF, FDRH Range: 0 to 0xC3FF, FDRT Range: 0 to 0x7E00C3FF.
+ *
+ * \retval None
  */
 IFX_INLINE void IfxPsi5_setFractionalDivider(Ifx_PSI5 *psi5, IfxPsi5_FractionalDividerRegister fcd, uint32 value);
 
@@ -649,14 +736,21 @@ IFX_INLINE void IfxPsi5_setFractionalDivider(Ifx_PSI5 *psi5, IfxPsi5_FractionalD
 /******************************************************************************/
 
 /**
- * \return None
+ * \brief Enables the PSI5 module.
+ *
+ * \param[inout] psi5        Pointer to the Ifx_PSI5 structure.
+ * 
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5_enableModule(Ifx_PSI5 *psi5);
 
-/** \brief Enable channel
- * \param psi5 Pointer to PSI5 SFR base register
- * \param channelId Channel ID
- * \return None
+/**
+ * \brief Enables a specific PSI5 channel for operation.
+ *
+ * \param[inout] psi5        Pointer to the PSI5 SFR base register.
+ * \param[in]    channelId   The ID of the channel to be enabled. Range: \ref IfxPsi5_ChannelId
+ *
+ * \retval None
  */
 IFX_EXTERN void IfxPsi5_enableChannel(Ifx_PSI5 *psi5, IfxPsi5_ChannelId channelId);
 

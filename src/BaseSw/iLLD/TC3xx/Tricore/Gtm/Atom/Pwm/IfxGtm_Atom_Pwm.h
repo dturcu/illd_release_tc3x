@@ -3,7 +3,7 @@
  * \brief GTM PWM details
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -142,7 +142,7 @@ typedef struct
     boolean        ccu1Enabled;       /**< \brief Enable/Disable choice for CCU1 trigger interrupt */
     IfxGtm_IrqMode mode;              /**< \brief IRQ mode of interrupt */
     IfxSrc_Tos     isrProvider;       /**< \brief Type of Service for Ccu0/1 interrupt */
-    Ifx_Priority   isrPriority;       /**< \brief Priority for Ccu0/1 interrupt */
+    Ifx_Priority   isrPriority;       /**< \brief Priority for Ccu0/1 interrupt. Range 0 to 255 */
 } IfxGtm_Atom_Pwm_Interrupt;
 
 /** \brief configuration structure for output pin
@@ -167,8 +167,8 @@ typedef struct
     IfxGtm_Atom_Ch            atomChannel;                    /**< \brief ATOM channel used for the timer */
     IfxGtm_Cmu_Clk			  clock;						  /**< \brief Timer input clock */
     IfxGtm_Atom_Mode          mode;                           /**< \brief Atom mode of operation */
-    uint32                    period;                         /**< \brief Period */
-    uint32                    dutyCycle;                      /**< \brief Duty Cycle */
+    uint32                    period;                         /**< \brief Period. Range: 0 to 0x00FFFFFF */
+    uint32                    dutyCycle;                      /**< \brief Duty Cycle. Range: 0 to 0x00FFFFFF */
     Ifx_ActiveState           signalLevel;                    /**< \brief Signal Level */
     boolean                   oneShotModeEnabled;             /**< \brief Enable/Disable the one shot mode */
     IfxGtm_Dtm_ClockSource    dtmClockSource;                 /**< \brief DTM clock source */

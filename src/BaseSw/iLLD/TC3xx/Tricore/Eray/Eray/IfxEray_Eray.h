@@ -3,7 +3,7 @@
  * \brief ERAY ERAY details
  * \ingroup IfxLld_Eray
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -534,75 +534,75 @@
  */
 typedef struct
 {
-    uint32 microticksPerCycle;       /**< \brief Duration of the communication cycle in Microticks. */
+    uint32 microticksPerCycle;       /**< \brief Duration of the communication cycle in Microticks. Range: 0x280 to 0x9C400. */
 } IfxEray_Eray_Gtu01Config;
 
 /** \brief GTU02 configuration.
  */
 typedef struct
 {
-    uint16 macroticksPerCycle;       /**< \brief Duration of the communication cycle in Macroticks. */
-    uint8  maxSyncFrames;            /**< \brief Maximum number of sync frames in a cluster. */
+    uint16 macroticksPerCycle;       /**< \brief Duration of the communication cycle in Macroticks. Range: 0xA to 0x3E80. */
+    uint8  maxSyncFrames;            /**< \brief Maximum number of sync frames in a cluster. Range: 0x2 to 0xF. */
 } IfxEray_Eray_Gtu02Config;
 
 /** \brief GTU03 configuration.
  */
 typedef struct
 {
-    uint8 channelAMicrotickInitialOffset;       /**< \brief difference between adjacent time reference points on channel A in microticks. */
-    uint8 channelBMicrotickInitialOffset;       /**< \brief difference between adjacent time reference points on channel B in microticks. */
-    uint8 channelAMacrotickInitialOffset;       /**< \brief difference between two adjacent static slots on channel A in macroticks. */
-    uint8 channelBMacrotickInitialOffset;       /**< \brief difference between two adjacent static slots on channel B in macroticks. */
+    uint8 channelAMicrotickInitialOffset;       /**< \brief difference between adjacent time reference points on channel A in microticks. Range: 0x0 to 0xF0. */
+    uint8 channelBMicrotickInitialOffset;       /**< \brief difference between adjacent time reference points on channel B in microticks. Range: 0x2 to 0x48. */
+    uint8 channelAMacrotickInitialOffset;       /**< \brief difference between two adjacent static slots on channel A in macroticks. Range: 0x0 to 0xF0. */
+    uint8 channelBMacrotickInitialOffset;       /**< \brief difference between two adjacent static slots on channel B in macroticks. Range: 0x2 to 0x48. */
 } IfxEray_Eray_Gtu03Config;
 
 /** \brief GTU04 configuration.
  */
 typedef struct
 {
-    uint16 networkStartIdleTime;       /**< \brief starting point of Network Idle Time Phase. */
-    uint16 correctionOffset;           /**< \brief offset correction start point. */
+    uint16 networkStartIdleTime;       /**< \brief starting point of Network Idle Time Phase. Range: 0x7 to 0x3E7D. */
+    uint16 correctionOffset;           /**< \brief offset correction start point. Range: 0x8 to 0x3E7E. */
 } IfxEray_Eray_Gtu04Config;
 
 /** \brief GTU05 configuration.
  */
 typedef struct
 {
-    uint8 channelAReceptionDelay;       /**< \brief reception delay on channel A. */
-    uint8 channelBReceptionDelay;       /**< \brief reception delay on channel B. */
-    uint8 clusterDrift;                 /**< \brief cluster drift damping value used in clock synchronization. */
-    uint8 decodingCorrection;           /**< \brief decoding correction to determine the primary time reference point. */
+    uint8 channelAReceptionDelay;       /**< \brief reception delay on channel A. Range: 0x0 to 0xC8. */
+    uint8 channelBReceptionDelay;       /**< \brief reception delay on channel B. Range: 0x0 to 0xC8. */
+    uint8 clusterDrift;                 /**< \brief cluster drift damping value used in clock synchronization. Range: 0x0 to 0x14. */
+    uint8 decodingCorrection;           /**< \brief decoding correction to determine the primary time reference point. Range: 0xE to 0x8F. */
 } IfxEray_Eray_Gtu05Config;
 
 /** \brief GTU06 configuration.
  */
 typedef struct
 {
-    uint16 acceptedStartupDeviation;       /**< \brief expanded range of measured deviation for startup Frames during integration. */
-    uint16 maxDriftOffset;                 /**< \brief maximum drift offset between two nodes. */
+    uint16 acceptedStartupDeviation;       /**< \brief expanded range of measured deviation for startup Frames during integration. Range: 0x0 to 0x753. */
+    uint16 maxDriftOffset;                 /**< \brief maximum drift offset between two nodes. Range: 0x2 to 0x783. */
 } IfxEray_Eray_Gtu06Config;
 
 /** \brief GTU07 configuration.
  */
 typedef struct
 {
-    uint16 staticSlotLength;       /**< \brief duration of static slot in macroticks. */
-    uint16 staticSlotsCount;       /**< \brief number of static slots in a communication cycle. */
+    uint16 staticSlotLength;       /**< \brief duration of static slot in macroticks. Range: 0x4 to 0x293.*/
+    uint16 staticSlotsCount;       /**< \brief number of static slots in a communication cycle. Range: 0x2 to 0x3FF. */
 } IfxEray_Eray_Gtu07Config;
 
 /** \brief GTU08 configuration.
  */
 typedef struct
 {
-    uint8  dynamicSlotLength;       /**< \brief duration of dynamic slot in macroticks. */
-    uint16 dynamicSlotCount;        /**< \brief number of dynamic slots in a communication cycle. */
+    uint8  dynamicSlotLength;       /**< \brief duration of dynamic slot in macroticks. Range: 0x2 to 0x3F. */
+    uint16 dynamicSlotCount;        /**< \brief number of dynamic slots in a communication cycle. Range: 0x0 to 0x1F32. */
 } IfxEray_Eray_Gtu08Config;
 
 /** \brief GTU09 configuration.
  */
 typedef struct
 {
-    uint8                    staticActionPoint;        /**< \brief static slots and symbol window action point. */
-    uint8                    dynamicActionPoint;       /**< \brief dynamic slots action point. */
+    uint8                    staticActionPoint;        /**< \brief static slots and symbol window action point. Range: 0x1 to 0x3F. */
+    uint8                    dynamicActionPoint;       /**< \brief dynamic slots action point. Range: 0x1 to 0x1F. */
     IfxEray_IdleDynamicSlots idleDynamicSlots;         /**< \brief duration of dynamic slot idle phase. */
 } IfxEray_Eray_Gtu09Config;
 
@@ -610,8 +610,8 @@ typedef struct
  */
 typedef struct
 {
-    uint16 maxOffsetCorrection;       /**< \brief maximum offset correction to be applied by the internal clock synchronization algorithm. */
-    uint16 maxRateCorrection;         /**< \brief maximum rate correction to be applied by the internal clock synchronization algorithm. */
+    uint16 maxOffsetCorrection;       /**< \brief maximum offset correction to be applied by the internal clock synchronization algorithm. Range: 0x5 to 0x3BA2. */
+    uint16 maxRateCorrection;         /**< \brief maximum rate correction to be applied by the internal clock synchronization algorithm. Range: 0x1 to 0x783. */
 } IfxEray_Eray_Gtu10Config;
 
 /** \brief GTU11 configuration.
@@ -675,46 +675,47 @@ typedef struct
  */
 typedef struct
 {
-    uint8                  collisionAvoidanceDuration;       /**< \brief accepted duration of collision avoidance symbol. */
+    uint8                  collisionAvoidanceDuration;       /**< \brief accepted duration of collision avoidance symbol. Range: 0x43 to 0x63. */
     IfxEray_StrobePosition strobePosition;                   /**< \brief sample count value for strobing. */
     IfxEray_Baudrate       baudrate;                         /**< \brief baud rate on the flexray bus. */
-    uint16                 receiveWakeupTestDuration;        /**< \brief duration of received wakeup pattern in bit times. */
-    uint8                  transmitWakeupRepetitions;        /**< \brief duration of transmitted wakeup pattern in bit times. */
-    uint16                 transmissionStartTime;            /**< \brief duration of transmission start time. */
+    uint16                 receiveWakeupTestDuration;        /**< \brief duration of received wakeup pattern in bit times. Range: 0x4C to 0x12D. */
+    uint8                  transmitWakeupRepetitions;        /**< \brief duration of transmitted wakeup pattern in bit times. Range: 0x2 to 0x3F. */
+    uint16                 transmissionStartTime;            /**< \brief duration of transmission start time. Range: 0x3 to 0xF. */
 } IfxEray_Eray_Prtc1Control;
 
 /** \brief Wakeup symbol control properties.
  */
 typedef struct
 {
-    uint8 receiveWakeupIdleTime;        /**< \brief duration of received wakeup symbol idle phase. */
-    uint8 receiveWakeupLowTime;         /**< \brief duration of received wakeup symbol low phase. */
-    uint8 transmitWakeupIdleTime;       /**< \brief duration of transmit wakeup symbol idle phase. */
-    uint8 transmitWakeupLowTime;        /**< \brief duration of transmit wakeup symbol low phase. */
+    uint8 receiveWakeupIdleTime;        /**< \brief duration of received wakeup symbol idle phase. Range: 0xE to 0x3B. */
+    uint8 receiveWakeupLowTime;         /**< \brief duration of received wakeup symbol low phase.  Range: 0xA to 0x37. */
+    uint8 transmitWakeupIdleTime;       /**< \brief duration of transmit wakeup symbol idle phase. Range: 0x2D to 0xB4. */
+    uint8 transmitWakeupLowTime;        /**< \brief duration of transmit wakeup symbol low phase. Range: 0xF to 0x3C. */
 } IfxEray_Eray_Prtc2Control;
 
 /** \brief communication controller control properties.
  */
 typedef struct
 {
-    boolean                      startupFrameTransmitted;           /**< \brief whether the key slot is used to transmit startup Frames. */
-    boolean                      syncFrameTransmitted;              /**< \brief whether the key slot is used to transmit SYNC Frames. */
-    uint8                        maxColdStartAttempts;              /**< \brief maximum number of attempts that a cold starting node is permitted. */
-    uint8                        numberOfCyclePairsForActive;       /**< \brief number of even / odd cycle pairs that must have valid clock correction terms. */
+    boolean                      startupFrameTransmitted;           /**< \brief whether the key slot is used to transmit startup Frames. Range: TRUE Startup frame has been transmitted, FALSE Startup frame has not been transmitted. */
+    boolean                      syncFrameTransmitted;              /**< \brief whether the key slot is used to transmit SYNC Frames. Range: TRUE Synchronization frame has been transmitted, FALSE Synchronization frame has not been transmitted. */
+    uint8                        maxColdStartAttempts;              /**< \brief maximum number of attempts that a cold starting node is permitted. Range: 0x2 to 0x1F. */
+    uint8                        numberOfCyclePairsForActive;       /**< \brief number of even / odd cycle pairs that must have valid clock correction terms. Range: 0x0 to 0x1F. */
     IfxEray_WakeupChannel        wakeupPatternChannel;              /**< \brief Wakeup pattern carry channel */
     IfxEray_TransmissionSlotMode transmissionSlotMode;              /**< \brief Initial transmission mode. */
-    boolean                      clockSyncErrorHalt;                /**< \brief transition to HALT state due to a clock synchronization error. */
-    boolean                      channelASymbolTransmitted;         /**< \brief selects channel A for MTS symbol transmission. */
-    boolean                      channelBSymbolTransmitted;         /**< \brief selects channel B for MTS symbol transmission */
-    boolean                      channelAConnectedNode;             /**< \brief whether the node is connected to channel A. */
-    boolean                      channelBConnectedNode;             /**< \brief whether the node is connected to channel B. */
+    boolean                      clockSyncErrorHalt;                /**< \brief transition to HALT state due to a clock synchronization error. Range: TRUE communication controller will enter “HALT” state,
+                                                                                FALSE communication controller will enter / remain in “NORMAL_PASSIVE”. */
+    boolean                      channelASymbolTransmitted;         /**< \brief selects channel A for MTS symbol transmission. Range: TRUE if channel A selected for MTS transmission, FALSE if channel A disabled for MTS transmission. */
+    boolean                      channelBSymbolTransmitted;         /**< \brief selects channel B for MTS symbol transmission. Range: TRUE if channel B selected for MTS transmission, FALSE if channel B disabled for MTS transmission. */
+    boolean                      channelAConnectedNode;             /**< \brief whether the node is connected to channel A. Range: TRUE if node connected to channel A, FALSE if not connected to channel A. */
+    boolean                      channelBConnectedNode;             /**< \brief whether the node is connected to channel B. Range: TRUE if node connected to channel B, FALSE if not connected to channel B.  */
 } IfxEray_Eray_Succ1Config;
 
 /** \brief Communication listen timeout properties.
  */
 typedef struct
 {
-    uint32                     listenTimeOut;            /**< \brief wakeup or startup listen timeout in microticks. */
+    uint32                     listenTimeOut;            /**< \brief wakeup or startup listen timeout in microticks. Range: 0x504 to 0x139706. */
     IfxEray_ListenTimeOutNoise listenTimeOutNoise;       /**< \brief upper limit for startup and wakeup listen timeout in the presence of noise. */
 } IfxEray_Eray_Succ2Config;
 
@@ -722,8 +723,8 @@ typedef struct
  */
 typedef struct
 {
-    uint8 clockCorrectionCyclesPassive;       /**< \brief maximum number of cycles missing clock correction lead active to passive state. */
-    uint8 clockCorrectionCyclesHalt;          /**< \brief maximum number of cycles missing clock correctionlead to active or passive to halt. */
+    uint8 clockCorrectionCyclesPassive;       /**< \brief maximum number of cycles missing clock correction lead active to passive state. Range: 0x1 to 0xF. */
+    uint8 clockCorrectionCyclesHalt;          /**< \brief maximum number of cycles missing clock correction lead to active or passive to halt. Range: 0x1 to 0xF. */
 } IfxEray_Eray_Succ3Config;
 
 /** \} */
@@ -734,9 +735,9 @@ typedef struct
  */
 typedef struct
 {
-    uint32                    networkVectorLength;           /**< \brief length of network management vector. */
-    uint8                     staticFramepayload;            /**< \brief payload length of static frame in double bytes. */
-    uint16                    latestTransmissionStart;       /**< \brief number of dynamic slots before inhibit frame transmission in dynamic segment. */
+    uint32                    networkVectorLength;           /**< \brief length of network management vector. Range: 0x0 to 0xC. */
+    uint8                     staticFramepayload;            /**< \brief payload length of static frame in double bytes. Range: 0x0 to 0x7F. */
+    uint16                    latestTransmissionStart;       /**< \brief number of dynamic slots before inhibit frame transmission in dynamic segment. Range: 0x0 to 0x1F2D. */
     IfxEray_Eray_GTUConfig    gtuConfig;                     /**< \brief gloabl timing unit configuration structure. */
     IfxEray_Eray_Succ1Config  succ1Config;                   /**< \brief communication controller control properties. */
     IfxEray_Eray_Succ2Config  succ2Config;                   /**< \brief communication listen timeout properties. */
@@ -749,16 +750,16 @@ typedef struct
  */
 typedef struct
 {
-    uint16     int0Priority;           /**< \brief the interrupt line 0 priority. Always 1 since all interrupts are handled at a time. */
-    uint16     int1Priority;           /**< \brief the interrupt line 1 priority. Always 1 since all interrupts are handled at a time. */
-    uint16     tint0Priority;          /**< \brief the timer interrupt 0 priority. Always 1 since all interrupts are handled at a time. */
-    uint16     tint1Priority;          /**< \brief the timer interrupt 1 priority. Always 1 since all interrupts are handled at a time. */
-    uint16     ndat0Priority;          /**< \brief the new data interrupt 0 priority. Always 1 since all interrupts are handled at a time. */
-    uint16     ndat1Priority;          /**< \brief the new data interrupt 1 priority. Always 1 since all interrupts are handled at a time. */
-    uint16     mbsc0Priority;          /**< \brief the message buffer status changed interrupt 0 priority. Always 1 since all interrupts are handled at a time. */
-    uint16     mbsc1Priority;          /**< \brief the message buffer status changed interrupt 1 priority. Always 1 since all interrupts are handled at a time. */
-    uint16     ibusyPriority;          /**< \brief the inputput buffer interrupt priority. Always 1 since all interrupts are handled at a time. */
-    uint16     obusyPriority;          /**< \brief the output buffer interrupt priority. Always 1 since all interrupts are handled at a time. */
+    uint16     int0Priority;           /**< \brief the interrupt line 0 priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     int1Priority;           /**< \brief the interrupt line 1 priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     tint0Priority;          /**< \brief the timer interrupt 0 priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     tint1Priority;          /**< \brief the timer interrupt 1 priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     ndat0Priority;          /**< \brief the new data interrupt 0 priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     ndat1Priority;          /**< \brief the new data interrupt 1 priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     mbsc0Priority;          /**< \brief the message buffer status changed interrupt 0 priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     mbsc1Priority;          /**< \brief the message buffer status changed interrupt 1 priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     ibusyPriority;          /**< \brief the inputput buffer interrupt priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
+    uint16     obusyPriority;          /**< \brief the output buffer interrupt priority. Always 1 since all interrupts are handled at a time. Range: 0x0 to 0xFF. */
     IfxSrc_Tos int0IsrProvider;        /**< \brief the interrupt line 0 service provider. CPU or DMA. */
     IfxSrc_Tos int1IsrProvider;        /**< \brief the interrupt line 1 service provider. CPU or DMA. */
     IfxSrc_Tos tint0IsrProvider;       /**< \brief the timer interrupt line 0 service provider. CPU or DMA. */
@@ -775,21 +776,21 @@ typedef struct
  */
 typedef struct
 {
-    uint8                  firstDynamicBuffer;           /**< \brief first dynamic buffer index. */
-    uint8                  numberOfMessageBuffers;       /**< \brief last configured buffer. */
-    uint32                 fifoBufferStartIndex;         /**< \brief message buffers assigned FIFO. */
-    uint8                  fifoDepth;                    /**< \brief fifo critical level. */
-    uint16                 frameIdFilter;                /**< \brief Frame ID  used for rejection filtering. */
+    uint8                  firstDynamicBuffer;           /**< \brief first dynamic buffer index. Range: 0x0 to 0xFF. */
+    uint8                  numberOfMessageBuffers;       /**< \brief last configured buffer. Range: 0x1 to 0xFF. */
+    uint32                 fifoBufferStartIndex;         /**< \brief message buffers assigned FIFO. Range: 0x0 to 0xFF. */
+    uint8                  fifoDepth;                    /**< \brief fifo critical level. Range: 0x0 to 0xFF. */
+    uint16                 frameIdFilter;                /**< \brief Frame ID  used for rejection filtering. Range: 0x0 to 0x3FF. */
     IfxEray_ReceiveChannel receiveChannel;               /**< \brief FIFO receive channel. */
-    uint16                 rejectedFrameId;              /**< \brief frame ID to be rejected by the FIFO. */
-    uint8                  filteredCycleNumber;          /**< \brief the cycle set to which Frame ID and channel rejection filter are applied. */
-    boolean                staticFifoDisabled;           /**< \brief fifo is not used in static segment. */
-    boolean                fifoNullFramesRejected;       /**< \brief whether null frames stored in fifo or not. */
-    boolean                bufferReconfigEnabled;        /**< \brief whether reconfiguration of message buffers is enabled or not. */
-    boolean                fifoConfigured;               /**< \brief Whether receive FIFO configured or not. */
+    uint16                 rejectedFrameId;              /**< \brief frame ID to be rejected by the FIFO. Range: 0x0 to 0x7FF. */
+    uint8                  filteredCycleNumber;          /**< \brief the cycle set to which Frame ID and channel rejection filter are applied. Range: 0x0 to 0x7F. */
+    boolean                staticFifoDisabled;           /**< \brief fifo is not used in static segment. Range: TRUE if reject messages for static segment, FALSE if FIFO also used in static segment. */
+    boolean                fifoNullFramesRejected;       /**< \brief whether null frames stored in fifo or not. Range: TRUE if reject all NULL Frames, FALSE if NULL Frames are stored in the FIFO. */
+    boolean                bufferReconfigEnabled;        /**< \brief whether reconfiguration of message buffers is enabled or not. Range: TRUE if reconfiguration of message buffers is enabled, FALSE if reconfiguration of message buffers is disabled. */
+    boolean                fifoConfigured;               /**< \brief Whether receive FIFO configured or not. Range: TRUE if receive FIFO configured, FALSE if receive FIFO not configured. */
     IfxEray_Header        *header[128];                  /**< \brief Header section of message buffer. */
     IfxEray_SlotConfig    *slotControl[128];             /**< \brief Transmit control properties. */
-    uint32                *data[128];                    /**< \brief data section of message buffer. */
+    uint32                *data[128];                    /**< \brief data section of message buffer. Range: 0x0 to 0xFFFFFFFF. */
 } IfxEray_Eray_MessageRAMConfig;
 
 /** \} */
@@ -820,7 +821,7 @@ typedef struct
 typedef struct
 {
     IfxEray_Header     *header;            /**< \brief header of a reconfigurable buffer. */
-    uint32              data[64];          /**< \brief data section of a reconfigurable buffer. */
+    uint32              data[64];          /**< \brief data section of a reconfigurable buffer. Range: 0x0 to 0xFFFFFFFF. */
     IfxEray_SlotConfig *slotControl;       /**< \brief message buffer configuration in message RAM. */
 } IfxEray_Eray_BufferReconfig;
 
@@ -839,18 +840,18 @@ typedef struct
     IfxEray_Eray_MessageRAMConfig messageRAMConfig;       /**< \brief Message RAM configuration structure. */
     IfxEray_Eray_ControllerConfig controllerConfig;       /**< \brief Communication Controller configuration structure. */
     IFX_CONST IfxEray_Eray_Pins  *pins;                   /**< \brief Pins configuration structure. */
-    boolean                       loopbackMode;           /**< \brief Bypass switch for loopback mode */
+    boolean                       loopbackMode;           /**< \brief Bypass switch for loopback mode. Range: TRUE if loopbackMode is enabled, FALSE if loopbackMode is disabled. */
 } IfxEray_Eray_NodeConfig;
 
 /** \brief Receive control properties structure.
  */
 typedef struct
 {
-    boolean headerReceived;         /**< \brief whether header selected for transfer from Message RAM to Output Buffer or not. */
-    boolean dataReceived;           /**< \brief whether data selected for transfer from Message RAM to Output Buffer or not. */
-    boolean swapRequested;          /**< \brief whether output buffer shadow and output buffer host are swapped or not. */
-    boolean receiveRequested;       /**< \brief  */
-    uint8   bufferIndex;            /**< \brief buffer index in the Message RAM. */
+    boolean headerReceived;         /**< \brief whether header selected for transfer from Message RAM to Output Buffer or not. Range: TRUE header was received, FALSE header was not received. */
+    boolean dataReceived;           /**< \brief whether data selected for transfer from Message RAM to Output Buffer or not. Range: TRUE data  was received, FALSE data Header was not received. */
+    boolean swapRequested;          /**< \brief whether output buffer shadow and output buffer host are swapped or not. Range: TRUE if swap OBF shadow and OBF host, FALSE no action. */
+    boolean receiveRequested;       /**< \brief whether receive selected for transfer from Message RAM to Output Buffer or not. Range: TRUE if transfer to OBF shadow requested, FALSE no request. */
+    uint8   bufferIndex;            /**< \brief buffer index in the Message RAM. Range: 0x0 to 0x7F. */
 } IfxEray_Eray_ReceiveControl;
 
 /** \brief Received Frame.
@@ -858,17 +859,17 @@ typedef struct
 typedef struct
 {
     IfxEray_ReceivedHeader header;         /**< \brief received header in a frame. */
-    uint32                 data[64];       /**< \brief received data in a frame. */
+    uint32                 data[64];       /**< \brief received data in a frame. Range: 0x0 to 0xFFFFFFFF. */
 } IfxEray_Eray_ReceivedFrame;
 
 /** \brief Transfer control in a slot.
  */
 typedef struct
 {
-    boolean headerTransfered;        /**< \brief whether header section of frame is transfered or not. */
-    boolean dataTransfered;          /**< \brief whether data section of message buffer is transfered or not. */
-    boolean transferRequested;       /**< \brief whether frame in a slot is transfered or not. */
-    uint8   bufferIndex;             /**< \brief buffer index which gives slot for transfers. */
+    boolean headerTransfered;        /**< \brief whether header section of frame is transfered or not. Range: TRUE header transfer is requested, FALSE header transfer is not requested. */
+    boolean dataTransfered;          /**< \brief whether data section of message buffer is transfered or not. Range: TRUE data transfer is requested, FALSE data transfer is not requested. */
+    boolean transferRequested;       /**< \brief whether frame in a slot is transfered or not. Range: TRUE if set transmission request flag, FALSE if reset transmission request flag. */
+    uint8   bufferIndex;             /**< \brief buffer index which gives slot for transfers. Range: 0x0 to 0x7F. */
 } IfxEray_Eray_TransmitControl;
 
 /** \} */
@@ -880,10 +881,13 @@ typedef struct
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief De-initialises the ERAY module.
- * \param eray pointer to module handle.
- * \return None
+/**
+ * \brief De-initializes the ERAY module, releasing any allocated resources and resetting the module to its initial state.
  *
+ * \param[inout] eray Pointer to the ERAY module handle.
+ *
+ * \retval None
+ * 
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
@@ -894,20 +898,25 @@ IFX_INLINE void IfxEray_Eray_deInitModule(IfxEray_Eray *eray);
 /******************************************************************************/
 
 /** \brief Initialises the ERAY module with supplied configuration.
- * \param eray pointer to ERAY Module handle.
- * \param config pointer to module configuration structure.
- * \return None
+ *
+ * \param[inout] eray   Pointer to the ERAY Module handle.
+ * \param[in]    config Pointer to module configuration structure.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_EXTERN void IfxEray_Eray_initModule(IfxEray_Eray *eray, const IfxEray_Eray_Config *config);
 
-/** \brief Inialises the default module configuration buffer.
- * \param config pointer to module configuration structure.
- * \param eray pointer ERAY module registers.
- * \return None
+/**
+ * \brief Initializes the default module configuration buffer with standard values for the ERAY module.
  *
+ * \param[inout] config Pointer to the module configuration structure to be initialized.
+ * \param[in]    eray   Pointer to the ERAY module registers.
+ *
+ * \retval None
+ * 
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
@@ -922,19 +931,25 @@ IFX_EXTERN void IfxEray_Eray_initModuleConfig(IfxEray_Eray_Config *config, Ifx_E
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Initialises the Node with supplied configuration.
- * \param eray pointer to ERAY Module handle.
- * \param config pointer to node configuration structure.
- * \return None
+/**
+ * \brief Initializes the ERAY node with the provided configuration.
+ *
+ * \param[inout] eray   Pointer to the ERAY module handle.
+ * \param[in]    config Pointer to the node configuration structure.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_EXTERN void IfxEray_Eray_Node_init(IfxEray_Eray *eray, const IfxEray_Eray_NodeConfig *config);
 
-/** \brief Initialises the default node configuration buffer.
- * \param config pointer to node configuration structure.
- * \return None
+/**
+ * \brief Initializes the node configuration structure with default values.
+ *
+ * \param[inout] config Pointer to the node configuration structure to be initialized.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
@@ -950,93 +965,128 @@ IFX_EXTERN void IfxEray_Eray_Node_initConfig(IfxEray_Eray_NodeConfig *config);
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Allows node to enter the cold startup state.
- * \param eray pointer to ERAY Module handle.
- * \return TRUE if cold start successful otherwise FALSE.
+/**
+ * \brief Enables the ERAY module to transition into a cold startup state.
  *
- * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
+ * \param[inout] eray Pointer to the ERAY Module handle.
+ *
+ * \retval TRUE The module successfully entered the cold startup state.
+ *         FALSE The module did not successfully enter the cold startup state.
+ *
+ * \see IfxLld_Eray_Eray_Usage for example usage.
  *
  */
 IFX_INLINE boolean IfxEray_Eray_allowColdStart(IfxEray_Eray *eray);
 
-/** \brief Reconfiguring the buffer or changing the slot.
- * \param eray pointer to module handle.
- * \param reconfigBuffer pointer reconfigurable buffer structure.
- * \return None
+/**
+ * \brief Reconfigures the buffer or changes the slot in the ERAY module.
  *
- * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
+ * \param[inout] eray           Pointer to the ERAY module handle.
+ * \param[in]    reconfigBuffer Pointer to the reconfigurable buffer structure containing new configurations.
+ *
+ * \retval None
  *
  */
 IFX_INLINE void IfxEray_Eray_bufferReconfig(IfxEray_Eray *eray, IfxEray_Eray_BufferReconfig *reconfigBuffer);
 
-/** \brief Changes the POC state and return status.
- * \param eray pointer to module handle.
- * \param PocCommand POC command to change state.
- * \return TRUE if command accepted.
+/**
+ * \brief Changes the POC state and returns whether the command was accepted.
+ *
+ * \param[inout] eray       Pointer to the ERAY module handle.
+ * \param[in]    PocCommand The POC command to execute. Range: \ref IfxEray_PocCommand.
+ *
+ * \retval TRUE The command was successfully accepted.
+ *         FALSE The command was not accepted.
+ *
  */
 IFX_INLINE boolean IfxEray_Eray_changePocState(IfxEray_Eray *eray, IfxEray_PocCommand PocCommand);
 
-/** \brief Reads the received data from output registers.
- * \param eray pointer to module handle.
- * \param data pointer to received data buffer.
- * \param payloadLength payload length received in a frame.
- * \return None
+/**
+ * \brief Reads the received data from output registers into the provided buffer.
+ *
+ * \param[in]    eray          Pointer to the ERAY module handle.
+ * \param[inout] data          Pointer to the buffer where the received data will be stored.
+ * \param[in]    payloadLength The length of the payload received in the frame. Range: 0x0 to 0x7F.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_Eray_readData(IfxEray_Eray *eray, uint32 *data, uint8 payloadLength);
 
-/** \brief reads the frame received in a buffer.
- * \param eray pointer to module handle.
- * \param frame received frame in a buffer.
- * \param maxPayloadLength maximum payload length received in a frame.
- * \return None
+/**
+ * \brief Reads a received frame into a buffer.
+ *
+ * \param[in]    eray             Pointer to the ERAY module handle.
+ * \param[inout] frame            Pointer to the structure where the received frame will be stored. The structure contains the header and data of the received frame.
+ * \param[in]    maxPayloadLength Maximum allowed payload length for the received frame. This value is used to prevent buffer overflow.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_INLINE void IfxEray_Eray_readFrame(IfxEray_Eray *eray, IfxEray_Eray_ReceivedFrame *frame, Ifx_SizeT maxPayloadLength);
 
-/** \brief Sets the Controller state to ALL Slots mode.
- * \param eray pointer to module handle.
- * \return TRUE if All slots mode is successful otherwise FALSE.
+/**
+ * \brief Sets the Controller state to ALL Slots mode.
+ *
+ * \param[inout] eray Pointer to the ERAY module handle.
+ *
+ * \retval TRUE If setting All slots mode was successful.
+ *         FALSE If setting All slots mode failed.
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
- *
+ * 
  */
 IFX_INLINE boolean IfxEray_Eray_setPocAllSlots(IfxEray_Eray *eray);
 
-/** \brief Runs the communication controller.
- * \param eray pointer to ERAY Module handle.
- * \return TRUE if communication started otherwise FALSE.
+/**
+ * \brief Starts the communication controller for the ERAY module.
+ *
+ * \param[inout] eray Pointer to the ERAY module handle.
+ *
+ * \retval TRUE Communication started successfully.
+ *         FALSE Failed to start communication.
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_INLINE boolean IfxEray_Eray_startCommunication(IfxEray_Eray *eray);
 
-/** \brief Wakeups the channel in a cluster.
- * \param eray pointer to ERAY Module handle.
- * \param channel wakeup channel Id.
- * \return None
+/**
+ * \brief Wakes up the specified channel in a cluster.
+ *
+ * \param[inout] eray    Pointer to the ERAY Module handle.
+ * \param[in]    channel The channel ID to wake up. Range: \ref IfxEray_Channel.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_INLINE void IfxEray_Eray_wakeUpChannel(IfxEray_Eray *eray, IfxEray_Channel channel);
 
-/** \brief Wakeups the node in a cluster.
- * \param eray pointer to ERAY Module handle.
- * \return TRUE if cluster is wakeup otherwise FALSE.
+/**
+ * \brief Wakes up the node in a cluster.
+ *
+ * \param[inout] eray Pointer to the ERAY Module handle.
+ *
+ * \retval TRUE The cluster was successfully woken up.
+ *         FALSE The wake-up process failed.
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_INLINE boolean IfxEray_Eray_wakeUpCluster(IfxEray_Eray *eray);
 
-/** \brief Writes data section of a frame to input data registers.
- * \param eray pointer to module handle.
- * \param data data section in frame.
- * \param payloadLength payload length configured for slot buffer.
- * \return None
+/**
+ * \brief Writes the data section of a frame to the input data registers.
+ *
+ * \param[inout] eray          Pointer to the ERAY module handle.
+ * \param[in]    data          Data section in the frame to be written.
+ * \param[in]    payloadLength Payload length configured for the slot buffer. Range: 0x0 to 0x7F.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
@@ -1047,30 +1097,39 @@ IFX_INLINE void IfxEray_Eray_writeData(IfxEray_Eray *eray, uint32 *data, uint8 p
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Transfers frame from fifo in message RAM to Output buffer.
- * \param eray pointer to ERAY Module handle.
- * \param config pointer to receive control structure.
- * \return None
+/**
+ * \brief Transfers a frame from the FIFO in message RAM to the output buffer.
+ *
+ * \param[inout] eray   Pointer to the ERAY Module handle.
+ * \param[in]    config Pointer to the receive control structure.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_EXTERN void IfxEray_Eray_receiveFifoFrame(IfxEray_Eray *eray, IfxEray_Eray_ReceiveControl *config);
 
-/** \brief Transfers header and data from message buffer to output buffer.
- * \param eray pointer to ERAY Module handle.
- * \param config pointer to receive control structure.
- * \return None
+/**
+ * \brief Transfers header and data from message buffer to output buffer based on receive control properties.
+ *
+ * \param[inout] eray   Pointer to the ERAY Module handle.
+ * \param[in] config Pointer to the receive control structure.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_EXTERN void IfxEray_Eray_receiveFrame(IfxEray_Eray *eray, IfxEray_Eray_ReceiveControl *config);
 
-/** \brief Transfers the frame in given slot.
- * \param eray pointer to module handle.
- * \param transmitControl transmits frame in a given slot.
- * \return None
+/**
+ * \brief Transfers the frame in a given slot.
+ *
+ * \param[inout] eray            Pointer to the ERAY module handle.
+ * \param[in]    transmitControl Pointer to the transmit control structure.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
@@ -1086,19 +1145,26 @@ IFX_EXTERN void IfxEray_Eray_transmitFrame(IfxEray_Eray *eray, IfxEray_Eray_Tran
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Gets the current node controller POC state.
- * \param eray pointer to module handle.
- * \return current POC state.
+/**
+ * \brief Gets the current node controller POC state.
+ *
+ * \param[in] eray Pointer to the ERAY module handle.
+ *
+ * \retval IfxEray_PocState The current POC state of the ERAY module. Range: \ref IfxEray_PocState.
+ *
  */
 IFX_INLINE IfxEray_PocState IfxEray_Eray_getPocState(IfxEray_Eray *eray);
 
-/** \brief Gets the received wakeup pattern channel.
- * \param eray pointer to module handle.
- * \return received wakeup pattern channel.
- *
- * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
- *
- */
+/**
+* \brief Retrieves the received wakeup pattern channel for the ERAY module.
+*
+* \param[in] eray Pointer to the ERAY module handle.
+*
+* \retval IfxEray_WakeupChannel The specific channel that received the wakeup pattern. Range: \ref IfxEray_WakeupChannel.
+*
+* For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
+*
+*/
 IFX_INLINE IfxEray_WakeupChannel IfxEray_Eray_getWakeupPatternReceivedChannel(IfxEray_Eray *eray);
 
 /** \} */
@@ -1110,63 +1176,93 @@ IFX_INLINE IfxEray_WakeupChannel IfxEray_Eray_getWakeupPatternReceivedChannel(If
 /*-------------------------Inline Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief clears the error interrupt flag requested.
- * \param eray pointer to module handle.
- * \param errorFlag error flag to be cleared.
- * \return None
+/**
+ * \brief Clears the specified error interrupt flag for the ERAY module.
+ *
+ * \param[inout] eray      Pointer to the ERAY module handle.
+ * \param[in]    errorFlag The specific error flag to clear. Range: \ref IfxEray_ClearErrorFlag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_Eray_clearErrorFlag(IfxEray_Eray *eray, IfxEray_ClearErrorFlag errorFlag);
 
-/** \brief Clears the status interrupt flag requested.
- * \param eray pointer to module handle.
- * \param statusFlag status flag to be cleared.
- * \return None
+/**
+ * \brief Clears the status interrupt flag requested for the ERAY module.
+ *
+ * \param[inout] eray       Pointer to the ERAY module handle.
+ * \param[in]    statusFlag The status flag to be cleared. Range: \ref IfxEray_ClearStatusFlag.
+ *
+ * \retval None
+ *
  */
 IFX_INLINE void IfxEray_Eray_clearStatusFlag(IfxEray_Eray *eray, IfxEray_ClearStatusFlag statusFlag);
 
-/** \brief Gets the error interrupt status.
- * \param eray pointer to module handle.
- * \return error interrupt status.
+/**
+ * \brief Retrieves the error interrupt status of the ERAY module.
+ *
+ * \param[in] eray Pointer to the ERAY module handle.
+ *
+ * \retval Ifx_ERAY_EIR The current error interrupt status of the ERAY module.
+ *
  */
 IFX_INLINE Ifx_ERAY_EIR IfxEray_Eray_getErrorInterrupts(IfxEray_Eray *eray);
 
-/** \brief Gets the message buffer interrupt status.
- * \param eray pointer to module handle.
- * \param messageBuffer message buffer to which interrupt status be checked.
- * \return message buffer interrupt status.
+/**
+ * \brief Retrieves the interrupt status of a specified message buffer in the ERAY module.
+ *
+ * \param[in] eray          Pointer to the ERAY module handle.
+ * \param[in] messageBuffer The identifier of the message buffer whose interrupt status is to be retrieved. Range: 0x0 to 0x7F.
+ *
+ * \retval uint8 The current interrupt status of the specified message buffer. Range: 0x0 or 0x1.
+ *
  */
 IFX_INLINE uint8 IfxEray_Eray_getMessageBufferInterruptStatus(IfxEray_Eray *eray, uint8 messageBuffer);
 
-/** \brief Gets the new data interrupt buffers status.
- * \param eray pointer to module handle.
- * \param ndat ndat buffer to which interrupt status be checked.
- * \return ndat buffer interrupt status.
+/**
+ * \brief Gets the new data interrupt buffers status.
+ *
+ * \param[in] eray Pointer to the ERAY module handle.
+ * \param[in] ndat The new data buffer for which to check the interrupt status. Range: 0x0 to 0x7F.
+ *
+ * \retval uint8 The interrupt status of the specified new data buffer. Range: 0x0 or 0x1.
+ *
  */
 IFX_INLINE uint8 IfxEray_Eray_getNewDataInterruptStatus(IfxEray_Eray *eray, uint8 ndat);
 
-/** \brief Gets the node status interrupts.
- * \param eray pointer to module handle.
- * \return node status interrupts.
+/**
+ * \brief Retrieves the current status of the ERAY module's interrupts.
+ *
+ * \param[in] eray Pointer to the ERAY module handle.
+ *
+ * \retval Ifx_ERAY_SIR The current status of the ERAY module's interrupts.
+ *
  */
 IFX_INLINE Ifx_ERAY_SIR IfxEray_Eray_getStatusInterrupts(IfxEray_Eray *eray);
 
-/** \brief Enables the message buffer interrupt line.
- * \param eray pointer to module handle.
- * \param messageBuffer message buffer interrupt which should be configured
- * \param messageBufferDestination selects MBSC0 or MBSC1 interrupt output
- * \return None
+/**
+ * \brief Configures the interrupt destination for a specified message buffer.
+ *
+ * \param[inout] eray                     Pointer to the IfxEray_Eray module handle.
+ * \param[in]    messageBuffer            Message buffer identifier to configure. Range: 0x0 to 0x7F.
+ * \param[in]    messageBufferDestination Destination selects MBSC0 or MBSC1 interrupt output. Range: 0x0 to 0x1.
+ *
+ * \retval None
  *
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */
 IFX_INLINE void IfxEray_Eray_setMessageBufferInterruptDestination(IfxEray_Eray *eray, uint8 messageBuffer, uint8 messageBufferDestination);
 
-/** \brief Enables the NDAT buffer interrupt line.
- * \param eray pointer to module handle.
- * \param ndat message buffer number configured to which ndat interrupt line to be set.
- * \param ndatDestination selects NDAT0 or NDAT1 interrupt output
- * \return None
+/**
+ * \brief Configures the destination of the New Data (NDAT) interrupt for a specified message buffer.
  *
+ * \param[inout] eray            Pointer to the ERAY module handle.
+ * \param[in]    ndat            Message buffer number to configure.  Range: 0x0 to 0x7F.
+ * \param[in]    ndatDestination Destination selects NDAT0 or NDAT1 interrupt output. Range: 0x0 to 0x1.
+ *
+ * \retval None
+ * 
  * For usage exapmle see : \ref IfxLld_Eray_Eray_Usage
  *
  */

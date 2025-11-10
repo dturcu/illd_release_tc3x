@@ -2,7 +2,7 @@
  * \file IfxFlash.c
  * \brief FLASH  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -60,6 +60,7 @@ void IfxFlash_disableWriteProtection(uint32 flash, IfxFlash_UcbType ucb, uint32 
 
     *addr1 = ucb;
 
+    /* Write the password to the flash command register, one 32-bit word at a time */
     for (i = 0; i < 8; i++)
     {
         *addr1 = password[i];

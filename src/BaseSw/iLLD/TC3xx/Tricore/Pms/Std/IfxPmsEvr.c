@@ -2,7 +2,7 @@
  * \file IfxPmsEvr.c
  * \brief PMS  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -149,7 +149,10 @@ void IfxPmsEvr_filterSecondaryConversionResult(Ifx_PMS *pms, IfxPmsEvr_SupplyFil
     uint16          passwd = IfxScuWdt_getSafetyWatchdogPassword();
 
     Ifx_PMS_MONFILT tempMONFILT;
+
+    /* Clear safety endinit protection */
     IfxScuWdt_clearSafetyEndinit(passwd);
+    /* Reads the current filter register value */
     tempMONFILT.U = pms->MONFILT.U;
 
     switch (supply)
@@ -174,8 +177,10 @@ void IfxPmsEvr_filterSecondaryConversionResult(Ifx_PMS *pms, IfxPmsEvr_SupplyFil
         break;
     }
 
+    /* Updates the filter register with the new value */
     pms->MONFILT.U = tempMONFILT.U;
 
+    /* Set safety endinit protection again */
     IfxScuWdt_setSafetyEndinit(passwd);
 }
 
@@ -209,9 +214,13 @@ void IfxPmsEvr_setSecondaryOverVoltageThresholdMv(Ifx_PMS *pms, float32 threshol
     uint16         passwd = IfxScuWdt_getSafetyWatchdogPassword();
     Ifx_PMS_OVMON  tempOVMON;
     Ifx_PMS_OVMON2 tempOVMON2;
+
+    /* Clear safety endinit protection */
     IfxScuWdt_clearSafetyEndinit(passwd);
 
+    /* Reads current OVMON register value */
     tempOVMON.U  = pms->OVMON.U;
+    /* Reads current OVMON2 register value */
     tempOVMON2.U = pms->OVMON2.U;
 
     switch (supply)
@@ -236,9 +245,12 @@ void IfxPmsEvr_setSecondaryOverVoltageThresholdMv(Ifx_PMS *pms, float32 threshol
         break;
     }
 
+    /* Updates OVMON register with new threshold */
     pms->OVMON.U  = tempOVMON.U;
+    /* Updates OVMON2 register with new threshold */
     pms->OVMON2.U = tempOVMON2.U;
 
+    /* Set safety endinit protection again */
     IfxScuWdt_setSafetyEndinit(passwd);
 }
 
@@ -249,8 +261,13 @@ void IfxPmsEvr_setSecondaryUnderVoltageThresholdMv(Ifx_PMS *pms, float32 thresho
 
     Ifx_PMS_UVMON  tempUVMON;
     Ifx_PMS_UVMON2 tempUVMON2;
+
+    /* Clear safety endinit protection */
     IfxScuWdt_clearSafetyEndinit(passwd);
+
+    /* Reads current UVMON register value */
     tempUVMON.U  = pms->UVMON.U;
+    /* Reads current UVMON2 register value */
     tempUVMON2.U = pms->UVMON2.U;
 
     switch (supply)
@@ -275,8 +292,11 @@ void IfxPmsEvr_setSecondaryUnderVoltageThresholdMv(Ifx_PMS *pms, float32 thresho
         break;
     }
 
+    /* Updates UVMON register with new threshold */
     pms->UVMON.U  = tempUVMON.U;
+    /* Updates UVMON2 register with new threshold */
     pms->UVMON2.U = tempUVMON2.U;
 
+    /* Set safety endinit protection again */
     IfxScuWdt_setSafetyEndinit(passwd);
 }

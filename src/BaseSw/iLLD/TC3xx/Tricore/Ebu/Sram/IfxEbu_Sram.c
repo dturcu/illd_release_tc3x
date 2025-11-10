@@ -2,7 +2,7 @@
  * \file IfxEbu_Sram.c
  * \brief EBU SRAM details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -59,18 +59,22 @@
 
 void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
 {
+	/* Get pointer to EBU module from config */
     Ifx_EBU *ebu = config->module;
 
+    /* Store key config info in SRAM object */
     sram->ebu         = ebu;
     sram->chipSelect  = config->chipSelect;
     sram->baseAddress = config->memoryRegionConfig.baseAddress;
 
     {
+    	/* Fetch current password of CPU Watchdog module */
         uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
+        /* Clearing the endinit protection */
         IfxScuWdt_clearCpuEndinit(passwd);
-
+        /* Set the EBU external clock ratio for synchronous operation */
         IfxEbu_setExternalClockRatio(ebu, config->externalClockRatio);
-
+        /* Setting the endinit protection back on */
         IfxScuWdt_setCpuEndinit(passwd);
     }
 
@@ -101,6 +105,7 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
     /* Configuring the Parameters for Asynchronous and Synchronous Mode*/
     if ((config->device == IfxEbu_Sram_Device_deMuxedAsynchronousType) || (config->device == IfxEbu_Sram_Device_muxedAsynchronousType) || (config->syncReadAccessParameter.externalClock == 0))
     {
+    	/* Configuring Access Parameters for Read Access */
         Ifx_EBU_BUS_RAP busrap;
         busrap.U                           = 0;
         busrap.B.ADDRC                     = config->readAccessParameter.addressCycle;
@@ -117,6 +122,7 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
     }
     else
     {
+    	/* Configuring Access Parameters for Read Access for Synchronous devices */
         Ifx_EBU_BUS_RAP busrap;
         busrap.U                           = 0;
         busrap.B.ADDRC                     = (config->syncReadAccessParameter.addressCycle * config->syncReadAccessParameter.externalClock);
@@ -135,6 +141,7 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
     /* Configuring the Parameters for Asynchronous and Synchronous Mode*/
     if ((config->device == IfxEbu_Sram_Device_deMuxedAsynchronousType) || (config->device == IfxEbu_Sram_Device_muxedAsynchronousType) || (config->syncWriteAccessParameter.externalClock == 0))
     {
+    	/* Configuring Access Parameters for Write Access */
         Ifx_EBU_BUS_WAP buswap;
         buswap.U                           = 0;
         buswap.B.ADDRC                     = config->writeAccessParameter.addressCycle;
@@ -151,6 +158,7 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
     }
     else
     {
+    	/* Configuring Access Parameters for Read Access for Synchronous devices */
         Ifx_EBU_BUS_WAP buswap;
         buswap.U                           = 0;
         buswap.B.ADDRC                     = (config->syncWriteAccessParameter.addressCycle * config->syncWriteAccessParameter.externalClock);
@@ -166,12 +174,13 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
         ebu->BUS[config->chipSelect].WAP.U = buswap.U;
     }
 
-    /* for Synchronous mode we configure the feedback clock */
+    /* For Synchronous mode we configure the feedback clock */
     if ((config->device == IfxEbu_Sram_Device_deMuxedAsynchronousType) || (config->device == IfxEbu_Sram_Device_muxedAsynchronousType) || (config->syncWriteAccessParameter.externalClock == 0))
     {
+    	/* Configuring EBU for Read access */
         Ifx_EBU_BUS_RCON busrcon;
         busrcon.U                           = 0;
-        busrcon.B.AGEN                      = deviceType; // config->readConfig.deviceType;
+        busrcon.B.AGEN                      = deviceType; /* config->readConfig.deviceType; */
         busrcon.B.WAIT                      = config->readConfig.waitControl;
         busrcon.B.WAITINV                   = config->readConfig.polarityWait;
         busrcon.B.EBSE                      = config->readConfig.earlyBurst;
@@ -184,6 +193,7 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
     }
     else
     {
+    	/* Synchronous Read Configuration */
         Ifx_EBU_BUS_RCON busrcon;
         busrcon.U                           = 0;
         busrcon.B.AGEN                      = config->syncReadConfig.deviceType;
@@ -200,12 +210,13 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
         ebu->BUS[config->chipSelect].RCON.U = busrcon.U;
     }
 
-    /* for Synchronous mode we configure the feedback clock */
+    /* For Synchronous mode we configure the feedback clock */
     if ((config->device == IfxEbu_Sram_Device_deMuxedAsynchronousType) || (config->device == IfxEbu_Sram_Device_muxedAsynchronousType) || (config->syncWriteAccessParameter.externalClock == 0))
     {
+    	/* Configuring EBU for Write access */
         Ifx_EBU_BUS_WCON buswcon;
         buswcon.U                           = 0;
-        buswcon.B.AGEN                      = deviceType; // config->writeConfig.deviceType;
+        buswcon.B.AGEN                      = deviceType;  /* config->writeConfig.deviceType; */
         buswcon.B.WAIT                      = config->writeConfig.waitControl;
         buswcon.B.WAITINV                   = config->writeConfig.polarityWait;
         buswcon.B.EBSE                      = config->writeConfig.earlyBurst;
@@ -217,6 +228,7 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
     }
     else
     {
+    	/* Synchronous Write Configuration */
         Ifx_EBU_BUS_WCON buswcon;
         buswcon.U                           = 0;
         buswcon.B.AGEN                      = config->syncWriteConfig.deviceType;
@@ -232,6 +244,7 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
     }
 
     {
+    	/* Memory Region configuration */
         Ifx_EBU_ADDRSEL addrsel;
         addrsel.U                          = 0;
         addrsel.B.REGENAB                  = config->memoryRegionConfig.regionEnabled;
@@ -240,12 +253,13 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
         addrsel.B.GLOBALCS                 = config->memoryRegionConfig.combinedChipSelect;
         addrsel.B.MASK                     = config->memoryRegionConfig.addressMask;
         addrsel.B.ALTSEG                   = config->memoryRegionConfig.alternateSegment;
-        addrsel.B.BASE                     = (config->memoryRegionConfig.baseAddress >> 12); /* Only 20 bits of Address are written */
+        addrsel.B.BASE                     = (config->memoryRegionConfig.baseAddress >> 12);  /* Only 20 bits of Address are written */
 
         ebu->ADDRSEL[config->chipSelect].U = addrsel.U;
     }
 
     {
+    	/* Module Configuration */
         Ifx_EBU_MODCON modcon;
         modcon.U             = 0;
         modcon.B.LOCKTIMEOUT = config->moduleConfig.lockTimeout;
@@ -254,16 +268,18 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
 
         if ((config->device == IfxEbu_Sram_Device_deMuxedAsynchronousType) || (config->device == IfxEbu_Sram_Device_muxedAsynchronousType))
         {
+        	/* Output is ADV */
             modcon.B.ALE = 1;
         }
         else
         {
+        	/* Output is ALE */
             modcon.B.ALE = 0;
         }
 
         ebu->MODCON.U = modcon.U;
 
-        /* read back to ensure that EBU is configured before first external access */
+        /* Read back to ensure that EBU is configured before first external access */
         if (ebu->MODCON.U)
         {}
     }
@@ -272,11 +288,15 @@ void IfxEbu_Sram_initMemory(IfxEbu_Sram *sram, const IfxEbu_Sram_Config *config)
 
 void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
 {
+	/* Initializing default configuration */
+
     config->module             = ebu;
+    /* Configuring external clock ratio */
     config->externalClockRatio = IfxEbu_ExternalClockRatio_3;
+    /* Configuring chip Select */
     config->chipSelect         = IfxEbu_ChipSelect_0;
 
-    /* Configuring Access Parameters for Read and Write Access */
+    /* Configuring Access Parameters for Read Access */
     config->readAccessParameter.addressHold     = 1;
     config->readAccessParameter.addressCycle    = 0;
     config->readAccessParameter.commandDelay    = 0;
@@ -287,6 +307,7 @@ void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
     config->readAccessParameter.recoveryAccess  = 0;
     config->readAccessParameter.recoveryRegion  = 1;
 
+    /* Configuring Access Parameters for Write Access */
     config->writeAccessParameter.addressHold    = 1;
     config->writeAccessParameter.addressCycle   = 0;
     config->writeAccessParameter.commandDelay   = 0;
@@ -297,7 +318,7 @@ void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
     config->writeAccessParameter.recoveryAccess = 0;
     config->writeAccessParameter.recoveryRegion = 1;
 
-    /* Configuring EBU for Read and Write access */
+    /* Configuring EBU for Read access */
     config->readConfig.deviceType       = IfxEbu_DeviceType_demuxedAsynchronousType;
     config->readConfig.polarityWait     = 0;
     config->readConfig.byteControl      = 0;
@@ -306,6 +327,7 @@ void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
     config->readConfig.deviceInterface  = IfxEbu_ExternalDeviceInterface_32bitMultiplexed;
     config->readConfig.waitControl      = IfxEbu_WaitControl_off;
 
+    /* Configuring EBU for Write access */
     config->writeConfig.deviceType      = IfxEbu_DeviceType_demuxedAsynchronousType;
     config->writeConfig.polarityWait    = 0;
     config->writeConfig.byteControl     = 0;
@@ -314,7 +336,7 @@ void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
     config->writeConfig.deviceInterface = IfxEbu_ExternalDeviceInterface_32bitMultiplexed;
     config->writeConfig.waitControl     = IfxEbu_WaitControl_off;
 
-    /* Configuring Access Parameters for Read and Write Access for Synchronous devices */
+    /* Configuring Access Parameters for Read Access for Synchronous devices */
     config->syncReadAccessParameter.addressHold     = 1;
     config->syncReadAccessParameter.addressCycle    = 0;
     config->syncReadAccessParameter.commandDelay    = 1;
@@ -325,6 +347,7 @@ void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
     config->syncReadAccessParameter.recoveryAccess  = 2;
     config->syncReadAccessParameter.recoveryRegion  = 0;
 
+    /* Configuring Access Parameters for Write Access for Synchronous devices */
     config->syncWriteAccessParameter.addressHold    = 1;
     config->syncWriteAccessParameter.addressCycle   = 1;
     config->syncWriteAccessParameter.commandDelay   = 1;
@@ -335,7 +358,7 @@ void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
     config->syncWriteAccessParameter.recoveryAccess = 2;
     config->syncWriteAccessParameter.recoveryRegion = 1;
 
-    /* Configuring EBU for Read and Write access */
+    /* Synchronous Read Configuration */
     config->syncReadConfig.deviceType                  = IfxEbu_DeviceType_demuxedBurstType;
     config->syncReadConfig.polarityWait                = 0;
     config->syncReadConfig.byteControl                 = 0;
@@ -344,12 +367,14 @@ void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
     config->syncReadConfig.burstFlashClockFeedback     = 1;
     config->syncReadConfig.burstLength                 = IfxEbu_SynchronousBurstLength_4;
 
+    /* Synchronous write Configuration */
     config->syncWriteConfig.deviceType                 = IfxEbu_DeviceType_demuxedBurstType;
     config->syncWriteConfig.polarityWait               = 0;
     config->syncWriteConfig.byteControl                = 0;
     config->syncWriteConfig.deviceInterface            = IfxEbu_ExternalDeviceInterface_32bitMultiplexed;
     config->syncWriteConfig.burstLength                = IfxEbu_SynchronousBurstLength_1;
 
+    /* Memory Region configuration */
     config->memoryRegionConfig.regionEnabled           = TRUE;
     config->memoryRegionConfig.alternateSegmentEnabled = TRUE;
     config->memoryRegionConfig.writeProtection         = FALSE;
@@ -358,6 +383,7 @@ void IfxEbu_Sram_initMemoryConfig(IfxEbu_Sram_Config *config, Ifx_EBU *ebu)
     config->memoryRegionConfig.alternateSegment        = 0x8;
     config->memoryRegionConfig.baseAddress             = 0xA4000000;
 
+    /* Module Configuration */
     config->moduleConfig.aleMode                       = 1;
     config->moduleConfig.arbMode                       = IfxEbu_ExternalBusMode_soleMaster;
     config->moduleConfig.lockTimeout                   = 0xff;

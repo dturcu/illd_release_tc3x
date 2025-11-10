@@ -2,7 +2,7 @@
  * \file IfxHssl.c
  * \brief HSSL  basic functionality
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -61,36 +61,48 @@
 void IfxHssl_disableHsctModule(Ifx_HSCT *hsct)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); /* clears the endinit protection */
-    hsct->CLC.B.DISR = 1;           /* disables the module */
-    IfxScuWdt_setCpuEndinit(psw);   /* sets the endinit protection back on */
+    /* Clears the endinit protection */
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Disables the Hsct module */
+    hsct->CLC.B.DISR = 1;
+    /* Sets the endinit protection back on */
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 
 void IfxHssl_disableHsslModule(Ifx_HSSL *hssl)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); /* clears the endinit protection */
-    hssl->CLC.B.DISR = 1;           /* disables the module */
-    IfxScuWdt_setCpuEndinit(psw);   /* sets the endinit protection back on */
+    /* Clears the endinit protection */
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Disables the Hssl module */
+    hssl->CLC.B.DISR = 1;
+    /* Sets the endinit protection back on */
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 
 void IfxHssl_enableHsctModule(Ifx_HSCT *hsct)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); /* clears the endinit protection */
-    hsct->CLC.B.DISR = 0;           /* enables the module */
-    IfxScuWdt_setCpuEndinit(psw);   /* sets the endinit protection back on */
+    /* Clears the endinit protection */
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Enables the Hsct module */
+    hsct->CLC.B.DISR = 0;
+    /* Sets the endinit protection back on */
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 
 void IfxHssl_enableHsslModule(Ifx_HSSL *hssl)
 {
     uint16 psw = IfxScuWdt_getCpuWatchdogPassword();
-    IfxScuWdt_clearCpuEndinit(psw); /* clears the endinit protection */
-    hssl->CLC.B.DISR = 0;           /* enables the module */
-    IfxScuWdt_setCpuEndinit(psw);   /* sets the endinit protection back on */
+    /* clears the endinit protection */
+    IfxScuWdt_clearCpuEndinit(psw);
+    /* Enables the Hssl module */
+    hssl->CLC.B.DISR = 0;
+    /* Sets the endinit protection back on */
+    IfxScuWdt_setCpuEndinit(psw);
 }
 
 
@@ -288,16 +300,18 @@ void IfxHssl_resetHsctKernel(Ifx_HSCT *hsct)
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
 
     IfxScuWdt_clearCpuEndinit(passwd);
-    hsct->KRST0.B.RST = 1;          /* Only if both Kernel reset bits are set a reset is executed */
+    /* Only if both Kernel reset bits are set a reset is executed */
+    hsct->KRST0.B.RST = 1;
     hsct->KRST1.B.RST = 1;
     IfxScuWdt_setCpuEndinit(passwd);
 
-    while (0 == hsct->KRST0.B.RSTSTAT)  /* Wait until reset is executed */
-
+    /* Wait until reset is executed */
+    while (0 == hsct->KRST0.B.RSTSTAT)
     {}
 
     IfxScuWdt_clearCpuEndinit(passwd);
-    hsct->KRSTCLR.B.CLR = 1;            /* Clear Kernel reset status bit */
+    /* Clear Kernel reset status bit */
+    hsct->KRSTCLR.B.CLR = 1;
     IfxScuWdt_setCpuEndinit(passwd);
 }
 
@@ -307,16 +321,18 @@ void IfxHssl_resetHsslKernel(Ifx_HSSL *hssl)
     uint16 passwd = IfxScuWdt_getCpuWatchdogPassword();
 
     IfxScuWdt_clearCpuEndinit(passwd);
-    hssl->KRST0.B.RST = 1;          /* Only if both Kernel reset bits are set a reset is executed */
+    /* Only if both Kernel reset bits are set a reset is executed */
+    hssl->KRST0.B.RST = 1;
     hssl->KRST1.B.RST = 1;
     IfxScuWdt_setCpuEndinit(passwd);
 
-    while (0 == hssl->KRST0.B.RSTSTAT)  /* Wait until reset is executed */
-
+    /* Wait until reset is executed */
+    while (0 == hssl->KRST0.B.RSTSTAT)
     {}
 
     IfxScuWdt_clearCpuEndinit(passwd);
-    hssl->KRSTCLR.B.CLR = 1;            /* Clear Kernel reset status bit */
+    /* Clear Kernel reset status bit */
+    hssl->KRSTCLR.B.CLR = 1;
     IfxScuWdt_setCpuEndinit(passwd);
 }
 #endif

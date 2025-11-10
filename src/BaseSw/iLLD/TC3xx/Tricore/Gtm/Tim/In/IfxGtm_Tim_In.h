@@ -3,7 +3,7 @@
  * \brief GTM IN details
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -155,7 +155,8 @@
 
 /** \addtogroup IfxLld_Gtm_Tim_In_Enumerations
  * \{ */
-/** \brief Config Filter Mode
+/** \brief Config Filter Mode.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.FLT_CTR_RE and Ifx_GTM_TIM_CH_CTRL.B.FLT_CTR_FE
  */
 typedef enum
 {
@@ -176,7 +177,8 @@ typedef enum
 
 /** \} */
 
-/** \brief Active edge for measurement
+/** \brief Active edge for measurement.
+ * Definition in Ifx_GTM_TIM_CH_CTRL.B.DSL
  */
 typedef enum
 {
@@ -202,7 +204,7 @@ typedef struct
     IfxGtm_Cmu_Clk           clock;                   /**< \brief Timer input clock */
     Ifx_Pwm_Mode             mode;                    /**< \brief PWM mode, only Ifx_Pwm_Mode_leftAligned and Ifx_Pwm_Mode_righAligned are supported */
     IfxGtm_Tim_In_ActiveEdge activeEdge;              /**< \brief Active edge to be selected as falling, raising or both */
-    uint32                   gateCount;               /**< \brief Shadow count value */
+    uint32                   gateCount;               /**< \brief Shadow count value. Range: 0 to 0xFFFFFF */
 } IfxGtm_Tim_In_ConfigCapture;
 
 /** \brief Configuration structure for TIM filter
@@ -238,18 +240,18 @@ typedef struct
 typedef struct
 {
     Ifx_GTM_TIM_CH *channel;                     /**< \brief TIM channel used */
-    uint32          periodTick;                  /**< \brief Period value in clock ticks */
-    uint32          pulseLengthTick;             /**< \brief Duty value in clock ticks */
+    uint32          periodTick;                  /**< \brief Period value in clock ticks. Range: 0 to 0xFFFFFF */
+    uint32          pulseLengthTick;             /**< \brief Duty value in clock ticks. Range: 0 to 0xFFFFFF */
     boolean         dataCoherent;                /**< \brief TRUE, if the duty and period values are measured from the same period */
     boolean         overflowCnt;                 /**< \brief TRUE if the last measurement show an overflow in CNT */
     boolean         newData;                     /**< \brief TRUE when values are updated, and  if none of the counter CNT, CNTS have overflowed */
     boolean         dataLost;                    /**< \brief TRUE if data are lost */
-    uint32          edgeCounterUpper;            /**< \brief upper part of the edge counter */
+    uint32          edgeCounterUpper;            /**< \brief upper part of the edge counter. Range: 0 to 0xFFFF */
     boolean         glitch;                      /**< \brief TRUE if glitch is detected */
     float32         captureClockFrequency;       /**< \brief Capture clock frequency in Hz */
     IfxGtm_Tim      timIndex;                    /**< \brief Index of the TIM module being used. */
     IfxGtm_Tim_Ch   channelIndex;                /**< \brief Index of the TIM channel being used. */
-    uint16          edgeCount;                   /**< \brief number of edges counted. */
+    uint16          edgeCount;                   /**< \brief number of edges counted. Range: 0 to 0xFFFF */
 } IfxGtm_Tim_In;
 
 /** \brief Configuration structure for TIM input capture
@@ -261,7 +263,7 @@ typedef struct
     IfxGtm_Tim_Ch               channelIndex;       /**< \brief Channel index */
     IfxGtm_IrqMode              irqMode;            /**< \brief Interrupt mode for the new value available */
     IfxSrc_Tos                  isrProvider;        /**< \brief Interrupt service provider for the timer interrupt */
-    Ifx_Priority                isrPriority;        /**< \brief Set the interrupt priority for new value available. If 0, no interrupt will be generated */
+    Ifx_Priority                isrPriority;        /**< \brief Set the interrupt priority for new value available. If 0, no interrupt will be generated. Range 0 to 255 */
     IfxGtm_Tim_In_ConfigCapture capture;            /**< \brief Capture configuration */
     IfxGtm_Tim_In_ConfigFilter  filter;             /**< \brief Filter configuration */
     IfxGtm_Tim_In_ConfigTimeout timeout;            /**< \brief Timeout configuration */

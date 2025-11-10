@@ -2,7 +2,7 @@
  * \file IfxEbu_BFlashSpansion.c
  * \brief EBU BFLASHSPANSION details
  *
- * \version iLLD_1_20_0
+ * \version iLLD_1_21_0
  * \copyright Copyright (c) 2024 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -58,7 +58,11 @@
 
 void IfxEbu_BFlashSpansion_cmdSetBurstConfig(IfxEbu_BFlashSpansion *bflash, IfxEbu_BFlashSpansion_BurstCfg burstCfg)
 {
+	/* Suppress unused parameter warning as blockAddress is currently unused */
     IFX_UNUSED_PARAMETER(burstCfg.B.automaticSleepModeDisable);
+
+    /* Calculate the addresses for command cycle operations */
+    /* These are based on standard command addresses for Spansion flash memory */
     volatile uint32 *addr1 = (volatile uint32 *)(bflash->baseAddress + (0x555 << 2));
     volatile uint32 *addr2 = (volatile uint32 *)(bflash->baseAddress + (0x2aa << 2));
     uint16           cfg   = bflash->burstCfg.U;
@@ -72,7 +76,11 @@ void IfxEbu_BFlashSpansion_cmdSetBurstConfig(IfxEbu_BFlashSpansion *bflash, IfxE
 
 void IfxEbu_BFlashSpansion_eraseBlock(IfxEbu_BFlashSpansion *bflash, uint32 blockAddress)
 {
+	/* Suppress unused parameter warning as blockAddress is currently unused */
     IFX_UNUSED_PARAMETER(blockAddress);
+
+    /* Calculate the addresses for command cycle operations */
+    /* These are based on standard command addresses for Spansion flash memory */
     volatile uint32 *addr1 = (volatile uint32 *)(bflash->baseAddress + 4 * 0x555);
     volatile uint32 *addr2 = (volatile uint32 *)(bflash->baseAddress + 4 * 0x2aa);
 
@@ -85,6 +93,7 @@ void IfxEbu_BFlashSpansion_eraseBlock(IfxEbu_BFlashSpansion *bflash, uint32 bloc
     *addr2 = 0x00550055;
     *addr1 = 0x00100010;
 
+    /* Waits for the Spansion flash device to signal readiness */
     IfxEbu_BFlashSpansion_waitForReady(bflash);
 }
 
@@ -98,14 +107,15 @@ void IfxEbu_BFlashSpansion_initMemory(IfxEbu_BFlashSpansion *bflash, const IfxEb
 
     {
         uint16 password = IfxScuWdt_getCpuWatchdogPassword();
+        /* Clearing the endinit protection */
         IfxScuWdt_clearCpuEndinit(password);
-
+        /* Set the EBU external clock ratio for synchronous operation */
         IfxEbu_setExternalClockRatio(ebu, config->externalClockRatio);
-
+        /* Setting the endinit protection back on */
         IfxScuWdt_setCpuEndinit(password);
     }
 
-    /* configuring Base and Alternate segment Address for EBU to Access External Memory */
+    /* Configuring Base and Alternate segment Address for EBU to Access External Memory */
     {
         Ifx_EBU_ADDRSEL addrsel;
         addrsel.U                          = 0;
@@ -125,6 +135,7 @@ void IfxEbu_BFlashSpansion_initMemory(IfxEbu_BFlashSpansion *bflash, const IfxEb
 
     if (config->syncReadAccessParameter.externalClock == 0)
     {
+    	/* Asynchronous read configuration */
         {
             Ifx_EBU_BUS_RCON busrcon;
             busrcon.U                           = 0;
@@ -136,6 +147,7 @@ void IfxEbu_BFlashSpansion_initMemory(IfxEbu_BFlashSpansion *bflash, const IfxEb
         }
 
         {
+        	/* Asynchronous read Access parameter */
             Ifx_EBU_BUS_RAP busrap;
             busrap.U                           = 0;
             busrap.B.ADDRC                     = config->asyncReadAccessParameter.addressCycle; /* Delays are given wrt to Asynchronous mode */
@@ -151,6 +163,7 @@ void IfxEbu_BFlashSpansion_initMemory(IfxEbu_BFlashSpansion *bflash, const IfxEb
     }
     else
     {
+    	/* Synchronous read configuration */
         {
             Ifx_EBU_BUS_RCON busrcon;
             busrcon.U                           = 0;
@@ -193,6 +206,7 @@ void IfxEbu_BFlashSpansion_initMemory(IfxEbu_BFlashSpansion *bflash, const IfxEb
         }
 
         {
+        	/* Asynchronous write Access parameter */
             Ifx_EBU_BUS_WAP buswap;
             buswap.U                           = 0;
             buswap.B.ADDRC                     = config->asyncWriteAccessParameter.addressCycle;
@@ -218,11 +232,11 @@ void IfxEbu_BFlashSpansion_initMemory(IfxEbu_BFlashSpansion *bflash, const IfxEb
         ebu->MODCON.U        = modcon.U;
     }
 
-    /* read back to ensure that EBU is configured before first external access */
+    /* Read back to ensure that EBU is configured before first external access */
     if (ebu->MODCON.U)
     {}
 
-    /* configure burst mode in external device*/
+    /* Configure burst mode in external device*/
     IfxEbu_BFlashSpansion_cmdSetBurstConfig(bflash, config->burstCfg);
 }
 
@@ -257,7 +271,7 @@ void IfxEbu_BFlashSpansion_initMemoryConfig(IfxEbu_BFlashSpansion_Config *config
     config->syncReadAccessParameter.addressCycle   = 1;
     config->syncReadAccessParameter.addressHold    = 0;
     config->syncReadAccessParameter.commandDelay   = 1;
-    config->syncReadAccessParameter.externalClock  = 3; // This is commonly used for both Sync and Async configurations as the configurations are dependent on clock ratio //
+    config->syncReadAccessParameter.externalClock  = 3; /* This is commonly used for both Sync and Async configurations as the configurations are dependent on clock ratio */
     config->syncReadAccessParameter.dataHold       = 0;
     config->syncReadAccessParameter.waitState      = 2;
     config->syncReadAccessParameter.recoveryAccess = 1;
@@ -309,6 +323,8 @@ void IfxEbu_BFlashSpansion_initMemoryConfig(IfxEbu_BFlashSpansion_Config *config
 
 void IfxEbu_BFlashSpansion_programWord(IfxEbu_BFlashSpansion *bflash, uint32 address, uint32 data)
 {
+	/* Calculate the addresses for command cycle operations */
+	/* These are based on standard command addresses for Spansion flash memory */
     volatile uint32 *addr1 = (volatile uint32 *)(bflash->baseAddress + 4 * 0x555);
     volatile uint32 *addr2 = (volatile uint32 *)(bflash->baseAddress + 4 * 0x2aa);
     volatile uint32 *addr3 = (volatile uint32 *)(address);
@@ -319,6 +335,7 @@ void IfxEbu_BFlashSpansion_programWord(IfxEbu_BFlashSpansion *bflash, uint32 add
     *addr1 = 0x00a000a0;
     *addr3 = data;
 
+    /* Waits for the Spansion flash device to signal readiness */
     IfxEbu_BFlashSpansion_waitForReady(bflash);
 }
 
@@ -328,7 +345,7 @@ boolean IfxEbu_BFlashSpansion_waitForReady(IfxEbu_BFlashSpansion *bflash)
     volatile uint32 *addr1 = (volatile uint32 *)(bflash->baseAddress);
     uint32           data1, data2;
 
-    /* ensure that previous write operation is finished before reading */
+    /* Ensure that previous write operation is finished before reading */
     __dsync();
 
     /* When erase or program command is issued Spansion flash indicates the status of busy by toggling the data on bit 6 */
