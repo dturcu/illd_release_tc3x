@@ -2374,25 +2374,13 @@ IFX_INLINE void IfxCan_Node_enableConfigurationChange(Ifx_CAN_N *node)
 {
     Ifx_CAN_N_CCCR cccr;
 
-    /* If INIT already set, clear it before setting again. */
-    /* The module needs some time if INIT was rewritten !*/
-    if (node->CCCR.B.INIT == 1)
+    if (node->CCCR.B.INIT != 1)
     {
-        node->CCCR.B.CCE = 0;
+        node->CCCR.B.INIT = 1;
 
-        while (node->CCCR.B.CCE != 0)
-        {}
-
-        node->CCCR.B.INIT = 0;
-
-        while (node->CCCR.B.INIT != 0)
+        while (node->CCCR.B.INIT != 1)
         {}
     }
-
-    node->CCCR.B.INIT = 1;
-
-    while (node->CCCR.B.INIT != 1)
-    {}
 
     {
         cccr.U       = node->CCCR.U;
